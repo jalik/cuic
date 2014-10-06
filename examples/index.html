@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Cuic.js - Examples</title>
+    <link href="css/base.css" rel="stylesheet" type="text/css">
+    <link href="css/styles.css" rel="stylesheet" type="text/css">
+
+    <script src="../libs/jquery-2.1.1.min.js"></script>
+    <script src="../src/base.js"></script>
+    <script src="../src/dialog.js"></script>
+    <script src="../src/forms.js"></script>
+    <script src="../src/navbar.js"></script>
+    <script src="../src/notification.js"></script>
+    <script src="../src/panel.js"></script>
+    <script src="../src/table.js"></script>
+    <script src="../src/tabs.js"></script>
+    <script src="../src/tooltip.js"></script>
+    <script src="../src/tree.js"></script>
+</head>
+<body>
+
+<div id="page">
+<h1>Cuic.js - Common User Interface Components</h1>
+
+<p>
+    Cuic.js is a library that provides various components used in dynamic UIs (like notifications, tooltips,
+    tabs...). It was designed to be simple and easy to use, with convention over configuration pattern.
+</p>
+
+<div>
+    <h2><a href="#">Cuic</a>.Dialog</h2>
+
+    <p>Dialogs are used to display things that needs interactions, for example a confirmation, or a login form.</p>
+
+    <div class="sandbox" id="sb-dialog">
+        <label class="inline">
+            <span class="label">location</span>
+            <select name="location">
+                <option>bottom</option>
+                <option>bottom left</option>
+                <option>bottom right</option>
+                <option selected>center</option>
+                <option>left</option>
+                <option>right</option>
+                <option>top</option>
+                <option>top left</option>
+                <option>top right</option>
+            </select>
+        </label>
+        <label class="inline">
+            <span class="label">css</span>
+            <input type="text" name="css" value="width: 400px">
+        </label>
+        <label class="inline">
+            <span class="label">modal</span>
+            <input type="checkbox" name="modal" checked>
+        </label>
+        <label class="inline">
+            <span class="label">container</span>
+            <input type="checkbox" name="container" checked>
+        </label>
+        <button class="run">Run</button>
+
+        <div class="blueprint" style="height: 500px; margin-top: 1em"></div>
+    </div>
+    <script>
+
+        (function () {
+            var sandbox = $('#sb-dialog');
+
+            sandbox.find('.run').on('click', function () {
+                var modal = sandbox.find('[name=modal]').is(':checked');
+                var container = sandbox.find('[name=container]').is(':checked');
+                var css = sandbox.find('[name=css]').val();
+                var location = sandbox.find('[name=location]').val();
+
+                Cuic.dialog({
+                    container: container ? '#sb-dialog .blueprint' : document.body,
+                    css: css,
+                    modal: modal,
+                    location: location,
+                    title: 'Simple dialog',
+                    content: 'This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p>',
+                    buttons: [
+                        {
+                            label: 'Close'
+                        },
+                        {
+                            label: 'Accept'
+                        }
+                    ]
+                });
+            });
+        })();
+
+    </script>
+</div>
+
+<div>
+    <h2><a href="#">Cuic</a>.Navbar</h2>
+
+    <p>Navbars are used to keep navigation links accessible quickly.</p>
+
+    <div class="sandbox" id="sb-navbar">
+        <label class="inline">
+            <span class="label">collapse</span>
+            <input type="checkbox" name="collapse" checked>
+        </label>
+        <label class="inline">
+            <span class="label">scroll</span>
+            <input type="checkbox" name="scroll" checked>
+        </label>
+        <button class="run">Run</button>
+
+        <div class="blueprint" style="height: 300px; margin-top: 1em; overflow: hidden">
+            <nav class="navbar">
+                <a href="#" class="navbar-item">Item 1</a>
+                <a href="#" class="navbar-item">Item 2</a>
+                <a href="#" class="navbar-item">Item 3</a>
+                <a href="#" class="navbar-item">Item 4</a>
+                <a href="#" class="navbar-item">Item 5</a>
+                <a href="#" class="navbar-item">Item 6</a>
+                <a href="#" class="navbar-item">Item 7</a>
+                <a href="#" class="navbar-item">Item 8</a>
+                <a href="#" class="navbar-item">Item 9</a>
+                <a href="#" class="navbar-item close-button">Close</a>
+            </nav>
+            <img src="css/square-100.png" style="float: left; margin: 20px">
+        </div>
+    </div>
+    <script>
+
+        (function () {
+            var sandbox = $('#sb-navbar');
+            var navbar = $('.navbar', sandbox);
+            var run = function () {
+                var collapse = sandbox.find('[name=collapse]').is(':checked');
+                var scroll = sandbox.find('[name=scroll]').is(':checked');
+
+                Cuic.navbar({
+                    collapse: collapse,
+                    scroll: scroll,
+                    target: navbar
+                });
+            };
+
+            $(document).ready(function () {
+                sandbox.find('.run').on('click', run);
+                run();
+            });
+        })();
+
+    </script>
+</div>
+
+<div>
+    <h2><a href="#">Cuic</a>.Notification</h2>
+
+    <p>Notifications are used to display messages that does not require any interaction.</p>
+
+    <div class="sandbox" id="sb-notification">
+        <label class="inline">
+            <span class="label">location</span>
+            <select name="location">
+                <option>bottom</option>
+                <option>bottom left</option>
+                <option>bottom right</option>
+                <option selected>center</option>
+                <option>left</option>
+                <option>right</option>
+                <option>top</option>
+                <option>top left</option>
+                <option>top right</option>
+            </select>
+        </label>
+        <label class="inline">
+            <span class="label">duration</span>
+            <input type="number" name="duration" value="2000">
+        </label>
+        <label class="inline">
+            <span class="label">autoClose</span>
+            <input type="checkbox" name="autoClose" checked>
+        </label>
+        <label class="inline">
+            <span class="label">container</span>
+            <input type="checkbox" name="container" checked>
+        </label>
+        <button class="run">Run</button>
+
+        <div class="blueprint" style="height: 300px;margin-top: 1em"></div>
+    </div>
+    <script>
+
+        (function () {
+            var sandbox = $('#sb-notification');
+
+            sandbox.find('.run').on('click', function () {
+                var autoClose = sandbox.find('[name=autoClose]').is(':checked');
+                var container = sandbox.find('[name=container]').is(':checked');
+                var duration = sandbox.find('[name=duration]').val();
+                var location = sandbox.find('[name=location]').val();
+
+                Cuic.notification({
+                    autoClose: autoClose,
+                    container: container ? '#sb-notification .blueprint' : document.body,
+                    content: 'Notification from <b>' + location + '</b>',
+                    duration: duration,
+                    location: location
+                });
+            });
+        })();
+
+    </script>
+</div>
+
+<div>
+    <h2><a href="#">Cuic</a>.Panel</h2>
+
+    <p>Panels are used to display content that could be hidden when more screen space is needed.</p>
+
+    <div class="sandbox" id="sb-panel">
+        <label class="inline">
+            <span class="label">location</span>
+            <select name="location">
+                <option>bottom</option>
+                <option selected>left</option>
+                <option>right</option>
+                <option>top</option>
+            </select>
+        </label>
+        <label class="inline">
+            <span class="label">css</span>
+            <input type="text" name="css" value="width: 200px">
+        </label>
+        <label class="inline">
+            <span class="label">container</span>
+            <input type="checkbox" name="container" checked>
+        </label>
+        <button class="run">Run</button>
+
+        <div class="blueprint" style="height: 300px;margin-top: 1em">
+            <div id="panel" class="panel">
+                <header class="panel-title">Title</header>
+                <div class="panel-content">
+                    <ul>
+                        <li>Item 1</li>
+                        <li>Item 2</li>
+                        <li>Item 3</li>
+                    </ul>
+                </div>
+                <footer class="panel-footer">Footer - <a href="#" class="close-button">Close</a></footer>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        (function () {
+
+            var sandbox = $('#sb-panel');
+
+            var run = function () {
+                var container = sandbox.find('[name=container]').is(':checked');
+                var css = sandbox.find('[name=css]').val();
+                var location = sandbox.find('[name=location]').val();
+
+                Cuic.panel({
+                    closed: false,
+                    container: container ? '#sb-panel .blueprint' : document.body,
+                    css: css,
+                    location: location,
+                    target: '#panel'
+                });
+            };
+
+            sandbox.find('.run').on('click', function () {
+                run();
+            });
+
+            $(document).ready(function () {
+                run();
+            });
+
+        })();
+
+    </script>
+</div>
+
+<div>
+    <h2><a href="#">Cuic</a>.Table</h2>
+
+    <p>Tables are useful to represent data that could need filtering and ordering.</p>
+
+    <div class="sandbox" id="sb-table">
+        <table>
+            <thead>
+            <tr>
+                <th class="sortable">Head 1</th>
+                <th class="sortable default">Head 2</th>
+                <th class="sortable">Head 3</th>
+                <th class="sortable">Head 4</th>
+                <th class="sortable">Head 5</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>a</td>
+                <td>3e</td>
+                <td>u</td>
+                <td>w</td>
+                <td>i</td>
+            </tr>
+            <tr>
+                <td>b</td>
+                <td>2s</td>
+                <td>f</td>
+                <td>q</td>
+                <td>z</td>
+            </tr>
+            <tr>
+                <td>c</td>
+                <td>4m</td>
+                <td>g</td>
+                <td>n</td>
+                <td>k</td>
+            </tr>
+            <tr>
+                <td>d</td>
+                <td>1o</td>
+                <td>p</td>
+                <td>t</td>
+                <td>h</td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td>Foot 1</td>
+                <td>Foot 2</td>
+                <td>Foot 3</td>
+                <td>Foot 4</td>
+                <td>Foot 5</td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+    <script>
+
+        (function () {
+            Cuic.table({
+                target: '#sb-table table',
+                selectRowOnClick: true
+            });
+        })();
+
+    </script>
+</div>
+
+<div>
+    <h2><a href="#">Cuic</a>.Tabs</h2>
+
+    <p>Tabs are used to organize data and avoid scrolling the page.</p>
+
+    <div class="sandbox" id="sb-tabs">
+        <div class="tabs">
+            <span class="tab" data-content="tab1-content">Tab1</span>
+            <span class="tab default" data-content="tab2-content">default</span>
+            <span class="tab" data-content="tab3-content">Tab3</span>
+            <span class="tab disabled" data-content="tab4-content">disabled</span>
+        </div>
+        <div class="tab-content">
+            <div id="tab1-content">
+                <b>Content of tab1</b>.
+                <img src="css/square-100.png" style="float: left; margin: 0 1em 1em 0">
+
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in pharetra tortor. Mauris tortor
+                    dui, malesuada sit amet dolor ut, tincidunt porttitor mauris. Cras rutrum risus nec justo
+                    sollicitudin ultricies. Phasellus fringilla posuere erat, bibendum blandit turpis aliquet quis. Nam
+                    sagittis libero eget neque imperdiet facilisis nec vitae lacus. Morbi.
+                </p>
+            </div>
+            <div id="tab2-content">
+                <b>Content of tab2</b>.
+                <p>
+                    Fusce non felis sit amet ipsum porta commodo in sed odio. In hac habitasse platea dictumst.
+                    Curabitur finibus, tellus et venenatis euismod, tellus mauris pulvinar arcu, non bibendum felis
+                    augue vel nunc. In hac habitasse platea dictumst. Cras sodales facilisis leo ut ornare.
+                    Pellentesque euismod id nunc vitae pharetra. Proin.
+                </p>
+            </div>
+            <div id="tab3-content">
+                <img src="css/square-100.png" style="float: right; margin: 0 0 1em 1em">
+                <b>Content of tab3</b>.
+                <p>
+                    Curabitur vitae est tellus. Ut quis tempus lectus, blandit sollicitudin tortor. Curabitur aliquam
+                    pretium massa sed convallis. Vivamus iaculis metus vel augue lacinia, a consequat lectus laoreet.
+                    Duis feugiat eu. Phasellus fringilla posuere erat, bibendum blandit turpis aliquet quis.
+                </p>
+            </div>
+            <div id="tab4-content">
+                <b>This tab is disabled.</b>.
+            </div>
+        </div>
+    </div>
+    <script>
+
+        (function () {
+            Cuic.tabs({
+                tabs: '#sb-tabs > .tabs',
+                content: '#sb-tabs > .tab-content'
+            });
+        })();
+
+    </script>
+</div>
+
+<div>
+    <h2><a href="#">Cuic</a>.Tooltip</h2>
+
+    <p>Tooltips are used to display a short description, (eg: help or tips).</p>
+
+    <div class="sandbox" id="sb-tooltip">
+        <label class="inline">
+            <span class="label">anchor</span>
+            <select name="anchor">
+                <option>bottom</option>
+                <option>bottom left</option>
+                <option>bottom right</option>
+                <option selected>center</option>
+                <option>left</option>
+                <option>right</option>
+                <option>top</option>
+                <option>top left</option>
+                <option>top right</option>
+            </select>
+        </label>
+        <label class="inline">
+            <span class="label">css</span>
+            <input type="text" name="css" value="margin: 5px">
+        </label>
+        <button class="run">Run</button>
+
+        <div class="blueprint" style="height: 400px;margin-top: 1em">
+            <img src="css/square-100.png" style="position:absolute;top:100px;left:300px"
+                 title="Center, this is a long description of the image to demonstrate that the tooltip can handle easily big text">
+            <img src="css/square-100.png" title="Top left" style="position:absolute;top:20px;left:20px">
+            <img src="css/square-100.png" title="Top right" style="position:absolute;top:20px;right:20px">
+            <img src="css/square-100.png" title="Bottom right" style="position:absolute;bottom:20px;right:20px">
+            <img src="css/square-100.png" title="Bottom left" style="position:absolute;bottom:20px;left:20px">
+        </div>
+    </div>
+    <script>
+
+        (function () {
+            var sandbox = $('#sb-tooltip');
+
+            sandbox.find('.run').on('click', function () {
+                var anchor = sandbox.find('[name=anchor]').val();
+                var css = sandbox.find('[name=css]').val();
+
+                Cuic.tooltip({
+                    anchor: anchor,
+                    css: css,
+                    target: '[title]'
+                });
+            });
+        })();
+
+    </script>
+</div>
+
+<div>
+    <h2><a href="#">Cuic</a>.Tree</h2>
+
+    <p>Trees are used to organize nested objects, so they can be browsed.</p>
+
+    <div class="sandbox" id="sb-tree">
+        <ul class="tree" style="height: 250px">
+            <li class="item">
+                <span class="item-name">item 1</span>
+            </li>
+            <li class="item default">
+                <span class="item-name">menu 2</span>
+
+                <ul class="item-content">
+                    <li class="item">
+                        <span class="item-name">sub-item 1</span>
+                    </li>
+                    <li class="item">
+                        <span class="item-name">sub-menu 2</span>
+                        <ul class="item-content">
+                            <li class="item"><span class="item-name">entry 1</span></li>
+                            <li class="item"><span class="item-name">entry 2</span></li>
+                            <li class="item"><span class="item-name">entry 3</span></li>
+                            <li class="item"><span class="item-name">entry 4</span></li>
+                        </ul>
+                    </li>
+                    <li class="item">
+                        <span class="item-name">sub-item 3</span>
+                    </li>
+                    <li class="item disabled">
+                        <span class="item-name">disabled</span>
+                    </li>
+                </ul>
+            </li>
+            <li class="item">
+                <span class="item-name">item 3</span>
+            </li>
+        </ul>
+    </div>
+    <script>
+
+        (function () {
+            Cuic.tree({
+                target: '#sb-tree > .tree',
+                collapsed: true,
+                singleMode: false
+            });
+        })();
+
+    </script>
+</div>
+</div>
+</body>
+</html>

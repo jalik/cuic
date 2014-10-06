@@ -1,0 +1,287 @@
+@charset "UTF-8";
+
+/* DIALOG */
+
+.dialog {
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0 5px 1em #888;
+    margin: 2em;
+    padding: 1em;
+}
+
+.dialog-button {
+    color: #555;
+    cursor: pointer;
+    font-size: 0.9em;
+    padding: 0.5em;
+    text-transform: uppercase;
+    transition: all 200ms;
+}
+
+.dialog-button:hover {
+    background-color: #eee;
+    color: #333;
+}
+
+.dialog-button:active {
+    background-color: #ddd;
+    color: #222;
+}
+
+.dialog-content {
+    padding: 0 1em;
+}
+
+.dialog-footer {
+    padding-top: 1em;
+    text-align: center;
+}
+
+.dialog-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 0;
+    padding: 1em;
+}
+
+.dialog-wrapper {
+    background: rgba(240, 240, 240, 0.7);
+}
+
+/* NAVBAR */
+
+.navbar {
+    background: #fff;
+    border-bottom: solid 3px #57a0be;
+    box-shadow: 0 1px 0.5em #888;
+    display: block;
+}
+
+.navbar-dropdown {
+    background: #fff;
+    border-radius: 3px;
+    box-shadow: 0 1px 0.5em #888;
+    padding: 10px;
+}
+
+.navbar-dropdown-item {
+    border-bottom: solid 1px #eee;
+    cursor: pointer;
+    display: block;
+    padding: 0.5em;
+}
+
+.navbar-dropdown-item:hover {
+    background-color: #eee;
+}
+
+.navbar-item,
+.navbar-dropdown-button {
+    border-right: solid 1px #eee;
+    cursor: pointer;
+    display: inline-block;
+    height: 60px;
+    line-height: 60px;
+    padding: 0 1em;
+    transition: all 200ms;
+}
+
+.navbar-item:hover,
+.navbar-dropdown-button:hover {
+    background: rgba(87, 160, 190, 0.1);
+    border-bottom: none;
+}
+
+/* NOTIFICATION */
+
+.notification {
+    background: rgba(0, 0, 0, 0.80);
+    border-radius: 3px;
+    box-shadow: 0 1px 0.5em #888;
+    color: #fff;
+    font-size: 0.8em;
+    overflow: auto;
+    margin: 1em;
+    padding: 1em;
+    transition: background 200ms;
+}
+
+.notification:hover {
+    background: rgba(0, 0, 0, 0.60);
+}
+
+.notification > * {
+    vertical-align: middle;
+}
+
+.notification .close-button {
+    cursor: pointer;
+    float: right;
+    font-size: 1.1em;
+    font-weight: bolder;
+    margin: 0 0 1em 1em;
+}
+
+/* PANEL */
+
+.panel {
+    background: #fff;
+    border: solid 1px #ccc;
+    box-shadow: 0 1px 0.5em #888;
+    padding: 1em;
+}
+
+.panel-content {
+    padding: 1em;
+}
+
+.panel-footer {
+    color: #888;
+    font-size: 0.8em;
+    padding: 0.5em 1em;
+    bottom: 0;
+}
+
+.panel-title {
+    border-bottom: solid 3px #57a0be;
+    font-weight: bold;
+    font-size: 1em;
+    padding: 0 1em 0.5em 1em;
+}
+
+/* TAB */
+
+.tab {
+    background: #ddd;
+    border-radius: 3px 3px 0 0;
+    color: #888;
+    cursor: pointer;
+    display: inline-block;
+    padding: 0.5em;
+    transition: all 200ms;
+}
+
+.tab:hover {
+    color: #333;
+}
+
+.tab-content {
+    background: #fff;
+    border: solid 1px #ccc;
+    border-top: none;
+    display: block;
+    box-sizing: border-box;
+    overflow: auto;
+    padding: 1em;
+    width: 100%;
+}
+
+.tabs {
+    border-bottom: solid 3px #57a0be;
+    display: block;
+}
+
+.tabs .active {
+    background: #57a0be;
+    color: #fff;
+}
+
+.tabs .disabled {
+    background: #ddd;
+    color: #aaa;
+}
+
+/* TABLE */
+
+td.sorted {
+    background: rgba(230, 230, 230, 0.5);
+}
+
+th.sortable {
+    cursor: pointer;
+}
+
+th.sorted {
+    background: rgba(230, 230, 230, 0.5);
+}
+
+tr.selected {
+    background: rgba(87, 160, 190, 0.1);
+}
+
+/* TOOLTIP */
+
+.tooltip {
+    background: rgba(0, 0, 0, 0.70);
+    border-radius: 3px;
+    box-shadow: 0 1px 0.5em #888;
+    color: #fff;
+    font-size: 0.8em;
+    overflow: auto;
+    margin: 5px;
+    padding: 0.5em;
+}
+
+/* TREE */
+
+.tree {
+    background: #fff;
+    border: solid 1px #ddd;
+    border-radius: 3px;
+    list-style: none;
+    margin: 0;
+    overflow: auto;
+    padding: 0.5em;
+}
+
+.tree .active > .item-name {
+    color: #57a0be;
+}
+
+.tree .collapsed {
+}
+
+.tree .collapsed > .item-name {
+    background: #eee;
+    color: #888;
+}
+
+.tree .disabled > .item-name {
+    color: #aaa;
+}
+
+.tree .expanded {
+}
+
+.tree .expanded > .item-name {
+    background: #f5f5f5;
+}
+
+.tree .item {
+    list-style: none;
+}
+
+.tree .item-content {
+    border-left: solid 2px #eee;
+    display: block;
+    margin-left: 1.3em;
+    padding: 0;
+}
+
+.tree .item-content .item {
+    margin: 0;
+}
+
+.tree .item-name {
+    color: #555;
+    cursor: pointer;
+    display: block;
+    margin-bottom: 1px;
+    padding: 0.5em;
+    transition: all 200ms;
+}
+
+.tree .item-name:hover {
+    color: #222;
+}
