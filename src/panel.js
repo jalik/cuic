@@ -12,8 +12,8 @@
             animDuration: 500,
             closeButtonClass: "panel-close",
             closeButton: "×",
-            closed: true,
-            container: document.body,
+            closed: false,
+            container: null,
             content: null,
             contentClass: "panel-content",
             css: null,
@@ -86,7 +86,7 @@
         panel.addClass(options.panelClass);
 
         // Get the container
-        var container = $(options.container);
+        var container = $(options.container || panel.parent());
         var containerHeight = container.height();
         var containerWidth = container.width();
 

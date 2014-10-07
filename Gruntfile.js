@@ -38,9 +38,10 @@ module.exports = function (grunt) {
                     'src/base.js',
                     'src/dialog.js',
                     'src/forms.js',
-//                    'src/navbar.js',
+                    'src/navbar.js',
                     'src/notification.js',
-//                    'src/table.js',
+                    'src/panel.js',
+                    'src/table.js',
                     'src/tabs.js',
                     'src/tooltip.js',
                     'src/tree.js'

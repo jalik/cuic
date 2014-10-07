@@ -58,14 +58,6 @@
      * @returns {{}}
      */
     Cuic.getFields = function (form, fieldNames) {
-        // Set default options
-        options = $.extend(true, {
-            errorCallback: null,
-            errorClass: "error",
-            fields: null,
-            target: null
-        }, options);
-
         form = $(form);
         var fields = {};
         var checkboxes = {};
@@ -75,7 +67,7 @@
         form.find("input[name]").each(function () {
             // Ignores unwanted fields
             if (!fieldNames || fieldNames.indexOf(this.name) !== -1) {
-                var value = Cuic.forms.parseValue(this.value);
+                var value = Cuic.parseValue(this.value);
                 var name = this.name;
 
                 switch (this.type) {
@@ -117,7 +109,7 @@
         form.find("select[name]").each(function () {
             // Ignores unwanted fields
             if (!fieldNames || fieldNames.indexOf(this.name) !== -1) {
-                var value = Cuic.forms.parseValue(this.value);
+                var value = Cuic.parseValue(this.value);
                 var name = this.name;
 
                 if (this.multiple) {
@@ -137,7 +129,7 @@
         form.find("textarea[name]").each(function () {
             // Ignores unwanted fields
             if (!fieldNames || fieldNames.indexOf(this.name) !== -1) {
-                var value = Cuic.forms.parseValue(this.value);
+                var value = Cuic.parseValue(this.value);
                 var name = this.name;
                 fields[name] = value;
             }
@@ -226,7 +218,7 @@
         var params = null;
 
         if (options.params) {
-            params = Cuic.forms.serialize(options.params);
+            params = Cuic.serialize(options.params);
         }
 
         $.each(files, function (key, value) {

@@ -89,7 +89,6 @@
 
         // Show or hide children when screen size changes
         if (options.collapse) {
-
             dropdownButton.on("click", function (ev) {
                 ev.stopPropagation();
 
@@ -136,8 +135,13 @@
                     }
                 });
 
-                // Move the dropdown button to the end
-                dropdownButton.appendTo(bar);
+                if (dropdown.children().length > 0) {
+                    // Move the dropdown button to the end
+                    dropdownButton.appendTo(bar);
+                }
+                else {
+                    dropdownButton.hide();
+                }
 
                 var timer;
 
