@@ -97,6 +97,7 @@
      * @param container
      */
     Cuic.position = function (target, position, container) {
+        target = $(target);
         container = $(container || target.offsetParent());
 
         if (container.length === 1) {
@@ -153,52 +154,59 @@
             return relativeTop + (containerHeight / 2 - targetHeight / 2);
         }
 
-        switch (position) {
-            case "bottom":
-                styles.bottom = relativeBottom + "px";
-                styles.left = getCenterX() + "px";
-                break;
+        var pos = position.split(" ");
 
-            case "bottom left":
-                styles.bottom = relativeBottom + "px";
-                styles.left = relativeLeft + "px";
-                break;
+        if (pos[0]) {
+            switch (pos[0]) {
+                case "bottom":
+                    styles.bottom = relativeBottom + "px";
+                    styles.left = getCenterX() + "px";
+                    break;
 
-            case "bottom right":
-                styles.bottom = relativeBottom + "px";
-                styles.right = relativeRight + "px";
-                break;
+                case "center":
+                    styles.left = getCenterX() + "px";
+                    styles.top = getCenterY() + "px";
+                    break;
 
-            case "left":
-                styles.top = getCenterY() + "px";
-                styles.left = relativeLeft + "px";
-                break;
+                case "left":
+                    styles.left = relativeLeft + "px";
+                    styles.top = getCenterY() + "px";
+                    break;
 
-            case "right":
-                styles.top = getCenterY() + "px";
-                styles.right = relativeRight + "px";
-                break;
+                case "right":
+                    styles.right = relativeRight + "px";
+                    styles.top = getCenterY() + "px";
+                    break;
 
-            case "top":
-                styles.top = relativeTop + "px";
-                styles.left = getCenterX() + "px";
-                break;
+                case "top":
+                    styles.left = getCenterX() + "px";
+                    styles.top = relativeTop + "px";
+                    break;
 
-            case "top left":
-                styles.top = relativeTop + "px";
-                styles.left = relativeLeft + "px";
-                break;
+                default:
+                    if (/^[0-9]+(\.[0-9]*)?[a-z%]*$/g.test(pos[0])) {
+                        styles.left = pos[0];
+                    }
+            }
+        }
 
-            case "top right":
-                styles.top = relativeTop + "px";
-                styles.right = relativeRight + "px";
-                break;
+        if (pos[1]) {
+            switch (pos[1]) {
+                case "bottom":
+                    styles.top = "";
+                    styles.bottom = relativeBottom + "px";
+                    break;
 
-            default :
-            case "center":
-                styles.top = getCenterY() + "px";
-                styles.left = getCenterX() + "px";
-                break;
+                case "middle":
+                    styles.bottom = "";
+                    styles.top = getCenterY() + "px";
+                    break;
+
+                case "top":
+                    styles.bottom = "";
+                    styles.top = relativeTop + "px";
+                    break;
+            }
         }
 
         // Check that the element is not positioned outside the viewport

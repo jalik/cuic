@@ -75,8 +75,8 @@ td {
     transition: all 200ms;
 }
 
-tfoot {
-    border-top: solid 2px #57a0be;
+tfoot th {
+    border-top: solid 2px #ccc;
 }
 
 th {
@@ -87,8 +87,8 @@ th {
     transition: all 200ms;
 }
 
-thead {
-    border-bottom: solid 3px #57a0be;
+thead th {
+    border-bottom: solid 3px #ccc;
 }
 
 tr {

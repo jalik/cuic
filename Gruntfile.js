@@ -36,15 +36,17 @@ module.exports = function (grunt) {
             dist: {
                 src: [
                     'src/base.js',
-                    'src/dialog.js',
-                    'src/forms.js',
-                    'src/navbar.js',
-                    'src/notification.js',
-                    'src/panel.js',
-                    'src/table.js',
-                    'src/tabs.js',
-                    'src/tooltip.js',
-                    'src/tree.js'
+                    'src/fn-forms.js',
+                    'src/fn-hook.js',
+                    'src/ui-dialog.js',
+                    'src/ui-grid.js',
+                    'src/ui-navbar.js',
+                    'src/ui-notification.js',
+                    'src/ui-panel.js',
+                    'src/ui-table.js',
+                    'src/ui-tabs.js',
+                    'src/ui-tooltip.js',
+                    'src/ui-tree.js'
                 ],
                 dest: buildFile
             }

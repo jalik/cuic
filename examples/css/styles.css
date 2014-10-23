@@ -202,8 +202,9 @@ th.sortable {
     cursor: pointer;
 }
 
-th.sorted {
+thead th.sorted {
     background: rgba(230, 230, 230, 0.5);
+    border-bottom-color: #57a0be;
 }
 
 tr.selected {
@@ -235,45 +236,22 @@ tr.selected {
     padding: 0.5em;
 }
 
-.tree .active > .item-name {
-    color: #57a0be;
-}
-
-.tree .collapsed {
-}
-
-.tree .collapsed > .item-name {
-    background: #eee;
-    color: #888;
-}
-
-.tree .disabled > .item-name {
-    color: #aaa;
-}
-
-.tree .expanded {
-}
-
-.tree .expanded > .item-name {
-    background: #f5f5f5;
-}
-
-.tree .item {
+.tree-item {
     list-style: none;
 }
 
-.tree .item-content {
+.tree-item-content {
     border-left: solid 2px #eee;
     display: block;
     margin-left: 1.3em;
     padding: 0;
 }
 
-.tree .item-content .item {
+.tree-item-content .tree-item {
     margin: 0;
 }
 
-.tree .item-name {
+.tree-item-name {
     color: #555;
     cursor: pointer;
     display: block;
@@ -282,6 +260,29 @@ tr.selected {
     transition: all 200ms;
 }
 
-.tree .item-name:hover {
+.tree-item-name:hover {
     color: #222;
+}
+
+.tree .active > .tree-item-name {
+    color: #57a0be;
+}
+
+.tree .collapsed {
+}
+
+.tree .collapsed > .tree-item-name {
+    background: #eee;
+    color: #888;
+}
+
+.tree .disabled > .tree-item-name {
+    color: #aaa;
+}
+
+.tree .expanded {
+}
+
+.tree .expanded > .tree-item-name {
+    background: #f5f5f5;
 }

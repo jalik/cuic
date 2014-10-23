@@ -218,7 +218,7 @@
         var params = null;
 
         if (options.params) {
-            params = Cuic.serialize(options.params);
+            params = Cuic.serializeUrlArgs(options.params);
         }
 
         $.each(files, function (key, value) {

@@ -15,6 +15,7 @@
             container: null,
             content: null,
             css: null,
+            hidden: false,
             location: "center",
             modal: true,
             target: null,
@@ -124,6 +125,22 @@
             content.css("height", dialog.height() - headerHeight - footerHeight - contentPadding);
         }
 
+        dialog.open = function () {
+            wrapper.hide().fadeIn(200, function () {
+                dialog.fadeIn(200);
+
+                var timer;
+
+                $(window).off("resize.dialog");
+                $(window).on("resize.dialog", function () {
+                    clearTimeout(timer);
+                    timer = setTimeout(function () {
+                        Cuic.position(dialog, options.location, wrapper);
+                    }, 50);
+                });
+            });
+        };
+
         dialog.close = function () {
             dialog.fadeOut(200, function () {
                 var wrapper = dialog.parent(".dialog-wrapper");
@@ -151,15 +168,6 @@
             });
         }
 
-        var timer;
-
-        $(window).on("resize.dialog", function () {
-            clearTimeout(timer);
-            timer = setTimeout(function () {
-                Cuic.position(dialog, options.location, wrapper);
-            }, 200);
-        });
-
         //
         var images = dialog.find("img");
 
@@ -176,11 +184,13 @@
             resizeContent();
         }
 
-        // Display the dialog
+        // Hide the dialog
         dialog.hide();
-        wrapper.hide().fadeIn(200, function () {
-            dialog.fadeIn(200);
-        });
+
+        // Display the dialog
+        if (!options.hidden) {
+            dialog.open();
+        }
 
         return dialog;
     };

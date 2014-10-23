@@ -9,7 +9,7 @@
     Cuic.panel = function (options) {
         // Set default options
         options = $.extend(true, {
-            animDuration: 500,
+            animDuration: 400,
             closeButtonClass: "panel-close",
             closeButton: "×",
             closed: false,
@@ -19,11 +19,13 @@
             css: null,
             footer: null,
             footerClass: "panel-footer",
-            location: "left",
+            location: null,
+            maximized: false,
             panelClass: "panel",
             target: null,
             title: null,
             titleClass: "panel-title",
+            toggleButtonClass: "panel-toggle",
             zIndex: 70
         }, options);
 
@@ -32,6 +34,10 @@
         if (options.target) {
             // Use the target as panel
             panel = $(options.target);
+
+            if (panel.length !== 1) {
+                throw new Error("Target not found : " + options.target);
+            }
         } else {
             // Create the panel
             panel = $("<div>", {
@@ -67,12 +73,6 @@
             }
         }
 
-        // Reset the size
-        panel.css({
-            width: "auto",
-            height: "auto"
-        });
-
         // Set custom styles
         Cuic.applyCss(options.css, panel);
 
@@ -87,13 +87,9 @@
 
         // Get the container
         var container = $(options.container || panel.parent());
-        var containerHeight = container.height();
-        var containerWidth = container.width();
 
         // If the panel is in the body, then we use the window as container
         if (container[0].tagName === "BODY") {
-            containerHeight = $(window).innerHeight();
-            containerWidth = $(window).innerWidth();
             panel.css("position", "fixed");
         } else {
             // To hide the panel in the container,
@@ -101,22 +97,28 @@
             container.css("overflow", "hidden");
         }
 
-        // Make the panel fit the container
-        switch (options.location) {
-            case "bottom":
-            case "top":
-                panel.width("100%");
-                break;
+        // Maximize the panel
+        if (options.maximized) {
+            var p = panel.position();
 
-            default :
-            case "left":
-            case "right":
-                panel.height("100%");
-                break;
+            if (p.top != null || p.bottom != null) {
+                panel.css({
+                    left: 0,
+                    width: "100%"
+                });
+            }
+            else if (p.left != null || p.right != null) {
+                panel.css({
+                    top: 0,
+                    height: "100%"
+                });
+            }
         }
 
         // Position the panel
-        Cuic.position(panel, options.location, options.container);
+        if (options.location) {
+            Cuic.position(panel, options.location, options.container);
+        }
 
         /**
          * Hides the panel
@@ -129,30 +131,25 @@
             // Stop the current animation
             panel.stop(true, false);
 
-            switch (options.location) {
-                case "bottom":
-                    panel.animate({
-                        bottom: -panel.outerHeight(true)
-                    }, duration, callback);
-                    break;
-
-                case "left":
-                    panel.animate({
-                        left: -panel.outerWidth(true)
-                    }, duration, callback);
-                    break;
-
-                case "right":
-                    panel.animate({
-                        right: -panel.outerWidth(true)
-                    }, duration, callback);
-                    break;
-
-                case "top":
-                    panel.animate({
-                        top: -panel.outerHeight(true)
-                    }, duration, callback);
-                    break;
+            if (options.location.indexOf("left") > -1) {
+                panel.animate({
+                    left: -panel.outerWidth(true)
+                }, duration, callback);
+            }
+            else if (options.location.indexOf("right") > -1) {
+                panel.animate({
+                    right: -panel.outerWidth(true)
+                }, duration, callback);
+            }
+            else if (options.location.indexOf("bottom") > -1) {
+                panel.animate({
+                    bottom: -panel.outerHeight(true)
+                }, duration, callback);
+            }
+            else if (options.location.indexOf("top") > -1) {
+                panel.animate({
+                    top: -panel.outerHeight(true)
+                }, duration, callback);
             }
         };
 
@@ -167,56 +164,59 @@
             // Stop the current animation
             panel.stop(true, false);
 
-            switch (options.location) {
-                case "bottom":
-                    panel.css({
-                        bottom: -panel.outerHeight(true),
-                        display: ""
-                    }).animate({
-                        bottom: 0
-                    }, duration, callback);
-                    break;
-
-                case "left":
-                    panel.css({
-                        left: -panel.outerWidth(true),
-                        display: ""
-                    }).animate({
-                        left: 0
-                    }, duration, callback);
-                    break;
-
-                case "right":
-                    panel.css({
-                        right: -panel.outerWidth(true),
-                        display: ""
-                    }).animate({
-                        right: 0
-                    }, duration, callback);
-                    break;
-
-                case "top":
-                    panel.css({
-                        top: -panel.outerHeight(true),
-                        display: ""
-                    }).animate({
-                        top: 0
-                    }, duration, callback);
-                    break;
+            if (options.location.indexOf("left") > -1) {
+                panel.css({
+                    left: -panel.outerWidth(true),
+                    display: ""
+                }).animate({
+                    left: 0
+                }, duration, callback);
+            }
+            else if (options.location.indexOf("right") > -1) {
+                panel.css({
+                    right: -panel.outerWidth(true),
+                    display: ""
+                }).animate({
+                    right: 0
+                }, duration, callback);
+            }
+            else if (options.location.indexOf("bottom") > -1) {
+                panel.css({
+                    bottom: -panel.outerHeight(true),
+                    display: ""
+                }).animate({
+                    bottom: 0
+                }, duration, callback);
+            }
+            else if (options.location.indexOf("top") > -1) {
+                panel.css({
+                    top: -panel.outerHeight(true),
+                    display: ""
+                }).animate({
+                    top: 0
+                }, duration, callback);
             }
         };
 
         // Watch events on the close button
-        panel.find(".close-button").off("click.panel").on("click.panel", function (ev) {
+        var closeButton = panel.find("." + options.closeButtonClass);
+        closeButton.off("click.panel").on("click.panel", function (ev) {
             ev.preventDefault();
             panel.hide(options.animDuration);
         });
 
+        // Watch events on the toggle button
+        var toggleButton = panel.find("." + options.toggleButtonClass);
+        toggleButton.off("click.panel").on("click.panel", function (ev) {
+            ev.preventDefault();
+            panel.slideToggle(options.animDuration);
+        });
+
         if (options.closed) {
-            panel.hide(options.animDuration);
+            panel.hide(0);
         }
         else {
-            panel.show(options.animDuration);
+            panel.show(0);
         }
 
         return panel;

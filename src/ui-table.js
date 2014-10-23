@@ -118,7 +118,9 @@
 
         // Sort the table
         var defaultColumn = thead.find(".default");
-        table.sort(defaultColumn.index(), defaultColumn.hasClass("ascendant") ? "asc" : "desc");
+        defaultColumn = defaultColumn.length === 1 ? defaultColumn : thead.find(".sortable:first");
+
+        table.sort(defaultColumn.index(), defaultColumn.hasClass("descendant") ? "desc" : "asc");
 
         // Handle clicks on sortable columns
         thead.find("tr > ." + options.sortableClass).off("click.table").on("click.table", function (ev) {

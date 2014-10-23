@@ -8,15 +8,20 @@
 
     <script src="../libs/jquery-2.1.1.min.js"></script>
     <script src="../src/base.js"></script>
-    <script src="../src/dialog.js"></script>
-    <script src="../src/forms.js"></script>
-    <script src="../src/navbar.js"></script>
-    <script src="../src/notification.js"></script>
-    <script src="../src/panel.js"></script>
-    <script src="../src/table.js"></script>
-    <script src="../src/tabs.js"></script>
-    <script src="../src/tooltip.js"></script>
-    <script src="../src/tree.js"></script>
+    <script src="../src/fn-forms.js"></script>
+    <script src="../src/fn-hook.js"></script>
+    <script src="../src/ui-dialog.js"></script>
+    <script src="../src/ui-grid.js"></script>
+    <script src="../src/ui-navbar.js"></script>
+    <script src="../src/ui-notification.js"></script>
+    <script src="../src/ui-panel.js"></script>
+    <script src="../src/ui-table.js"></script>
+    <script src="../src/ui-tabs.js"></script>
+    <script src="../src/ui-tooltip.js"></script>
+    <script src="../src/ui-tree.js"></script>
+    <script>
+
+    </script>
 </head>
 <body>
 
@@ -37,15 +42,15 @@
         <label class="inline">
             <span class="label">location</span>
             <select name="location">
-                <option>bottom</option>
-                <option>bottom left</option>
-                <option>bottom right</option>
-                <option selected>center</option>
+                <option>left top</option>
                 <option>left</option>
-                <option>right</option>
+                <option>left bottom</option>
                 <option>top</option>
-                <option>top left</option>
-                <option>top right</option>
+                <option selected>center</option>
+                <option>bottom</option>
+                <option>right top</option>
+                <option>right</option>
+                <option>right bottom</option>
             </select>
         </label>
         <label class="inline">
@@ -98,6 +103,79 @@
 </div>
 
 <div>
+    <h2><a href="#">Cuic</a>.Grid</h2>
+
+    <p>The grid is a good way to dispose components using a coordinate system, allowing to drag them.</p>
+
+    <div class="sandbox" id="sb-grid">
+        <label class="inline">
+            <span class="label">gridHeight</span>
+            <input type="text" name="gridHeight" value="50" size="4">
+        </label>
+        <label class="inline">
+            <span class="label">gridWidth</span>
+            <input type="text" name="gridWidth" value="50" size="4">
+        </label>
+        <label class="inline">
+            <span class="label">modal</span>
+            <input type="checkbox" name="modal" checked>
+        </label>
+        <button class="run">Run</button>
+
+        <div id=""></div>
+        <div class="panel" id="draggable" draggable="true"><span class="panel-title">Title</span></div>
+
+        <svg id="grid" class="" style="height: 500px; width: 100%; margin-top: 1em"></svg>
+    </div>
+    <script>
+
+        $(document).ready(function () {
+            var sandbox = $('#sb-grid');
+
+            $("#draggable").on("dragstart", drag);
+
+            function drop(ev) {
+                console.log(ev);
+                ev.preventDefault();
+                console.log(ev);
+                ev.dataTransfer = ev.originalEvent.dataTransfer;
+                var data = ev.dataTransfer.getData("text/html");
+                ev.target.appendChild(document.getElementById(data));
+            }
+
+            function allowDrop(ev) {
+                ev.preventDefault();
+            }
+
+            function drag(ev) {
+                console.log(ev);
+                ev.dataTransfer = ev.originalEvent.dataTransfer;
+                ev.dataTransfer.setData("text/html", ev.target.id);
+            }
+
+            sandbox.find('.run').on('click', function () {
+//                var modal = sandbox.find('[name=modal]').is(':checked');
+//                var container = sandbox.find('[name=container]').is(':checked');
+//                var css = sandbox.find('[name=css]').val();
+//                var location = sandbox.find('[name=location]').val();
+                var gridHeight = sandbox.find('[name=gridHeight]').val();
+                var gridWidth = sandbox.find('[name=gridWidth]').val();
+
+                $("#grid").on("drop", drop);
+                $("#grid").on("dragover", allowDrop);
+
+                Cuic.grid({
+                    gridHeight: gridHeight,
+                    gridWidth: gridWidth,
+                    target: "#grid"
+                });
+            });
+        });
+
+    </script>
+</div>
+
+<div>
     <h2><a href="#">Cuic</a>.Navbar</h2>
 
     <p>Navbars are used to keep navigation links accessible quickly.</p>
@@ -124,7 +202,7 @@
                 <a href="#" class="navbar-item">Item 7</a>
                 <a href="#" class="navbar-item">Item 8</a>
                 <a href="#" class="navbar-item">Item 9</a>
-                <a href="#" class="navbar-item close-button">Close</a>
+                <a href="#" class="navbar-item navbar-close">Close</a>
             </nav>
             <img src="css/square-100.png" style="float: left; margin: 20px">
         </div>
@@ -163,15 +241,15 @@
         <label class="inline">
             <span class="label">location</span>
             <select name="location">
-                <option>bottom</option>
-                <option>bottom left</option>
-                <option>bottom right</option>
-                <option selected>center</option>
+                <option>left top</option>
                 <option>left</option>
-                <option>right</option>
+                <option>left bottom</option>
                 <option>top</option>
-                <option>top left</option>
-                <option>top right</option>
+                <option selected>center</option>
+                <option>bottom</option>
+                <option>right top</option>
+                <option>right</option>
+                <option>right bottom</option>
             </select>
         </label>
         <label class="inline">
@@ -223,10 +301,16 @@
         <label class="inline">
             <span class="label">location</span>
             <select name="location">
-                <option>bottom</option>
-                <option selected>left</option>
-                <option>right</option>
+                <option selected>100px top</option>
+                <option>left top</option>
+                <option>left</option>
+                <option>left bottom</option>
                 <option>top</option>
+                <option>center</option>
+                <option>bottom</option>
+                <option>right top</option>
+                <option>right</option>
+                <option>right bottom</option>
             </select>
         </label>
         <label class="inline">
@@ -236,6 +320,14 @@
         <label class="inline">
             <span class="label">container</span>
             <input type="checkbox" name="container" checked>
+        </label>
+        <label class="inline">
+            <span class="label">closed</span>
+            <input type="checkbox" name="closed">
+        </label>
+        <label class="inline">
+            <span class="label">maximized</span>
+            <input type="checkbox" name="maximized" checked>
         </label>
         <button class="run">Run</button>
 
@@ -249,7 +341,10 @@
                         <li>Item 3</li>
                     </ul>
                 </div>
-                <footer class="panel-footer">Footer - <a href="#" class="close-button">Close</a></footer>
+                <footer class="panel-footer">Footer -
+                    <a href="#" class="panel-close">Close</a> -
+                    <a href="#" class="panel-toggle">Toggle</a>
+                </footer>
             </div>
         </div>
     </div>
@@ -261,14 +356,17 @@
 
             var run = function () {
                 var container = sandbox.find('[name=container]').is(':checked');
+                var closed = sandbox.find('[name=closed]').is(':checked');
+                var maximized = sandbox.find('[name=maximized]').is(':checked');
                 var css = sandbox.find('[name=css]').val();
                 var location = sandbox.find('[name=location]').val();
 
                 Cuic.panel({
-                    closed: false,
+                    closed: closed,
                     container: container ? '#sb-panel .blueprint' : document.body,
                     css: css,
                     location: location,
+                    maximized: maximized,
                     target: '#panel'
                 });
             };
@@ -476,35 +574,35 @@
 
     <div class="sandbox" id="sb-tree">
         <ul class="tree" style="height: 250px">
-            <li class="item">
-                <span class="item-name">item 1</span>
+            <li class="tree-item">
+                <span class="tree-item-name">item 1</span>
             </li>
-            <li class="item default">
-                <span class="item-name">menu 2</span>
+            <li class="tree-item default">
+                <span class="tree-item-name">menu 2</span>
 
-                <ul class="item-content">
-                    <li class="item">
-                        <span class="item-name">sub-item 1</span>
+                <ul class="tree-item-content">
+                    <li class="tree-item">
+                        <span class="tree-item-name">sub-item 1</span>
                     </li>
-                    <li class="item">
-                        <span class="item-name">sub-menu 2</span>
-                        <ul class="item-content">
-                            <li class="item"><span class="item-name">entry 1</span></li>
-                            <li class="item"><span class="item-name">entry 2</span></li>
-                            <li class="item"><span class="item-name">entry 3</span></li>
-                            <li class="item"><span class="item-name">entry 4</span></li>
+                    <li class="tree-item">
+                        <span class="tree-item-name">sub-menu 2</span>
+                        <ul class="tree-item-content">
+                            <li class="tree-item"><span class="tree-item-name">entry 1</span></li>
+                            <li class="tree-item"><span class="tree-item-name">entry 2</span></li>
+                            <li class="tree-item"><span class="tree-item-name">entry 3</span></li>
+                            <li class="tree-item"><span class="tree-item-name">entry 4</span></li>
                         </ul>
                     </li>
-                    <li class="item">
-                        <span class="item-name">sub-item 3</span>
+                    <li class="tree-item">
+                        <span class="tree-item-name">sub-item 3</span>
                     </li>
-                    <li class="item disabled">
-                        <span class="item-name">disabled</span>
+                    <li class="tree-item disabled">
+                        <span class="tree-item-name">disabled</span>
                     </li>
                 </ul>
             </li>
-            <li class="item">
-                <span class="item-name">item 3</span>
+            <li class="tree-item">
+                <span class="tree-item-name">item 3</span>
             </li>
         </ul>
     </div>
@@ -513,8 +611,7 @@
         (function () {
             Cuic.tree({
                 target: '#sb-tree > .tree',
-                collapsed: true,
-                singleMode: false
+                collapsed: true
             });
         })();
 
