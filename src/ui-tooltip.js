@@ -23,7 +23,7 @@
             css: null,
             target: null,
             tooltipClass: "tooltip",
-            zIndex: 100
+            zIndex: 10
         }, options);
 
         // Get the target

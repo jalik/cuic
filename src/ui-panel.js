@@ -10,9 +10,9 @@
         // Set default options
         options = $.extend(true, {
             animDuration: 400,
+            autoClose: true,
             closeButtonClass: "panel-close",
             closeButton: "×",
-            closed: false,
             container: null,
             content: null,
             contentClass: "panel-content",
@@ -21,12 +21,14 @@
             footerClass: "panel-footer",
             location: null,
             maximized: false,
+            orientation: "horizontal",
             panelClass: "panel",
             target: null,
             title: null,
             titleClass: "panel-title",
             toggleButtonClass: "panel-toggle",
-            zIndex: 70
+            visible: false,
+            zIndex: 10
         }, options);
 
         var panel;
@@ -99,19 +101,21 @@
 
         // Maximize the panel
         if (options.maximized) {
-            var p = panel.position();
+            switch (options.orientation) {
+                case "vertical":
+                    panel.css({
+                        "box-sizing": "border-box",
+                        top: 0,
+                        height: "100%"
+                    });
+                    break;
 
-            if (p.top != null || p.bottom != null) {
-                panel.css({
-                    left: 0,
-                    width: "100%"
-                });
-            }
-            else if (p.left != null || p.right != null) {
-                panel.css({
-                    top: 0,
-                    height: "100%"
-                });
+                default:
+                    panel.css({
+                        "box-sizing": "border-box",
+                        left: 0,
+                        width: "100%"
+                    });
             }
         }
 
@@ -198,6 +202,21 @@
             }
         };
 
+        /**
+         * Toggles the panel visibility
+         * @param duration
+         */
+        panel.toggle = function (duration) {
+            duration = duration || 0;
+
+            if (panel.is(":visible")) {
+                panel.hide(duration);
+            }
+            else {
+                panel.show(duration);
+            }
+        };
+
         // Watch events on the close button
         var closeButton = panel.find("." + options.closeButtonClass);
         closeButton.off("click.panel").on("click.panel", function (ev) {
@@ -212,11 +231,25 @@
             panel.slideToggle(options.animDuration);
         });
 
-        if (options.closed) {
-            panel.hide(0);
+        if (options.visible) {
+            panel.show(300);
         }
         else {
-            panel.show(0);
+            panel.hide(0);
+        }
+
+        // Auto close the panel when the user clicks outside of it
+        if (options.autoClose) {
+            setTimeout(function () {
+                $(document).on("click.panel", function (ev) {
+                    $(document).off("click.panel", this);
+                    var target = $(ev.target);
+
+                    if (target !== panel && target.closest(panel).length === 0) {
+                        panel.hide(300);
+                    }
+                });
+            }, 1);
         }
 
         return panel;

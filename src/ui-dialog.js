@@ -20,7 +20,7 @@
             modal: true,
             target: null,
             title: null,
-            zIndex: 90
+            zIndex: 10
         }, options);
 
         // Get the container

@@ -18,7 +18,7 @@
             duration: 2000,
             location: "center",
             notificationClass: "notification",
-            zIndex: 100
+            zIndex: 10
         }, options);
 
         // Get the container

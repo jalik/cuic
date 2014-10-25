@@ -150,6 +150,19 @@
     padding: 0 1em 0.5em 1em;
 }
 
+/* POPUP */
+
+.popup {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 3px;
+    box-shadow: 0 1px 0.5em #ccc;
+    color: #555;
+    font-size: 0.8em;
+    overflow: auto;
+    margin: 5px;
+    padding: 1em;
+}
+
 /* TAB */
 
 .tab {
