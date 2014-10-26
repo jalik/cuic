@@ -10,7 +10,7 @@
     Cuic.hook = function (options) {
         // Set default options
         options = $.extend(true, {
-            attachedClass: "attached",
+            hookedClass: "hooked",
             onHook: null,
             onUnhook: null,
             target: null,
@@ -32,24 +32,19 @@
             width: ""
         });
 
-        // Get the top offset of the target
-        var targetOffsetTop = target.offset().top;
-
         // Create the spacer item that will replace
         // the bar when it is scrolled
         var spacer = $("<div>", {
-            css: {
-                display: "none"
-            }
+            css: { display: "none" }
         }).insertBefore(target);
 
         /**
-         * Hook the bar to the viewport
+         * Hook the target to the viewport
          */
         target.hook = function () {
-            targetOffsetTop = target.offset().top;
             spacer.css({
-                display: "block",
+                display: target.css("display"),
+                float: target.css("float"),
                 height: target.height(),
                 marginBottom: target.css("margin-bottom"),
                 marginLeft: target.css("margin-left"),
@@ -62,9 +57,9 @@
                 top: 0,
                 width: spacer.width(),
                 zIndex: options.zIndex
-            }).addClass(options.attachedClass);
+            }).addClass(options.hookedClass);
 
-            // Execute the hooked callback
+            // Execute the hooked listener
             if (typeof options.onHook === "function") {
                 options.onHook.call(target);
             }
@@ -79,17 +74,19 @@
                 position: "relative",
                 top: "",
                 width: ""
-            }).removeClass(options.attachedClass);
-            targetOffsetTop = target.offset().top;
+            }).removeClass(options.hookedClass);
 
-            // Execute the unhooked callback
+            // Execute the unhooked listener
             if (typeof options.onUnhook === "function") {
                 options.onUnhook.call(target);
             }
         };
 
+        // Get the target's top offset
+        var offsetTop = target.offset().top;
+
         var onScroll = function () {
-            if (win.scrollTop() > targetOffsetTop - parseFloat(target.css("margin-top"))) {
+            if (win.scrollTop() > offsetTop - parseFloat(target.css("margin-top"))) {
                 if (target.css("position") !== "fixed") {
                     target.hook();
                 }
@@ -104,7 +101,6 @@
         onScroll();
 
         // Scroll the bar when the window is scrolled
-        win.off("scroll.hook");
         win.on("scroll.hook", function () {
             onScroll();
         });

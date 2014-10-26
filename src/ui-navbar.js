@@ -9,7 +9,7 @@
     Cuic.navbar = function (options) {
         // Set default options
         options = $.extend(true, {
-            attachedClass: "attached",
+            hookedClass: "attached",
             closeButtonClass: "navbar-close",
             collapse: true,
             dropDownButton: "+",

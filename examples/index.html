@@ -20,13 +20,33 @@
     <script src="../src/ui-tabs.js"></script>
     <script src="../src/ui-tooltip.js"></script>
     <script src="../src/ui-tree.js"></script>
-    <script>
-
-    </script>
 </head>
 <body>
 
 <div id="page">
+<aside id="sidebar">
+    <h4> Composants </h4>
+    <ul class="menu">
+        <li><a href="#ui-dialog">Dialog</a></li>
+        <li><a href="#ui-grid">Grid</a></li>
+        <li><a href="#ui-navbar">Navbar</a></li>
+        <li><a href="#ui-notification">Notification</a></li>
+        <li><a href="#ui-panel">Panel</a></li>
+        <li><a href="#ui-popup">Popup</a></li>
+        <li><a href="#ui-table">Table</a></li>
+        <li><a href="#ui-tabs">Tabs</a></li>
+        <li><a href="#ui-tooltip">Tooltip</a></li>
+        <li><a href="#ui-tree">Tree</a></li>
+    </ul>
+    <script>
+        $(document).ready(function () {
+            Cuic.hook({
+                target: "#sidebar"
+            });
+        });
+    </script>
+</aside>
+<div id="content">
 <h1>Cuic.js - Common User Interface Components</h1>
 
 <p>
@@ -34,8 +54,8 @@
     tabs...). It was designed to be simple and easy to use, with convention over configuration pattern.
 </p>
 
-<div>
-    <h2><a href="#">Cuic</a>.Dialog</h2>
+<div id="ui-dialog">
+    <h2><a href="#">Cuic.</a>Dialog</h2>
 
     <p>Dialogs are used to display things that needs interactions, for example a confirmation, or a login form.</p>
 
@@ -96,15 +116,15 @@
                             label: 'Accept'
                         }
                     ]
-                });
+                }).open();
             });
         })();
 
     </script>
 </div>
 
-<div>
-    <h2><a href="#">Cuic</a>.Grid</h2>
+<div id="ui-grid">
+    <h2><a href="#">Cuic.</a>Grid</h2>
 
     <p>The grid is a good way to dispose components using a coordinate system, allowing to drag them.</p>
 
@@ -155,10 +175,10 @@
             }
 
             sandbox.find('.run').on('click', function () {
-//                var modal = sandbox.find('[name=modal]').is(':checked');
-//                var container = sandbox.find('[name=container]').is(':checked');
-//                var css = sandbox.find('[name=css]').val();
-//                var location = sandbox.find('[name=location]').val();
+                //                var modal = sandbox.find('[name=modal]').is(':checked');
+                //                var container = sandbox.find('[name=container]').is(':checked');
+                //                var css = sandbox.find('[name=css]').val();
+                //                var location = sandbox.find('[name=location]').val();
                 var gridHeight = sandbox.find('[name=gridHeight]').val();
                 var gridWidth = sandbox.find('[name=gridWidth]').val();
 
@@ -176,8 +196,8 @@
     </script>
 </div>
 
-<div>
-    <h2><a href="#">Cuic</a>.Navbar</h2>
+<div id="ui-navbar">
+    <h2><a href="#">Cuic.</a>Navbar</h2>
 
     <p>Navbars are used to keep navigation links accessible quickly.</p>
 
@@ -226,15 +246,14 @@
 
             $(document).ready(function () {
                 sandbox.find('.run').on('click', run);
-                run();
             });
         })();
 
     </script>
 </div>
 
-<div>
-    <h2><a href="#">Cuic</a>.Notification</h2>
+<div id="ui-notification">
+    <h2><a href="#">Cuic.</a>Notification</h2>
 
     <p>Notifications are used to display messages that does not require any interaction.</p>
 
@@ -270,8 +289,7 @@
         <div class="blueprint" style="height: 300px;margin-top: 1em"></div>
     </div>
     <script>
-
-        (function () {
+        $(document).ready(function () {
             var sandbox = $('#sb-notification');
 
             sandbox.find('.run').on('click', function () {
@@ -282,19 +300,19 @@
 
                 Cuic.notification({
                     autoClose: autoClose,
+                    autoRemove: false,
                     container: container ? '#sb-notification .blueprint' : document.body,
                     content: 'Notification from <b>' + location + '</b>',
                     duration: duration,
                     location: location
-                });
+                }).open();
             });
-        })();
-
+        });
     </script>
 </div>
 
-<div>
-    <h2><a href="#">Cuic</a>.Panel</h2>
+<div id="ui-panel">
+    <h2><a href="#">Cuic.</a>Panel</h2>
 
     <p>Panels are used to display content that could be hidden when more screen space is needed.</p>
 
@@ -385,8 +403,37 @@
     </script>
 </div>
 
-<div>
-    <h2><a href="#">Cuic</a>.Table</h2>
+<div id="ui-popup">
+    <h2><a href="#">Cuic.</a>Popup</h2>
+
+    <p>Popups are often used to display menus, for example, when a user clicks on a button, a popup menu appears next to
+        it.</p>
+
+    <div class="sandbox" id="sb-popup">
+        <div class="blueprint">
+            <button>Toggle popup</button>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            var popupButton = $("#sb-popup .blueprint > button");
+            var popup = Cuic.popup({
+                autoClose: true,
+                autoRemove: false,
+                target: popupButton
+            });
+            popupButton.on("click", function () {
+                if (popup.element.is(":hidden")) {
+                    popup.element.html("Clicked on " + new Date() + " <span class='popup-close'>×</span>");
+                }
+                popup.toggle();
+            });
+        });
+    </script>
+</div>
+
+<div id="ui-table">
+    <h2><a href="#">Cuic.</a>Table</h2>
 
     <p>Tables are useful to represent data that could need filtering and ordering.</p>
 
@@ -454,8 +501,8 @@
     </script>
 </div>
 
-<div>
-    <h2><a href="#">Cuic</a>.Tabs</h2>
+<div id="ui-tabs">
+    <h2><a href="#">Cuic.</a>Tabs</h2>
 
     <p>Tabs are used to organize data and avoid scrolling the page.</p>
 
@@ -463,8 +510,8 @@
         <div class="tabs">
             <span class="tab" data-content="tab1-content">Tab1</span>
             <span class="tab default" data-content="tab2-content">default</span>
-            <span class="tab" data-content="tab3-content">Tab3</span>
-            <span class="tab disabled" data-content="tab4-content">disabled</span>
+            <span class="tab disabled" data-content="tab3-content">disabled</span>
+            <span class="tab" data-content="tab4-content">Tab4</span>
         </div>
         <div class="tab-content">
             <div id="tab1-content">
@@ -488,33 +535,31 @@
                 </p>
             </div>
             <div id="tab3-content">
+                <b>This tab is disabled.</b>.
+            </div>
+            <div id="tab4-content">
                 <img src="css/square-100.png" style="float: right; margin: 0 0 1em 1em">
-                <b>Content of tab3</b>.
+                <b>Content of tab4</b>.
                 <p>
                     Curabitur vitae est tellus. Ut quis tempus lectus, blandit sollicitudin tortor. Curabitur aliquam
                     pretium massa sed convallis. Vivamus iaculis metus vel augue lacinia, a consequat lectus laoreet.
                     Duis feugiat eu. Phasellus fringilla posuere erat, bibendum blandit turpis aliquet quis.
                 </p>
             </div>
-            <div id="tab4-content">
-                <b>This tab is disabled.</b>.
-            </div>
         </div>
     </div>
     <script>
-
         (function () {
             Cuic.tabs({
-                tabs: '#sb-tabs > .tabs',
+                target: '#sb-tabs > .tabs',
                 content: '#sb-tabs > .tab-content'
             });
         })();
-
     </script>
 </div>
 
-<div>
-    <h2><a href="#">Cuic</a>.Tooltip</h2>
+<div id="ui-tooltip">
+    <h2><a href="#">Cuic.</a>Tooltip</h2>
 
     <p>Tooltips are used to display a short description, (eg: help or tips).</p>
 
@@ -557,7 +602,9 @@
                 var anchor = sandbox.find('[name=anchor]').val();
                 var css = sandbox.find('[name=css]').val();
 
-                Cuic.tooltip({
+                t=Cuic.tooltip({
+                    autoClose: true,
+                    autoRemove: false,
                     anchor: anchor,
                     css: css,
                     target: '[title]'
@@ -568,8 +615,8 @@
     </script>
 </div>
 
-<div>
-    <h2><a href="#">Cuic</a>.Tree</h2>
+<div id="ui-tree">
+    <h2><a href="#">Cuic.</a>Tree</h2>
 
     <p>Trees are used to organize nested objects, so they can be browsed.</p>
 
@@ -617,6 +664,8 @@
         })();
 
     </script>
+
+</div>
 </div>
 </div>
 </body>

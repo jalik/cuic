@@ -109,7 +109,7 @@
                     rows[i].appendTo(tbody);
                 }
 
-                // Calls the callback
+                // Calls the listener
                 if (typeof options.onSorted === "function") {
                     options.onSorted(index, order);
                 }

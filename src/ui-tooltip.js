@@ -1,120 +1,116 @@
 (function ($) {
     "use strict";
 
-    var tooltip;
-
     /**
      * Creates a tooltip
      * @param options
-     * @return {jQuery}
+     * @return {Cuic.Tooltip}
      */
     Cuic.tooltip = function (options) {
-        // Set default options
-        options = $.extend(true, {
-            anchor: "bottom",
-            anim: {
-                open: function (tt) {
-                    tt.fadeIn(200);
-                },
-                close: function (tt) {
-                    tt.fadeOut(100);
-                }
-            },
-            css: null,
-            target: null,
-            tooltipClass: "tooltip",
-            zIndex: 10
-        }, options);
-
-        // Get the target
-        var target = $(options.target);
-
-        // Remove attached listeners
-        target.off("mouseenter mouseleave");
-        target.hover(function (ev) {
-            showTooltip($(ev.currentTarget), options);
-
-        }, function (ev) {
-            hideTooltip($(ev.currentTarget), options);
-        });
-
-        return target;
+        return new Cuic.Tooltip(options);
     };
 
     /**
      * Creates a tooltip
      * @param options
-     * @return {jQuery}
+     * @constructor
      */
-    function createTooltip(options) {
-        if (!tooltip) {
-            tooltip = $("<div>", {
-                "class": options.tooltipClass
-            }).appendTo(document.body);
-        }
+    Cuic.Tooltip = function (options) {
+        var self = this;
+
+        // Set default options
+        options = $.extend(true, {
+            anchor: "bottom",
+            classes: "tooltip",
+            css: null,
+            target: null,
+            zIndex: 10
+        }, options);
+
+        // Set options
+        self.anchor = options.anchor;
+
+        // Get the target
+        self.target = $(options.target);
+
+        // Create the element
+        self.element = $("<div>", {
+            "class": options.classes,
+            css: {display: "none"}
+        }).appendTo(document.body);
 
         // Set custom styles
-        Cuic.applyCss(options.css, tooltip);
+        Cuic.applyCss(options.css, self.element);
 
         // Set required styles
-        tooltip.css({
+        self.element.css({
             position: "absolute",
             zIndex: options.zIndex
         });
 
-        return tooltip;
-    }
+        self.target.hover(function (ev) {
+            var target = $(ev.currentTarget);
+            var title = target.attr("title");
+            target.attr("title", "");
+            target.attr("data-title", title);
+            self.element.html(title);
+            self.target = target;
+            self.open();
+
+        }, function (ev) {
+            var target = $(ev.currentTarget);
+            var title = target.attr("data-title");
+            target.attr("title", title);
+            self.close();
+        });
+    };
 
     /**
-     * Hides the tooltip
-     * @param target
-     * @param options
+     * Where to display the tooltip
+     * @type {boolean}
      */
-    function hideTooltip(target, options) {
-        var tooltip = createTooltip(options);
-        tooltip.stop(true, false);
-        options.anim.close(tooltip);
-        target.attr("title", target.attr("data-title"));
-    }
+    Cuic.Tooltip.prototype.anchor = "right";
 
     /**
-     * Shows the tooltip
-     * @param target
-     * @param options
+     * The HTML tooltip element
+     * @type {jQuery}
      */
-    function showTooltip(target, options) {
-        // Set default options
-        options = $.extend(true, {
-            anchor: "bottom"
-        }, options);
+    Cuic.Tooltip.prototype.element = null;
 
-        if (target.attr("title")) {
-            // Create the tooltip
-            var tooltip = createTooltip(options);
+    /**
+     * The target used to position the tooltip
+     */
+    Cuic.Tooltip.prototype.target = null;
 
-            // Stop current animation
-            tooltip.stop(true, false);
+    /**
+     * Closes the tooltip
+     * @param callback
+     */
+    Cuic.Tooltip.prototype.close = function (callback) {
+        var self = this;
 
-            // Reset dimensions
-            tooltip.css({
-                bottom: "",
-                left: "",
-                right: "",
-                top: "",
-                height: "",
-                width: ""
-            });
+        self.element.stop(true, false).fadeOut(200, function () {
+            if (typeof callback === "function") {
+                callback.call(self);
+            }
+        });
+        return this;
+    };
 
-            // Add the content
-            tooltip.html(target.attr("title"));
-            target.attr("data-title", target.attr("title"));
-            target.removeAttr("title");
+    /**
+     * Opens the tooltip
+     * @param callback
+     */
+    Cuic.Tooltip.prototype.open = function (callback) {
+        var self = this;
 
-            // Position the tooltip
-            Cuic.anchor(tooltip, options.anchor, target);
+        // Position the tooltip
+        Cuic.anchor(this.element, this.anchor, this.target);
 
-            options.anim.open(tooltip);
-        }
-    }
+        // Show the tooltip
+        self.element.stop(true, false).fadeIn(200, callback);
+
+        return this;
+    };
 
 })(jQuery);

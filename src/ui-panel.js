@@ -127,9 +127,9 @@
         /**
          * Hides the panel
          * @param duration
-         * @param callback
+         * @param listener
          */
-        panel.hide = function (duration, callback) {
+        panel.hide = function (duration, listener) {
             duration = duration || 0;
 
             // Stop the current animation
@@ -138,31 +138,31 @@
             if (options.location.indexOf("left") > -1) {
                 panel.animate({
                     left: -panel.outerWidth(true)
-                }, duration, callback);
+                }, duration, listener);
             }
             else if (options.location.indexOf("right") > -1) {
                 panel.animate({
                     right: -panel.outerWidth(true)
-                }, duration, callback);
+                }, duration, listener);
             }
             else if (options.location.indexOf("bottom") > -1) {
                 panel.animate({
                     bottom: -panel.outerHeight(true)
-                }, duration, callback);
+                }, duration, listener);
             }
             else if (options.location.indexOf("top") > -1) {
                 panel.animate({
                     top: -panel.outerHeight(true)
-                }, duration, callback);
+                }, duration, listener);
             }
         };
 
         /**
          * Shows the panel
          * @param duration
-         * @param callback
+         * @param listener
          */
-        panel.show = function (duration, callback) {
+        panel.show = function (duration, listener) {
             duration = duration || 0;
 
             // Stop the current animation
@@ -174,7 +174,7 @@
                     display: ""
                 }).animate({
                     left: 0
-                }, duration, callback);
+                }, duration, listener);
             }
             else if (options.location.indexOf("right") > -1) {
                 panel.css({
@@ -182,7 +182,7 @@
                     display: ""
                 }).animate({
                     right: 0
-                }, duration, callback);
+                }, duration, listener);
             }
             else if (options.location.indexOf("bottom") > -1) {
                 panel.css({
@@ -190,7 +190,7 @@
                     display: ""
                 }).animate({
                     bottom: 0
-                }, duration, callback);
+                }, duration, listener);
             }
             else if (options.location.indexOf("top") > -1) {
                 panel.css({
@@ -198,7 +198,7 @@
                     display: ""
                 }).animate({
                     top: 0
-                }, duration, callback);
+                }, duration, listener);
             }
         };
 

@@ -41,6 +41,7 @@
      * @param target
      */
     Cuic.anchor = function (obj, position, target) {
+        target = $(target);
         var targetHeight = target.outerHeight();
         var targetHeightHalf = targetHeight / 2;
         var targetWidth = target.outerWidth();
