@@ -88,7 +88,7 @@
 
     /**
      * Where to display the notification
-     * @type {boolean}
+     * @type {string}
      */
     Cuic.Notification.prototype.location = "center";
 

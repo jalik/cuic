@@ -4,255 +4,398 @@
     /**
      * Creates a panel
      * @param options
-     * @return {jQuery}
+     * @return {Cuic.Panel}
      */
     Cuic.panel = function (options) {
+        return new Cuic.Panel(options);
+    };
+
+    /**
+     * Creates a panel
+     * @param options
+     * @constructor
+     */
+    Cuic.Panel = function (options) {
+        var self = this;
+
         // Set default options
         options = $.extend(true, {
-            animDuration: 400,
             autoClose: true,
-            closeButtonClass: "panel-close",
+            classes: "panel",
             closeButton: "×",
             container: null,
             content: null,
-            contentClass: "panel-content",
             css: null,
             footer: null,
-            footerClass: "panel-footer",
+            horizontal: true,
             location: null,
             maximized: false,
-            orientation: "horizontal",
-            panelClass: "panel",
             target: null,
             title: null,
-            titleClass: "panel-title",
-            toggleButtonClass: "panel-toggle",
             visible: false,
             zIndex: 10
         }, options);
 
-        var panel;
+        // Copy options
+        self.autoClose = options.autoClose;
+        self.location = options.location;
+        self.horizontal = options.horizontal;
 
         if (options.target) {
             // Use the target as panel
-            panel = $(options.target);
+            self.element = $(options.target);
 
-            if (panel.length !== 1) {
+            if (self.element.length !== 1) {
                 throw new Error("Target not found : " + options.target);
             }
+
+            // Find panel parts
+            self.header = self.element.find(".panel-header");
+            self.title = self.element.find(".panel-title");
+            self.content = self.element.find(".panel-content");
+            self.footer = self.element.find(".panel-footer");
+
         } else {
             // Create the panel
-            panel = $("<div>", {
-                "class": options.panelClass
-            });
+            self.element = $("<div>");
+
+            // Add the header
+            self.header = $("<header>", {
+                "class": "panel-header"
+            }).prependTo(self.element);
 
             // Add the title
-            var title = $("<header>", {
-                "class": options.titleClass,
+            self.title = $("<h5>", {
+                "class": "panel-title",
                 html: options.title
-            }).prependTo(panel);
+            }).prependTo(self.header);
 
             // Add the content
-            var content = $("<section>", {
-                "class": options.contentClass,
+            self.content = $("<section>", {
+                "class": "panel-content",
                 html: options.content
-            }).appendTo(panel);
+            }).appendTo(self.element);
 
             // Add the footer
-            var footer = $("<footer>", {
-                "class": options.footerClass,
+            self.footer = $("<footer>", {
+                "class": "panel-footer",
                 html: options.footer
-            }).appendTo(panel);
+            }).appendTo(self.element);
 
             // Hide the header if not used
             if (!options.title) {
-                title.hide();
+                self.header.hide();
             }
 
             // Hide the footer if not used
             if (!options.footer) {
-                footer.hide();
+                self.footer.hide();
             }
         }
 
+        // Add the panel class
+        self.element.addClass(options.classes);
+
         // Set custom styles
-        Cuic.applyCss(options.css, panel);
+        Cuic.applyCss(options.css, self.element);
 
         // Override styles
-        panel.css({
+        self.element.css({
             position: "absolute",
             zIndex: options.zIndex
         });
 
-        // Add the panel class
-        panel.addClass(options.panelClass);
-
         // Get the container
-        var container = $(options.container || panel.parent());
+        self.container = $(options.container || self.element.parent());
 
         // If the panel is in the body, then we use the window as container
-        if (container[0].tagName === "BODY") {
-            panel.css("position", "fixed");
+        if (self.container[0].tagName === "BODY") {
+            self.element.css("position", "fixed");
         } else {
             // To hide the panel in the container,
-            // the container must have overflow set to hidden
-            container.css("overflow", "hidden");
+            // the container must have a hidden overflow
+            self.container.css("overflow", "hidden");
+        }
+
+        // Position the panel
+        if (self.location) {
+            Cuic.position(self.element, self.location, self.container);
         }
 
         // Maximize the panel
         if (options.maximized) {
-            switch (options.orientation) {
-                case "vertical":
-                    panel.css({
-                        "box-sizing": "border-box",
-                        top: 0,
-                        height: "100%"
-                    });
-                    break;
-
-                default:
-                    panel.css({
-                        "box-sizing": "border-box",
-                        left: 0,
-                        width: "100%"
-                    });
-            }
+            self.maximize();
         }
 
-        // Position the panel
-        if (options.location) {
-            Cuic.position(panel, options.location, options.container);
+        // Set the panel visibility
+        if (options.visible) {
+            self.open();
+        }
+        else {
+            self.close();
         }
 
-        /**
-         * Hides the panel
-         * @param duration
-         * @param listener
-         */
-        panel.hide = function (duration, listener) {
-            duration = duration || 0;
+        // Find the close button
+        var closeButton = self.element.find(".panel-close");
+        closeButton.on("click", function (ev) {
+            ev.preventDefault();
+            self.close();
+        });
 
-            // Stop the current animation
-            panel.stop(true, false);
+        // Find the toggle button
+        var toggleButton = self.element.find(".panel-toggle");
+        toggleButton.on("click", function (ev) {
+            ev.preventDefault();
+            self.toggle();
+        });
 
-            if (options.location.indexOf("left") > -1) {
-                panel.animate({
-                    left: -panel.outerWidth(true)
-                }, duration, listener);
+        // Close the panel when the user clicks outside of it
+        $(document).on("click.panel", function (ev) {
+            var fn = this;
+            var target = $(ev.target);
+
+            if (target !== self.element && target.closest(self.element).length === 0) {
+                if (self.autoClose && !self.element.is(":animated")) {
+                    self.close();
+                }
             }
-            else if (options.location.indexOf("right") > -1) {
-                panel.animate({
-                    right: -panel.outerWidth(true)
-                }, duration, listener);
-            }
-            else if (options.location.indexOf("bottom") > -1) {
-                panel.animate({
-                    bottom: -panel.outerHeight(true)
-                }, duration, listener);
-            }
-            else if (options.location.indexOf("top") > -1) {
-                panel.animate({
-                    top: -panel.outerHeight(true)
-                }, duration, listener);
+        });
+    };
+
+    /**
+     * Close the panel when the user clicks outside
+     * @type {boolean}
+     */
+    Cuic.Panel.prototype.autoClose = false;
+
+    /**
+     * Indicates if the panel is closing
+     * @type {boolean}
+     */
+    Cuic.Panel.prototype.closing = false;
+
+    /**
+     * The HTML panel element
+     * @type {jQuery}
+     */
+    Cuic.Panel.prototype.element = null;
+
+    /**
+     * The panel can be horizontal or vertical
+     * @type {boolean}
+     */
+    Cuic.Panel.prototype.horizontal = true;
+
+    /**
+     * Where to display the panel
+     * @type {string}
+     */
+    Cuic.Panel.prototype.location = "left top";
+
+    /**
+     * Make the panel fit its parent
+     * @type {boolean}
+     */
+    Cuic.Panel.prototype.maximized = false;
+
+    /**
+     * The original height of the panel
+     * @type {number}
+     */
+    Cuic.Panel.prototype.originalHeight = null;
+
+    /**
+     * The original width of the panel
+     * @type {number}
+     */
+    Cuic.Panel.prototype.originalWidth = null;
+
+    /**
+     * Closes the panel
+     * @param callback
+     * @return {Cuic.Panel}
+     */
+    Cuic.Panel.prototype.close = function (callback) {
+        var self = this;
+        var panel = self.element;
+        var location = self.location;
+
+        // Stop the current animation
+        panel.stop(true, false);
+
+        // Start closing
+        self.closing = true;
+
+        var cb = function () {
+            self.closing = false;
+            panel.css({
+                display: "none"
+            });
+            if (typeof callback === "function") {
+                callback.call(self);
             }
         };
 
-        /**
-         * Shows the panel
-         * @param duration
-         * @param listener
-         */
-        panel.show = function (duration, listener) {
-            duration = duration || 0;
-
-            // Stop the current animation
-            panel.stop(true, false);
-
-            if (options.location.indexOf("left") > -1) {
-                panel.css({
-                    left: -panel.outerWidth(true),
-                    display: ""
-                }).animate({
-                    left: 0
-                }, duration, listener);
+        if (self.horizontal) {
+            if (location.indexOf("bottom") > -1) {
+                panel.animate({
+                    bottom: -panel.outerHeight(true)
+                }, 400, cb);
             }
-            else if (options.location.indexOf("right") > -1) {
-                panel.css({
-                    right: -panel.outerWidth(true),
-                    display: ""
-                }).animate({
-                    right: 0
-                }, duration, listener);
+            else if (location.indexOf("top") > -1) {
+                panel.animate({
+                    top: -panel.outerHeight(true)
+                }, 400, cb);
             }
-            else if (options.location.indexOf("bottom") > -1) {
+        }
+        else {
+            if (location.indexOf("left") > -1) {
+                panel.animate({
+                    left: -panel.outerWidth(true)
+                }, 400, cb);
+            }
+            else if (location.indexOf("right") > -1) {
+                panel.animate({
+                    right: -panel.outerWidth(true)
+                }, 400, cb);
+            }
+        }
+        return self;
+    };
+
+    /**
+     * Make the panel fit its parent
+     * @param duration
+     * @return {Cuic.Panel}
+     */
+    Cuic.Panel.prototype.maximize = function (duration) {
+        var self = this;
+
+        duration = duration || 0;
+
+        // Save the original size
+        self.originalHeight = self.element.height();
+        self.originalWidth = self.element.width();
+
+        if (self.horizontal) {
+            self.element.animate({width: "100%"}, duration);
+        } else {
+            self.element.animate({height: "100%"}, duration);
+        }
+        return self;
+    };
+
+    /**
+     * Make the panel fit its content
+     * @param duration
+     * @return {Cuic.Panel}
+     */
+    Cuic.Panel.prototype.minimize = function (duration) {
+        var self = this;
+
+        duration = duration || 0;
+
+        if (self.horizontal) {
+            self.element.animate({width: self.originalWidth + "px"}, duration);
+        } else {
+            self.element.animate({height: self.originalHeight + "px"}, duration);
+        }
+        return self;
+    };
+
+    /**
+     * Opens the panel
+     * @param callback
+     * @return {Cuic.Panel}
+     */
+    Cuic.Panel.prototype.open = function (callback) {
+        var self = this;
+        var panel = self.element;
+        var location = self.location;
+
+        // Stop the current animation
+        panel.stop(true, false);
+
+        // Stop closing
+        self.closing = false;
+
+        // Display the panel
+        panel.css("display", "block");
+
+        if (self.horizontal) {
+            if (location.indexOf("bottom") > -1) {
                 panel.css({
                     bottom: -panel.outerHeight(true),
+                    top: "",
                     display: ""
                 }).animate({
                     bottom: 0
-                }, duration, listener);
+                }, 400, callback);
             }
-            else if (options.location.indexOf("top") > -1) {
+            else if (location.indexOf("top") > -1) {
                 panel.css({
                     top: -panel.outerHeight(true),
+                    bottom: "",
                     display: ""
                 }).animate({
                     top: 0
-                }, duration, listener);
+                }, 400, callback);
             }
-        };
-
-        /**
-         * Toggles the panel visibility
-         * @param duration
-         */
-        panel.toggle = function (duration) {
-            duration = duration || 0;
-
-            if (panel.is(":visible")) {
-                panel.hide(duration);
+        } else {
+            if (location.indexOf("left") > -1) {
+                panel.animate({
+                    left: 0
+                }, 400, callback);
             }
-            else {
-                panel.show(duration);
+            else if (location.indexOf("right") > -1) {
+                panel.css({
+                    right: -panel.outerWidth(true),
+                    left: "",
+                    display: ""
+                }).animate({
+                    right: 0
+                }, 400, callback);
             }
-        };
+        }
+        return self;
+    };
 
-        // Watch events on the close button
-        var closeButton = panel.find("." + options.closeButtonClass);
-        closeButton.off("click.panel").on("click.panel", function (ev) {
-            ev.preventDefault();
-            panel.hide(options.animDuration);
-        });
+    /**
+     * Sets the position of the panel and optionally its container
+     * @param location
+     * @param container
+     * @return {Cuic.Panel}
+     */
+    Cuic.Panel.prototype.position = function (location, container) {
+        var self = this;
 
-        // Watch events on the toggle button
-        var toggleButton = panel.find("." + options.toggleButtonClass);
-        toggleButton.off("click.panel").on("click.panel", function (ev) {
-            ev.preventDefault();
-            panel.slideToggle(options.animDuration);
-        });
+        // Set the location
+        self.location = location;
 
-        if (options.visible) {
-            panel.show(300);
+        // Set the container
+        if (container != null) {
+            self.container = $(container);
+        }
+        Cuic.position(self.element, self.location, self.container);
+        return self;
+    };
+
+    /**
+     * Toggles the panel visibility
+     * @param callback
+     * @return {Cuic.Panel}
+     */
+    Cuic.Panel.prototype.toggle = function (callback) {
+        var self = this;
+
+        if (!self.element.is(":visible") || self.closing) {
+            self.open(callback);
         }
         else {
-            panel.hide(0);
+            self.close(callback);
         }
-
-        // Auto close the panel when the user clicks outside of it
-        if (options.autoClose) {
-            setTimeout(function () {
-                $(document).on("click.panel", function (ev) {
-                    $(document).off("click.panel", this);
-                    var target = $(ev.target);
-
-                    if (target !== panel && target.closest(panel).length === 0) {
-                        panel.hide(300);
-                    }
-                });
-            }, 1);
-        }
-
-        return panel;
+        return self;
     };
+
 
 })(jQuery);

@@ -39,6 +39,7 @@
      * @param obj
      * @param position
      * @param target
+     * @return {jQuery}
      */
     Cuic.anchor = function (obj, position, target) {
         target = $(target);
@@ -89,6 +90,7 @@
             left: posX + "px",
             top: posY + "px"
         });
+        return obj;
     };
 
     /**
@@ -96,6 +98,7 @@
      * @param target
      * @param position
      * @param container
+     * @return {jQuery}
      */
     Cuic.position = function (target, position, container) {
         target = $(target);
@@ -234,5 +237,24 @@
 
         // Apply new position
         target.css(styles);
+
+        return target;
     };
+
+    /**
+     * Returns the value depending of the type of the value,
+     * for example, if it is a function, it will returns the result of the function.
+     * @param value
+     * @param context
+     * @return {*}
+     */
+    Cuic.valueOf = function (value, context) {
+        switch (typeof value) {
+            case "function":
+                value = value.call(context);
+                break;
+        }
+        return value;
+    };
+
 })(jQuery);

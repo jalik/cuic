@@ -35,7 +35,6 @@
 
         // Copy options
         self.autoRemove = options.autoRemove;
-        self.container = options.container;
         self.location = options.location;
         self.modal = options.modal;
 
@@ -102,7 +101,7 @@
         if (options.buttons) {
             for (var i = 0; i < options.buttons.length; i += 1) {
                 var btn = options.buttons[i];
-                self.addButton(btn.label, btn.listener)
+                self.addButton(btn.label, btn.callback)
             }
         }
 
@@ -122,19 +121,19 @@
     Cuic.Dialog.prototype.container = document.body;
 
     /**
-     * The the dialog content
+     * The dialog content
      * @type {jQuery}
      */
     Cuic.Dialog.prototype.content = null;
 
     /**
-     * The the dialog footer
+     * The dialog footer
      * @type {jQuery}
      */
     Cuic.Dialog.prototype.footer = null;
 
     /**
-     * The the dialog header
+     * The dialog header
      * @type {jQuery}
      */
     Cuic.Dialog.prototype.header = null;

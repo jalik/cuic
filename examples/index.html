@@ -91,11 +91,10 @@
         <div class="blueprint" style="height: 500px; margin-top: 1em"></div>
     </div>
     <script>
-
-        (function () {
+        $(document).ready(function () {
             var sandbox = $('#sb-dialog');
 
-            sandbox.find('.run').on('click', function () {
+            var run = function () {
                 var modal = sandbox.find('[name=modal]').is(':checked');
                 var container = sandbox.find('[name=container]').is(':checked');
                 var css = sandbox.find('[name=css]').val();
@@ -117,9 +116,12 @@
                         }
                     ]
                 }).open();
+            };
+            sandbox.find('.run').on('click', function (ev) {
+                ev.stopPropagation();
+                run();
             });
-        })();
-
+        });
     </script>
 </div>
 
@@ -149,7 +151,6 @@
         <svg id="grid" class="" style="height: 500px; width: 100%; margin-top: 1em"></svg>
     </div>
     <script>
-
         $(document).ready(function () {
             var sandbox = $('#sb-grid');
 
@@ -174,7 +175,8 @@
                 ev.dataTransfer.setData("text/html", ev.target.id);
             }
 
-            sandbox.find('.run').on('click', function () {
+            sandbox.find('.run').on('click', function (ev) {
+                ev.stopPropagation();
                 //                var modal = sandbox.find('[name=modal]').is(':checked');
                 //                var container = sandbox.find('[name=container]').is(':checked');
                 //                var css = sandbox.find('[name=css]').val();
@@ -192,7 +194,6 @@
                 });
             });
         });
-
     </script>
 </div>
 
@@ -229,10 +230,10 @@
         </div>
     </div>
     <script>
-
-        (function () {
+        $(document).ready(function () {
             var sandbox = $('#sb-navbar');
             var navbar = $('.navbar', sandbox);
+
             var run = function () {
                 var collapse = sandbox.find('[name=collapse]').is(':checked');
                 var scroll = sandbox.find('[name=scroll]').is(':checked');
@@ -243,12 +244,11 @@
                     target: navbar
                 });
             };
-
-            $(document).ready(function () {
-                sandbox.find('.run').on('click', run);
+            sandbox.find('.run').on('click', function (ev) {
+                ev.stopPropagation();
+                run();
             });
-        })();
-
+        });
     </script>
 </div>
 
@@ -291,8 +291,7 @@
     <script>
         $(document).ready(function () {
             var sandbox = $('#sb-notification');
-
-            sandbox.find('.run').on('click', function () {
+            var run = function () {
                 var autoClose = sandbox.find('[name=autoClose]').is(':checked');
                 var container = sandbox.find('[name=container]').is(':checked');
                 var duration = sandbox.find('[name=duration]').val();
@@ -306,6 +305,10 @@
                     duration: duration,
                     location: location
                 }).open();
+            };
+            sandbox.find('.run').on('click', function (ev) {
+                ev.stopPropagation();
+                run();
             });
         });
     </script>
@@ -337,18 +340,32 @@
             <input type="text" name="css" value="width: 200px">
         </label>
         <label class="inline">
+            <span class="label">autoClose</span>
+            <input type="checkbox" name="autoClose" checked>
+        </label>
+        <label class="inline">
             <span class="label">container</span>
             <input type="checkbox" name="container" checked>
         </label>
         <label class="inline">
-            <span class="label">closed</span>
-            <input type="checkbox" name="closed">
+            <span class="label">horizontal</span>
+            <input type="checkbox" name="horizontal">
         </label>
         <label class="inline">
             <span class="label">maximized</span>
             <input type="checkbox" name="maximized" checked>
         </label>
-        <button class="run">Run</button>
+        <label class="inline">
+            <span class="label">visible</span>
+            <input type="checkbox" name="visible" checked>
+        </label>
+
+        <div>
+            <button class="run">Run</button>
+            <button class="fn-close">close()</button>
+            <button class="fn-open">open()</button>
+            <button class="fn-toggle">toggle()</button>
+        </div>
 
         <div class="blueprint" style="height: 300px;margin-top: 1em">
             <div id="panel" class="panel">
@@ -368,38 +385,42 @@
         </div>
     </div>
     <script>
-
-        (function () {
-
+        $(document).ready(function () {
             var sandbox = $('#sb-panel');
-
             var run = function () {
+                var autoClose = sandbox.find('[name=autoClose]').is(':checked');
                 var container = sandbox.find('[name=container]').is(':checked');
-                var closed = sandbox.find('[name=closed]').is(':checked');
-                var maximized = sandbox.find('[name=maximized]').is(':checked');
                 var css = sandbox.find('[name=css]').val();
+                var horizontal = sandbox.find('[name=horizontal]').is(':checked');
                 var location = sandbox.find('[name=location]').val();
+                var maximized = sandbox.find('[name=maximized]').is(':checked');
+                var visible = sandbox.find('[name=visible]').is(':checked');
 
-                Cuic.panel({
-                    closed: closed,
+                window.panel = Cuic.panel({
+                    autoClose: autoClose,
                     container: container ? '#sb-panel .blueprint' : document.body,
                     css: css,
+                    horizontal: horizontal,
                     location: location,
                     maximized: maximized,
-                    target: '#panel'
+                    target: '#panel',
+                    visible: visible
                 });
             };
-
-            sandbox.find('.run').on('click', function () {
+            sandbox.find('.run').on('click', function (ev) {
+                ev.stopPropagation();
                 run();
+                sandbox.find('.fn-close').on('click', function (ev) {
+                    panel.close();
+                });
+                sandbox.find('.fn-open').on('click', function (ev) {
+                    panel.open();
+                });
+                sandbox.find('.fn-toggle').on('click', function (ev) {
+                    panel.toggle();
+                });
             });
-
-            $(document).ready(function () {
-                run();
-            });
-
-        })();
-
+        });
     </script>
 </div>
 
@@ -422,7 +443,8 @@
                 autoRemove: false,
                 target: popupButton
             });
-            popupButton.on("click", function () {
+            popupButton.on("click", function (ev) {
+                ev.stopPropagation();
                 if (popup.element.is(":hidden")) {
                     popup.element.html("Clicked on " + new Date() + " <span class='popup-close'>×</span>");
                 }
@@ -490,14 +512,12 @@
         </table>
     </div>
     <script>
-
-        (function () {
+        $(document).ready(function () {
             Cuic.table({
                 target: '#sb-table table',
                 selectRowOnClick: true
             });
-        })();
-
+        });
     </script>
 </div>
 
@@ -549,12 +569,12 @@
         </div>
     </div>
     <script>
-        (function () {
+        $(document).ready(function () {
             Cuic.tabs({
                 target: '#sb-tabs > .tabs',
                 content: '#sb-tabs > .tab-content'
             });
-        })();
+        });
     </script>
 </div>
 
@@ -594,24 +614,25 @@
         </div>
     </div>
     <script>
-
-        (function () {
+        $(document).ready(function () {
             var sandbox = $('#sb-tooltip');
-
-            sandbox.find('.run').on('click', function () {
+            var run = function () {
                 var anchor = sandbox.find('[name=anchor]').val();
                 var css = sandbox.find('[name=css]').val();
 
-                t=Cuic.tooltip({
+                t = Cuic.tooltip({
                     autoClose: true,
                     autoRemove: false,
                     anchor: anchor,
                     css: css,
                     target: '[title]'
                 });
+            };
+            sandbox.find('.run').on('click', function (ev) {
+                ev.stopPropagation();
+                run();
             });
-        })();
-
+        });
     </script>
 </div>
 
@@ -655,14 +676,12 @@
         </ul>
     </div>
     <script>
-
-        (function () {
+        $(document).ready(function () {
             Cuic.tree({
                 target: '#sb-tree > .tree',
                 collapsed: true
             });
-        })();
-
+        });
     </script>
 
 </div>

@@ -62,7 +62,7 @@
             self.element.html(options.content);
         }
 
-        // Auto close the popup when the user clicks outside of it
+        // Close the popup when the user clicks outside of it
         $(document).on("click.popup", function (ev) {
             var fn = this;
             var target = $(ev.target);
@@ -81,7 +81,7 @@
 
     /**
      * Where to display the popup
-     * @type {boolean}
+     * @type {string}
      */
     Cuic.Popup.prototype.anchor = "right";
 
@@ -105,6 +105,7 @@
 
     /**
      * The target used to position the popup
+     * @type {jQuery}
      */
     Cuic.Popup.prototype.target = null;
 

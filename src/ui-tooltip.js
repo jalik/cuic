@@ -67,7 +67,7 @@
 
     /**
      * Where to display the tooltip
-     * @type {boolean}
+     * @type {string}
      */
     Cuic.Tooltip.prototype.anchor = "right";
 
@@ -79,6 +79,7 @@
 
     /**
      * The target used to position the tooltip
+     * @type {jQuery}
      */
     Cuic.Tooltip.prototype.target = null;
 
