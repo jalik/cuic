@@ -21,6 +21,7 @@
         // Set default options
         options = $.extend(true, {
             autoClose: true,
+            autoRemove: true,
             classes: "notification",
             closeButton: "×",
             container: null,
@@ -33,6 +34,7 @@
 
         // Copy options
         self.autoClose = options.autoClose;
+        self.autoRemove = options.autoRemove;
         self.duration = options.duration;
         self.location = options.location;
 

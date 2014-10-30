@@ -20,7 +20,7 @@
 
         // Set default options
         options = $.extend(true, {
-            autoRemove: false,
+            autoRemove: true,
             buttons: [],
             classes: "dialog",
             container: null,
@@ -119,6 +119,12 @@
             }
         });
     };
+
+    /**
+     * Remove the dialog from the DOM when closed
+     * @type {boolean}
+     */
+    Cuic.Dialog.prototype.autoRemove = true;
 
     /**
      * The container used to position the dialog
