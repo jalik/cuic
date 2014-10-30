@@ -79,12 +79,20 @@
             <input type="text" name="css" value="width: 400px">
         </label>
         <label class="inline">
-            <span class="label">modal</span>
-            <input type="checkbox" name="modal" checked>
-        </label>
-        <label class="inline">
             <span class="label">container</span>
             <input type="checkbox" name="container" checked>
+        </label>
+        <label class="inline">
+            <span class="label">buttons</span>
+            <input type="checkbox" name="buttons" checked>
+        </label>
+        <label class="inline">
+            <span class="label">title</span>
+            <input type="checkbox" name="title" checked>
+        </label>
+        <label class="inline">
+            <span class="label">modal</span>
+            <input type="checkbox" name="modal" checked>
         </label>
         <button class="run">Run</button>
 
@@ -100,21 +108,21 @@
                 var css = sandbox.find('[name=css]').val();
                 var location = sandbox.find('[name=location]').val();
 
-                Cuic.dialog({
+                window.dialog = Cuic.dialog({
                     container: container ? '#sb-dialog .blueprint' : document.body,
                     css: css,
                     modal: modal,
                     location: location,
-                    title: 'Simple dialog',
+                    title: sandbox.find("[name=title]").is(":checked") ? 'Header & title' : null,
                     content: 'This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p>',
-                    buttons: [
-                        {
-                            label: 'Close'
-                        },
+                    buttons: sandbox.find("[name=buttons]").is(":checked") ? [
                         {
                             label: 'Accept'
+                        },
+                        {
+                            label: 'Close'
                         }
-                    ]
+                    ] : null
                 }).open();
             };
             sandbox.find('.run').on('click', function (ev) {
@@ -238,7 +246,7 @@
                 var collapse = sandbox.find('[name=collapse]').is(':checked');
                 var scroll = sandbox.find('[name=scroll]').is(':checked');
 
-                Cuic.navbar({
+                window.navbar = Cuic.navbar({
                     collapse: collapse,
                     scroll: scroll,
                     target: navbar
@@ -297,7 +305,7 @@
                 var duration = sandbox.find('[name=duration]').val();
                 var location = sandbox.find('[name=location]').val();
 
-                Cuic.notification({
+                window.notification = Cuic.notification({
                     autoClose: autoClose,
                     autoRemove: false,
                     container: container ? '#sb-notification .blueprint' : document.body,
@@ -438,11 +446,13 @@
     <script>
         $(document).ready(function () {
             var popupButton = $("#sb-popup .blueprint > button");
-            var popup = Cuic.popup({
+
+            window.popup = Cuic.popup({
                 autoClose: true,
                 autoRemove: false,
                 target: popupButton
             });
+
             popupButton.on("click", function (ev) {
                 ev.stopPropagation();
                 if (popup.element.is(":hidden")) {
@@ -513,7 +523,7 @@
     </div>
     <script>
         $(document).ready(function () {
-            Cuic.table({
+            window.table = Cuic.table({
                 target: '#sb-table table',
                 selectRowOnClick: true
             });
@@ -570,7 +580,7 @@
     </div>
     <script>
         $(document).ready(function () {
-            Cuic.tabs({
+            window.tabs = Cuic.tabs({
                 target: '#sb-tabs > .tabs',
                 content: '#sb-tabs > .tab-content'
             });
@@ -620,7 +630,7 @@
                 var anchor = sandbox.find('[name=anchor]').val();
                 var css = sandbox.find('[name=css]').val();
 
-                t = Cuic.tooltip({
+                window.tooltip = Cuic.tooltip({
                     autoClose: true,
                     autoRemove: false,
                     anchor: anchor,
@@ -677,7 +687,7 @@
     </div>
     <script>
         $(document).ready(function () {
-            Cuic.tree({
+            window.tree = Cuic.tree({
                 target: '#sb-tree > .tree',
                 collapsed: true
             });

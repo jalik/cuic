@@ -20,7 +20,7 @@
 
         // Set default options
         options = $.extend(true, {
-            autoRemove: true,
+            autoRemove: false,
             buttons: [],
             classes: "dialog",
             container: null,
@@ -66,7 +66,10 @@
 
         // Add the header
         self.header = $("<header>", {
-            "class": "dialog-header"
+            "class": "dialog-header",
+            css: {
+                display: options.title != null ? "block" : "none"
+            }
         }).appendTo(self.element);
 
         // Add the title
@@ -84,7 +87,10 @@
 
         // Add the footer
         self.footer = $("<footer>", {
-            "class": "dialog-footer"
+            "class": "dialog-footer",
+            css: {
+                display: options.buttons != null ? "block" : "none"
+            }
         }).appendTo(self.element);
 
 
@@ -108,7 +114,7 @@
         // If the dialog is not modal,
         // a click on the wrapper will close the dialog
         self.wrapper.on("click", function (ev) {
-            if (!self.modal && ev.currentTarget == self.wrapper[0]) {
+            if (!self.modal && ev.target == self.wrapper[0]) {
                 self.close();
             }
         });
@@ -159,7 +165,7 @@
      */
     Cuic.Dialog.prototype.addButton = function (label, listener) {
         var self = this;
-        var button = $("<div>", {
+        var button = $("<button>", {
             "class": "dialog-button",
             html: label
         }).appendTo(self.footer);
@@ -186,8 +192,15 @@
 
         // Resize buttons
         var buttons = self.footer.children(".dialog-button");
-        buttons.css("display", buttons.length > 1 ? "inline-block" : "block");
 
+        if (buttons.length > 1) {
+            self.footer.show();
+            buttons.css("display", "inline-block");
+        }
+        else if (buttons.length > 0) {
+            self.footer.show();
+            buttons.css("display", "block");
+        }
         return button;
     };
 
@@ -198,17 +211,19 @@
     Cuic.Dialog.prototype.close = function (callback) {
         var self = this;
 
-        self.element.stop(true, false).fadeOut(200, function () {
-            self.wrapper.stop(true, false).fadeOut(200, function () {
-                if (self.autoRemove) {
-                    self.wrapper.remove();
-                }
-                if (typeof callback === "function") {
-                    callback.call(self);
-                }
+        if (self.element.is(":visible")) {
+            self.element.stop(true, false).fadeOut(200, function () {
+                self.wrapper.stop(true, false).fadeOut(200, function () {
+                    if (self.autoRemove) {
+                        self.wrapper.remove();
+                    }
+                    if (typeof callback === "function") {
+                        callback.call(self);
+                    }
+                });
             });
-        });
-        return this;
+        }
+        return self;
     };
 
     /**
@@ -218,49 +233,50 @@
     Cuic.Dialog.prototype.open = function (callback) {
         var self = this;
 
-        function resizeContent() {
-            var headerHeight = self.header.outerHeight();
-            var footerHeight = self.footer.outerHeight();
-            var contentPadding = self.content.innerHeight() - self.content.height();
-            self.content.css("height", self.element.height() - headerHeight - footerHeight - contentPadding);
-        }
+        if (!self.element.is(":visible")) {
+            if (self.element.find("img").length > 0) {
+                // Position the dialog when images are loaded
+                self.element.find("img").on("load", function () {
+                    self.resizeContent();
+                });
+            }
+            else {
+                // Position the dialog in the wrapper
+                self.resizeContent();
+            }
 
-        if (self.element.find("img").length > 0) {
-            // Position the dialog when images are loaded
-            self.element.find("img").on("load", function () {
-                // todo clean code
-                self.wrapper.show();
-                self.element.show();
-                Cuic.position(self.element, self.location, self.wrapper);
-                resizeContent();
-                self.element.hide();
-                self.wrapper.hide();
+            // Display the wrapper, then the dialog
+            self.wrapper.fadeIn(200, function () {
+                self.element.fadeIn(200, callback);
+
+                var timer;
+                $(window).on("resize.dialog", function () {
+                    clearTimeout(timer);
+                    timer = setTimeout(function () {
+                        Cuic.position(self.element, self.location, self.wrapper);
+                    }, 50);
+                });
             });
+        }
+        return self;
+    };
+
+    /**
+     * Resizes the content of the dialog
+     */
+    Cuic.Dialog.prototype.resizeContent = function () {
+        var self = this;
+
+        self.wrapper.show();
+        Cuic.position(self.element, self.location, self.wrapper);
+
+        if (self.content.css("box-sizing") === "border-box") {
+            self.content.css("height", self.content.innerHeight());
         }
         else {
-            // Position the dialog in the wrapper
-            // todo clean code
-            self.wrapper.show();
-            self.element.show();
-            Cuic.position(self.element, self.location, self.wrapper);
-            resizeContent();
-            self.element.hide();
-            self.wrapper.hide();
+            self.content.css("height", self.content.height());
         }
-
-        // Display the wrapper, then the dialog
-        self.wrapper.fadeIn(200, function () {
-            self.element.fadeIn(200, callback);
-
-            var timer;
-            $(window).on("resize.dialog", function () {
-                clearTimeout(timer);
-                timer = setTimeout(function () {
-                    Cuic.position(self.element, self.location, self.wrapper);
-                }, 50);
-            });
-        });
-        return this;
+        self.wrapper.hide();
     };
 
     /**

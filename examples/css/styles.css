@@ -11,22 +11,32 @@
 }
 
 .dialog-button {
-    color: #555;
+    background: #eee;
+    border: none;
+    border-radius: 3px;
+    color: #777;
     cursor: pointer;
-    font-size: 0.9em;
-    padding: 0.5em;
-    text-transform: uppercase;
+    display: inline-block;
+    font-size: .9em;
+    font-weight: bold;
+    height: 2.8em;
+    margin-right: .3em;
+    padding: 0 .6em;
     transition: all 200ms;
+    vertical-align: middle;
+    white-space: nowrap;
+    word-break: keep-all;
 }
 
+.dialog-button:focus,
 .dialog-button:hover {
-    background-color: #eee;
-    color: #333;
+    background: #5fbedd;
+    color: #fff;
 }
 
 .dialog-button:active {
-    background-color: #ddd;
-    color: #222;
+    background: #666;
+    color: #ccc;
 }
 
 .dialog-content {
@@ -34,8 +44,15 @@
 }
 
 .dialog-footer {
+    margin-top: 0.5em;
+    border-top: solid 1px #eee;
     padding-top: 1em;
     text-align: center;
+}
+
+.dialog-header {
+    border-bottom: solid 1px #eee;
+    margin-bottom: 1em;
 }
 
 .dialog-title {
@@ -96,23 +113,24 @@
 /* NOTIFICATION */
 
 .notification {
-    background: rgba(0, 0, 0, 0.80);
+    background: rgba(0, 0, 0, .7);
     border-radius: 3px;
-    box-shadow: 0 1px 0.5em #888;
+    box-shadow: 0 1px .5em #888;
     color: #fff;
-    font-size: 0.8em;
-    overflow: auto;
+    font-size: .9em;
+    line-height: 1.2em;
     margin: 1em;
+    overflow: auto;
     padding: 1em;
     transition: background 200ms;
 }
 
 .notification:hover {
-    background: rgba(0, 0, 0, 0.60);
+    background: rgba(0, 0, 0, .6);
 }
 
 .notification > * {
-    vertical-align: middle;
+    line-height: 1.2em;
 }
 
 .notification .close-button {
