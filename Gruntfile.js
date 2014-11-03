@@ -24,50 +24,52 @@
 
 module.exports = function (grunt) {
 
-    var buildFile = 'build/<%= pkg.name %>-<%= pkg.version %>.min.js';
+    var concatenatedFile = "build/<%= pkg.name %>-<%= pkg.version %>.js";
+    var compressedFile = "build/<%= pkg.name %>-<%= pkg.version %>.min.js";
 
     // Project configuration.
     grunt.initConfig({
-        pkg: grunt.file.readJSON('package.json'),
+        pkg: grunt.file.readJSON("package.json"),
         concat: {
             options: {
-                separator: ';'
+                separator: ";"
             },
             dist: {
                 src: [
-                    'src/base.js',
-                    'src/fn-forms.js',
-                    'src/fn-hook.js',
-                    'src/ui-dialog.js',
-                    'src/ui-grid.js',
-                    'src/ui-navbar.js',
-                    'src/ui-notification.js',
-                    'src/ui-panel.js',
-                    'src/ui-popup.js',
-                    'src/ui-table.js',
-                    'src/ui-tabs.js',
-                    'src/ui-tooltip.js',
-                    'src/ui-tree.js'
+                    "src/base.js",
+                    "src/fn-forms.js",
+                    "src/fn-hook.js",
+                    "src/fn-keys.js",
+                    "src/ui-dialog.js",
+                    "src/ui-grid.js",
+                    "src/ui-navbar.js",
+                    "src/ui-notification.js",
+                    "src/ui-panel.js",
+                    "src/ui-popup.js",
+                    "src/ui-table.js",
+                    "src/ui-tabs.js",
+                    "src/ui-tooltip.js",
+                    "src/ui-tree.js"
                 ],
-                dest: buildFile
+                dest: concatenatedFile
             }
         },
         uglify: {
             options: {
-                banner: ''
+                banner: ""
             },
             build: {
-                src: buildFile,
-                dest: buildFile
+                src: concatenatedFile,
+                dest: compressedFile
             }
         }
     });
 
     // Load plugins
-    grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks("grunt-contrib-concat");
+    grunt.loadNpmTasks("grunt-contrib-uglify");
 
     // Default task(s).
-    grunt.registerTask('default', ['concat', 'uglify']);
+    grunt.registerTask("default", ["concat", "uglify"]);
 
 };

@@ -25,6 +25,8 @@
             classes: "dialog",
             container: null,
             content: null,
+            contentHeight: null,
+            contentWidth: null,
             css: null,
             location: "center",
             modal: true,
@@ -64,6 +66,13 @@
             display: "none"
         }).appendTo(self.wrapper);
 
+        Cuic.shortcut({
+            key: "Esc",
+            target: self.element
+        }, function () {
+            self.close();
+        });
+
         // Add the header
         self.header = $("<header>", {
             "class": "dialog-header",
@@ -102,6 +111,15 @@
             position: fixed ? "fixed" : "absolute"
         });
 
+        // Set content height
+        if (parseFloat(options.contentHeight) > 0) {
+            self.content.css("height", options.contentHeight);
+        }
+
+        // Set content width
+        if (parseFloat(options.contentWidth) > 0) {
+            self.content.css("width", options.contentWidth);
+        }
 
         // Add the buttons
         if (options.buttons) {
@@ -213,6 +231,7 @@
     /**
      * Closes the dialog
      * @param callback
+     * @return {Cuic.Dialog}
      */
     Cuic.Dialog.prototype.close = function (callback) {
         var self = this;
@@ -235,6 +254,7 @@
     /**
      * Opens the dialog
      * @param callback
+     * @return {Cuic.Dialog}
      */
     Cuic.Dialog.prototype.open = function (callback) {
         var self = this;
@@ -243,23 +263,25 @@
             if (self.element.find("img").length > 0) {
                 // Position the dialog when images are loaded
                 self.element.find("img").on("load", function () {
-                    self.resizeContent();
+//                    self.resizeContent(); todo improve resizing
                 });
             }
-            else {
-                // Position the dialog in the wrapper
-                self.resizeContent();
-            }
+            // Position the dialog in the wrapper
+            self.resizeContent();
 
             // Display the wrapper, then the dialog
             self.wrapper.fadeIn(200, function () {
                 self.element.fadeIn(200, callback);
+
+                // Focus the last button
+                self.footer.find("button:last").focus();
 
                 var timer;
                 $(window).on("resize.dialog", function () {
                     clearTimeout(timer);
                     timer = setTimeout(function () {
                         Cuic.position(self.element, self.location, self.wrapper);
+                        self.resizeContent();
                     }, 50);
                 });
             });
@@ -269,9 +291,11 @@
 
     /**
      * Resizes the content of the dialog
+     * @return {Cuic.Dialog}
      */
     Cuic.Dialog.prototype.resizeContent = function () {
         var self = this;
+        var display = self.wrapper.css("display");
 
         self.wrapper.show();
         Cuic.position(self.element, self.location, self.wrapper);
@@ -282,12 +306,14 @@
         else {
             self.content.css("height", self.content.height());
         }
-        self.wrapper.hide();
+        self.wrapper.css("display", display);
+        return self;
     };
 
     /**
      * Toggles the dialog visibility
      * @param callback
+     * @return {Cuic.Dialog}
      */
     Cuic.Dialog.prototype.toggle = function (callback) {
         if (this.element.is(":visible")) {

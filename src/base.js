@@ -12,7 +12,7 @@
     }
 
     /**
-     * The base of the kit
+     * The Common User Interface Components
      * @type {{}}
      */
     window.Cuic = {};

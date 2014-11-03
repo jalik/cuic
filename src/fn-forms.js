@@ -58,86 +58,61 @@
      * @returns {{}}
      */
     Cuic.getFields = function (form, fieldNames) {
-        form = $(form);
         var fields = {};
-        var checkboxes = {};
-        var name;
 
-        // Get input values
-        form.find("input[name]").each(function () {
-            // Ignores unwanted fields
-            if (!fieldNames || fieldNames.indexOf(this.name) !== -1) {
-                var value = Cuic.parseValue(this.value);
-                var name = this.name;
+        $(form).find("[name]").each(function () {
+            var name = this.name;
 
-                switch (this.type) {
-                    case "button":
-                    case "submit":
-                    case "reset":
-                        // Ignores buttons
+            if (!fieldNames || fieldNames.indexOf(name) !== -1) {
+                var field = this;
+                var value = this.value;
+
+                switch (field.nodeName.toUpperCase()) {
+                    case "INPUT":
+                        if (this.type === "checkbox") {
+                            if (!fields.hasOwnProperty(name)) {
+                                var checkboxes = $(form).find("[name=" + name + "]");
+
+                                if (checkboxes.length > 1) {
+                                    fields[name] = [];
+                                    chkb.filter(":checked").each(function () {
+                                        fields[name].push(this.value === "on" ? true : Cuic.parseValue(this.value));
+                                    });
+                                }
+                                else {
+                                    fields[name] = value === "on" ? true : Cuic.parseValue(value);
+                                }
+                            }
+                        }
+                        else if (this.type === "radio") {
+                            if (this.checked) {
+                                fields[name] = Cuic.parseValue(value);
+                            }
+                        }
+                        else if (this.type !== "button" && this.type !== "reset" && this.type !== "submit") {
+                            fields[name] = Cuic.parseValue(value);
+                        }
                         break;
 
-                    case "checkbox":
-                        if (!fields[name]) {
+                    case "SELECT":
+                        if (this.multiple) {
                             fields[name] = [];
-                            checkboxes[name] = 0;
+                            $(field).find("option:selected").each(function () {
+                                fields[name].push(Cuic.parseValue(this.value));
+                            });
                         }
-                        fields[name].push(this.checked);
-                        checkboxes[name] += 1;
-                        break;
-
-                    case "radio":
-                        if (this.checked) {
-                            fields[name] = value;
+                        else {
+                            fields[name] = Cuic.parseValue(value);
                         }
                         break;
 
-                    default:
-                        fields[name] = value;
+                    case "TEXTAREA":
+                        fields[name] = Cuic.parseValue(value);
                         break;
                 }
-            }
-        });
 
-        for (name in checkboxes) {
-            if (checkboxes.hasOwnProperty(name) && checkboxes[name] == 1) {
-                fields[name] = fields[name][0];
-            }
-        }
-
-        // Get list values
-        form.find("select[name]").each(function () {
-            // Ignores unwanted fields
-            if (!fieldNames || fieldNames.indexOf(this.name) !== -1) {
-                var value = Cuic.parseValue(this.value);
-                var name = this.name;
-
-                if (this.multiple) {
-                    if (!fields[name]) {
-                        fields[name] = [];
-                    }
-                    if (this.checked) {
-                        fields[name].push(value);
-                    }
-                } else {
-                    fields[name] = value;
-                }
-            }
-        });
-
-        // Get textarea values
-        form.find("textarea[name]").each(function () {
-            // Ignores unwanted fields
-            if (!fieldNames || fieldNames.indexOf(this.name) !== -1) {
-                var value = Cuic.parseValue(this.value);
-                var name = this.name;
-                fields[name] = value;
-            }
-        });
-
-        for (name in fields) {
-            if (fields.hasOwnProperty(name)) {
                 if (typeof fields[name] === "string") {
+                    // Remove extra spaces
                     fields[name] = fields[name].trim();
 
                     if (fields[name] === "") {
@@ -145,7 +120,7 @@
                     }
                 }
             }
-        }
+        });
         return fields;
     };
 
