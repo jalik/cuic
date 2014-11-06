@@ -21,7 +21,7 @@
         // Set default options
         options = $.extend(true, {
             autoRemove: true,
-            buttons: [],
+            buttons: null,
             classes: "dialog",
             container: null,
             content: null,
@@ -122,7 +122,7 @@
         }
 
         // Add the buttons
-        if (options.buttons) {
+        if (options.buttons instanceof Array) {
             for (var i = 0; i < options.buttons.length; i += 1) {
                 var btn = options.buttons[i];
                 self.addButton(btn.label, btn.callback)
@@ -260,18 +260,19 @@
         var self = this;
 
         if (!self.element.is(":visible")) {
-            if (self.element.find("img").length > 0) {
-                // Position the dialog when images are loaded
-                self.element.find("img").on("load", function () {
-//                    self.resizeContent(); todo improve resizing
-                });
-            }
             // Position the dialog in the wrapper
             self.resizeContent();
 
             // Display the wrapper, then the dialog
             self.wrapper.fadeIn(200, function () {
                 self.element.fadeIn(200, callback);
+
+                if (self.element.find("img").length > 0) {
+                    // Position the dialog when images are loaded
+                    self.element.find("img").on("load", function () {
+                        self.resizeContent();
+                    });
+                }
 
                 // Focus the last button
                 self.footer.find("button:last").focus();
@@ -280,7 +281,6 @@
                 $(window).on("resize.dialog", function () {
                     clearTimeout(timer);
                     timer = setTimeout(function () {
-                        Cuic.position(self.element, self.location, self.wrapper);
                         self.resizeContent();
                     }, 50);
                 });
@@ -298,14 +298,28 @@
         var display = self.wrapper.css("display");
 
         self.wrapper.show();
+
+        // Set dialog max height
+        var dialogMaxHeight = window.innerHeight;
+
+//        if (self.element.css("box-sizing") !== "border-box") {
+        dialogMaxHeight -= parseFloat(self.element.css("margin-top"));
+        dialogMaxHeight -= parseFloat(self.element.css("margin-bottom"));
+//        }
+        self.element.css("max-height", dialogMaxHeight + "px");
+
+        // Set dialog content max height
+        var maxHeight = dialogMaxHeight;
+        if (self.footer) {
+            maxHeight -= self.footer.outerHeight(true);
+        }
+        if (self.header) {
+            maxHeight -= self.content.offset().top;
+        }
+        self.content.css("max-height", maxHeight);
+
         Cuic.position(self.element, self.location, self.wrapper);
 
-        if (self.content.css("box-sizing") === "border-box") {
-            self.content.css("height", self.content.innerHeight());
-        }
-        else {
-            self.content.css("height", self.content.height());
-        }
         self.wrapper.css("display", display);
         return self;
     };
