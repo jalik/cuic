@@ -260,19 +260,22 @@
         var self = this;
 
         if (!self.element.is(":visible")) {
-            // Position the dialog in the wrapper
-            self.resizeContent();
+            var images = self.element.find("img");
+
+            if (images.length > 0) {
+                // Position the dialog when images are loaded
+                images.on("load", function () {
+                    self.resizeContent();
+                });
+            }
+            else {
+                // Position the dialog in the wrapper
+                self.resizeContent();
+            }
 
             // Display the wrapper, then the dialog
             self.wrapper.fadeIn(200, function () {
                 self.element.fadeIn(200, callback);
-
-                if (self.element.find("img").length > 0) {
-                    // Position the dialog when images are loaded
-                    self.element.find("img").on("load", function () {
-                        self.resizeContent();
-                    });
-                }
 
                 // Focus the last button
                 self.footer.find("button:last").focus();
