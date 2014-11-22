@@ -11,6 +11,7 @@
     <script src="../src/fn-forms.js"></script>
     <script src="../src/fn-hook.js"></script>
     <script src="../src/fn-keys.js"></script>
+    <script src="../src/fn-resizable.js"></script>
     <script src="../src/ui-dialog.js"></script>
     <script src="../src/ui-grid.js"></script>
     <script src="../src/ui-navbar.js"></script>
@@ -143,11 +144,11 @@
             <div class="sandbox" id="sb-grid">
                 <label class="inline">
                     <span class="label">cols</span>
-                    <input type="text" name="cols" value="5" size="2">
+                    <input type="text" name="cols" value="6" size="2">
                 </label>
                 <label class="inline">
                     <span class="label">rows</span>
-                    <input type="text" name="rows" value="3" size="2">
+                    <input type="text" name="rows" value="5" size="2">
                 </label>
                 <label class="inline">
                     <span class="label">colsWidth</span>
@@ -165,23 +166,36 @@
                     <span class="label">editable</span>
                     <input type="checkbox" name="editable" checked>
                 </label>
+                <label class="inline">
+                    <span class="label">autoResize</span>
+                    <input type="checkbox" name="autoResize" checked>
+                </label>
                 <button class="run">Run</button>
 
                 <div id="grid" class="grid" style="margin-top: 1em">
-                    <div data-col="1" data-row="1">1.1</div>
-                    <div data-col="2" data-row="1" data-size-x="4" data-size-y="1">1.2</div>
-                    <div data-col="1" data-row="2" data-size-x="2" data-size-y="1"><span>2.1</span></div>
-                    <div data-col="1" data-row="3" data-size-x="1" data-size-y="1" data-resizable="true">3.1</div>
+                    <div class="widget" id="widgetA" data-col="1" data-row="1" data-size-x="3" data-size-y="3"
+                         data-draggable="false" data-resizable="=false">
+                        <span>A</span>
+                    </div>
+                    <div class="widget" id="widgetB" data-col="4" data-row="1" data-size-x="2" data-size-y="2">
+                        <span>B</span></div>
+                    <div class="widget" id="widgetC" data-col="4" data-row="3" data-size-x="2" data-size-y="1">
+                        <span>C</span></div>
+                    <div class="widget" id="widgetD" data-col="1" data-row="4" data-size-x="5" data-size-y="1">
+                        <p>qzd jqod jjqzd jqzdjojqd jkqzljd ljdklq jkljqdkjkqldjklqj kjdzq jkqz jklzq djlqzdjq jklqjqk
+                            jkqzjdjqzd jljklqzjdjqzo duizqhd hzqhd uihqzd piu dqzbq zui douiq zduhdq zohi</p>
+                    </div>
                 </div>
             </div>
             <script>
                 $(document).ready(function () {
                     var sandbox = $('#sb-grid');
+                    var autoResize = sandbox.find('[name=autoResize]');
                     var cols = sandbox.find('[name=cols]');
                     var colsWidth = sandbox.find('[name=colsWidth]');
+                    var editable = sandbox.find('[name=editable]');
                     var rows = sandbox.find('[name=rows]');
                     var rowsHeight = sandbox.find('[name=rowsHeight]');
-                    var editable = sandbox.find('[name=editable]');
                     var spacing = sandbox.find('[name=spacing]');
 
                     sandbox.find('.run').on('click', function (ev) {
@@ -190,14 +204,22 @@
                         var gridWidth = sandbox.find('[name=gridWidth]').val();
 
                         window.grid = Cuic.grid({
+                            animSpeed: 200,
+                            autoResize: autoResize.is(":checked"),
                             cols: cols.val(),
                             colsWidth: colsWidth.val(),
                             editable: editable.is(":checked"),
+                            maxCols: cols.val(),
+                            maxRows: rows.val(),
                             rows: rows.val(),
                             rowsHeight: rowsHeight.val(),
                             spacing: spacing.val(),
                             target: "#grid"
                         });
+                    });
+                    autoResize.on("change", function () {
+                        grid.autoResize = autoResize.is(":checked");
+                        grid.minimize();
                     });
                     editable.on("change", function () {
                         grid.editable = editable.is(":checked");

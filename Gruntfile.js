@@ -40,6 +40,7 @@ module.exports = function (grunt) {
                     "src/fn-forms.js",
                     "src/fn-hook.js",
                     "src/fn-keys.js",
+                    "src/fn-resizable.js",
                     "src/ui-dialog.js",
                     "src/ui-grid.js",
                     "src/ui-navbar.js",
