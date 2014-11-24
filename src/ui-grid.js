@@ -2,13 +2,6 @@
     "use strict";
 
     var counter = 0;
-    var mousePosition = [0, 0];
-
-    $(document).ready(function () {
-        $(document).on("mousemove", function (ev) {
-            mousePosition = [ev.clientX, ev.clientY];
-        });
-    });
 
     /**
      * Creates a Grid
@@ -44,7 +37,6 @@
             rows: 1,
             rowsHeight: 100,
             spacing: 10,
-            target: null,
             widgetSelector: ".widget"
         }, options);
 
@@ -70,12 +62,23 @@
         grid.element.css({
             display: "block",
             minHeight: options.height,
-            minWidth: options.width,
-            position: "relative"
+            minWidth: options.width
         });
 
         // Set the grid size
         grid.resize(options.cols, options.rows);
+
+        // Set the grid resizable
+        new Cuic.Resizable({
+            target: grid.element,
+            onResizeStop: function () {
+                var cols = grid.getSizeX(grid.element.outerWidth());
+                var rows = grid.getSizeY(grid.element.outerHeight());
+                grid.maxCols = cols;
+                grid.maxRows = rows;
+                grid.maximize();
+            }
+        });
 
         // Create the widget preview
         grid.preview = $("<div>", {
@@ -103,22 +106,6 @@
             grid.minimize();
         }
     };
-
-    Cuic.Grid.prototype.animSpeed = 200;
-    Cuic.Grid.prototype.autoResize = true;
-    Cuic.Grid.prototype.cols = null;
-    Cuic.Grid.prototype.colsWidth = 100;
-    Cuic.Grid.prototype.editable = true;
-    Cuic.Grid.prototype.element = null;
-    Cuic.Grid.prototype.fps = 30;
-    Cuic.Grid.prototype.maxCols = null;
-    Cuic.Grid.prototype.maxRows = null;
-    Cuic.Grid.prototype.onWidgetMoved = null;
-    Cuic.Grid.prototype.onWidgetResized = null;
-    Cuic.Grid.prototype.rows = null;
-    Cuic.Grid.prototype.rowsHeight = 100;
-    Cuic.Grid.prototype.spacing = 10;
-    Cuic.Grid.prototype.widgets = {};
 
     /**
      * Adds a widget to the grid
@@ -166,63 +153,16 @@
             grid.resize(widget.sizeX, widget.row - 1 + widget.sizeY);
         }
 
-        // Add the resize button
-        var resizer = $("<div>", {
-            "class": "resizer",
-            css: {
-                bottom: 0,
-                cursor: "se-resize",
-                display: "none",
-                height: 10,
-                position: "absolute",
-                right: 0,
-                width: 10
-            }
-        }).appendTo(element);
+        var height;
+        var width;
 
-        // Watch resize event
-        resizer.on("mousedown", function (ev) {
-            // Check if widget is resizable
-            if (!grid.editable || !widget.resizable) return;
-
-            // Cannot resize if dragging
-            if (widget.isDragging()) return;
-
-            // Stop selection
-            ev.preventDefault();
-
-            var height = element.outerHeight();
-            var width = element.outerWidth();
-            var startX = ev.clientX;
-            var startY = ev.clientY;
-
-            // Maximize the grid
-            if (grid.autoResize) {
-                grid.maximize();
-            }
-
-            // Display the widget preview
-            grid.element.append(preview.css({
-                left: element.css("left"),
-                height: element.outerHeight(),
-                top: element.css("top"),
-                width: element.outerWidth()
-            }));
-
-            // Change the widget style
-            element.addClass("resizing").css({zIndex: 2});
-
-            var timer = setInterval(function () {
-                var tmpHeight = height + mousePosition[1] - startY;
-                var tmpWidth = width + mousePosition[0] - startX;
+        new Cuic.Resizable({
+            target: widget.element,
+            onResize: function () {
+                var tmpHeight = element.outerHeight();
+                var tmpWidth = element.outerWidth();
                 var sizeX = Math.round(tmpWidth / (grid.colsWidth + grid.spacing));
                 var sizeY = Math.round(tmpHeight / (grid.rowsHeight + grid.spacing));
-
-                // Resize the widget
-                element.css({
-                    height: tmpHeight,
-                    width: tmpWidth
-                });
 
                 // Make sure the widget does not overlap the grid
                 if (sizeX + widget.col - 1 > grid.maxCols) {
@@ -244,12 +184,32 @@
                     height: grid.calculateHeight(sizeY),
                     width: grid.calculateWidth(sizeX)
                 });
+            },
+            onResizeStart: function () {
+                if (grid.editable && widget.resizable && !widget.isDragging()) {
+                    height = element.outerHeight();
+                    width = element.outerWidth();
 
-            }, Math.round(1000 / grid.fps));
+                    // Move widget to foreground
+                    element.css({zIndex: 2});
 
-            $(document).one("mouseup", function () {
-                clearInterval(timer);
+                    // Display the widget preview
+                    grid.element.append(preview.css({
+                        left: element.css("left"),
+                        height: height,
+                        top: element.css("top"),
+                        width: width
+                    }));
 
+                    // Maximize the grid
+                    if (grid.autoResize) {
+                        grid.maximize();
+                    }
+                    return true;
+                }
+                return false;
+            },
+            onResizeStop: function () {
                 // Remove the preview
                 preview.detach();
 
@@ -262,64 +222,14 @@
                 if (grid.autoResize) {
                     grid.minimize();
                 }
-            });
-        });
-
-        // Toggle the resize handler
-        element.on("mouseover", function (ev) {
-            if (grid.editable && widget.resizable) {
-                resizer.show();
-            }
-            if (ev.target === ev.currentTarget) {
-                element.css(
-                    "cursor", grid.editable && widget.draggable ? "move" : "default"
-                );
             }
         });
-        element.on("mouseout", function () {
-            resizer.hide();
-        });
 
-        // Watch drag event
-        element.on("mousedown", function (ev) {
-            // Do nothing if the event does not concern the widget directly
-            if (ev.target !== ev.currentTarget) return;
-
-            // Cannot drag if resizing
-            if (widget.isResizing()) return;
-
-            // Check if widget is draggable
-            if (!grid.editable || !widget.draggable) return;
-
-            // Stop selection
-            ev.preventDefault();
-
-            // Maximize the grid
-            if (grid.autoResize) {
-                grid.maximize();
-            }
-
-            // Change the widget style
-            element.addClass("dragging").css({zIndex: 2});
-
-            // Display the widget preview
-            grid.element.append(preview.css({
-                height: element.outerHeight(),
-                width: element.outerWidth()
-            }));
-
-            var offsetTop = ev.clientY - ev.target.offsetTop;
-            var offsetLeft = ev.clientX - ev.target.offsetLeft;
-
-            var timer = setInterval(function () {
-                var left = mousePosition[0] - offsetLeft;
-                var top = mousePosition[1] - offsetTop;
-
-                element.css({
-                    left: left,
-                    top: top
-                });
-
+        new Cuic.Draggable({
+            target: widget.element,
+            onDrag: function () {
+                var left = parseFloat(element.css("left"));
+                var top = parseFloat(element.css("top"));
                 var col = grid.getPositionX(left);
                 var row = grid.getPositionY(top);
 
@@ -332,12 +242,33 @@
                     left: grid.calculateLeft(col),
                     top: grid.calculateTop(row)
                 });
+            },
+            onDragStart: function (ev) {
+                if (ev.target === ev.currentTarget && grid.editable && widget.draggable && !widget.isResizing()) {
+                    height = element.outerHeight();
+                    width = element.outerWidth();
 
-            }, Math.round(1000 / grid.fps));
+                    // Move widget to foreground
+                    element.css({zIndex: 2});
 
-            $(document).one("mouseup", function () {
-                clearInterval(timer);
+                    // Display the widget preview
+                    grid.element.append(preview.css({
+                        left: element.css("left"),
+                        height: height,
+                        top: element.css("top"),
+                        width: width
+                    }));
 
+                    // Maximize the grid
+                    if (grid.autoResize) {
+                        grid.maximize();
+                    }
+
+                    return true;
+                }
+                return false;
+            },
+            onDragStop: function () {
                 // Remove the preview
                 preview.detach();
 
@@ -352,7 +283,7 @@
                 if (grid.autoResize) {
                     grid.minimize();
                 }
-            });
+            }
         });
         return widget;
     };
@@ -639,6 +570,22 @@
         return grid;
     };
 
+    Cuic.Grid.prototype.animSpeed = 200;
+    Cuic.Grid.prototype.autoResize = true;
+    Cuic.Grid.prototype.cols = null;
+    Cuic.Grid.prototype.colsWidth = 100;
+    Cuic.Grid.prototype.editable = true;
+    Cuic.Grid.prototype.element = null;
+    Cuic.Grid.prototype.fps = 30;
+    Cuic.Grid.prototype.maxCols = null;
+    Cuic.Grid.prototype.maxRows = null;
+    Cuic.Grid.prototype.onWidgetMoved = null;
+    Cuic.Grid.prototype.onWidgetResized = null;
+    Cuic.Grid.prototype.rows = null;
+    Cuic.Grid.prototype.rowsHeight = 100;
+    Cuic.Grid.prototype.spacing = 10;
+    Cuic.Grid.prototype.widgets = {};
+
     /**
      * Creates a grid widget
      * @param options
@@ -704,18 +651,6 @@
         widget.element.addClass("widget");
     };
 
-    Cuic.Grid.Widget.prototype.col = 1;
-    Cuic.Grid.Widget.prototype.draggable = true;
-    Cuic.Grid.Widget.prototype.element = null;
-    Cuic.Grid.Widget.prototype.maxSizeX = null;
-    Cuic.Grid.Widget.prototype.maxSizeY = null;
-    Cuic.Grid.Widget.prototype.minSizeX = 1;
-    Cuic.Grid.Widget.prototype.minSizeY = 1;
-    Cuic.Grid.Widget.prototype.resizable = true;
-    Cuic.Grid.Widget.prototype.row = 1;
-    Cuic.Grid.Widget.prototype.sizeX = 1;
-    Cuic.Grid.Widget.prototype.sizeY = 1;
-
     /**
      * Checks if the widget is dragging
      * @return {Boolean}
@@ -731,5 +666,17 @@
     Cuic.Grid.Widget.prototype.isResizing = function () {
         return this.element.hasClass("resizing");
     };
+
+    Cuic.Grid.Widget.prototype.col = 1;
+    Cuic.Grid.Widget.prototype.draggable = true;
+    Cuic.Grid.Widget.prototype.element = null;
+    Cuic.Grid.Widget.prototype.maxSizeX = null;
+    Cuic.Grid.Widget.prototype.maxSizeY = null;
+    Cuic.Grid.Widget.prototype.minSizeX = 1;
+    Cuic.Grid.Widget.prototype.minSizeY = 1;
+    Cuic.Grid.Widget.prototype.resizable = true;
+    Cuic.Grid.Widget.prototype.row = 1;
+    Cuic.Grid.Widget.prototype.sizeX = 1;
+    Cuic.Grid.Widget.prototype.sizeY = 1;
 
 })(jQuery);

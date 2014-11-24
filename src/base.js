@@ -11,11 +11,30 @@
         throw "jQuery not found";
     }
 
+    $(document).ready(function () {
+        $(document).on("mousemove", function (ev) {
+            Cuic.mouseX = ev.clientX;
+            Cuic.mouseY = ev.clientY;
+        });
+    });
+
     /**
      * The Common User Interface Components
      * @type {{}}
      */
     window.Cuic = {};
+
+    /**
+     * The mouse X position
+     * @type {number}
+     */
+    Cuic.mouseX = null;
+
+    /**
+     * The mouse Y position
+     * @type {number}
+     */
+    Cuic.mouseY = null;
 
     /**
      * Applies the styles to the target.
