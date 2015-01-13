@@ -293,37 +293,47 @@
     };
 
     /**
-     * Resizes the content of the dialog
+     * Resizes the content
      * @return {Cuic.Dialog}
      */
     Cuic.Dialog.prototype.resizeContent = function () {
         var self = this;
         var display = self.wrapper.css("display");
+        var maxHeight;
 
         self.wrapper.show();
 
-        // Set dialog max height
-        var dialogMaxHeight = window.innerHeight;
+        // Set max height
+        if (self.container) {
+            maxHeight = self.container.height();
+        } else {
+            maxHeight = window.innerHeight;
+        }
 
-//        if (self.element.css("box-sizing") !== "border-box") {
-        dialogMaxHeight -= parseFloat(self.element.css("margin-top"));
-        dialogMaxHeight -= parseFloat(self.element.css("margin-bottom"));
-//        }
-        self.element.css("max-height", dialogMaxHeight + "px");
+        maxHeight -= parseFloat(self.element.css("margin-top"));
+        maxHeight -= parseFloat(self.element.css("margin-bottom"));
+        maxHeight -= parseFloat(self.element.css("padding-top"));
+        maxHeight -= parseFloat(self.element.css("padding-bottom"));
+        self.element.css("max-height", maxHeight + "px");
 
-        // Set dialog content max height
-        var maxHeight = dialogMaxHeight;
+        // Set content max height
+        var contentMaxHeight = maxHeight;
+        contentMaxHeight -= parseFloat(self.content.css("margin-top"));
+        contentMaxHeight -= parseFloat(self.content.css("margin-bottom"));
+        contentMaxHeight -= parseFloat(self.content.css("padding-top"));
+        contentMaxHeight -= parseFloat(self.content.css("padding-bottom"));
+
         if (self.footer) {
-            maxHeight -= self.footer.outerHeight(true);
+            contentMaxHeight -= self.footer.outerHeight(true);
         }
         if (self.header) {
-            maxHeight -= self.content.offset().top;
+            contentMaxHeight -= self.header.outerHeight(true);
         }
-        self.content.css("max-height", maxHeight);
-
+        self.content.css("max-height", contentMaxHeight);
+        self.content.css("overflow", "auto");
         Cuic.position(self.element, self.location, self.wrapper);
-
         self.wrapper.css("display", display);
+
         return self;
     };
 

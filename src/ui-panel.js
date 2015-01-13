@@ -62,13 +62,13 @@
             // Add the header
             self.header = $("<header>", {
                 "class": "panel-header"
-            }).prependTo(self.element);
+            }).appendTo(self.element);
 
             // Add the title
             self.title = $("<h5>", {
                 "class": "panel-title",
                 html: options.title
-            }).prependTo(self.header);
+            }).appendTo(self.header);
 
             // Add the content
             self.content = $("<section>", {
@@ -322,6 +322,9 @@
         // Display the panel
         panel.css("display", "block");
 
+        // Resize the content
+        self.resizeContent();
+
         if (self.horizontal) {
             if (location.indexOf("bottom") > -1) {
                 panel.css({
@@ -377,6 +380,46 @@
             self.container = $(container);
         }
         Cuic.position(self.element, self.location, self.container);
+        return self;
+    };
+
+    /**
+     * Resizes the content
+     * @return {Cuic.Panel}
+     */
+    Cuic.Panel.prototype.resizeContent = function () {
+        var self = this;
+        var maxHeight;
+
+        // Set max height
+        if (self.container) {
+            maxHeight = self.container.innerHeight();
+        } else {
+            maxHeight = window.innerHeight;
+        }
+
+        maxHeight -= parseFloat(self.element.css("margin-top"));
+        maxHeight -= parseFloat(self.element.css("margin-bottom"));
+        maxHeight -= parseFloat(self.element.css("padding-top"));
+        maxHeight -= parseFloat(self.element.css("padding-bottom"));
+
+        // Set content max height
+        var contentMaxHeight = maxHeight;
+        contentMaxHeight -= parseFloat(self.content.css("margin-top"));
+        contentMaxHeight -= parseFloat(self.content.css("margin-bottom"));
+        contentMaxHeight -= parseFloat(self.content.css("padding-top"));
+        contentMaxHeight -= parseFloat(self.content.css("padding-bottom"));
+
+        if (self.footer) {
+            contentMaxHeight -= self.footer.outerHeight(true);
+        }
+        if (self.header) {
+            contentMaxHeight -= self.header.outerHeight(true);
+        }
+
+        self.content.css("max-height", contentMaxHeight);
+        self.content.css("overflow", "auto");
+
         return self;
     };
 

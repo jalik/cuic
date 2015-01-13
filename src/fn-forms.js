@@ -54,71 +54,92 @@
     /**
      * Returns the form fields
      * @param form
-     * @param fieldNames
+     * @param options
      * @returns {{}}
      */
-    Cuic.getFields = function (form, fieldNames) {
+    Cuic.getFields = function (form, options) {
         var fields = {};
+
+        options = $.extend(true, {
+            fields: null,
+            ignore: null,
+            ignoreEmpty: false
+        }, options);
 
         $(form).find("[name]").each(function () {
             var name = this.name;
 
-            if (!fieldNames || fieldNames.indexOf(name) !== -1) {
-                var field = this;
-                var value = this.value;
+            // Check if the field should be collected
+            if (options.fields && options.fields.indexOf(name) === -1) {
+                return;
+            }
 
-                switch (field.nodeName.toUpperCase()) {
-                    case "INPUT":
-                        if (this.type === "checkbox") {
-                            if (!fields.hasOwnProperty(name)) {
-                                var checkboxes = $(form).find("[name=" + name + "]");
+            // Check if the field should be ignored
+            if (options.ignore && options.ignore.indexOf(name) !== -1) {
+                return;
+            }
 
-                                if (checkboxes.length > 1) {
-                                    fields[name] = [];
-                                    chkb.filter(":checked").each(function () {
-                                        fields[name].push(this.value === "on" ? true : Cuic.parseValue(this.value));
-                                    });
-                                }
-                                else {
-                                    fields[name] = value === "on" ? true : Cuic.parseValue(value);
-                                }
+            var field = this;
+            var value = this.value;
+
+            switch (field.nodeName.toUpperCase()) {
+                case "INPUT":
+                    if (field.type === "checkbox") {
+                        // Ignore the field if it was already collected
+                        if (!fields.hasOwnProperty(name)) {
+                            var checkboxes = $(form).find("[name=" + name + "]");
+
+                            if (checkboxes.length > 1) {
+                                fields[name] = [];
+
+                                checkboxes.filter(":checked").each(function () {
+                                    fields[name].push(this.value === "on" ? true : Cuic.parseValue(this.value));
+                                });
+                            }
+                            else if (field.checked) {
+                                fields[name] = (value === "on" ? true : Cuic.parseValue(value));
                             }
                         }
-                        else if (this.type === "radio") {
-                            if (this.checked) {
-                                fields[name] = Cuic.parseValue(value);
-                            }
-                        }
-                        else if (this.type !== "button" && this.type !== "reset" && this.type !== "submit") {
-                            fields[name] = Cuic.parseValue(value);
-                        }
-                        break;
-
-                    case "SELECT":
-                        if (this.multiple) {
-                            fields[name] = [];
-                            $(field).find("option:selected").each(function () {
-                                fields[name].push(Cuic.parseValue(this.value));
-                            });
-                        }
-                        else {
-                            fields[name] = Cuic.parseValue(value);
-                        }
-                        break;
-
-                    case "TEXTAREA":
-                        fields[name] = Cuic.parseValue(value);
-                        break;
-                }
-
-                if (typeof fields[name] === "string") {
-                    // Remove extra spaces
-                    fields[name] = fields[name].trim();
-
-                    if (fields[name] === "") {
-                        fields[name] = null;
                     }
+                    else if (field.type === "radio") {
+                        if (field.checked) {
+                            fields[name] = (value === "on" ? true : Cuic.parseValue(value));
+                        }
+                    }
+                    else if (field.type !== "button" && field.type !== "reset" && field.type !== "submit") {
+                        fields[name] = Cuic.parseValue(value);
+                    }
+                    break;
+
+                case "SELECT":
+                    if (field.multiple) {
+                        fields[name] = [];
+                        $(field).find("option:selected").each(function () {
+                            fields[name].push(Cuic.parseValue(this.value));
+                        });
+                    }
+                    else {
+                        fields[name] = Cuic.parseValue(value);
+                    }
+                    break;
+
+                case "TEXTAREA":
+                    fields[name] = Cuic.parseValue(value);
+                    break;
+            }
+
+            // Remove extra spaces
+            if (typeof fields[name] === "string") {
+                fields[name] = fields[name].trim();
+
+                if (fields[name] === "") {
+                    fields[name] = null;
                 }
+            }
+
+            // Remove empty fields
+            if (fields[name] === null && options.ignoreEmpty) {
+                delete fields[name];
             }
         });
         return fields;

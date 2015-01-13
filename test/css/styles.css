@@ -207,11 +207,15 @@
     bottom: 0;
 }
 
-.panel-title {
+.panel-header {
     border-bottom: solid 3px #57a0be;
+    padding: 0 1em 0.5em 1em;
+}
+
+.panel-title {
     font-weight: bold;
     font-size: 1em;
-    padding: 0 1em 0.5em 1em;
+    margin: 0;
 }
 
 /* POPUP */
