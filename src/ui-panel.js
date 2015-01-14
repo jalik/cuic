@@ -124,15 +124,14 @@
 
         // Maximize the panel
         if (options.maximized) {
-            self.maximize();
+            //self.maximize();
         }
 
         // Set the panel visibility
         if (options.visible) {
-            self.open();
-        }
-        else {
-            self.close();
+            self.open(null, 0);
+        } else {
+            self.close(null, 0);
         }
 
         // Find the close button
@@ -213,12 +212,14 @@
     /**
      * Closes the panel
      * @param callback
+     * @param duration
      * @return {Cuic.Panel}
      */
-    Cuic.Panel.prototype.close = function (callback) {
+    Cuic.Panel.prototype.close = function (callback, duration) {
         var self = this;
         var panel = self.element;
         var location = self.location;
+        duration = duration >= 0 ? 0 : 400;
 
         // Stop the current animation
         panel.stop(true, false);
@@ -240,24 +241,24 @@
             if (location.indexOf("bottom") > -1) {
                 panel.animate({
                     bottom: -panel.outerHeight(true)
-                }, 400, cb);
+                }, duration, cb);
             }
             else if (location.indexOf("top") > -1) {
                 panel.animate({
                     top: -panel.outerHeight(true)
-                }, 400, cb);
+                }, duration, cb);
             }
         }
         else {
             if (location.indexOf("left") > -1) {
                 panel.animate({
                     left: -panel.outerWidth(true)
-                }, 400, cb);
+                }, duration, cb);
             }
             else if (location.indexOf("right") > -1) {
                 panel.animate({
                     right: -panel.outerWidth(true)
-                }, 400, cb);
+                }, duration, cb);
             }
         }
         return self;
@@ -306,12 +307,14 @@
     /**
      * Opens the panel
      * @param callback
+     * @param duration
      * @return {Cuic.Panel}
      */
-    Cuic.Panel.prototype.open = function (callback) {
+    Cuic.Panel.prototype.open = function (callback, duration) {
         var self = this;
         var panel = self.element;
         var location = self.location;
+        duration = duration >= 0 ? 0 : 400;
 
         // Stop the current animation
         panel.stop(true, false);
@@ -319,45 +322,39 @@
         // Stop closing
         self.closing = false;
 
-        // Display the panel
-        panel.css("display", "block");
-
         // Resize the content
         self.resizeContent();
 
         if (self.horizontal) {
             if (location.indexOf("bottom") > -1) {
                 panel.css({
-                    bottom: -panel.outerHeight(true),
                     top: "",
                     display: ""
                 }).animate({
                     bottom: 0
-                }, 400, callback);
+                }, duration, callback);
             }
             else if (location.indexOf("top") > -1) {
                 panel.css({
-                    top: -panel.outerHeight(true),
                     bottom: "",
                     display: ""
                 }).animate({
                     top: 0
-                }, 400, callback);
+                }, duration, callback);
             }
         } else {
             if (location.indexOf("left") > -1) {
                 panel.animate({
                     left: 0
-                }, 400, callback);
+                }, duration, callback);
             }
             else if (location.indexOf("right") > -1) {
                 panel.css({
-                    right: -panel.outerWidth(true),
                     left: "",
                     display: ""
                 }).animate({
                     right: 0
-                }, 400, callback);
+                }, duration, callback);
             }
         }
         return self;
@@ -389,19 +386,24 @@
      */
     Cuic.Panel.prototype.resizeContent = function () {
         var self = this;
-        var maxHeight;
+        var display = self.element.css("display");
+        var maxHeight = window.innerHeight;
 
-        // Set max height
-        if (self.container) {
-            maxHeight = self.container.innerHeight();
-        } else {
-            maxHeight = window.innerHeight;
+        // Temporary display the panel
+        // to get real height values
+        self.element.show();
+
+        // Use container for max height
+        if (self.container && self.container !== document.body) {
+            maxHeight = self.container.height();
         }
 
+        // Set panel max height
         maxHeight -= parseFloat(self.element.css("margin-top"));
         maxHeight -= parseFloat(self.element.css("margin-bottom"));
         maxHeight -= parseFloat(self.element.css("padding-top"));
         maxHeight -= parseFloat(self.element.css("padding-bottom"));
+        self.element.css("max-height", maxHeight + "px");
 
         // Set content max height
         var contentMaxHeight = maxHeight;
@@ -410,15 +412,20 @@
         contentMaxHeight -= parseFloat(self.content.css("padding-top"));
         contentMaxHeight -= parseFloat(self.content.css("padding-bottom"));
 
-        if (self.footer) {
-            contentMaxHeight -= self.footer.outerHeight(true);
-        }
         if (self.header) {
             contentMaxHeight -= self.header.outerHeight(true);
         }
+        if (self.footer) {
+            contentMaxHeight -= self.footer.outerHeight(true);
+        }
 
-        self.content.css("max-height", contentMaxHeight);
-        self.content.css("overflow", "auto");
+        self.content.css({
+            maxHeight: contentMaxHeight,
+            overflow: "auto"
+        });
+
+        // Restore the initial display state
+        self.element.css("display", display);
 
         return self;
     };

@@ -273,6 +273,13 @@
                 self.resizeContent();
             }
 
+            if (self.modal) {
+                self.wrapper.css({
+                    height: "100%",
+                    width: "100%"
+                });
+            }
+
             // Display the wrapper, then the dialog
             self.wrapper.fadeIn(200, function () {
                 self.element.fadeIn(200, callback);
@@ -299,17 +306,18 @@
     Cuic.Dialog.prototype.resizeContent = function () {
         var self = this;
         var display = self.wrapper.css("display");
-        var maxHeight;
+        var maxHeight = window.innerHeight;
 
+        // Temporary display the dialog
+        // to get real height values
         self.wrapper.show();
 
-        // Set max height
-        if (self.container) {
+        // Use container for max height
+        if (self.container && self.container !== document.body) {
             maxHeight = self.container.height();
-        } else {
-            maxHeight = window.innerHeight;
         }
 
+        // Set dialog max height
         maxHeight -= parseFloat(self.element.css("margin-top"));
         maxHeight -= parseFloat(self.element.css("margin-bottom"));
         maxHeight -= parseFloat(self.element.css("padding-top"));
@@ -323,15 +331,21 @@
         contentMaxHeight -= parseFloat(self.content.css("padding-top"));
         contentMaxHeight -= parseFloat(self.content.css("padding-bottom"));
 
-        if (self.footer) {
-            contentMaxHeight -= self.footer.outerHeight(true);
-        }
         if (self.header) {
             contentMaxHeight -= self.header.outerHeight(true);
         }
-        self.content.css("max-height", contentMaxHeight);
-        self.content.css("overflow", "auto");
+        if (self.footer) {
+            contentMaxHeight -= self.footer.outerHeight(true);
+        }
+
+        self.content.css({
+            maxHeight: contentMaxHeight,
+            overflow: "auto"
+        });
+
         Cuic.position(self.element, self.location, self.wrapper);
+
+        // Restore the initial display state
         self.wrapper.css("display", display);
 
         return self;
