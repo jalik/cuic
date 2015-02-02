@@ -174,6 +174,12 @@
     Cuic.Panel.prototype.autoClose = false;
 
     /**
+     * Tells if the panel is closing
+     * @type {boolean}
+     */
+    Cuic.Panel.prototype.closing = false;
+
+    /**
      * The HTML panel element
      * @type {jQuery}
      */
@@ -204,6 +210,12 @@
     Cuic.Panel.prototype.onOpened = null;
 
     /**
+     * Tells if the panel is opening
+     * @type {boolean}
+     */
+    Cuic.Panel.prototype.opening = false;
+
+    /**
      * The original height of the panel
      * @type {number}
      */
@@ -227,11 +239,16 @@
         var location = self.location;
         var prop = {};
 
-        if (self.visible) {
+        if (self.visible || self.opening) {
+            self.opening = false;
+            self.closing = true;
             duration = duration >= 0 ? 0 : 400;
+
+            panel.stop(true, false);
 
             // Horizontal animation
             if (location.indexOf("left") !== -1) {
+                panel.css("right", "");
                 prop.left = -panel.outerWidth(true)
             }
             else if (location.indexOf("right") !== -1) {
@@ -250,7 +267,8 @@
             }
 
             // Close the panel
-            panel.stop(true, false).animate(prop, duration, function () {
+            panel.animate(prop, duration, function () {
+                self.closing = false;
                 self.visible = false;
                 panel.css({display: "none"});
 
@@ -328,14 +346,16 @@
         var location = self.location;
         var prop = {};
 
-        if (!self.visible) {
+        if (!self.visible || self.closing) {
+            self.closing = false;
+            self.opening = true;
             duration = duration >= 0 ? 0 : 400;
 
             // Resize the content
             self.resizeContent();
 
             // Set auto display
-            panel.css("display", "");
+            panel.stop(true, false).css("display", "");
 
             // Horizontal animation
             if (location.indexOf("right") !== -1) {
@@ -379,7 +399,8 @@
             }
 
             // Open the panel
-            panel.stop(true, false).animate(prop, duration, function () {
+            panel.animate(prop, duration, function () {
+                self.opening = false;
                 self.visible = true;
 
                 if (typeof self.onOpened === "function") {
@@ -466,9 +487,16 @@
     Cuic.Panel.prototype.toggle = function (callback) {
         var self = this;
 
-        if (self.visible) {
+        if (self.opening) {
             self.close(callback);
-        } else {
+        }
+        else if (self.closing) {
+            self.open(callback);
+        }
+        else if (self.visible) {
+            self.close(callback);
+        }
+        else {
             self.open(callback);
         }
         return self;
