@@ -158,6 +158,7 @@
 
         new Cuic.Resizable({
             target: widget.element,
+            container: grid.element,
             onResize: function () {
                 var tmpHeight = element.outerHeight();
                 var tmpWidth = element.outerWidth();
@@ -227,6 +228,7 @@
 
         new Cuic.Draggable({
             target: widget.element,
+            container: grid.element,
             onDrag: function () {
                 var left = parseFloat(element.css("left"));
                 var top = parseFloat(element.css("top"));

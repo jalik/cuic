@@ -20,7 +20,7 @@
 
         // Set default options
         options = $.extend(true, {
-            autoRemove: true,
+            autoRemove: self.autoRemove,
             buttons: null,
             classes: "dialog",
             container: null,
@@ -28,8 +28,9 @@
             contentHeight: null,
             contentWidth: null,
             css: null,
-            location: "center",
-            modal: true,
+            draggable: self.draggable,
+            location: self.location,
+            modal: self.modal,
             target: null,
             title: null,
             zIndex: 10
@@ -37,6 +38,7 @@
 
         // Copy options
         self.autoRemove = options.autoRemove;
+        self.draggable = options.draggable;
         self.location = options.location;
         self.modal = options.modal;
 
@@ -136,6 +138,15 @@
                 self.close();
             }
         });
+
+        // Make the dialog draggable
+        if (self.draggable) {
+            new Cuic.Draggable({
+                area: self.header,
+                container: self.container,
+                target: self.element
+            });
+        }
     };
 
     /**
@@ -155,6 +166,12 @@
      * @type {jQuery}
      */
     Cuic.Dialog.prototype.content = null;
+
+    /**
+     * Is the dialog draggable
+     * @type {boolean}
+     */
+    Cuic.Dialog.prototype.draggable = true;
 
     /**
      * The dialog footer
@@ -288,6 +305,7 @@
                 self.footer.find("button:last").focus();
 
                 var timer;
+
                 $(window).on("resize.dialog", function () {
                     clearTimeout(timer);
                     timer = setTimeout(function () {
@@ -311,29 +329,25 @@
         // Temporary display the dialog
         // to get real height values
         self.wrapper.show();
+        self.element.show();
 
         // Use container for max height
-        if (self.container && self.container !== document.body) {
-            maxHeight = self.container.height();
+        if (self.container !== document.body) {
+            maxHeight = self.container.innerHeight();
         }
 
         // Set dialog max height
-        maxHeight -= parseFloat(self.element.css("margin-top"));
-        maxHeight -= parseFloat(self.element.css("margin-bottom"));
-        maxHeight -= parseFloat(self.element.css("padding-top"));
-        maxHeight -= parseFloat(self.element.css("padding-bottom"));
-        self.element.css("max-height", maxHeight + "px");
+        maxHeight -= self.element.outerHeight(true) - self.element.height();
+        self.element.css("max-height", maxHeight);
 
         // Set content max height
         var contentMaxHeight = maxHeight;
-        contentMaxHeight -= parseFloat(self.content.css("margin-top"));
-        contentMaxHeight -= parseFloat(self.content.css("margin-bottom"));
-        contentMaxHeight -= parseFloat(self.content.css("padding-top"));
-        contentMaxHeight -= parseFloat(self.content.css("padding-bottom"));
+        contentMaxHeight -= self.content.outerHeight(true) - self.content.height();
 
         if (self.header) {
             contentMaxHeight -= self.header.outerHeight(true);
         }
+
         if (self.footer) {
             contentMaxHeight -= self.footer.outerHeight(true);
         }
@@ -347,6 +361,7 @@
 
         // Restore the initial display state
         self.wrapper.css("display", display);
+        self.element.css("display", display);
 
         return self;
     };

@@ -27,9 +27,10 @@
             content: null,
             css: null,
             footer: null,
-            horizontal: true,
             location: null,
             maximized: false,
+            onClosed: self.onClosed,
+            onOpened: self.onOpened,
             target: null,
             title: null,
             visible: false,
@@ -39,7 +40,8 @@
         // Copy options
         self.autoClose = options.autoClose;
         self.location = options.location;
-        self.horizontal = options.horizontal;
+        self.onClosed = options.onClosed;
+        self.onOpened = options.onOpened;
 
         if (options.target) {
             // Use the target as panel
@@ -122,16 +124,20 @@
             Cuic.position(self.element, self.location, self.container);
         }
 
-        // Maximize the panel
-        if (options.maximized) {
-            //self.maximize();
-        }
-
         // Set the panel visibility
+        // Since the visible option is used to check if the panel is visible
+        // we force the panel to show or hide by setting visible to the inverse value.
         if (options.visible) {
+            self.visible = false;
             self.open(null, 0);
         } else {
+            self.visible = true;
             self.close(null, 0);
+        }
+
+        // Maximize the panel
+        if (options.maximized) {
+            self.maximize(0);
         }
 
         // Find the close button
@@ -168,22 +174,10 @@
     Cuic.Panel.prototype.autoClose = false;
 
     /**
-     * Indicates if the panel is closing
-     * @type {boolean}
-     */
-    Cuic.Panel.prototype.closing = false;
-
-    /**
      * The HTML panel element
      * @type {jQuery}
      */
     Cuic.Panel.prototype.element = null;
-
-    /**
-     * The panel can be horizontal or vertical
-     * @type {boolean}
-     */
-    Cuic.Panel.prototype.horizontal = true;
 
     /**
      * Where to display the panel
@@ -196,6 +190,18 @@
      * @type {boolean}
      */
     Cuic.Panel.prototype.maximized = false;
+
+    /**
+     * Called when the panel is closed
+     * @type {function}
+     */
+    Cuic.Panel.prototype.onClosed = null;
+
+    /**
+     * Called when the panel is opened
+     * @type {function}
+     */
+    Cuic.Panel.prototype.onOpened = null;
 
     /**
      * The original height of the panel
@@ -219,47 +225,42 @@
         var self = this;
         var panel = self.element;
         var location = self.location;
-        duration = duration >= 0 ? 0 : 400;
+        var prop = {};
 
-        // Stop the current animation
-        panel.stop(true, false);
+        if (self.visible) {
+            duration = duration >= 0 ? 0 : 400;
 
-        // Start closing
-        self.closing = true;
+            // Horizontal animation
+            if (location.indexOf("left") !== -1) {
+                prop.left = -panel.outerWidth(true)
+            }
+            else if (location.indexOf("right") !== -1) {
+                panel.css("left", "");
+                prop.right = -panel.outerWidth(true)
+            }
 
-        var cb = function () {
-            self.closing = false;
-            panel.css({
-                display: "none"
+            // Vertical animation
+            if (location.indexOf("bottom") !== -1) {
+                panel.css("top", "");
+                prop.bottom = -panel.outerHeight(true)
+            }
+            else if (location.indexOf("top") !== -1) {
+                panel.css("bottom", "");
+                prop.top = -panel.outerHeight(true)
+            }
+
+            // Close the panel
+            panel.stop(true, false).animate(prop, duration, function () {
+                self.visible = false;
+                panel.css({display: "none"});
+
+                if (typeof self.onClosed === "function") {
+                    self.onClosed.call(self);
+                }
+                if (typeof callback === "function") {
+                    callback.call(self);
+                }
             });
-            if (typeof callback === "function") {
-                callback.call(self);
-            }
-        };
-
-        if (self.horizontal) {
-            if (location.indexOf("bottom") > -1) {
-                panel.animate({
-                    bottom: -panel.outerHeight(true)
-                }, duration, cb);
-            }
-            else if (location.indexOf("top") > -1) {
-                panel.animate({
-                    top: -panel.outerHeight(true)
-                }, duration, cb);
-            }
-        }
-        else {
-            if (location.indexOf("left") > -1) {
-                panel.animate({
-                    left: -panel.outerWidth(true)
-                }, duration, cb);
-            }
-            else if (location.indexOf("right") > -1) {
-                panel.animate({
-                    right: -panel.outerWidth(true)
-                }, duration, cb);
-            }
         }
         return self;
     };
@@ -271,18 +272,29 @@
      */
     Cuic.Panel.prototype.maximize = function (duration) {
         var self = this;
+        var prop = {};
 
-        duration = duration || 0;
+        duration = duration >= 0 ? 0 : 400;
 
         // Save the original size
-        self.originalHeight = self.element.height();
-        self.originalWidth = self.element.width();
-
-        if (self.horizontal) {
-            self.element.animate({width: "100%"}, duration);
-        } else {
-            self.element.animate({height: "100%"}, duration);
+        if (!self.element.is(":animated")) {
+            self.originalHeight = self.element.height();
+            self.originalWidth = self.element.width();
         }
+
+        var horizontalMargin = self.element.outerWidth() - self.element.width();
+        var verticalMargin = self.element.outerHeight() - self.element.height();
+
+        if (self.location.indexOf("bottom") !== -1 || self.location.indexOf("top") !== -1) {
+            prop.width = self.container.width() - horizontalMargin;
+        }
+
+        if (self.location.indexOf("left") !== -1 || self.location.indexOf("right") !== -1) {
+            prop.height = self.container.height() - verticalMargin;
+        }
+
+        self.element.stop(true).animate(prop, duration);
+
         return self;
     };
 
@@ -294,13 +306,13 @@
     Cuic.Panel.prototype.minimize = function (duration) {
         var self = this;
 
-        duration = duration || 0;
+        duration = duration >= 0 ? 0 : 400;
 
-        if (self.horizontal) {
-            self.element.animate({width: self.originalWidth + "px"}, duration);
-        } else {
-            self.element.animate({height: self.originalHeight + "px"}, duration);
-        }
+        self.element.stop(true).animate({
+            width: self.originalWidth,
+            height: self.originalHeight
+        }, duration);
+
         return self;
     };
 
@@ -314,48 +326,69 @@
         var self = this;
         var panel = self.element;
         var location = self.location;
-        duration = duration >= 0 ? 0 : 400;
+        var prop = {};
 
-        // Stop the current animation
-        panel.stop(true, false);
+        if (!self.visible) {
+            duration = duration >= 0 ? 0 : 400;
 
-        // Stop closing
-        self.closing = false;
+            // Resize the content
+            self.resizeContent();
 
-        // Resize the content
-        self.resizeContent();
+            // Set auto display
+            panel.css("display", "");
 
-        if (self.horizontal) {
-            if (location.indexOf("bottom") > -1) {
-                panel.css({
-                    top: "",
-                    display: ""
-                }).animate({
-                    bottom: 0
-                }, duration, callback);
-            }
-            else if (location.indexOf("top") > -1) {
-                panel.css({
-                    bottom: "",
-                    display: ""
-                }).animate({
-                    top: 0
-                }, duration, callback);
-            }
-        } else {
-            if (location.indexOf("left") > -1) {
-                panel.animate({
-                    left: 0
-                }, duration, callback);
-            }
-            else if (location.indexOf("right") > -1) {
+            // Horizontal animation
+            if (location.indexOf("right") !== -1) {
                 panel.css({
                     left: "",
-                    display: ""
-                }).animate({
-                    right: 0
-                }, duration, callback);
+                    right: -panel.outerWidth()
+                });
+                prop.right = 0
+            } else if (location.indexOf("left") !== -1) {
+                panel.css({
+                    right: "",
+                    left: -panel.outerWidth()
+                });
+                prop.left = 0
             }
+
+            // Vertical animation
+            if (location.indexOf("bottom") !== -1) {
+                panel.css({
+                    top: "",
+                    bottom: -panel.outerHeight()
+                });
+                prop.bottom = 0
+            }
+            else if (location.indexOf("top") !== -1) {
+                panel.css({
+                    bottom: "",
+                    top: -panel.outerHeight()
+                });
+                prop.top = 0
+            }
+
+            // Fill missing properties
+            if ((prop.left != null || prop.right != null) && prop.bottom == null && prop.top == null) {
+                prop.top = 0;
+                prop.bottom = "";
+            }
+            if ((prop.bottom != null || prop.top != null) && prop.left == null && prop.right == null) {
+                prop.left = 0;
+                prop.right = "";
+            }
+
+            // Open the panel
+            panel.stop(true, false).animate(prop, duration, function () {
+                self.visible = true;
+
+                if (typeof self.onOpened === "function") {
+                    self.onOpened.call(self);
+                }
+                if (typeof callback === "function") {
+                    callback.call(self);
+                }
+            });
         }
         return self;
     };
@@ -395,26 +428,21 @@
 
         // Use container for max height
         if (self.container && self.container !== document.body) {
-            maxHeight = self.container.height();
+            maxHeight = self.container.innerHeight();
         }
 
         // Set panel max height
-        maxHeight -= parseFloat(self.element.css("margin-top"));
-        maxHeight -= parseFloat(self.element.css("margin-bottom"));
-        maxHeight -= parseFloat(self.element.css("padding-top"));
-        maxHeight -= parseFloat(self.element.css("padding-bottom"));
-        self.element.css("max-height", maxHeight + "px");
+        maxHeight -= self.element.outerHeight(true) - self.element.height();
+        self.element.css("max-height", maxHeight);
 
         // Set content max height
         var contentMaxHeight = maxHeight;
-        contentMaxHeight -= parseFloat(self.content.css("margin-top"));
-        contentMaxHeight -= parseFloat(self.content.css("margin-bottom"));
-        contentMaxHeight -= parseFloat(self.content.css("padding-top"));
-        contentMaxHeight -= parseFloat(self.content.css("padding-bottom"));
+        contentMaxHeight -= self.content.outerHeight(true) - self.content.height();
 
         if (self.header) {
             contentMaxHeight -= self.header.outerHeight(true);
         }
+
         if (self.footer) {
             contentMaxHeight -= self.footer.outerHeight(true);
         }
@@ -438,11 +466,10 @@
     Cuic.Panel.prototype.toggle = function (callback) {
         var self = this;
 
-        if (!self.element.is(":visible") || self.closing) {
-            self.open(callback);
-        }
-        else {
+        if (self.visible) {
             self.close(callback);
+        } else {
+            self.open(callback);
         }
         return self;
     };

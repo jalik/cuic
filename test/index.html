@@ -206,7 +206,7 @@
                         var gridHeight = sandbox.find('[name=gridHeight]').val();
                         var gridWidth = sandbox.find('[name=gridWidth]').val();
 
-                        window.grid = Cuic.grid({
+                        grid = Cuic.grid({
                             animSpeed: 200,
                             autoResize: autoResize.is(":checked"),
                             cols: cols.val(),
@@ -219,7 +219,7 @@
                             spacing: spacing.val(),
                             target: "#grid"
                         });
-                    });
+                    }).click();
                     autoResize.on("change", function () {
                         grid.autoResize = autoResize.is(":checked");
                         grid.minimize();
@@ -357,12 +357,10 @@
                 <label class="inline">
                     <span class="label">location</span>
                     <select name="location">
-                        <option selected>100px top</option>
                         <option>left top</option>
                         <option>left</option>
                         <option>left bottom</option>
                         <option>top</option>
-                        <option>center</option>
                         <option>bottom</option>
                         <option>right top</option>
                         <option>right</option>
@@ -380,10 +378,6 @@
                 <label class="inline">
                     <span class="label">container</span>
                     <input type="checkbox" name="container" checked>
-                </label>
-                <label class="inline">
-                    <span class="label">horizontal</span>
-                    <input type="checkbox" name="horizontal">
                 </label>
                 <label class="inline">
                     <span class="label">maximized</span>
@@ -413,11 +407,6 @@
                                 <li>Item 3</li>
                                 <li>Item 4</li>
                                 <li>Item 5</li>
-                                <li>Item 6</li>
-                                <li>Item 7</li>
-                                <li>Item 8</li>
-                                <li>Item 9</li>
-                                <li>Item 10</li>
                             </ul>
                         </div>
                         <footer class="panel-footer">Footer -
@@ -430,38 +419,55 @@
             <script>
                 $(document).ready(function () {
                     var sandbox = $('#sb-panel');
+                    var autoClose = sandbox.find('[name=autoClose]');
+                    var container = sandbox.find('[name=container]');
+                    var css = sandbox.find('[name=css]');
+                    var horizontal = sandbox.find('[name=horizontal]');
+                    var location = sandbox.find('[name=location]');
+                    var maximized = sandbox.find('[name=maximized]');
+                    var visible = sandbox.find('[name=visible]');
+
                     var run = function () {
-                        var autoClose = sandbox.find('[name=autoClose]').is(':checked');
-                        var container = sandbox.find('[name=container]').is(':checked');
-                        var css = sandbox.find('[name=css]').val();
-                        var horizontal = sandbox.find('[name=horizontal]').is(':checked');
-                        var location = sandbox.find('[name=location]').val();
-                        var maximized = sandbox.find('[name=maximized]').is(':checked');
-                        var visible = sandbox.find('[name=visible]').is(':checked');
 
                         window.panel = Cuic.panel({
-                            autoClose: autoClose,
-                            container: container ? '#sb-panel .blueprint' : document.body,
-                            css: css,
-                            horizontal: horizontal,
-                            location: location,
-                            maximized: maximized,
+                            autoClose: autoClose.is(':checked'),
+                            container: container.is(':checked') ? '#sb-panel .blueprint' : document.body,
+                            css: css.val(),
+                            horizontal: horizontal.is(':checked'),
+                            location: location.val(),
+                            maximized: maximized.is(':checked'),
                             target: '#panel',
-                            visible: visible
+                            visible: visible.is(':checked')
                         });
                     };
                     sandbox.find('.run').on('click', function (ev) {
                         ev.stopPropagation();
                         run();
-                        sandbox.find('.fn-close').on('click', function (ev) {
-                            panel.close();
-                        });
-                        sandbox.find('.fn-open').on('click', function (ev) {
-                            panel.open();
-                        });
-                        sandbox.find('.fn-toggle').on('click', function (ev) {
-                            panel.toggle();
-                        });
+                    }).click();
+                    sandbox.find('.fn-close').on('click', function (ev) {
+                        panel.close();
+                    });
+                    sandbox.find('.fn-open').on('click', function (ev) {
+                        panel.open();
+                    });
+                    sandbox.find('.fn-toggle').on('click', function (ev) {
+                        panel.toggle();
+                    });
+                    autoClose.on("change", function () {
+                        panel.autoClose = autoClose.is(":checked");
+                    });
+                    horizontal.on("change", function () {
+                        panel.horizontal = horizontal.is(":checked");
+                    });
+                    maximized.on("change", function () {
+                        if (maximized.is(":checked")) {
+                            panel.maximize();
+                        } else {
+                            panel.minimize();
+                        }
+                    });
+                    location.on("change", function () {
+                        panel.location = location.val();
                     });
                 });
             </script>

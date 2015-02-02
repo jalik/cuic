@@ -66,6 +66,9 @@
             self.element.css("position", "relative");
         }
 
+        // Get the container
+        self.container = $(options.container || self.element.offsetParent());
+
         /**
          * This method is called the element is resizing
          * @param ev
@@ -78,24 +81,48 @@
             // Prevent selection
             ev.preventDefault();
 
-            var height = self.element.height();
-            var width = self.element.width();
+            var containerLeft = self.container.offset().left;
+            var containerTop = self.container.offset().top;
+            var elementHeight = self.element.height();
+            var elementWidth = self.element.width();
+            var elementPaddingBottom = parseInt(self.element.css("padding-bottom"));
+            var elementPaddingLeft = parseInt(self.element.css("padding-left"));
+            var elementPaddingRight = parseInt(self.element.css("padding-right"));
+            var elementPaddingTop = parseInt(self.element.css("padding-top"));
 
             // Calculate the ratio
-            ratio = height / width;
+            ratio = elementHeight / elementWidth;
 
             self.element.addClass("resizing");
 
             var timer = setInterval(function () {
+                var containerHeight = self.container.innerHeight();
+                var containerWidth = self.container.innerWidth();
+                var elementLeft = self.element.offset().left;
+                var elementTop = self.element.offset().top;
+                var maxHeight = containerHeight - (elementTop - containerTop + elementPaddingLeft + elementPaddingRight);
+                var maxWidth = containerWidth - (elementLeft - containerLeft + elementPaddingBottom + elementPaddingTop);
+                var diffX = Cuic.mouseX - ev.clientX;
+                var diffY = Cuic.mouseY - ev.clientY;
                 var newHeight = null;
                 var newWidth = null;
 
+                // Resize horizontally
                 if (self.horizontal && horizontalHandlers.indexOf(ev.target) !== -1) {
-                    newWidth = width + Cuic.mouseX - ev.clientX;
+                    newWidth = elementWidth + diffX;
+
+                    if (newWidth > maxWidth) {
+                        newWidth = maxWidth;
+                    }
                 }
 
+                // Resize vertically
                 if (self.vertical && verticalHandlers.indexOf(ev.target) !== -1) {
-                    newHeight = height + Cuic.mouseY - ev.clientY;
+                    newHeight = elementHeight + diffY;
+
+                    if (newHeight > maxHeight) {
+                        newHeight = maxHeight;
+                    }
                 }
 
                 if (self.keepRatio) {
@@ -227,6 +254,7 @@
             && (!Number(this.minWidth) || width >= this.minWidth);
     };
 
+    Cuic.Draggable.prototype.container = null;
     Cuic.Resizable.prototype.element = null;
     Cuic.Resizable.prototype.fps = 30;
     Cuic.Resizable.prototype.horizontal = true;
