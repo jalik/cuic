@@ -17,7 +17,7 @@
             onAttach: null,
             onDetach: null,
             target: null,
-            zIndex: 10
+            zIndex: 1
         }, options);
 
         var closed = false;

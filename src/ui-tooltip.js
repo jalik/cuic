@@ -24,7 +24,7 @@
             classes: "tooltip",
             css: null,
             target: null,
-            zIndex: 10
+            zIndex: self.zIndex
         }, options);
 
         // Set options
@@ -82,6 +82,12 @@
      * @type {jQuery}
      */
     Cuic.Tooltip.prototype.target = null;
+
+    /**
+     * The tooltip z-position
+     * @type {number}
+     */
+    Cuic.Tooltip.prototype.zIndex = 1;
 
     /**
      * Closes the tooltip

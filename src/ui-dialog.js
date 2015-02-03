@@ -33,7 +33,7 @@
             modal: self.modal,
             target: null,
             title: null,
-            zIndex: 10
+            zIndex: self.zIndex
         }, options);
 
         // Copy options
@@ -197,6 +197,12 @@
      * @type {boolean}
      */
     Cuic.Dialog.prototype.modal = true;
+
+    /**
+     * The dialog z-position
+     * @type {number}
+     */
+    Cuic.Dialog.prototype.zIndex = 1;
 
     /**
      * Adds a button to the dialog

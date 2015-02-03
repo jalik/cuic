@@ -39,7 +39,7 @@
         }
         else {
             // Set the first tab as default if the default tab is not defined in the HTML
-            self.tabs.eq(this.defaultTab).addClass("default");
+            self.tabs.eq(self.defaultTab).addClass("default");
         }
 
         // Set default tab as active

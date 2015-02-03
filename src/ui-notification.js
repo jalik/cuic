@@ -20,16 +20,16 @@
 
         // Set default options
         options = $.extend(true, {
-            autoClose: true,
-            autoRemove: true,
+            autoClose: self.autoClose,
+            autoRemove: self.autoRemove,
             classes: "notification",
             closeButton: "×",
             container: null,
             content: null,
             css: null,
-            duration: 2000,
-            location: "center",
-            zIndex: 10
+            duration: self.duration,
+            location: self.location,
+            zIndex: self.zIndex
         }, options);
 
         // Copy options
@@ -93,6 +93,12 @@
      * @type {string}
      */
     Cuic.Notification.prototype.location = "center";
+
+    /**
+     * The notification z-position
+     * @type {number}
+     */
+    Cuic.Notification.prototype.zIndex = 1;
 
     /**
      * Closes the notification

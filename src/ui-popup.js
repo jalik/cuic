@@ -20,14 +20,14 @@
 
         // Set default options
         options = $.extend(true, {
-            anchor: "right",
-            autoClose: true,
-            autoRemove: true,
+            anchor: self.anchor,
+            autoClose: self.autoClose,
+            autoRemove: self.autoRemove,
             classes: "popup",
             content: null,
             css: null,
             target: null,
-            zIndex: 10
+            zIndex: self.zIndex
         }, options);
 
         // Set options
@@ -108,6 +108,12 @@
      * @type {jQuery}
      */
     Cuic.Popup.prototype.target = null;
+
+    /**
+     * The popup z-position
+     * @type {number}
+     */
+    Cuic.Popup.prototype.zIndex = 1;
 
     /**
      * Closes the popup

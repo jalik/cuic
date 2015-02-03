@@ -20,21 +20,21 @@
 
         // Set default options
         options = $.extend(true, {
-            autoClose: true,
+            autoClose: self.autoClose,
             classes: "panel",
             closeButton: "×",
             container: null,
             content: null,
             css: null,
             footer: null,
-            location: null,
-            maximized: false,
+            location: self.location,
+            maximized: self.maximized,
             onClosed: self.onClosed,
             onOpened: self.onOpened,
             target: null,
             title: null,
-            visible: false,
-            zIndex: 10
+            visible: self.visible,
+            zIndex: self.zIndex
         }, options);
 
         // Copy options
@@ -226,6 +226,12 @@
      * @type {number}
      */
     Cuic.Panel.prototype.originalWidth = null;
+
+    /**
+     * The panel z-position
+     * @type {number}
+     */
+    Cuic.Panel.prototype.zIndex = 1;
 
     /**
      * Closes the panel
