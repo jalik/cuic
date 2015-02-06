@@ -20,22 +20,26 @@
 
         // Default options
         options = $.extend(true, {
+            classes: self.classes,
             fps: self.fps,
             horizontal: self.horizontal,
             onDrag: self.onDrag,
             onDragStart: self.onDragStart,
             onDragStop: self.onDragStop,
+            rootOnly: self.rootOnly,
             stepX: self.stepX,
             stepY: self.stepY,
             vertical: self.vertical
         }, options);
 
         // Define attributes
+        self.classes = options.classes;
         self.fps = Number(options.fps);
         self.horizontal = options.horizontal;
         self.onDrag = options.onDrag;
         self.onDragStart = options.onDragStart;
         self.onDragStop = options.onDragStop;
+        self.rootOnly = options.rootOnly;
         self.stepX = Number(options.stepX);
         self.stepY = Number(options.stepY);
         self.vertical = options.vertical;
@@ -45,9 +49,6 @@
             self.element = $(options.target);
         }
 
-        // Get the area that received the focus for dragging
-        self.area = $(options.area || self.element);
-
         // Get the container
         self.container = $(options.container || self.element.offsetParent());
 
@@ -56,11 +57,28 @@
             self.element.parent().css("position", "relative");
         }
 
+        // Get the area that received the focus for dragging
+        self.area = $(options.area || self.element);
+
+        // Add the draggable classes
+        self.area.addClass(self.classes);
+
         // Change cursor icon over dragging area
         self.area.css("cursor", "move");
 
+        $(document).ready(function () {
+            $(document.head).append($("<style>", {
+                text: "." + self.classes + " > * { cursor: auto }"
+            }));
+        });
+
         // Start the drag event on mouse down
         self.area.on("mousedown", function (ev) {
+            // Ignore dragging if the target is not the root
+            if (self.rootOnly && ev.target !== ev.currentTarget) {
+                return;
+            }
+
             if (typeof self.onDragStart === "function") {
                 if (self.onDragStart.call(self, ev) === false) return;
             }
@@ -136,6 +154,7 @@
     };
 
     Cuic.Draggable.prototype.area = null;
+    Cuic.Draggable.prototype.classes = "draggable";
     Cuic.Draggable.prototype.container = null;
     Cuic.Draggable.prototype.element = null;
     Cuic.Draggable.prototype.fps = 30;
@@ -143,6 +162,7 @@
     Cuic.Draggable.prototype.onDrag = null;
     Cuic.Draggable.prototype.onDragStart = null;
     Cuic.Draggable.prototype.onDragStop = null;
+    Cuic.Draggable.prototype.rootOnly = true;
     Cuic.Draggable.prototype.stepX = null;
     Cuic.Draggable.prototype.stepY = null;
     Cuic.Draggable.prototype.vertical = true;

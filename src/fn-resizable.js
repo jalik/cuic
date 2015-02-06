@@ -20,6 +20,7 @@
 
         // Default options
         options = $.extend(true, {
+            classes: self.classes,
             fps: self.fps,
             handlerSize: 10,
             horizontal: self.horizontal,
@@ -42,6 +43,7 @@
         var ratio = 1;
 
         // Define attributes
+        self.classes = options.classes;
         self.fps = Number(options.fps) || self.fps;
         self.horizontal = !!options.horizontal;
         self.keepRatio = !!options.keepRatio;
@@ -60,6 +62,9 @@
         if (options.target) {
             self.element = $(options.target);
         }
+
+        // Add the resizable classes
+        self.element.addClass(self.classes);
 
         // Force the target to be the relative parent
         if (self.element.css("position") === "static") {
@@ -254,6 +259,7 @@
             && (!Number(this.minWidth) || width >= this.minWidth);
     };
 
+    Cuic.Draggable.prototype.classes = "resizable";
     Cuic.Draggable.prototype.container = null;
     Cuic.Resizable.prototype.element = null;
     Cuic.Resizable.prototype.fps = 30;

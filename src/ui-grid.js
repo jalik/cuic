@@ -22,22 +22,22 @@
 
         // Default options
         options = $.extend(true, {
-            animSpeed: 200,
-            autoResize: true,
-            cols: 1,
-            colsWidth: 100,
-            editable: true,
-            fps: 30,
-            maxCols: 5,
-            maxRows: 5,
-            minCols: 1,
-            minRows: 1,
-            onWidgetMoved: null,
-            onWidgetResized: null,
-            rows: 1,
-            rowsHeight: 100,
-            spacing: 10,
-            widgetSelector: ".widget"
+            animSpeed: grid.animSpeed,
+            autoResize: grid.autoResize,
+            cols: grid.cols,
+            colsWidth: grid.colsWidth,
+            editable: grid.editable,
+            fps: grid.fps,
+            maxCols: grid.maxCols,
+            maxRows: grid.maxRows,
+            minCols: grid.minCols,
+            minRows: grid.minRows,
+            onWidgetMoved: grid.onWidgetMoved,
+            onWidgetResized: grid.onWidgetResized,
+            rows: grid.rows,
+            rowsHeight: grid.rowsHeight,
+            spacing: grid.spacing,
+            widgetSelector: grid.widgetSelector
         }, options);
 
         // Set the options
@@ -228,6 +228,7 @@
 
         new Cuic.Draggable({
             target: widget.element,
+            rootOnly: true,
             container: grid.element,
             onDrag: function () {
                 var left = parseFloat(element.css("left"));
@@ -246,7 +247,7 @@
                 });
             },
             onDragStart: function (ev) {
-                if (ev.target === ev.currentTarget && grid.editable && widget.draggable && !widget.isResizing()) {
+                if (grid.editable && widget.draggable && !widget.isResizing()) {
                     height = element.outerHeight();
                     width = element.outerWidth();
 
@@ -265,7 +266,6 @@
                     if (grid.autoResize) {
                         grid.maximize();
                     }
-
                     return true;
                 }
                 return false;
@@ -587,6 +587,7 @@
     Cuic.Grid.prototype.rowsHeight = 100;
     Cuic.Grid.prototype.spacing = 10;
     Cuic.Grid.prototype.widgets = {};
+    Cuic.Grid.prototype.widgetSelector = ".widget";
 
     /**
      * Creates a grid widget
@@ -594,63 +595,63 @@
      * @constructor
      */
     Cuic.Grid.Widget = function (options) {
-        var widget = this;
+        var self = this;
 
         // Default options
         options = $.extend(true, {
-            col: 1,
+            col: self.col,
             content: null,
-            draggable: true,
-            maxSizeX: null,
-            maxSizeY: null,
-            minSizeX: 1,
-            minSizeY: 1,
-            resizable: true,
-            row: 1,
-            sizeX: 1,
-            sizeY: 1,
+            draggable: self.draggable,
+            maxSizeX: self.maxSizeX,
+            maxSizeY: self.maxSizeY,
+            minSizeX: self.minSizeX,
+            minSizeY: self.minSizeY,
+            resizable: self.resizable,
+            row: self.row,
+            sizeX: self.sizeX,
+            sizeY: self.sizeY,
             target: null
         }, options);
 
         // Set the options
-        widget.col = parseInt(options.col);
-        widget.draggable = /^true$/gi.test(options.draggable);
-        widget.resizable = /^true$/gi.test(options.resizable);
-        widget.row = parseInt(options.row);
-        widget.maxSizeX = parseInt(options.maxSizeX);
-        widget.maxSizeY = parseInt(options.maxSizeY);
-        widget.minSizeX = parseInt(options.minSizeX);
-        widget.minSizeY = parseInt(options.minSizeY);
-        widget.sizeX = parseInt(options.sizeX);
-        widget.sizeY = parseInt(options.sizeY);
+        self.col = parseInt(options.col);
+        self.draggable = /^true$/gi.test(options.draggable);
+        self.resizable = /^true$/gi.test(options.resizable);
+        self.row = parseInt(options.row);
+        self.maxSizeX = parseInt(options.maxSizeX);
+        self.maxSizeY = parseInt(options.maxSizeY);
+        self.minSizeX = parseInt(options.minSizeX);
+        self.minSizeY = parseInt(options.minSizeY);
+        self.sizeX = parseInt(options.sizeX);
+        self.sizeY = parseInt(options.sizeY);
 
         // Find the target
         if (options.target) {
-            widget.element = $(options.target);
+            self.element = $(options.target);
 
-            if (widget.element.length > 0) {
-                widget.col = parseInt(widget.element.attr("data-col")) || options.col;
-                widget.draggable = !!widget.element.attr("data-draggable") ? /^true$/gi.test(widget.element.attr("data-draggable")) : options.draggable;
-                widget.maxSizeX = parseInt(widget.element.attr("data-max-size-x")) || options.maxSizeX;
-                widget.maxSizeY = parseInt(widget.element.attr("data-max-size-y")) || options.maxSizeY;
-                widget.minSizeX = parseInt(widget.element.attr("data-min-size-x")) || options.minSizeX;
-                widget.minSizeY = parseInt(widget.element.attr("data-min-size-y")) || options.minSizeY;
-                widget.resizable = !!widget.element.attr("data-resizable") ? /^true$/gi.test(widget.element.attr("data-resizable")) : options.resizable;
-                widget.row = parseInt(widget.element.attr("data-row")) || options.row;
-                widget.sizeX = parseInt(widget.element.attr("data-size-x")) || options.sizeX;
-                widget.sizeY = parseInt(widget.element.attr("data-size-y")) || options.sizeY;
+            if (self.element.length > 0) {
+                self.col = parseInt(self.element.attr("data-col")) || options.col;
+                self.draggable = !!self.element.attr("data-draggable") ? /^true$/gi.test(self.element.attr("data-draggable")) : options.draggable;
+                self.maxSizeX = parseInt(self.element.attr("data-max-size-x")) || options.maxSizeX;
+                self.maxSizeY = parseInt(self.element.attr("data-max-size-y")) || options.maxSizeY;
+                self.minSizeX = parseInt(self.element.attr("data-min-size-x")) || options.minSizeX;
+                self.minSizeY = parseInt(self.element.attr("data-min-size-y")) || options.minSizeY;
+                self.resizable = !!self.element.attr("data-resizable") ? /^true$/gi.test(self.element.attr("data-resizable")) : options.resizable;
+                self.row = parseInt(self.element.attr("data-row")) || options.row;
+                self.sizeX = parseInt(self.element.attr("data-size-x")) || options.sizeX;
+                self.sizeY = parseInt(self.element.attr("data-size-y")) || options.sizeY;
             }
         }
 
         // Create the element HTML node
-        if (!widget.element || widget.element.length < 1) {
-            widget.element = $("<div>", {
+        if (!self.element || self.element.length < 1) {
+            self.element = $("<div>", {
                 html: options.content
             });
         }
 
         // Set the style
-        widget.element.addClass("widget");
+        self.element.addClass("widget");
     };
 
     /**

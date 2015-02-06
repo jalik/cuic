@@ -245,7 +245,7 @@
         var location = self.location;
         var prop = {};
 
-        if (self.visible || self.opening) {
+        if (!self.closing && (self.visible || self.opening)) {
             self.opening = false;
             self.closing = true;
             duration = duration >= 0 ? 0 : 400;
@@ -254,7 +254,6 @@
 
             // Horizontal animation
             if (location.indexOf("left") !== -1) {
-                panel.css("right", "");
                 prop.left = -panel.outerWidth(true)
             }
             else if (location.indexOf("right") !== -1) {
@@ -268,7 +267,6 @@
                 prop.bottom = -panel.outerHeight(true)
             }
             else if (location.indexOf("top") !== -1) {
-                panel.css("bottom", "");
                 prop.top = -panel.outerHeight(true)
             }
 
@@ -311,10 +309,12 @@
 
         if (self.location.indexOf("bottom") !== -1 || self.location.indexOf("top") !== -1) {
             prop.width = self.container.width() - horizontalMargin;
+            prop.left = 0;
         }
 
         if (self.location.indexOf("left") !== -1 || self.location.indexOf("right") !== -1) {
             prop.height = self.container.height() - verticalMargin;
+            prop.top = 0;
         }
 
         self.element.stop(true).animate(prop, duration);
@@ -332,9 +332,25 @@
 
         duration = duration >= 0 ? 0 : 400;
 
+        var startHeight = self.element.height();
+        var startWidth = self.element.width();
+
+        self.element.css({
+            height: "auto",
+            width: "auto"
+        });
+
+        var height = self.element.height();
+        var width = self.element.width();
+
+        self.element.css({
+            height: startHeight,
+            width: startWidth
+        });
+
         self.element.stop(true).animate({
-            width: self.originalWidth,
-            height: self.originalHeight
+            height: height,
+            width: width
         }, duration);
 
         return self;
@@ -352,56 +368,55 @@
         var location = self.location;
         var prop = {};
 
-        if (!self.visible || self.closing) {
+        if (!self.opening && (!self.visible || self.closing)) {
             self.closing = false;
             self.opening = true;
             duration = duration >= 0 ? 0 : 400;
 
+            // Set auto display
+            panel.stop(true, false).show();
+
             // Resize the content
             self.resizeContent();
 
-            // Set auto display
-            panel.stop(true, false).css("display", "");
+            if (!self.visible) {
+                // Reposition the panel if panel is not visible
+                Cuic.position(self.element, self.location, self.container);
+            }
 
             // Horizontal animation
             if (location.indexOf("right") !== -1) {
-                panel.css({
-                    left: "",
-                    right: -panel.outerWidth()
-                });
+                if (!self.visible) {
+                    panel.css({
+                        right: -panel.outerWidth()
+                    });
+                }
                 prop.right = 0
             } else if (location.indexOf("left") !== -1) {
-                panel.css({
-                    right: "",
-                    left: -panel.outerWidth()
-                });
+                if (!self.visible) {
+                    panel.css({
+                        left: -panel.outerWidth()
+                    });
+                }
                 prop.left = 0
             }
 
             // Vertical animation
             if (location.indexOf("bottom") !== -1) {
-                panel.css({
-                    top: "",
-                    bottom: -panel.outerHeight()
-                });
+                if (!self.visible) {
+                    panel.css({
+                        bottom: -panel.outerHeight()
+                    });
+                }
                 prop.bottom = 0
             }
             else if (location.indexOf("top") !== -1) {
-                panel.css({
-                    bottom: "",
-                    top: -panel.outerHeight()
-                });
+                if (!self.visible) {
+                    panel.css({
+                        top: -panel.outerHeight()
+                    });
+                }
                 prop.top = 0
-            }
-
-            // Fill missing properties
-            if ((prop.left != null || prop.right != null) && prop.bottom == null && prop.top == null) {
-                prop.top = 0;
-                prop.bottom = "";
-            }
-            if ((prop.bottom != null || prop.top != null) && prop.left == null && prop.right == null) {
-                prop.left = 0;
-                prop.right = "";
             }
 
             // Open the panel

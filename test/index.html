@@ -102,7 +102,7 @@
                 </label>
                 <button class="run">Run</button>
 
-                <div class="blueprint" style="height: 400px; margin-top: 1em"></div>
+                <div class="blueprint" style="height: 500px; margin-top: 1em"></div>
             </div>
             <script>
                 $(document).ready(function () {
@@ -120,7 +120,7 @@
                             modal: modal,
                             location: location,
                             title: sandbox.find("[name=title]").is(":checked") ? 'Header & title' : null,
-                            content: 'This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p><p>Etiam id eros ut leo aliquam bibendum ac id lectus.</p>',
+                            content: 'This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p>',
                             buttons: sandbox.find("[name=buttons]").is(":checked") ? [
                                 {
                                     label: 'Accept'
@@ -134,7 +134,7 @@
                     sandbox.find('.run').on('click', function (ev) {
                         ev.stopPropagation();
                         run();
-                    });
+                    }).click();
                 });
             </script>
         </div>
@@ -395,7 +395,7 @@
                     <button class="fn-toggle">toggle()</button>
                 </div>
 
-                <div class="blueprint" style="height: 300px;margin-top: 1em">
+                <div class="blueprint" style="height: 500px;margin-top: 1em">
                     <div id="panel" class="panel">
                         <header class="panel-header">
                             <h5 class="panel-title">Title</h5>

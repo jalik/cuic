@@ -142,8 +142,9 @@
         // Make the dialog draggable
         if (self.draggable) {
             new Cuic.Draggable({
-                area: self.header,
+                area: self.element,
                 container: self.container,
+                rootOnly: true,
                 target: self.element
             });
         }
