@@ -6,15 +6,6 @@
     /**
      * Creates a Grid
      * @param options
-     * @return {Cuic.Grid}
-     */
-    Cuic.grid = function (options) {
-        return new Cuic.Grid(options);
-    };
-
-    /**
-     * Creates a Grid
-     * @param options
      * @constructor
      */
     Cuic.Grid = function (options) {

@@ -4,15 +4,6 @@
     /**
      * Makes an object draggable
      * @param options
-     * @return {Cuic.Draggable}
-     */
-    Cuic.draggable = function (options) {
-        return new Cuic.Draggable(options);
-    };
-
-    /**
-     * Makes an object draggable
-     * @param options
      * @constructor
      */
     Cuic.Draggable = function (options) {

@@ -4,15 +4,6 @@
     /**
      * Makes an object resizable
      * @param options
-     * @return {Cuic.Resizable}
-     */
-    Cuic.resizable = function (options) {
-        return new Cuic.Resizable(options);
-    };
-
-    /**
-     * Makes an object resizable
-     * @param options
      * @constructor
      */
     Cuic.Resizable = function (options) {

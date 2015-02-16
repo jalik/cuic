@@ -3,10 +3,11 @@
 
     /**
      * Creates a navbar
+     * @todo create an object
      * @param options
      * @return {*}
      */
-    Cuic.navbar = function (options) {
+    Cuic.Navbar = function (options) {
         // Set default options
         options = $.extend(true, {
             hookedClass: "attached",

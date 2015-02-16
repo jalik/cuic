@@ -4,15 +4,6 @@
     /**
      * Creates a dialog
      * @param options
-     * @return {Cuic.Dialog}
-     */
-    Cuic.dialog = function (options) {
-        return new Cuic.Dialog(options);
-    };
-
-    /**
-     * Creates a dialog
-     * @param options
      * @constructor
      */
     Cuic.Dialog = function (options) {
@@ -142,7 +133,7 @@
         // Make the dialog draggable
         if (self.draggable) {
             new Cuic.Draggable({
-                area: self.element,
+                area: self.title,
                 container: self.container,
                 rootOnly: true,
                 target: self.element

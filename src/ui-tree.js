@@ -3,10 +3,11 @@
 
     /**
      * Enables interactions on a tree
+     * @todo create an object
      * @param options
      * @return {jQuery}
      */
-    Cuic.tree = function (options) {
+    Cuic.Tree = function (options) {
         // Set default options
         options = $.extend(true, {
             collapsed: true,

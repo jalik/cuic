@@ -4,15 +4,6 @@
     /**
      * Creates a popup
      * @param options
-     * @return {Cuic.Popup}
-     */
-    Cuic.popup = function (options) {
-        return new Cuic.Popup(options);
-    };
-
-    /**
-     * Creates a popup
-     * @param options
      * @constructor
      */
     Cuic.Popup = function (options) {

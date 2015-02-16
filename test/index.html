@@ -74,10 +74,10 @@
                         <option>left bottom</option>
                         <option>top</option>
                         <option selected>center</option>
-                        <option>bottom</option>
                         <option>right top</option>
                         <option>right</option>
                         <option>right bottom</option>
+                        <option>bottom</option>
                     </select>
                 </label>
                 <label class="inline">
@@ -114,7 +114,7 @@
                         var css = sandbox.find('[name=css]').val();
                         var location = sandbox.find('[name=location]').val();
 
-                        window.dialog = Cuic.dialog({
+                        window.dialog = new Cuic.Dialog({
                             container: container ? '#sb-dialog .blueprint' : document.body,
                             css: css,
                             modal: modal,
@@ -134,7 +134,7 @@
                     sandbox.find('.run').on('click', function (ev) {
                         ev.stopPropagation();
                         run();
-                    }).click();
+                    });
                 });
             </script>
         </div>
@@ -206,7 +206,7 @@
                         var gridHeight = sandbox.find('[name=gridHeight]').val();
                         var gridWidth = sandbox.find('[name=gridWidth]').val();
 
-                        grid = Cuic.grid({
+                        grid = new Cuic.Grid({
                             animSpeed: 200,
                             autoResize: autoResize.is(":checked"),
                             cols: cols.val(),
@@ -272,7 +272,7 @@
                         var collapse = sandbox.find('[name=collapse]').is(':checked');
                         var scroll = sandbox.find('[name=scroll]').is(':checked');
 
-                        window.navbar = Cuic.navbar({
+                        window.navbar = new Cuic.Navbar({
                             collapse: collapse,
                             scroll: scroll,
                             target: navbar
@@ -300,10 +300,10 @@
                         <option>left bottom</option>
                         <option>top</option>
                         <option selected>center</option>
-                        <option>bottom</option>
                         <option>right top</option>
                         <option>right</option>
                         <option>right bottom</option>
+                        <option>bottom</option>
                     </select>
                 </label>
                 <label class="inline">
@@ -326,23 +326,73 @@
                 $(document).ready(function () {
                     var sandbox = $('#sb-notification');
                     var run = function () {
-                        var autoClose = sandbox.find('[name=autoClose]').is(':checked');
+                        var autoClose = sandbox.find('[name=autoClose]');
                         var container = sandbox.find('[name=container]').is(':checked');
-                        var duration = sandbox.find('[name=duration]').val();
-                        var location = sandbox.find('[name=location]').val();
+                        var duration = sandbox.find('[name=duration]');
+                        var location = sandbox.find('[name=location]');
 
-                        window.notification = Cuic.notification({
-                            autoClose: autoClose,
-                            autoRemove: false,
+                        window.notification = new Cuic.Notification({
+                            autoClose: autoClose.is(":checked"),
+                            autoRemove: true,
                             container: container ? '#sb-notification .blueprint' : document.body,
-                            content: 'Notification from <b>' + location + '</b>',
-                            duration: duration,
-                            location: location
+                            content: 'Notification from <b>' + location.val() + '</b>',
+                            duration: duration.val(),
+                            location: location.val()
                         }).open();
                     };
                     sandbox.find('.run').on('click', function (ev) {
                         ev.stopPropagation();
                         run();
+                    });
+                });
+            </script>
+        </div>
+
+        <div id="ui-notification-stack">
+            <h2><a href="#">Cuic.</a>Notification.Stack</h2>
+
+            <p>Notification areas are used to centralize notifications display.</p>
+
+            <div class="sandbox" id="sb-notification-stack">
+                <label class="inline">
+                    <span class="label">location</span>
+                    <select name="location">
+                        <option>left top</option>
+                        <option>left</option>
+                        <option>left bottom</option>
+                        <option selected>top</option>
+                        <option>center</option>
+                        <option>right top</option>
+                        <option>right</option>
+                        <option>right bottom</option>
+                        <option>bottom</option>
+                    </select>
+                </label>
+                <button class="run">Run</button>
+
+                <div class="blueprint" style="height: 300px;margin-top: 1em;overflow: auto"></div>
+            </div>
+            <script>
+                $(document).ready(function () {
+                    var sandbox = $('#sb-notification-stack');
+                    var run = function () {
+                        var location = sandbox.find('[name=location]');
+
+                        window.notificationStack = new Cuic.Notification.Stack({
+                            container: '#sb-notification-stack .blueprint',
+                            css: "width:200px",
+                            location: location.val()
+                        });
+                    };
+                    sandbox.find('.run').on('click', function (ev) {
+                        ev.stopPropagation();
+                        run();
+                        setInterval(function () {
+                            notificationStack.add({
+                                autoClose: true,
+                                content: "Custom event at <em>" + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds() + "</em>"
+                            });
+                        }, 1000);
                     });
                 });
             </script>
@@ -358,13 +408,13 @@
                     <span class="label">location</span>
                     <select name="location">
                         <option>left top</option>
-                        <option>left</option>
+                        <option selected>left</option>
                         <option>left bottom</option>
                         <option>top</option>
-                        <option>bottom</option>
                         <option>right top</option>
                         <option>right</option>
                         <option>right bottom</option>
+                        <option>bottom</option>
                     </select>
                 </label>
                 <label class="inline">
@@ -373,7 +423,7 @@
                 </label>
                 <label class="inline">
                     <span class="label">autoClose</span>
-                    <input type="checkbox" name="autoClose" checked>
+                    <input type="checkbox" name="autoClose">
                 </label>
                 <label class="inline">
                     <span class="label">container</span>
@@ -429,7 +479,7 @@
 
                     var run = function () {
 
-                        window.panel = Cuic.panel({
+                        window.panel = new Cuic.Panel({
                             autoClose: autoClose.is(':checked'),
                             container: container.is(':checked') ? '#sb-panel .blueprint' : document.body,
                             css: css.val(),
@@ -489,7 +539,7 @@
                 $(document).ready(function () {
                     var popupButton = $("#sb-popup .blueprint > button");
 
-                    window.popup = Cuic.popup({
+                    window.popup = new Cuic.Popup({
                         autoClose: true,
                         autoRemove: false,
                         target: popupButton
@@ -565,7 +615,7 @@
             </div>
             <script>
                 $(document).ready(function () {
-                    window.table = Cuic.table({
+                    window.table = new Cuic.Table({
                         target: '#sb-table table',
                         selectRowOnClick: true
                     });
@@ -627,7 +677,7 @@
             </div>
             <script>
                 $(document).ready(function () {
-                    window.tabs = Cuic.tabs({
+                    window.tabs = new Cuic.Tabs({
                         target: '#sb-tabs > .tabs',
                         content: '#sb-tabs > .tab-content'
                     });
@@ -638,53 +688,78 @@
         <div id="ui-tooltip">
             <h2><a href="#">Cuic.</a>Tooltip</h2>
 
-            <p>Tooltips are used to display a short description, (eg: help or tips).</p>
+            <p>Tooltips are used to display a short description (eg: help, tips, etc.) next to an element.</p>
 
             <div class="sandbox" id="sb-tooltip">
                 <label class="inline">
                     <span class="label">anchor</span>
                     <select name="anchor">
-                        <option>bottom</option>
-                        <option>bottom left</option>
-                        <option>bottom right</option>
-                        <option selected>center</option>
+                        <option>left top</option>
                         <option>left</option>
-                        <option>right</option>
+                        <option>left bottom</option>
                         <option>top</option>
-                        <option>top left</option>
-                        <option>top right</option>
+                        <option>right top</option>
+                        <option>right</option>
+                        <option selected>right bottom</option>
+                        <option>bottom</option>
                     </select>
                 </label>
                 <label class="inline">
                     <span class="label">css</span>
-                    <input type="text" name="css" value="margin: 5px">
+                    <input type="text" name="css" value="margin: 10px">
+                </label>
+                <label class="inline">
+                    <span class="label">followPointer</span>
+                    <input type="checkbox" name="followPointer" checked>
                 </label>
                 <button class="run">Run</button>
 
                 <div class="blueprint" style="height: 400px;margin-top: 1em">
-                    <img src="css/square-100.png" style="position:absolute;top:100px;left:300px"
-                         title="Center, this is a long description of the image to demonstrate that the tooltip can handle easily big text">
-                    <img src="css/square-100.png" title="Top left" style="position:absolute;top:20px;left:20px">
-                    <img src="css/square-100.png" title="Top right" style="position:absolute;top:20px;right:20px">
-                    <img src="css/square-100.png" title="Bottom right" style="position:absolute;bottom:20px;right:20px">
-                    <img src="css/square-100.png" title="Bottom left" style="position:absolute;bottom:20px;left:20px">
+                    <div class="group1">
+                        <img src="css/square-100.png" title="Top left" style="margin: 10px">
+                        <img src="css/square-100.png" title="Top right" style="margin: 10px">
+                    </div>
+                    <div class="group2">
+                        <img src="css/square-100.png" title="Bottom left" style="margin: 10px">
+                        <img src="css/square-100.png" title="Bottom right" style="margin: 10px">
+                        <img src="css/square-100.png" style="margin: 10px"
+                             title="<em>Description</em><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in pharetra tortor. Mauris tortor dui, malesuada sit amet dolor ut, tincidunt porttitor mauris. Cras rutrum risus nec justo sollicitudin ultricies. Phasellus fringilla posuere erat, bibendum blandit turpis aliquet quis. Nam sagittis libero eget neque imperdiet facilisis nec vitae lacus. Morbi. ">
+                    </div>
                 </div>
             </div>
             <script>
                 $(document).ready(function () {
                     var sandbox = $('#sb-tooltip');
+                    var anchor = sandbox.find("[name=anchor]");
+                    var followPointer = sandbox.find("[name=followPointer]");
                     var run = function () {
-                        var anchor = sandbox.find('[name=anchor]').val();
                         var css = sandbox.find('[name=css]').val();
 
-                        window.tooltip = Cuic.tooltip({
-                            autoClose: true,
-                            autoRemove: false,
-                            anchor: anchor,
+                        window.tooltip = new Cuic.Tooltip({
+                            anchor: anchor.val(),
+                            attribute: "title",
                             css: css,
-                            target: '[title]'
+                            followPointer: followPointer.is(":checked"),
+                            target: sandbox.find('.group1').children('[title]')
+                        });
+
+                        window.tooltipBlue = new Cuic.Tooltip({
+                            anchor: anchor.val(),
+                            attribute: "title",
+                            css: css + ";background:rgba(93,190,221,0.9)",
+                            followPointer: followPointer.is(":checked"),
+                            target: sandbox.find('.group2').children('[title]')
                         });
                     };
+
+                    anchor.on("change", function () {
+                        tooltip.anchor = anchor.val();
+                    });
+
+                    followPointer.on("change", function () {
+                        tooltip.followPointer = followPointer.is(":checked");
+                    });
+
                     sandbox.find('.run').on('click', function (ev) {
                         ev.stopPropagation();
                         run();
@@ -734,7 +809,7 @@
             </div>
             <script>
                 $(document).ready(function () {
-                    window.tree = Cuic.tree({
+                    window.tree = new Cuic.Tree({
                         target: '#sb-tree > .tree',
                         collapsed: true
                     });

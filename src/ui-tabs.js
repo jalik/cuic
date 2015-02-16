@@ -4,15 +4,6 @@
     var tabIndex = 0;
 
     /**
-     * Enables interactions on tabs
-     * @param options
-     * @return {Cuic.Tabs}
-     */
-    Cuic.tabs = function (options) {
-        return new Cuic.Tabs(options);
-    };
-
-    /**
      * Creates a group of tabs
      * @param options
      * @constructor

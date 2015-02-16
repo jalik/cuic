@@ -5,10 +5,11 @@
 
     /**
      * Enables interactions on a table
+     * @todo create an object
      * @param options
      * @return {jQuery}
      */
-    Cuic.table = function (options) {
+    Cuic.Table = function (options) {
         // Set default options
         options = $.extend(true, {
             onSorted: null,

@@ -4,15 +4,6 @@
     /**
      * Creates a panel
      * @param options
-     * @return {Cuic.Panel}
-     */
-    Cuic.panel = function (options) {
-        return new Cuic.Panel(options);
-    };
-
-    /**
-     * Creates a panel
-     * @param options
      * @constructor
      */
     Cuic.Panel = function (options) {

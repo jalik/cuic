@@ -61,54 +61,89 @@
      * @return {jQuery}
      */
     Cuic.anchor = function (obj, position, target) {
-        target = $(target);
-        var targetHeight = target.outerHeight();
+        var isPixel = target instanceof Array && target.length === 2;
+
+        if (!isPixel) {
+            target = $(target);
+        }
+
+        var targetHeight = isPixel ? 1 : target.outerHeight();
         var targetHeightHalf = targetHeight / 2;
-        var targetWidth = target.outerWidth();
+        var targetWidth = isPixel ? 1 : target.outerWidth();
         var targetWidthHalf = targetWidth / 2;
+
         var objWidth = obj.outerWidth(true);
         var objWidthHalf = objWidth / 2;
         var objHeight = obj.outerHeight(true);
         var objHeightHalf = objHeight / 2;
 
-        var offset = target.offset();
+        var offset = isPixel ? {left: target[0], top: target[1]} : target.offset();
 
-        var posX = 0;
-        var posY = 0;
+        var pos = position.split(" ");
 
-        switch (position) {
+        var styles = {
+            bottom: "",
+            right: ""
+        };
+
+        switch (pos[0]) {
+            case "bottom":
+                styles.left = offset.left + targetWidthHalf - objWidthHalf;
+                styles.top = offset.top + targetHeight;
+                break;
+
             case "left":
-                posX = offset.left - objWidth;
-                posY = offset.top + targetHeightHalf - objHeightHalf;
+                styles.left = offset.left - objWidth;
+                styles.top = offset.top + targetHeightHalf - objHeightHalf;
                 break;
 
             case "right":
-                posX = offset.left + targetWidth;
-                posY = offset.top + targetHeightHalf - objHeightHalf;
+                styles.left = offset.left + targetWidth;
+                styles.top = offset.top + targetHeightHalf - objHeightHalf;
                 break;
 
             case "top":
-                posX = offset.left + targetWidthHalf - objWidthHalf;
-                posY = offset.top - objHeight;
+                styles.left = offset.left + targetWidthHalf - objWidthHalf;
+                styles.top = offset.top - objHeight;
+                break;
+        }
+
+        switch (pos[1]) {
+            case "bottom":
+                styles.top = offset.top + targetHeight;
                 break;
 
-            default:
-            case "bottom":
-                posX = offset.left + targetWidthHalf - objWidthHalf;
-                posY = offset.top + targetHeight;
+            case "middle":
+                styles.top = offset.top + targetHeightHalf - objHeightHalf;
+                break;
+
+            case "top":
+                styles.top = offset.top - objHeight;
                 break;
         }
 
         if (obj.css("position") === "fixed") {
-            posX -= window.scrollX;
-            posY -= window.scrollY;
+            styles.left -= window.scrollX;
+            styles.top -= window.scrollY;
+        }
+
+        // Check that the element is not positioned outside the screen
+        if (styles.bottom != null && styles.bottom < 0) {
+            styles.bottom = 0;
+        }
+        if (styles.left != null && styles.left < 0) {
+            styles.left = 0;
+        }
+        if (styles.right != null && styles.right < 0) {
+            styles.right = 0;
+        }
+        if (styles.top != null && styles.top < 0) {
+            styles.top = 0;
         }
 
         // Position the object
-        obj.css({
-            left: posX + "px",
-            top: posY + "px"
-        });
+        obj.css(styles);
+
         return obj;
     };
 
@@ -232,7 +267,7 @@
             }
         }
 
-        // Check that the element is not positioned outside the viewport
+        // Check that the element is not positioned outside the screen
         if (styles.bottom != null && styles.bottom < 0) {
             styles.bottom = 0;
         }
