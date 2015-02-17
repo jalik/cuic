@@ -56,7 +56,7 @@
     };
 
     /**
-     * The index of the default tab
+     * The default tab index
      * @type {number}
      */
     Cuic.Tabs.prototype.defaultTab = 0;

@@ -14,7 +14,7 @@
             onHook: null,
             onUnhook: null,
             target: null,
-            zIndex: 10
+            zIndex: 4
         }, options);
 
         var win = $(window);

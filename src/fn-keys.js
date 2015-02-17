@@ -21,39 +21,68 @@
     /**
      * Creates a shortcut
      * @param options
-     * @param callback
      */
-    Cuic.shortcut = function (options, callback) {
+    Cuic.Shortcut = function (options) {
+        var self = this;
+
         options = $.extend(true, {
             altKey: false,
+            callback: null,
             ctrlKey: false,
             shiftKey: false,
             keyCode: null,
-            key: null,
-            target: null
+            target: document.body
         }, options);
+
+        // Define attributes
+        self.altKey = options.altKey;
+        self.callback = options.callback;
+        self.ctrlKey = options.ctrlKey;
+        self.keyCode = options.keyCode;
+        self.shiftKey = options.shiftKey;
 
         // Get the target
         var target = $(options.target);
 
-        if (typeof callback !== "function") {
-            throw  new Error("Callback is not a function");
-        }
-
-        // Monitor key up events
-        var keyUp = function (ev) {
-            if (ev.keyCode === options.keyCode || ev.key === options.key) {
-                if (target.length === 0) {
-                    $(document).off("keyup.dialog", keyUp);
-                    callback.call();
-                }
-                else if ($(document.activeElement).closest(target).length > 0) {
-                    $(document).off("keyup.dialog", keyUp);
-                    callback.call(target);
-                }
+        // Watch key up event
+        target.on("keyup", function (ev) {
+            if (self.keyCode === ev.keyCode
+                && self.altKey === ev.altKey
+                && self.ctrlKey === ev.ctrlKey
+                && self.shiftKey === ev.shiftKey) {
+                options.callback.call(target);
             }
-        };
-        $(document).on("keyup.dialog", keyUp);
+        });
     };
+
+    /**
+     * Should alt key be pressed
+     * @type {boolean}
+     */
+    Cuic.Shortcut.prototype.altKey = false;
+
+    /**
+     * The callback method
+     * @type {function}
+     */
+    Cuic.Shortcut.prototype.callback = null;
+
+    /**
+     * Should ctrl key be pressed
+     * @type {boolean}
+     */
+    Cuic.Shortcut.prototype.ctrlKey = false;
+
+    /**
+     * The key code
+     * @type {number}
+     */
+    Cuic.Shortcut.prototype.keyCode = null;
+
+    /**
+     * Should shift key be pressed
+     * @type {boolean}
+     */
+    Cuic.Shortcut.prototype.shiftKey = false;
 
 })(jQuery);

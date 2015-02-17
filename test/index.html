@@ -67,8 +67,8 @@
 
             <div class="sandbox" id="sb-dialog">
                 <label class="inline">
-                    <span class="label">location</span>
-                    <select name="location">
+                    <span class="label">position</span>
+                    <select name="position">
                         <option>left top</option>
                         <option>left</option>
                         <option>left bottom</option>
@@ -107,18 +107,17 @@
             <script>
                 $(document).ready(function () {
                     var sandbox = $('#sb-dialog');
-
+                    var modal = sandbox.find('[name=modal]');
+                    var container = sandbox.find('[name=container]');
+                    var css = sandbox.find('[name=css]');
+                    var position = sandbox.find('[name=position]');
                     var run = function () {
-                        var modal = sandbox.find('[name=modal]').is(':checked');
-                        var container = sandbox.find('[name=container]').is(':checked');
-                        var css = sandbox.find('[name=css]').val();
-                        var location = sandbox.find('[name=location]').val();
 
                         window.dialog = new Cuic.Dialog({
-                            container: container ? '#sb-dialog .blueprint' : document.body,
-                            css: css,
-                            modal: modal,
-                            location: location,
+                            container: container.is(':checked') ? '#sb-dialog .blueprint' : document.body,
+                            css: css.val(),
+                            modal: modal.is(':checked'),
+                            position: position.val(),
                             title: sandbox.find("[name=title]").is(":checked") ? 'Header & title' : null,
                             content: 'This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p>',
                             buttons: sandbox.find("[name=buttons]").is(":checked") ? [
@@ -293,8 +292,8 @@
 
             <div class="sandbox" id="sb-notification">
                 <label class="inline">
-                    <span class="label">location</span>
-                    <select name="location">
+                    <span class="label">position</span>
+                    <select name="position">
                         <option>left top</option>
                         <option>left</option>
                         <option>left bottom</option>
@@ -325,24 +324,27 @@
             <script>
                 $(document).ready(function () {
                     var sandbox = $('#sb-notification');
-                    var run = function () {
-                        var autoClose = sandbox.find('[name=autoClose]');
-                        var container = sandbox.find('[name=container]').is(':checked');
-                        var duration = sandbox.find('[name=duration]');
-                        var location = sandbox.find('[name=location]');
+                    var autoClose = sandbox.find('[name=autoClose]');
+                    var container = sandbox.find('[name=container]');
+                    var duration = sandbox.find('[name=duration]');
+                    var position = sandbox.find('[name=position]');
 
+                    var run = function () {
                         window.notification = new Cuic.Notification({
                             autoClose: autoClose.is(":checked"),
                             autoRemove: true,
-                            container: container ? '#sb-notification .blueprint' : document.body,
-                            content: 'Notification from <b>' + location.val() + '</b>',
+                            container: container.is(':checked') ? '#sb-notification .blueprint' : document.body,
+                            content: 'Notification from <b>' + position.val() + '</b>',
                             duration: duration.val(),
-                            location: location.val()
+                            position: position.val()
                         }).open();
                     };
                     sandbox.find('.run').on('click', function (ev) {
                         ev.stopPropagation();
                         run();
+                    });
+                    position.on("change", function () {
+                        notification.setPosition(position.val(), container.is(':checked') ? '#sb-notification .blueprint' : document.body);
                     });
                 });
             </script>
@@ -355,8 +357,8 @@
 
             <div class="sandbox" id="sb-notification-stack">
                 <label class="inline">
-                    <span class="label">location</span>
-                    <select name="location">
+                    <span class="label">position</span>
+                    <select name="position">
                         <option>left top</option>
                         <option>left</option>
                         <option>left bottom</option>
@@ -375,13 +377,12 @@
             <script>
                 $(document).ready(function () {
                     var sandbox = $('#sb-notification-stack');
+                    var position = sandbox.find('[name=position]');
                     var run = function () {
-                        var location = sandbox.find('[name=location]');
-
                         window.notificationStack = new Cuic.Notification.Stack({
                             container: '#sb-notification-stack .blueprint',
                             css: "width:200px",
-                            location: location.val()
+                            position: position.val()
                         });
                     };
                     sandbox.find('.run').on('click', function (ev) {
@@ -394,6 +395,9 @@
                             });
                         }, 1000);
                     });
+                    position.on("change", function () {
+                        notificationStack.setPosition(position.val());
+                    });
                 });
             </script>
         </div>
@@ -405,8 +409,8 @@
 
             <div class="sandbox" id="sb-panel">
                 <label class="inline">
-                    <span class="label">location</span>
-                    <select name="location">
+                    <span class="label">position</span>
+                    <select name="position">
                         <option>left top</option>
                         <option selected>left</option>
                         <option>left bottom</option>
@@ -472,8 +476,7 @@
                     var autoClose = sandbox.find('[name=autoClose]');
                     var container = sandbox.find('[name=container]');
                     var css = sandbox.find('[name=css]');
-                    var horizontal = sandbox.find('[name=horizontal]');
-                    var location = sandbox.find('[name=location]');
+                    var position = sandbox.find('[name=position]');
                     var maximized = sandbox.find('[name=maximized]');
                     var visible = sandbox.find('[name=visible]');
 
@@ -483,8 +486,7 @@
                             autoClose: autoClose.is(':checked'),
                             container: container.is(':checked') ? '#sb-panel .blueprint' : document.body,
                             css: css.val(),
-                            horizontal: horizontal.is(':checked'),
-                            location: location.val(),
+                            position: position.val(),
                             maximized: maximized.is(':checked'),
                             target: '#panel',
                             visible: visible.is(':checked')
@@ -506,9 +508,6 @@
                     autoClose.on("change", function () {
                         panel.autoClose = autoClose.is(":checked");
                     });
-                    horizontal.on("change", function () {
-                        panel.horizontal = horizontal.is(":checked");
-                    });
                     maximized.on("change", function () {
                         if (maximized.is(":checked")) {
                             panel.maximize();
@@ -516,8 +515,8 @@
                             panel.minimize();
                         }
                     });
-                    location.on("change", function () {
-                        panel.location = location.val();
+                    position.on("change", function () {
+                        panel.setPosition(position.val());
                     });
                 });
             </script>
@@ -547,8 +546,8 @@
 
                     popupButton.on("click", function (ev) {
                         ev.stopPropagation();
-                        if (popup.element.is(":hidden")) {
-                            popup.element.html("Clicked on " + new Date() + " <span class='popup-close'>×</span>");
+                        if (!popup.isOpened()) {
+                            popup.setContent("Clicked on " + new Date() + " <span class='popup-close'>×</span>");
                         }
                         popup.toggle();
                     });
@@ -692,8 +691,8 @@
 
             <div class="sandbox" id="sb-tooltip">
                 <label class="inline">
-                    <span class="label">anchor</span>
-                    <select name="anchor">
+                    <span class="label">position</span>
+                    <select name="position">
                         <option>left top</option>
                         <option>left</option>
                         <option>left bottom</option>
@@ -730,13 +729,13 @@
             <script>
                 $(document).ready(function () {
                     var sandbox = $('#sb-tooltip');
-                    var anchor = sandbox.find("[name=anchor]");
+                    var position = sandbox.find("[name=position]");
                     var followPointer = sandbox.find("[name=followPointer]");
                     var run = function () {
                         var css = sandbox.find('[name=css]').val();
 
                         window.tooltip = new Cuic.Tooltip({
-                            anchor: anchor.val(),
+                            position: position.val(),
                             attribute: "title",
                             css: css,
                             followPointer: followPointer.is(":checked"),
@@ -744,7 +743,7 @@
                         });
 
                         window.tooltipBlue = new Cuic.Tooltip({
-                            anchor: anchor.val(),
+                            position: position.val(),
                             attribute: "title",
                             css: css + ";background:rgba(93,190,221,0.9)",
                             followPointer: followPointer.is(":checked"),
@@ -752,12 +751,14 @@
                         });
                     };
 
-                    anchor.on("change", function () {
-                        tooltip.anchor = anchor.val();
+                    position.on("change", function () {
+                        tooltip.setAnchor(position.val());
+                        tooltipBlue.setAnchor(position.val());
                     });
 
                     followPointer.on("change", function () {
                         tooltip.followPointer = followPointer.is(":checked");
+                        tooltipBlue.followPointer = followPointer.is(":checked");
                     });
 
                     sandbox.find('.run').on('click', function (ev) {

@@ -8,10 +8,13 @@
      */
     Cuic.Draggable = function (options) {
         var self = this;
+        var area;
+        var container;
+        var element;
 
         // Default options
         options = $.extend(true, {
-            classes: self.classes,
+            className: self.className,
             fps: self.fps,
             horizontal: self.horizontal,
             onDrag: self.onDrag,
@@ -24,138 +27,210 @@
         }, options);
 
         // Define attributes
-        self.classes = options.classes;
-        self.fps = Number(options.fps);
-        self.horizontal = options.horizontal;
+        self.className = options.className;
+        self.fps = options.fps;
+        self.horizontal = !!options.horizontal;
         self.onDrag = options.onDrag;
         self.onDragStart = options.onDragStart;
         self.onDragStop = options.onDragStop;
         self.rootOnly = options.rootOnly;
-        self.stepX = Number(options.stepX);
-        self.stepY = Number(options.stepY);
-        self.vertical = options.vertical;
+        self.stepX = options.stepX;
+        self.stepY = options.stepY;
+        self.vertical = !!options.vertical;
 
-        // Get the target
-        if (options.target) {
-            self.element = $(options.target);
-        }
+        /**
+         * Returns the element
+         * @return {*}
+         */
+        self.getElement = function () {
+            return element;
+        };
 
-        // Get the container
-        self.container = $(options.container || self.element.offsetParent());
+        /**
+         * Set the dragging area
+         * @param obj
+         * @return {*}
+         */
+        self.setArea = function (obj) {
+            area = $(obj);
 
-        // Force the parent to be relative
-        if (self.element.parent().css("position") === "static") {
-            self.element.parent().css("position", "relative");
-        }
+            // Add the draggable classes
+            area.addClass(self.className);
 
-        // Get the area that received the focus for dragging
-        self.area = $(options.area || self.element);
+            // Change cursor icon over dragging area
+            area.css("cursor", "move");
 
-        // Add the draggable classes
-        self.area.addClass(self.classes);
+            // Start dragging
+            area.on("mousedown", function (ev) {
+                // Ignore dragging if the target is not the root
+                if (self.rootOnly && ev.target !== ev.currentTarget) return;
 
-        // Change cursor icon over dragging area
-        self.area.css("cursor", "move");
-
-        $(document).ready(function () {
-            $(document.head).append($("<style>", {
-                text: "." + self.classes + " > * { cursor: auto }"
-            }));
-        });
-
-        // Start the drag event on mouse down
-        self.area.on("mousedown", function (ev) {
-            // Ignore dragging if the target is not the root
-            if (self.rootOnly && ev.target !== ev.currentTarget) {
-                return;
-            }
-
-            if (typeof self.onDragStart === "function") {
-                if (self.onDragStart.call(self, ev) === false) return;
-            }
-
-            // Prevent selection
-            ev.preventDefault();
-
-            var elementHeight = self.element.outerHeight();
-            var elementWidth = self.element.outerWidth();
-            var elementMarginBottom = parseInt(self.element.css("margin-bottom"));
-            var elementMarginLeft = parseInt(self.element.css("margin-left"));
-            var elementMarginRight = parseInt(self.element.css("margin-right"));
-            var elementMarginTop = parseInt(self.element.css("margin-top"));
-            var isInBody = self.container.get(0) == document.body;
-            var startOffset = self.element.offset();
-            var startX = Cuic.mouseX;
-            var startY = Cuic.mouseY;
-            var scrollX = window.scrollX;
-            var scrollY = window.scrollY;
-
-            self.element.addClass("dragging");
-
-            var timer = setInterval(function () {
-                var containerOffset = self.container.offset() || {left: 0, top: 0};
-                var containerHeight = self.container.innerHeight();
-                var containerWidth = self.container.innerWidth();
-                var minX = (isInBody ? scrollX : 0) + containerOffset.left + elementMarginLeft;
-                var minY = (isInBody ? scrollY : 0) + containerOffset.top + elementMarginTop;
-                var maxX = minX - elementMarginLeft + containerWidth - elementMarginRight;
-                var maxY = minY - elementMarginTop + containerHeight - elementMarginBottom;
-                var leftSup = Cuic.mouseX - startX;
-                var left = startOffset.left + (self.stepX ? Math.round(leftSup / self.stepX) * self.stepX : leftSup);
-                var topSup = Cuic.mouseY - startY;
-                var top = startOffset.top + (self.stepY ? Math.round(topSup / self.stepY) * self.stepY : topSup);
-
-                // Limit horizontal move
-                if (left < minX) {
-                    left = minX;
-                } else if (left + elementWidth > maxX) {
-                    left = maxX - elementWidth;
-                }
-
-                // Limit vertical move
-                if (top < minY) {
-                    top = minY;
-                } else if (top + elementHeight > maxY) {
-                    top = maxY - elementHeight;
-                }
-
-                if (typeof self.onDrag === "function"
-                    && self.onDrag.call(self, left, top) === false) {
+                // Execute callback
+                if (self.onDragStart && self.onDragStart.call(self, ev) === false) {
                     return;
                 }
 
-                if (self.horizontal) {
-                    self.element.offset({left: left});
-                }
-                if (self.vertical) {
-                    self.element.offset({top: top});
-                }
-            }, Math.round(1000 / self.fps));
+                // Prevent text selection
+                ev.preventDefault();
 
-            $(document).one("mouseup", function (ev) {
-                clearInterval(timer);
+                // Change element style
+                element.addClass("dragging");
 
-                self.element.removeClass("dragging");
+                var margin = Cuic.margin(element);
+                var height = element.outerHeight();
+                var width = element.outerWidth();
+                var isInBody = container.get(0) == document.body;
+                var startOffset = element.offset();
+                var startX = Cuic.mouseX;
+                var startY = Cuic.mouseY;
+                var scrollX = window.scrollX;
+                var scrollY = window.scrollY;
 
-                if (typeof self.onDragStop === "function") {
-                    self.onDragStop.call(self, ev);
-                }
+                var timer = setInterval(function () {
+                    var containerOffset = container.offset() || {left: 0, top: 0};
+                    var containerHeight = container.innerHeight();
+                    var containerWidth = container.innerWidth();
+                    var minX = (isInBody ? scrollX : 0) + containerOffset.left + margin.left;
+                    var minY = (isInBody ? scrollY : 0) + containerOffset.top + margin.top;
+                    var maxX = minX - margin.left + containerWidth - margin.right;
+                    var maxY = minY - margin.top + containerHeight - margin.bottom;
+                    var leftSup = Cuic.mouseX - startX;
+                    var left = startOffset.left + (Math.round(leftSup / self.stepX) * self.stepX);
+                    var topSup = Cuic.mouseY - startY;
+                    var top = startOffset.top + (Math.round(topSup / self.stepY) * self.stepY);
+
+                    // Check horizontal location
+                    if (left < minX) {
+                        left = minX;
+                    } else if (left + width > maxX) {
+                        left = maxX - width;
+                    }
+
+                    // Check vertical location
+                    if (top < minY) {
+                        top = minY;
+                    } else if (top + height > maxY) {
+                        top = maxY - height;
+                    }
+
+                    // Execute callback
+                    if (self.onDrag && self.onDrag.call(self, left, top) === false) {
+                        return;
+                    }
+
+                    // Move horizontally
+                    if (self.horizontal) {
+                        element.offset({left: left});
+                    }
+
+                    // Move vertically
+                    if (self.vertical) {
+                        element.offset({top: top});
+                    }
+                }, Math.round(1000 / self.fps));
+
+                // Stop dragging
+                $(document).one("mouseup", function (ev) {
+                    clearInterval(timer);
+                    element.removeClass("dragging");
+
+                    if (self.onDragStop) {
+                        self.onDragStop.call(self, ev);
+                    }
+                });
             });
+            return self;
+        };
+
+        /**
+         * Set the container
+         * @param elm
+         * @return {*}
+         */
+        self.setContainer = function (elm) {
+            container = $(elm);
+            return self;
+        };
+
+        // Find the target
+        if (options.target) element = $(options.target);
+
+        // Force the target to be the relative parent
+        if (element.css("position") === "static") {
+            element.css("position", "relative");
+        }
+
+        // Set the dragging area
+        self.setArea(options.area || element);
+
+        // Set the top container of the element
+        self.setContainer(options.container || element.offsetParent());
+
+        $(document).ready(function () {
+            $(document.head).append($("<style>", {
+                text: "." + self.className + " > * { cursor: auto }"
+            }));
         });
     };
 
-    Cuic.Draggable.prototype.area = null;
-    Cuic.Draggable.prototype.classes = "draggable";
-    Cuic.Draggable.prototype.container = null;
-    Cuic.Draggable.prototype.element = null;
+    /**
+     * The class name
+     * @type {string}
+     */
+    Cuic.Draggable.prototype.className = "draggable";
+
+    /**
+     * The animation speed
+     * @type {number}
+     */
     Cuic.Draggable.prototype.fps = 30;
+
+    /**
+     * Allows horizontal dragging
+     * @type {boolean}
+     */
     Cuic.Draggable.prototype.horizontal = true;
+
+    /**
+     * Called when the element is dragging
+     * @type {function}
+     */
     Cuic.Draggable.prototype.onDrag = null;
+
+    /**
+     * Called when the dragging starts
+     * @type {function}
+     */
     Cuic.Draggable.prototype.onDragStart = null;
+
+    /**
+     * Called when the dragging stops
+     * @type {function}
+     */
     Cuic.Draggable.prototype.onDragStop = null;
+
+    /**
+     * Only drags using the root node of the area
+     * @type {boolean}
+     */
     Cuic.Draggable.prototype.rootOnly = true;
-    Cuic.Draggable.prototype.stepX = null;
-    Cuic.Draggable.prototype.stepY = null;
+
+    /**
+     * The number of pixels to move horizontally
+     * @type {number}
+     */
+    Cuic.Draggable.prototype.stepX = 1;
+
+    /**
+     * The number of pixels to move vertically
+     * @type {number}
+     */
+    Cuic.Draggable.prototype.stepY = 1;
+
+    /**
+     * Allows vertical dragging
+     * @type {boolean}
+     */
     Cuic.Draggable.prototype.vertical = true;
 
 })(jQuery);
