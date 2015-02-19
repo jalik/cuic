@@ -473,11 +473,11 @@
         });
 
         // Close the panel when the user clicks outside of it
-        $(document).on("click.panel", function (ev) {
+        $(document).on("mousedown.panel", function (ev) {
             var target = $(ev.target);
 
             if (target !== element && target.closest(element).length === 0) {
-                if (self.autoClose) {
+                if (self.autoClose && isOpened) {
                     self.close();
                 }
             }

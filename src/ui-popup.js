@@ -158,11 +158,11 @@
         });
 
         // Close the popup when the user clicks outside of it
-        $(document).on("click.popup", function (ev) {
+        $(document).on("mousedown.popup", function (ev) {
             var target = $(ev.target);
 
             if (target !== element && target.closest(element).length === 0) {
-                if (self.autoClose) {
+                if (self.autoClose && isOpened) {
                     self.close();
                 }
             }
