@@ -85,18 +85,18 @@
          * @return {Cuic.Notification}
          */
         self.open = function (callback) {
+            var autoClose = function () {
+                clearTimeout(timer);
+                timer = setTimeout(function () {
+                    if (self.autoClose) {
+                        self.close();
+                    }
+                }, self.duration);
+            };
+
             if (isClosing || (!isOpened && !isOpening)) {
                 isClosing = false;
                 isOpening = true;
-
-                var autoClose = function () {
-                    clearTimeout(timer);
-                    timer = setTimeout(function () {
-                        if (self.autoClose) {
-                            self.close();
-                        }
-                    }, self.duration);
-                };
 
                 // If the content of the notification has changed,
                 // we need to check if there is a close button
@@ -131,6 +131,9 @@
                     isOpening = false;
                     isOpened = true;
                 });
+            } else if (isOpened) {
+                // Restart timeout
+                autoClose();
             }
             return self;
         };
