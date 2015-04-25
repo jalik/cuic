@@ -1,5 +1,30 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Karl STEIN
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 (function ($) {
-    "use strict";
+    'use strict';
 
     /**
      * Creates a notification
@@ -20,13 +45,13 @@
         options = $.extend(true, {
             autoClose: self.autoClose,
             autoRemove: self.autoRemove,
-            className: "notification",
-            closeButton: "×",
+            className: 'notification',
+            closeButton: '×',
             container: document.body,
             content: null,
             css: null,
             duration: self.duration,
-            position: "center",
+            position: 'center',
             zIndex: 10
         }, options);
 
@@ -100,7 +125,7 @@
 
                 // If the content of the notification has changed,
                 // we need to check if there is a close button
-                element.find(".notification-close").one("click", function () {
+                element.find('.notification-close').one('click', function () {
                     self.close();
                 });
 
@@ -112,7 +137,7 @@
                 });
 
                 // Position the notification
-                element.css({position: container.get(0).tagName === "BODY" ? "fixed" : "absolute"});
+                element.css({position: container.get(0).tagName === 'BODY' ? 'fixed' : 'absolute'});
 
                 // Set the position
                 self.setPosition(position);
@@ -176,8 +201,8 @@
         };
 
         // Create the element
-        element = $("<div>", {
-            "class": options.className,
+        element = $('<div>', {
+            'class': options.className,
             html: options.content
         });
 
@@ -186,8 +211,8 @@
 
         // Override styles
         element.css({
-            display: "none",
-            position: "absolute",
+            display: 'none',
+            position: 'absolute',
             zIndex: options.zIndex
         });
     };
@@ -233,7 +258,7 @@
 
         // Set default options
         options = $.extend(true, {
-            className: "notification-area",
+            className: 'notification-area',
             container: document.body,
             css: null,
             position: self.position,
@@ -253,7 +278,7 @@
         self.add = function (options, callback) {
             options = $.extend({}, options, {
                 container: self.element,
-                position: ""
+                position: ''
             });
 
             // Create the notification
@@ -264,16 +289,16 @@
                 var element = this.getElement();
 
                 // Insert the notification
-                if (position.indexOf("bottom") !== -1) {
+                if (position.indexOf('bottom') !== -1) {
                     self.getElement().append(element);
                 } else {
                     self.getElement().prepend(element);
                 }
 
                 element.css({
-                    display: "block",
-                    height: "",
-                    position: "static"
+                    display: 'block',
+                    height: '',
+                    position: 'static'
                 });
 
                 var margin = Cuic.margin(element);
@@ -284,19 +309,19 @@
                     marginBottom: margin.bottom,
                     marginTop: margin.top,
                     opacity: 1,
-                    overflow: "",
+                    overflow: '',
                     paddingBottom: padding.bottom,
                     paddingTop: padding.top
                 };
 
                 // Display the notification
                 element.css({
-                    display: "block",
+                    display: 'block',
                     height: 0,
                     marginBottom: 0,
                     marginTop: 0,
                     opacity: 0,
-                    overflow: "hidden",
+                    overflow: 'hidden',
                     paddingBottom: 0,
                     paddingTop: 0
                 }).animate(original, duration, callback);
@@ -335,8 +360,8 @@
         };
 
         // Create the element
-        element = $("<div>", {
-            "class": options.className
+        element = $('<div>', {
+            'class': options.className
         }).appendTo(container);
 
         // Set custom styles
@@ -344,7 +369,7 @@
 
         // Override styles
         element.css({
-            position: container.get(0).tagName === "BODY" ? "fixed" : "absolute",
+            position: container.get(0).tagName === 'BODY' ? 'fixed' : 'absolute',
             zIndex: self.zIndex
         });
 

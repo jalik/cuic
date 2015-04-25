@@ -1,5 +1,30 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Karl STEIN
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 (function ($) {
-    "use strict";
+    'use strict';
 
     var counter = 0;
 
@@ -51,7 +76,7 @@
 
         // Set the grid style
         grid.element.css({
-            display: "block",
+            display: 'block',
             minHeight: options.height,
             minWidth: options.width
         });
@@ -72,13 +97,13 @@
         });
 
         // Create the widget preview
-        grid.preview = $("<div>", {
-            "class": "preview",
+        grid.preview = $('<div>', {
+            'class': 'preview',
             css: {
-                "box-sizing": "border-box",
+                'box-sizing': 'border-box',
                 height: grid.rowsHeight,
                 left: grid.spacing,
-                position: "absolute",
+                position: 'absolute',
                 top: grid.spacing,
                 width: grid.colsWidth,
                 zIndex: 1
@@ -87,7 +112,7 @@
 
         // Add widgets to the grid
         grid.element.children(options.widgetSelector).each(function () {
-            var id = this.id || "widget-" + (counter += 1);
+            var id = this.id || 'widget-' + (counter += 1);
             grid.addWidget(id, new Cuic.Grid.Widget({
                 target: this
             }));
@@ -119,15 +144,15 @@
         grid.element.append(widget.element);
 
         // Set the widget id
-        widget.element.attr("id", id);
+        widget.element.attr('id', id);
 
         // Override widget style
         widget.element.css({
-            "box-sizing": "border-box",
-            display: "block",
+            'box-sizing': 'border-box',
+            display: 'block',
             margin: 0,
-            overflow: "hidden",
-            position: "absolute"
+            overflow: 'hidden',
+            position: 'absolute'
         });
 
         // Position the widget
@@ -187,9 +212,9 @@
 
                     // Display the widget preview
                     grid.element.append(preview.css({
-                        left: element.css("left"),
+                        left: element.css('left'),
                         height: height,
-                        top: element.css("top"),
+                        top: element.css('top'),
                         width: width
                     }));
 
@@ -222,8 +247,8 @@
             rootOnly: true,
             container: grid.element,
             onDrag: function () {
-                var left = parseFloat(element.css("left"));
-                var top = parseFloat(element.css("top"));
+                var left = parseFloat(element.css('left'));
+                var top = parseFloat(element.css('top'));
                 var col = grid.getPositionX(left);
                 var row = grid.getPositionY(top);
 
@@ -247,9 +272,9 @@
 
                     // Display the widget preview
                     grid.element.append(preview.css({
-                        left: element.css("left"),
+                        left: element.css('left'),
                         height: height,
-                        top: element.css("top"),
+                        top: element.css('top'),
                         width: width
                     }));
 
@@ -266,8 +291,8 @@
                 preview.detach();
 
                 // Position the widget
-                var left = parseFloat(element.css("left"));
-                var top = parseFloat(element.css("top"));
+                var left = parseFloat(element.css('left'));
+                var top = parseFloat(element.css('top'));
                 var col = grid.getSizeX(left) + 1;
                 var row = grid.getSizeY(top) + 1;
                 grid.moveWidget(widget, col, row);
@@ -450,11 +475,11 @@
                 top: grid.calculateTop(row)
             }, {
                 complete: function () {
-                    widget.element.removeClass("dragging");
+                    widget.element.removeClass('dragging');
                     widget.element.css({zIndex: 1});
 
                     // Execute callback
-                    if (typeof grid.onWidgetMoved === "function") {
+                    if (typeof grid.onWidgetMoved === 'function') {
                         grid.onWidgetMoved.call(grid, widget);
                     }
                 },
@@ -548,11 +573,11 @@
                 width: sizeX * (grid.colsWidth + grid.spacing) - grid.spacing
             }, {
                 complete: function () {
-                    widget.element.removeClass("resizing");
+                    widget.element.removeClass('resizing');
                     widget.element.css({zIndex: 1});
 
                     // Execute callback
-                    if (typeof grid.onWidgetResized === "function") {
+                    if (typeof grid.onWidgetResized === 'function') {
                         grid.onWidgetResized.call(grid, widget);
                     }
                 },
@@ -578,7 +603,7 @@
     Cuic.Grid.prototype.rowsHeight = 100;
     Cuic.Grid.prototype.spacing = 10;
     Cuic.Grid.prototype.widgets = {};
-    Cuic.Grid.prototype.widgetSelector = ".widget";
+    Cuic.Grid.prototype.widgetSelector = '.widget';
 
     /**
      * Creates a grid widget
@@ -621,28 +646,28 @@
             self.element = $(options.target);
 
             if (self.element.length > 0) {
-                self.col = parseInt(self.element.attr("data-col")) || options.col;
-                self.draggable = !!self.element.attr("data-draggable") ? /^true$/gi.test(self.element.attr("data-draggable")) : options.draggable;
-                self.maxSizeX = parseInt(self.element.attr("data-max-size-x")) || options.maxSizeX;
-                self.maxSizeY = parseInt(self.element.attr("data-max-size-y")) || options.maxSizeY;
-                self.minSizeX = parseInt(self.element.attr("data-min-size-x")) || options.minSizeX;
-                self.minSizeY = parseInt(self.element.attr("data-min-size-y")) || options.minSizeY;
-                self.resizable = !!self.element.attr("data-resizable") ? /^true$/gi.test(self.element.attr("data-resizable")) : options.resizable;
-                self.row = parseInt(self.element.attr("data-row")) || options.row;
-                self.sizeX = parseInt(self.element.attr("data-size-x")) || options.sizeX;
-                self.sizeY = parseInt(self.element.attr("data-size-y")) || options.sizeY;
+                self.col = parseInt(self.element.attr('data-col')) || options.col;
+                self.draggable = !!self.element.attr('data-draggable') ? /^true$/gi.test(self.element.attr('data-draggable')) : options.draggable;
+                self.maxSizeX = parseInt(self.element.attr('data-max-size-x')) || options.maxSizeX;
+                self.maxSizeY = parseInt(self.element.attr('data-max-size-y')) || options.maxSizeY;
+                self.minSizeX = parseInt(self.element.attr('data-min-size-x')) || options.minSizeX;
+                self.minSizeY = parseInt(self.element.attr('data-min-size-y')) || options.minSizeY;
+                self.resizable = !!self.element.attr('data-resizable') ? /^true$/gi.test(self.element.attr('data-resizable')) : options.resizable;
+                self.row = parseInt(self.element.attr('data-row')) || options.row;
+                self.sizeX = parseInt(self.element.attr('data-size-x')) || options.sizeX;
+                self.sizeY = parseInt(self.element.attr('data-size-y')) || options.sizeY;
             }
         }
 
         // Create the element HTML node
         if (!self.element || self.element.length < 1) {
-            self.element = $("<div>", {
+            self.element = $('<div>', {
                 html: options.content
             });
         }
 
         // Set the style
-        self.element.addClass("widget");
+        self.element.addClass('widget');
     };
 
     /**
@@ -650,7 +675,7 @@
      * @return {Boolean}
      */
     Cuic.Grid.Widget.prototype.isDragging = function () {
-        return this.element.hasClass("dragging");
+        return this.element.hasClass('dragging');
     };
 
     /**
@@ -658,7 +683,7 @@
      * @return {Boolean}
      */
     Cuic.Grid.Widget.prototype.isResizing = function () {
-        return this.element.hasClass("resizing");
+        return this.element.hasClass('resizing');
     };
 
     Cuic.Grid.Widget.prototype.col = 1;

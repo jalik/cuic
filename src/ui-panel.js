@@ -1,5 +1,30 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Karl STEIN
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 (function ($) {
-    "use strict";
+    'use strict';
 
     /**
      * Creates a panel
@@ -23,8 +48,8 @@
         // Set default options
         options = $.extend(true, {
             autoClose: self.autoClose,
-            className: "panel",
-            closeButton: "×",
+            className: 'panel',
+            closeButton: '×',
             container: null,
             content: null,
             css: null,
@@ -32,7 +57,7 @@
             maximized: false,
             onClosed: self.onClosed,
             onOpened: self.onOpened,
-            position: "left top",
+            position: 'left top',
             target: null,
             title: null,
             visible: false,
@@ -63,18 +88,18 @@
                 duration = duration >= 0 ? 0 : 400;
 
                 // Horizontal animation
-                if (position.indexOf("left") !== -1) {
+                if (position.indexOf('left') !== -1) {
                     prop.left = -element.outerWidth(true)
-                } else if (position.indexOf("right") !== -1) {
-                    element.css("left", "");
+                } else if (position.indexOf('right') !== -1) {
+                    element.css('left', '');
                     prop.right = -element.outerWidth(true)
                 }
 
                 // Vertical animation
-                if (position.indexOf("bottom") !== -1) {
-                    element.css("top", "");
+                if (position.indexOf('bottom') !== -1) {
+                    element.css('top', '');
                     prop.bottom = -element.outerHeight(true)
-                } else if (position.indexOf("top") !== -1) {
+                } else if (position.indexOf('top') !== -1) {
                     prop.top = -element.outerHeight(true)
                 }
 
@@ -85,7 +110,7 @@
                     if (self.autoRemove) {
                         element.remove();
                     }
-                    element.css({display: "none"});
+                    element.css({display: 'none'});
                     isClosing = false;
                     isOpened = false;
 
@@ -151,7 +176,7 @@
             duration = duration >= 0 ? 0 : 400;
 
             // Save the original size
-            if (!element.is(":animated")) {
+            if (!element.is(':animated')) {
                 self.originalHeight = element.height();
                 self.originalWidth = element.width();
             }
@@ -159,12 +184,12 @@
             var horizontalMargin = element.outerWidth() - element.width();
             var verticalMargin = element.outerHeight() - element.height();
 
-            if (position.indexOf("bottom") !== -1 || position.indexOf("top") !== -1) {
+            if (position.indexOf('bottom') !== -1 || position.indexOf('top') !== -1) {
                 prop.width = container.width() - horizontalMargin;
                 prop.left = 0;
             }
 
-            if (position.indexOf("left") !== -1 || position.indexOf("right") !== -1) {
+            if (position.indexOf('left') !== -1 || position.indexOf('right') !== -1) {
                 prop.height = container.height() - verticalMargin;
                 prop.top = 0;
             }
@@ -186,8 +211,8 @@
             var startWidth = element.width();
 
             element.css({
-                height: "auto",
-                width: "auto"
+                height: 'auto',
+                width: 'auto'
             });
 
             var height = element.height();
@@ -233,36 +258,36 @@
                     self.resizeContent();
 
                     // Reset horizontal position
-                    if (position.indexOf("right") !== -1) {
+                    if (position.indexOf('right') !== -1) {
                         element.css({right: -element.outerWidth()});
-                    } else if (position.indexOf("left") !== -1) {
+                    } else if (position.indexOf('left') !== -1) {
                         element.css({left: -element.outerWidth()});
                     }
 
                     // Reset vertical position
-                    if (position.indexOf("bottom") !== -1) {
+                    if (position.indexOf('bottom') !== -1) {
                         element.css({bottom: -element.outerHeight()});
-                    } else if (position.indexOf("top") !== -1) {
+                    } else if (position.indexOf('top') !== -1) {
                         element.css({top: -element.outerHeight()});
                     }
                 }
 
                 // Horizontal animation
-                if (position.indexOf("right") !== -1) {
+                if (position.indexOf('right') !== -1) {
                     prop.right = 0
-                } else if (position.indexOf("left") !== -1) {
+                } else if (position.indexOf('left') !== -1) {
                     prop.left = 0
                 }
 
                 // Vertical animation
-                if (position.indexOf("bottom") !== -1) {
+                if (position.indexOf('bottom') !== -1) {
                     prop.bottom = 0
-                } else if (position.indexOf("top") !== -1) {
+                } else if (position.indexOf('top') !== -1) {
                     prop.top = 0
                 }
 
                 // Display the panel
-                element.css("display", "block");
+                element.css('display', 'block');
 
                 element.animate(prop, duration, function () {
                     isOpening = false;
@@ -285,7 +310,7 @@
          * @return {Cuic.Panel}
          */
         self.resizeContent = function () {
-            var display = element.css("display");
+            var display = element.css('display');
             var maxHeight = window.innerHeight;
 
             // Temporary display the panel
@@ -299,7 +324,7 @@
 
             // Set panel max height
             maxHeight -= element.outerHeight(true) - element.height();
-            element.css("max-height", maxHeight);
+            element.css('max-height', maxHeight);
 
             // Set content max height
             var contentMaxHeight = maxHeight;
@@ -315,11 +340,11 @@
 
             body.css({
                 maxHeight: contentMaxHeight,
-                overflow: "auto"
+                overflow: 'auto'
             });
 
             // Restore the initial display state
-            element.css("display", display);
+            element.css('display', display);
 
             return self;
         };
@@ -376,35 +401,35 @@
             element = $(options.target);
 
             // Find panel parts
-            header = element.find(".panel-header");
-            title = element.find(".panel-title");
-            body = element.find(".panel-content");
-            footer = element.find(".panel-footer");
+            header = element.find('.panel-header');
+            title = element.find('.panel-title');
+            body = element.find('.panel-content');
+            footer = element.find('.panel-footer');
 
         } else {
             // Create the panel
-            element = $("<div>");
+            element = $('<div>');
 
             // Add the header
-            header = $("<header>", {
-                "class": "panel-header"
+            header = $('<header>', {
+                'class': 'panel-header'
             }).appendTo(element);
 
             // Add the title
-            title = $("<h5>", {
-                "class": "panel-title",
+            title = $('<h5>', {
+                'class': 'panel-title',
                 html: options.title
             }).appendTo(header);
 
             // Add the body
-            body = $("<section>", {
-                "class": "panel-content",
+            body = $('<section>', {
+                'class': 'panel-content',
                 html: options.content
             }).appendTo(element);
 
             // Add the footer
-            footer = $("<footer>", {
-                "class": "panel-footer",
+            footer = $('<footer>', {
+                'class': 'panel-footer',
                 html: options.footer
             }).appendTo(element);
 
@@ -427,8 +452,8 @@
 
         // Override styles
         element.css({
-            display: "none",
-            position: "absolute",
+            display: 'none',
+            position: 'absolute',
             zIndex: options.zIndex
         });
 
@@ -436,12 +461,12 @@
         self.setPosition(position, container || element.offsetParent());
 
         // If the panel is in the body, then we use the window as container
-        if (container.get(0).tagName === "BODY") {
-            element.css("position", "fixed");
+        if (container.get(0).tagName === 'BODY') {
+            element.css('position', 'fixed');
         } else {
             // To hide the panel in the container,
             // the container must have a hidden overflow
-            container.css("overflow", "hidden");
+            container.css('overflow', 'hidden');
         }
 
         // Set the panel visibility
@@ -459,21 +484,21 @@
         }
 
         // Find the close button
-        var closeButton = element.find(".panel-close");
-        closeButton.on("click", function (ev) {
+        var closeButton = element.find('.panel-close');
+        closeButton.on('click', function (ev) {
             ev.preventDefault();
             self.close();
         });
 
         // Find the toggle button
-        var toggleButton = element.find(".panel-toggle");
-        toggleButton.on("click", function (ev) {
+        var toggleButton = element.find('.panel-toggle');
+        toggleButton.on('click', function (ev) {
             ev.preventDefault();
             self.toggle();
         });
 
         // Close the panel when the user clicks outside of it
-        $(document).on("mousedown.panel", function (ev) {
+        $(document).on('mousedown.panel', function (ev) {
             var target = $(ev.target);
 
             if (target !== element && target.closest(element).length === 0) {

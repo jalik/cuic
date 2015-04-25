@@ -1,5 +1,30 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Karl STEIN
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 (function ($) {
-    "use strict";
+    'use strict';
 
     /**
      * Creates a dialog
@@ -24,14 +49,14 @@
         options = $.extend(true, {
             autoRemove: self.autoRemove,
             buttons: null,
-            className: "dialog",
+            className: 'dialog',
             container: document.body,
             content: null,
             contentHeight: null,
             contentWidth: null,
             css: null,
             draggable: self.draggable,
-            position: "center",
+            position: 'center',
             modal: self.modal,
             target: null,
             title: null,
@@ -55,25 +80,25 @@
          * @return {jQuery}
          */
         self.addButton = function (label, listener) {
-            var button = $("<button>", {
-                "class": "dialog-button",
+            var button = $('<button>', {
+                'class': 'dialog-button',
                 html: label
             }).appendTo(footer);
 
             // By default a button closes the dialog
             if (!listener) {
-                listener = "close";
+                listener = 'close';
             }
 
-            if (typeof listener === "function") {
-                button.on("click", function (ev) {
+            if (typeof listener === 'function') {
+                button.on('click', function (ev) {
                     listener.call(self, ev);
                 });
             }
             else {
                 switch (listener) {
-                    case "close":
-                        button.on("click", function () {
+                    case 'close':
+                        button.on('click', function () {
                             self.close();
                         });
                         break;
@@ -81,15 +106,15 @@
             }
 
             // Resize buttons
-            var buttons = footer.children(".dialog-button");
+            var buttons = footer.children('.dialog-button');
 
             if (buttons.length > 1) {
                 footer.show();
-                buttons.css("display", "inline-block");
+                buttons.css('display', 'inline-block');
             }
             else if (buttons.length > 0) {
                 footer.show();
-                buttons.css("display", "block");
+                buttons.css('display', 'block');
             }
             return button;
         };
@@ -175,11 +200,11 @@
                 isOpening = true;
 
                 // Find images
-                var images = element.find("img");
+                var images = element.find('img');
 
                 if (images.length > 0) {
                     // Position the dialog when images are loaded
-                    images.on("load", function () {
+                    images.on('load', function () {
                         self.resizeContent();
                     });
                 } else {
@@ -189,12 +214,12 @@
 
                 // If the content of the dialog has changed,
                 // we need to check if there is a close button
-                element.find(".dialog-close").one("click", function () {
+                element.find('.dialog-close').one('click', function () {
                     self.close();
                 });
 
                 // Position the notification
-                element.css({position: container.get(0).tagName === "BODY" ? "fixed" : "absolute"});
+                element.css({position: container.get(0).tagName === 'BODY' ? 'fixed' : 'absolute'});
 
                 // Set the position
                 self.setPosition(position);
@@ -204,8 +229,8 @@
 
                 if (self.modal) {
                     wrapper.css({
-                        height: "100%",
-                        width: "100%"
+                        height: '100%',
+                        width: '100%'
                     });
                     wrapper.fadeIn(200, function () {
                         element.fadeIn(200, function () {
@@ -217,7 +242,7 @@
                         });
 
                         // Focus the last button
-                        footer.find("button:last").focus();
+                        footer.find('button:last').focus();
                     });
                 } else {
                     element.fadeIn(200, function () {
@@ -228,7 +253,7 @@
                         isOpened = true;
 
                         // Focus the last button
-                        footer.find("button:last").focus();
+                        footer.find('button:last').focus();
                     });
                 }
             }
@@ -240,7 +265,7 @@
          * @return {Cuic.Dialog}
          */
         self.resizeContent = function () {
-            var display = wrapper.css("display");
+            var display = wrapper.css('display');
             var maxHeight = window.innerHeight;
 
             // Temporary display the dialog
@@ -255,7 +280,7 @@
 
             // Set dialog max height
             maxHeight -= element.outerHeight(true) - element.height();
-            element.css("max-height", maxHeight);
+            element.css('max-height', maxHeight);
 
             // Set content max height
             var contentMaxHeight = maxHeight;
@@ -271,14 +296,14 @@
 
             body.css({
                 maxHeight: contentMaxHeight,
-                overflow: "auto"
+                overflow: 'auto'
             });
 
             Cuic.position(element, position, wrapper);
 
             // Restore the initial display state
-            wrapper.css("display", display);
-            element.css("display", display);
+            wrapper.css('display', display);
+            element.css('display', display);
 
             return self;
         };
@@ -321,57 +346,57 @@
         };
 
         // If the dialog is not in a container, then it is fixed
-        var fixed = container.get(0).tagName === "BODY";
+        var fixed = container.get(0).tagName === 'BODY';
 
         // Create the wrapper
-        wrapper = $("<div>", {
-            "class": "dialog-wrapper",
+        wrapper = $('<div>', {
+            'class': 'dialog-wrapper',
             css: {
-                display: "none",
-                height: "100%",
+                display: 'none',
+                height: '100%',
                 left: 0,
-                position: fixed ? "fixed" : "absolute",
+                position: fixed ? 'fixed' : 'absolute',
                 top: 0,
-                width: "100%",
+                width: '100%',
                 zIndex: options.zIndex
             }
         }).appendTo(container);
 
         // Create the dialog
-        element = $("<div>", {
-            "class": options.className,
+        element = $('<div>', {
+            'class': options.className,
             css: {
-                display: "none",
+                display: 'none',
                 zIndex: options.zIndex
             }
         }).appendTo(wrapper);
 
         // Add the header
-        header = $("<header>", {
-            "class": "dialog-header",
+        header = $('<header>', {
+            'class': 'dialog-header',
             css: {
-                display: options.title != null ? "block" : "none"
+                display: options.title != null ? 'block' : 'none'
             }
         }).appendTo(element);
 
         // Add the title
-        title = $("<h3>", {
+        title = $('<h3>', {
             html: options.title,
-            "class": "dialog-title"
+            'class': 'dialog-title'
         }).appendTo(header);
 
         // Add the content
-        body = $("<section>", {
-            "html": options.content,
-            "class": "dialog-content",
-            style: "overflow: auto"
+        body = $('<section>', {
+            'html': options.content,
+            'class': 'dialog-content',
+            style: 'overflow: auto'
         }).appendTo(element);
 
         // Add the footer
-        footer = $("<footer>", {
-            "class": "dialog-footer",
+        footer = $('<footer>', {
+            'class': 'dialog-footer',
             css: {
-                display: options.buttons != null ? "block" : "none"
+                display: options.buttons != null ? 'block' : 'none'
             }
         }).appendTo(element);
 
@@ -380,16 +405,16 @@
         Cuic.applyCss(options.css, element);
 
         // Override styles
-        element.css({position: fixed ? "fixed" : "absolute"});
+        element.css({position: fixed ? 'fixed' : 'absolute'});
 
         // Set content height
         if (parseFloat(options.contentHeight) > 0) {
-            body.css("height", options.contentHeight);
+            body.css('height', options.contentHeight);
         }
 
         // Set content width
         if (parseFloat(options.contentWidth) > 0) {
-            body.css("width", options.contentWidth);
+            body.css('width', options.contentWidth);
         }
 
         // Add the buttons
@@ -402,22 +427,24 @@
 
         // If the dialog is not modal,
         // a click on the wrapper will close the dialog
-        wrapper.on("click", function (ev) {
+        wrapper.on('click', function (ev) {
             if (!self.modal && ev.target == wrapper.get(0)) {
                 self.close();
             }
         });
 
         // Make the dialog draggable
-        self.draggable = new Cuic.Draggable({
-            area: title,
-            container: container,
-            rootOnly: false,
-            target: element
-        });
+        if (options.draggable) {
+            self.draggable = new Cuic.Draggable({
+                area: title,
+                container: container,
+                rootOnly: false,
+                target: element
+            });
+        }
 
         var timer;
-        $(window).on("resize.dialog", function () {
+        $(window).on('resize.dialog', function () {
             clearTimeout(timer);
             timer = setTimeout(function () {
                 self.resizeContent();

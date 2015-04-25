@@ -1,14 +1,39 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Karl STEIN
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 (function ($) {
-    "use strict";
+    'use strict';
 
     // Check if the namespace is not used
-    if (typeof Cuic !== "undefined") {
-        throw "Cuic already exists";
+    if (typeof Cuic !== 'undefined') {
+        throw 'Cuic already exists';
     }
 
     // Check if jQuery is loaded
-    if (typeof jQuery === "undefined") {
-        throw "jQuery not found";
+    if (typeof jQuery === 'undefined') {
+        throw 'jQuery not found';
     }
 
     /**
@@ -36,11 +61,11 @@
          */
         applyCss: function (styles, elm) {
             if (styles != null) {
-                if (typeof styles === "object") {
+                if (typeof styles === 'object') {
                     elm.css(styles);
                 }
-                else if (typeof styles === "string") {
-                    elm.attr("style", elm.attr("style") + ";" + styles);
+                else if (typeof styles === 'string') {
+                    elm.attr('style', elm.attr('style') + ';' + styles);
                 }
             }
         },
@@ -71,50 +96,50 @@
 
             var offset = isPixel ? {left: target[0], top: target[1]} : target.offset();
 
-            var pos = position.split(" ");
+            var pos = position.split(' ');
 
             var styles = {
-                bottom: "",
-                right: ""
+                bottom: '',
+                right: ''
             };
 
             switch (pos[0]) {
-                case "bottom":
+                case 'bottom':
                     styles.left = offset.left + targetWidthHalf - objWidthHalf;
                     styles.top = offset.top + targetHeight;
                     break;
 
-                case "left":
+                case 'left':
                     styles.left = offset.left - objWidth;
                     styles.top = offset.top + targetHeightHalf - objHeightHalf;
                     break;
 
-                case "right":
+                case 'right':
                     styles.left = offset.left + targetWidth;
                     styles.top = offset.top + targetHeightHalf - objHeightHalf;
                     break;
 
-                case "top":
+                case 'top':
                     styles.left = offset.left + targetWidthHalf - objWidthHalf;
                     styles.top = offset.top - objHeight;
                     break;
             }
 
             switch (pos[1]) {
-                case "bottom":
+                case 'bottom':
                     styles.top = offset.top + targetHeight;
                     break;
 
-                case "middle":
+                case 'middle':
                     styles.top = offset.top + targetHeightHalf - objHeightHalf;
                     break;
 
-                case "top":
+                case 'top':
                     styles.top = offset.top - objHeight;
                     break;
             }
 
-            if (elm.css("position") === "fixed") {
+            if (elm.css('position') === 'fixed') {
                 styles.left -= window.scrollX;
                 styles.top -= window.scrollY;
             }
@@ -147,10 +172,10 @@
         margin: function (elm) {
             elm = $(elm);
             return {
-                bottom: parseInt(elm.css("margin-bottom")),
-                left: parseInt(elm.css("margin-left")),
-                right: parseInt(elm.css("margin-right")),
-                top: parseInt(elm.css("margin-top"))
+                bottom: parseInt(elm.css('margin-bottom')),
+                left: parseInt(elm.css('margin-left')),
+                right: parseInt(elm.css('margin-right')),
+                top: parseInt(elm.css('margin-top'))
             }
         },
 
@@ -162,10 +187,10 @@
         padding: function (elm) {
             elm = $(elm);
             return {
-                bottom: parseInt(elm.css("padding-bottom")),
-                left: parseInt(elm.css("padding-left")),
-                right: parseInt(elm.css("padding-right")),
-                top: parseInt(elm.css("padding-top"))
+                bottom: parseInt(elm.css('padding-bottom')),
+                left: parseInt(elm.css('padding-left')),
+                right: parseInt(elm.css('padding-right')),
+                top: parseInt(elm.css('padding-top'))
             }
         },
 
@@ -181,7 +206,7 @@
             container = $(container || elm.offsetParent());
 
             if (container.length === 1) {
-                if (container[0].tagName === "HTML") {
+                if (container[0].tagName === 'HTML') {
                     container = $(document.body);
                 }
                 container.append(elm);
@@ -197,7 +222,7 @@
             var windowWidth = $(window).innerWidth();
 
             // If the target is fixed, we use the window as container
-            if (elm.css("position") === "fixed") {
+            if (elm.css('position') === 'fixed') {
                 containerHeight = windowHeight;
                 containerWidth = windowWidth;
                 fixed = true;
@@ -234,31 +259,31 @@
                 return relativeTop + (containerHeight / 2 - targetHeight / 2);
             }
 
-            var pos = position.split(" ");
+            var pos = position.split(' ');
 
             if (pos[0]) {
                 switch (pos[0]) {
-                    case "bottom":
+                    case 'bottom':
                         styles.bottom = relativeBottom;
                         styles.left = getCenterX();
                         break;
 
-                    case "center":
+                    case 'center':
                         styles.left = getCenterX();
                         styles.top = getCenterY();
                         break;
 
-                    case "left":
+                    case 'left':
                         styles.left = relativeLeft;
                         styles.top = getCenterY();
                         break;
 
-                    case "right":
+                    case 'right':
                         styles.right = relativeRight;
                         styles.top = getCenterY();
                         break;
 
-                    case "top":
+                    case 'top':
                         styles.left = getCenterX();
                         styles.top = relativeTop;
                         break;
@@ -272,18 +297,18 @@
 
             if (pos[1]) {
                 switch (pos[1]) {
-                    case "bottom":
-                        styles.top = "";
+                    case 'bottom':
+                        styles.top = '';
                         styles.bottom = relativeBottom;
                         break;
 
-                    case "middle":
-                        styles.bottom = "";
+                    case 'middle':
+                        styles.bottom = '';
                         styles.top = getCenterY();
                         break;
 
-                    case "top":
-                        styles.bottom = "";
+                    case 'top':
+                        styles.bottom = '';
                         styles.top = relativeTop;
                         break;
                 }
@@ -305,10 +330,10 @@
 
             // Remove previous position
             elm.css({
-                bottom: "",
-                left: "",
-                right: "",
-                top: ""
+                bottom: '',
+                left: '',
+                right: '',
+                top: ''
             });
 
             // Apply new position
@@ -326,7 +351,7 @@
          */
         valueOf: function (value, context) {
             switch (typeof value) {
-                case "function":
+                case 'function':
                     value = value.call(context);
                     break;
             }
@@ -335,7 +360,7 @@
     };
 
     $(document).ready(function () {
-        $(document).on("mousemove", function (ev) {
+        $(document).on('mousemove', function (ev) {
             Cuic.mouseX = ev.clientX;
             Cuic.mouseY = ev.clientY;
         });

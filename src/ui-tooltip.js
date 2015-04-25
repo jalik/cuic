@@ -1,5 +1,30 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Karl STEIN
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 (function ($) {
-    "use strict";
+    'use strict';
 
     /**
      * Creates a tooltip
@@ -18,10 +43,10 @@
         // Set default options
         options = $.extend(true, {
             attribute: self.attribute,
-            className: "tooltip",
+            className: 'tooltip',
             css: null,
             followPointer: self.followPointer,
-            position: "right bottom",
+            position: 'right bottom',
             target: null,
             zIndex: 10
         }, options);
@@ -135,8 +160,8 @@
         };
 
         // Create the element
-        element = $("<div>", {
-            "class": options.className
+        element = $('<div>', {
+            'class': options.className
         }).appendTo(document.body);
 
         // Set custom styles
@@ -144,8 +169,8 @@
 
         // Set required styles
         element.css({
-            display: "none",
-            position: "absolute",
+            display: 'none',
+            position: 'absolute',
             zIndex: options.zIndex
         });
 
@@ -155,9 +180,9 @@
             var content = target.attr(self.attribute);
 
             // Display the tooltip
-            target.on("mouseenter", function (ev) {
-                target.attr("data-tooltip", content);
-                target.attr(self.attribute, "");
+            target.on('mouseenter', function (ev) {
+                target.attr('data-tooltip', content);
+                target.attr(self.attribute, '');
                 element.html(content);
 
                 if (self.followPointer) {
@@ -169,16 +194,16 @@
             });
 
             // Move the tooltip
-            target.on("mousemove", function (ev) {
+            target.on('mousemove', function (ev) {
                 if (self.followPointer) {
                     Cuic.anchor(element, position, [ev.pageX, ev.pageY]);
                 }
             });
 
             // Close the tooltip
-            target.on("mouseleave", function (ev) {
-                var text = target.attr("data-tooltip");
-                target.attr("data-tooltip", "");
+            target.on('mouseleave', function (ev) {
+                var text = target.attr('data-tooltip');
+                target.attr('data-tooltip', '');
                 target.attr(self.attribute, text);
                 self.close();
             });
@@ -189,7 +214,7 @@
      * The attribute used to get the tooltip content
      * @type {string}
      */
-    Cuic.Tooltip.prototype.attribute = "title";
+    Cuic.Tooltip.prototype.attribute = 'title';
 
     /**
      * Tells if the notification follows the pointer

@@ -1,5 +1,30 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Karl STEIN
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 (function ($) {
-    "use strict";
+    'use strict';
 
     /**
      * Checks all form fields
@@ -9,7 +34,7 @@
         // Set default options
         options = $.extend(true, {
             errorCallback: null,
-            errorClass: "error",
+            errorClass: 'error',
             fields: null,
             target: null
         }, options);
@@ -18,10 +43,10 @@
 
         // Get the fields
         var form = $(options.target);
-        var fields = form.find("[name]");
+        var fields = form.find('[name]');
 
         // Removes all errors
-        form.find("." + options.errorClass).removeClass(options.errorClass);
+        form.find('.' + options.errorClass).removeClass(options.errorClass);
 
         function errorFound(field) {
             if (typeof options.errorCallback === 'function') {
@@ -38,7 +63,7 @@
             // Filter field
             if (!(options.fields instanceof Array) || options.fields.indexOf(field.attr('name')) !== -1) {
                 // Checks if the field is required
-                if (this.required && value == "") {
+                if (this.required && value == '') {
                     errorFound(field);
                 } else {
                     // Checks if the field value matches the pattern
@@ -66,8 +91,9 @@
             ignoreEmpty: false
         }, options);
 
-        $(form).find("[name]").each(function () {
+        $(form).find('[name]').each(function () {
             var name = this.name;
+            var safeName = name.replace(/\[\]/, '');
 
             // Check if the field should be collected
             if (options.fields && options.fields.indexOf(name) === -1) {
@@ -83,63 +109,63 @@
             var value = this.value;
 
             switch (field.nodeName.toUpperCase()) {
-                case "INPUT":
-                    if (field.type === "checkbox") {
+                case 'INPUT':
+                    if (field.type === 'checkbox') {
                         // Ignore the field if it was already collected
-                        if (!fields.hasOwnProperty(name)) {
-                            var checkboxes = $(form).find("[name=" + name + "]");
+                        if (!fields.hasOwnProperty(safeName)) {
+                            var checkboxes = $(form).find('[name="' + name + '"]');
 
                             if (checkboxes.length > 1) {
-                                fields[name] = [];
+                                fields[safeName] = [];
 
-                                checkboxes.filter(":checked").each(function () {
-                                    fields[name].push(this.value === "on" ? true : Cuic.parseValue(this.value));
+                                checkboxes.filter(':checked').each(function () {
+                                    fields[safeName].push(this.value === 'on' ? true : Cuic.parseValue(this.value));
                                 });
                             }
                             else if (field.checked) {
-                                fields[name] = (value === "on" ? true : Cuic.parseValue(value));
+                                fields[safeName] = (value === 'on' ? true : Cuic.parseValue(value));
                             }
                         }
                     }
-                    else if (field.type === "radio") {
+                    else if (field.type === 'radio') {
                         if (field.checked) {
-                            fields[name] = (value === "on" ? true : Cuic.parseValue(value));
+                            fields[safeName] = (value === 'on' ? true : Cuic.parseValue(value));
                         }
                     }
-                    else if (field.type !== "button" && field.type !== "reset" && field.type !== "submit") {
-                        fields[name] = Cuic.parseValue(value);
+                    else if (field.type !== 'button' && field.type !== 'reset' && field.type !== 'submit') {
+                        fields[safeName] = Cuic.parseValue(value);
                     }
                     break;
 
-                case "SELECT":
+                case 'SELECT':
                     if (field.multiple) {
-                        fields[name] = [];
-                        $(field).find("option:selected").each(function () {
-                            fields[name].push(Cuic.parseValue(this.value));
+                        fields[safeName] = [];
+                        $(field).find('option:selected').each(function () {
+                            fields[safeName].push(Cuic.parseValue(this.value));
                         });
                     }
                     else {
-                        fields[name] = Cuic.parseValue(value);
+                        fields[safeName] = Cuic.parseValue(value);
                     }
                     break;
 
-                case "TEXTAREA":
-                    fields[name] = Cuic.parseValue(value);
+                case 'TEXTAREA':
+                    fields[safeName] = Cuic.parseValue(value);
                     break;
             }
 
             // Remove extra spaces
-            if (typeof fields[name] === "string") {
-                fields[name] = fields[name].trim();
+            if (typeof fields[safeName] === 'string') {
+                fields[safeName] = fields[safeName].trim();
 
-                if (fields[name] === "") {
-                    fields[name] = null;
+                if (fields[safeName] === '') {
+                    fields[safeName] = null;
                 }
             }
 
             // Remove empty fields
-            if (fields[name] === null && options.ignoreEmpty) {
-                delete fields[name];
+            if (fields[safeName] === null && options.ignoreEmpty) {
+                delete fields[safeName];
             }
         });
         return fields;
@@ -151,29 +177,29 @@
      * @returns {string}
      */
     Cuic.serializeUrlArgs = function (args) {
-        var output = "";
+        var output = '';
 
         if (args != null) {
-            if (typeof args === "string") {
+            if (typeof args === 'string') {
                 output = args;
             }
-            else if (typeof args === "object") {
+            else if (typeof args === 'object') {
                 var arr = [];
 
                 for (var key in args) {
                     if (args.hasOwnProperty(key)) {
                         if (args[key] != null) {
                             var value = encodeURIComponent(args[key]);
-                            arr.push("&");
+                            arr.push('&');
                             arr.push(key);
-                            arr.push("=");
+                            arr.push('=');
                             arr.push(value.trim());
                         }
                     }
                 }
                 if (arr.length > 0) {
                     arr.unshift(arr);
-                    output = arr.join("");
+                    output = arr.join('');
                 }
             }
         }
@@ -186,11 +212,11 @@
      * @returns {*}
      */
     Cuic.parseValue = function (str) {
-        if (typeof str === "string") {
-            if (str.toLowerCase() === "true") {
+        if (typeof str === 'string') {
+            if (str.toLowerCase() === 'true') {
                 return true;
 
-            } else if (str.toLowerCase() === "false") {
+            } else if (str.toLowerCase() === 'false') {
                 return false;
 
             } else if (/^[0-9]+$/.test(str)) {
@@ -222,8 +248,8 @@
         });
 
         options = $.extend(true, options, {
-            url: options.url + (params ? "?" + params : ""),
-            type: "POST",
+            url: options.url + (params ? '?' + params : ''),
+            type: 'POST',
             data: data,
             cache: false,
             processData: false,

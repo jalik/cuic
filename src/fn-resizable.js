@@ -1,5 +1,30 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Karl STEIN
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 (function ($) {
-    "use strict";
+    'use strict';
 
     /**
      * Makes an object resizable
@@ -75,8 +100,8 @@
         element.addClass(self.className);
 
         // Force the target to be the relative parent
-        if (element.css("position") === "static") {
-            element.css("position", "relative");
+        if (element.css('position') === 'static') {
+            element.css('position', 'relative');
         }
 
         // Set the top container of the element
@@ -96,7 +121,7 @@
             ev.preventDefault();
 
             // Change element style
-            element.addClass("resizing");
+            element.addClass('resizing');
 
             var containerLeft = container.offset().left;
             var containerTop = container.offset().top;
@@ -164,9 +189,9 @@
             }, Math.round(1000 / self.fps));
 
             // Stop resizing
-            $(document).one("mouseup", function (ev) {
+            $(document).one('mouseup', function (ev) {
                 clearInterval(timer);
-                element.removeClass("resizing");
+                element.removeClass('resizing');
 
                 if (self.onResizeStop) {
                     self.onResizeStop.call(self, ev);
@@ -175,46 +200,46 @@
         };
 
         // Right handler
-        var rightHandler = $("<div>", {
+        var rightHandler = $('<div>', {
             css: {
-                cursor: "e-resize",
-                display: "none",
-                height: "100%",
-                position: "absolute",
+                cursor: 'e-resize',
+                display: 'none',
+                height: '100%',
+                position: 'absolute',
                 right: 0,
                 top: 0,
                 width: options.handlerSize,
                 zIndex: 1
             }
-        }).on("mousedown", resize).appendTo(element);
+        }).on('mousedown', resize).appendTo(element);
 
         // Bottom handler
-        var bottomHandler = $("<div>", {
+        var bottomHandler = $('<div>', {
             css: {
                 bottom: 0,
-                cursor: "s-resize",
-                display: "none",
+                cursor: 's-resize',
+                display: 'none',
                 height: options.handlerSize,
-                position: "absolute",
+                position: 'absolute',
                 left: 0,
-                width: "100%",
+                width: '100%',
                 zIndex: 1
             }
-        }).on("mousedown", resize).appendTo(element);
+        }).on('mousedown', resize).appendTo(element);
 
         // Bottom-Right handler
-        var bottomRightHandler = $("<div>", {
+        var bottomRightHandler = $('<div>', {
             css: {
                 bottom: 0,
-                cursor: "se-resize",
-                display: "none",
+                cursor: 'se-resize',
+                display: 'none',
                 height: options.handlerSize,
-                position: "absolute",
+                position: 'absolute',
                 right: 0,
                 width: options.handlerSize,
                 zIndex: 2
             }
-        }).on("mousedown", resize).appendTo(element);
+        }).on('mousedown', resize).appendTo(element);
 
         handlers = [
             rightHandler,
@@ -231,8 +256,8 @@
         ];
 
         // Display all handlers when mouse enters the target
-        element.on("mouseenter", function () {
-            if (!element.hasClass("resizing")) {
+        element.on('mouseenter', function () {
+            if (!element.hasClass('resizing')) {
                 for (var i = 0; i < handlers.length; i += 1) {
                     handlers[i].stop(true, false).fadeIn(0);
                 }
@@ -240,8 +265,8 @@
         });
 
         // Hide all handlers when mouse leaves the target
-        element.on("mouseleave", function () {
-            if (!element.hasClass("resizing")) {
+        element.on('mouseleave', function () {
+            if (!element.hasClass('resizing')) {
                 for (var i = 0; i < handlers.length; i += 1) {
                     handlers[i].stop(true, false).fadeOut(0);
                 }
@@ -273,7 +298,7 @@
      * The class name
      * @type {string}
      */
-    Cuic.Draggable.prototype.className = "resizable";
+    Cuic.Draggable.prototype.className = 'resizable';
 
     /**
      * The animation speed

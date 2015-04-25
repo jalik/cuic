@@ -1,5 +1,30 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Karl STEIN
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 (function ($) {
-    "use strict";
+    'use strict';
 
     var tabIndex = 0;
 
@@ -19,10 +44,10 @@
 
         // Get the tabs
         var target = $(options.target);
-        self.tabs = target.children(".tab");
+        self.tabs = target.children('.tab');
         self.content = $(options.content);
 
-        var defaultTab = self.tabs.filter(".default");
+        var defaultTab = self.tabs.filter('.default');
 
         if (defaultTab.length === 1) {
             // Set the default tab
@@ -30,27 +55,27 @@
         }
         else {
             // Set the first tab as default if the default tab is not defined in the HTML
-            self.tabs.eq(self.defaultTab).addClass("default");
+            self.tabs.eq(self.defaultTab).addClass('default');
         }
 
         // Set default tab as active
-        self.tabs.filter(".default").addClass("active");
+        self.tabs.filter('.default').addClass('active');
 
         self.tabs.each(function () {
             var tab = $(this);
-            var tabContent = self.content.find("#" + tab.attr("data-content"));
+            var tabContent = self.content.find('#' + tab.attr('data-content'));
 
             // Set the tabindex for keyboard tabulation
-            tab.attr("tabindex", tabIndex += 1);
+            tab.attr('tabindex', tabIndex += 1);
 
             // Hide all tabs but not the default tab
-            if (!tab.hasClass("default")) {
+            if (!tab.hasClass('default')) {
                 tabContent.hide();
             }
         });
 
         // Display the content of the tab when it is focused
-        self.tabs.on("focus.tab", function (ev) {
+        self.tabs.on('focus.tab', function (ev) {
             self.selectTab($(ev.currentTarget).index());
         });
     };
@@ -70,7 +95,7 @@
         if (index == this.getActiveTabIndex()) {
             this.selectPreviousTab();
         }
-        return this.getTab(index).addClass("disabled");
+        return this.getTab(index).addClass('disabled');
     };
 
     /**
@@ -79,7 +104,7 @@
      * @return {jQuery}
      */
     Cuic.Tabs.prototype.enableTab = function (index) {
-        return this.getTab(index).removeClass("disabled");
+        return this.getTab(index).removeClass('disabled');
     };
 
     /**
@@ -87,7 +112,7 @@
      * @return {jQuery}
      */
     Cuic.Tabs.prototype.getActiveTab = function () {
-        return this.tabs.filter(".active:first");
+        return this.tabs.filter('.active:first');
     };
 
     /**
@@ -114,7 +139,7 @@
      */
     Cuic.Tabs.prototype.getTabContent = function (index) {
         var tab = this.getTab(index);
-        return this.content.find("#" + tab.attr("data-content"));
+        return this.content.find('#' + tab.attr('data-content'));
     };
 
     /**
@@ -130,7 +155,7 @@
      * @return {jQuery}
      */
     Cuic.Tabs.prototype.selectNextTab = function () {
-        return this.selectTab(this.getActiveTab().next(":not(.disabled)").index());
+        return this.selectTab(this.getActiveTab().next(':not(.disabled)').index());
     };
 
     /**
@@ -138,7 +163,7 @@
      * @return {jQuery}
      */
     Cuic.Tabs.prototype.selectPreviousTab = function () {
-        return this.selectTab(this.getActiveTab().prev(":not(.disabled)").index());
+        return this.selectTab(this.getActiveTab().prev(':not(.disabled)').index());
     };
 
     /**
@@ -150,9 +175,9 @@
         var tab = this.getTab(index);
         var tabContent = this.getTabContent(index);
 
-        if (!tab.hasClass("disabled")) {
-            this.tabs.removeClass("active");
-            tab.addClass("active");
+        if (!tab.hasClass('disabled')) {
+            this.tabs.removeClass('active');
+            tab.addClass('active');
             this.content.children().not(tabContent).hide();
             tabContent.stop(true, false).fadeIn(200);
         }
