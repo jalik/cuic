@@ -434,14 +434,12 @@
         });
 
         // Make the dialog draggable
-        if (options.draggable) {
-            self.draggable = new Cuic.Draggable({
-                area: title,
-                container: container,
-                rootOnly: false,
-                target: element
-            });
-        }
+        self.draggable = new Cuic.Draggable({
+            area: title,
+            container: container,
+            rootOnly: false,
+            target: element
+        });
 
         var timer;
         $(window).on('resize.dialog', function () {
