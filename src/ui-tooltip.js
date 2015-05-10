@@ -42,10 +42,10 @@
 
         // Set default options
         options = $.extend(true, {
-            attribute: self.attribute,
+            attribute: 'title',
             className: 'tooltip',
             css: null,
-            followPointer: self.followPointer,
+            followPointer: true,
             position: 'right bottom',
             target: null,
             zIndex: 10
@@ -209,17 +209,5 @@
             });
         });
     };
-
-    /**
-     * The attribute used to get the tooltip content
-     * @type {string}
-     */
-    Cuic.Tooltip.prototype.attribute = 'title';
-
-    /**
-     * Tells if the notification follows the pointer
-     * @type {boolean}
-     */
-    Cuic.Tooltip.prototype.followPointer = true;
 
 })(jQuery);

@@ -39,6 +39,7 @@
         // Set default options
         options = $.extend(true, {
             content: null,
+            defaultTab: 0,
             target: null
         }, options);
 
@@ -55,6 +56,7 @@
         }
         else {
             // Set the first tab as default if the default tab is not defined in the HTML
+            self.defaultTab = options.defaultTab;
             self.tabs.eq(self.defaultTab).addClass('default');
         }
 
@@ -79,12 +81,6 @@
             self.selectTab($(ev.currentTarget).index());
         });
     };
-
-    /**
-     * The default tab index
-     * @type {number}
-     */
-    Cuic.Tabs.prototype.defaultTab = 0;
 
     /**
      * Disables a tab

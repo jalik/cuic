@@ -43,14 +43,14 @@
 
         // Default options
         options = $.extend(true, {
-            autoClose: self.autoClose,
-            autoRemove: self.autoRemove,
+            autoClose: true,
+            autoRemove: true,
             className: 'notification',
             closeButton: '×',
             container: document.body,
             content: null,
             css: null,
-            duration: self.duration,
+            duration: 2000,
             position: 'center',
             zIndex: 10
         }, options);
@@ -226,24 +226,6 @@
     Cuic.Notification.prototype.animateOpen = function (duration, callback) {
         return this.getElement().fadeIn(200, callback);
     };
-
-    /**
-     * Close the notification after a given amount of time
-     * @type {boolean}
-     */
-    Cuic.Notification.prototype.autoClose = true;
-
-    /**
-     * Remove the notification from the DOM when closed
-     * @type {boolean}
-     */
-    Cuic.Notification.prototype.autoRemove = true;
-
-    /**
-     * How many milliseconds the notification should remain visible
-     * @type {number}
-     */
-    Cuic.Notification.prototype.duration = 2000;
 
     /**
      * Creates a notification stack

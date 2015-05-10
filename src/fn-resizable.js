@@ -42,21 +42,21 @@
 
         // Default options
         options = $.extend(true, {
-            className: self.className,
-            fps: self.fps,
+            className: 'resizable',
+            fps: 30,
             handlerSize: 10,
-            horizontal: self.horizontal,
-            keepRatio: self.keepRatio,
-            maxHeight: self.maxHeight,
-            maxWidth: self.maxWidth,
-            minHeight: self.minHeight,
-            minWidth: self.minWidth,
-            onResize: self.onResize,
-            onResizeStart: self.onResizeStart,
-            onResizeStop: self.onResizeStop,
-            stepX: self.stepX,
-            stepY: self.stepY,
-            vertical: self.vertical
+            horizontal: true,
+            keepRatio: false,
+            maxHeight: null,
+            maxWidth: null,
+            minHeight: 1,
+            minWidth: 1,
+            onResize: null,
+            onResizeStart: null,
+            onResizeStop: null,
+            stepX: 1,
+            stepY: 1,
+            vertical: true
         }, options);
 
         // Define attributes
@@ -293,89 +293,5 @@
         return (!Number(this.maxWidth) || width <= this.maxWidth)
             && (!Number(this.minWidth) || width >= this.minWidth);
     };
-
-    /**
-     * The class name
-     * @type {string}
-     */
-    Cuic.Draggable.prototype.className = 'resizable';
-
-    /**
-     * The animation speed
-     * @type {number}
-     */
-    Cuic.Resizable.prototype.fps = 30;
-
-    /**
-     * Allows horizontal resizing
-     * @type {boolean}
-     */
-    Cuic.Resizable.prototype.horizontal = true;
-
-    /**
-     * Keeps ratio when resizing
-     * @type {boolean}
-     */
-    Cuic.Resizable.prototype.keepRatio = false;
-
-    /**
-     * The maximum height of the element
-     * @type {number}
-     */
-    Cuic.Resizable.prototype.maxHeight = null;
-
-    /**
-     * The maximum width of the element
-     * @type {number}
-     */
-    Cuic.Resizable.prototype.maxWidth = null;
-
-    /**
-     * The minimum height of the element
-     * @type {number}
-     */
-    Cuic.Resizable.prototype.minHeight = 1;
-
-    /**
-     * The minimum width of the element
-     * @type {number}
-     */
-    Cuic.Resizable.prototype.minWidth = 1;
-
-    /**
-     * Called when the element is resizing
-     * @type {function}
-     */
-    Cuic.Resizable.prototype.onResize = null;
-
-    /**
-     * Called when the resizing starts
-     * @type {function}
-     */
-    Cuic.Resizable.prototype.onResizeStart = null;
-
-    /**
-     * Called when the resizing stops
-     * @type {function}
-     */
-    Cuic.Resizable.prototype.onResizeStop = null;
-
-    /**
-     * The number of pixels to resize horizontally
-     * @type {number}
-     */
-    Cuic.Resizable.prototype.stepX = 1;
-
-    /**
-     * The number of pixels to resize vertically
-     * @type {number}
-     */
-    Cuic.Resizable.prototype.stepY = 1;
-
-    /**
-     * Allows vertical resizing
-     * @type {boolean}
-     */
-    Cuic.Resizable.prototype.vertical = true;
 
 })(jQuery);

@@ -47,7 +47,7 @@
 
         // Set default options
         options = $.extend(true, {
-            autoRemove: self.autoRemove,
+            autoRemove: true,
             buttons: null,
             className: 'dialog',
             container: document.body,
@@ -55,9 +55,9 @@
             contentHeight: null,
             contentWidth: null,
             css: null,
-            draggable: self.draggable,
+            draggable: true,
             position: 'center',
-            modal: self.modal,
+            modal: true,
             target: null,
             title: null,
             zIndex: 5
@@ -458,24 +458,5 @@
             }
         });
     };
-
-    /**
-     * Remove the dialog from the DOM when closed
-     * @type {boolean}
-     */
-    Cuic.Dialog.prototype.autoRemove = true;
-
-    /**
-     * Is the dialog draggable
-     * @type {Cuic.Draggable}
-     */
-    Cuic.Dialog.prototype.draggable = null;
-
-    /**
-     * Is the dialog important enough to only allow closing
-     * by an explicit click on the close button
-     * @type {boolean}
-     */
-    Cuic.Dialog.prototype.modal = true;
 
 })(jQuery);

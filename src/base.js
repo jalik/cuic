@@ -195,7 +195,7 @@
         },
 
         /**
-         * Position an object from the interior
+         * Position an object inside another
          * @param elm
          * @param position
          * @param container
@@ -203,13 +203,17 @@
          */
         position: function (elm, position, container) {
             elm = $(elm);
+
+            // Use element's parent as reference
             container = $(container || elm.offsetParent());
 
-            if (container.length === 1) {
+            if (container.length === 1 && container[0]) {
                 if (container[0].tagName === 'HTML') {
                     container = $(document.body);
                 }
                 container.append(elm);
+            } else {
+                throw new Error('Cannot position element, invalid container');
             }
 
             var fixed = false;

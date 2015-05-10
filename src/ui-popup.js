@@ -42,8 +42,8 @@
 
         // Default options
         options = $.extend(true, {
-            autoClose: self.autoClose,
-            autoRemove: self.autoRemove,
+            autoClose: true,
+            autoRemove: true,
             className: 'popup',
             content: null,
             css: null,
@@ -193,17 +193,5 @@
             }
         });
     };
-
-    /**
-     * Close the popup when the user clicks outside
-     * @type {boolean}
-     */
-    Cuic.Popup.prototype.autoClose = true;
-
-    /**
-     * Remove the popup from the DOM when closed
-     * @type {boolean}
-     */
-    Cuic.Popup.prototype.autoRemove = true;
 
 })(jQuery);

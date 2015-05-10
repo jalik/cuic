@@ -47,7 +47,7 @@
 
         // Set default options
         options = $.extend(true, {
-            autoClose: self.autoClose,
+            autoClose: false,
             className: 'panel',
             closeButton: '×',
             container: null,
@@ -55,8 +55,8 @@
             css: null,
             footer: null,
             maximized: false,
-            onClosed: self.onClosed,
-            onOpened: self.onOpened,
+            onClosed: null,
+            onOpened: null,
             position: 'left top',
             target: null,
             title: null,
@@ -508,35 +508,5 @@
             }
         });
     };
-
-    /**
-     * Close the panel when the user clicks outside
-     * @type {boolean}
-     */
-    Cuic.Panel.prototype.autoClose = false;
-
-    /**
-     * Called when the panel is closed
-     * @type {function}
-     */
-    Cuic.Panel.prototype.onClosed = null;
-
-    /**
-     * Called when the panel is opened
-     * @type {function}
-     */
-    Cuic.Panel.prototype.onOpened = null;
-
-    /**
-     * The original height of the panel
-     * @type {number}
-     */
-    Cuic.Panel.prototype.originalHeight = null;
-
-    /**
-     * The original width of the panel
-     * @type {number}
-     */
-    Cuic.Panel.prototype.originalWidth = null;
 
 })(jQuery);

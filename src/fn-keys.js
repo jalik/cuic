@@ -80,34 +80,4 @@
         });
     };
 
-    /**
-     * Should alt key be pressed
-     * @type {boolean}
-     */
-    Cuic.Shortcut.prototype.altKey = false;
-
-    /**
-     * The callback method
-     * @type {function}
-     */
-    Cuic.Shortcut.prototype.callback = null;
-
-    /**
-     * Should ctrl key be pressed
-     * @type {boolean}
-     */
-    Cuic.Shortcut.prototype.ctrlKey = false;
-
-    /**
-     * The key code
-     * @type {number}
-     */
-    Cuic.Shortcut.prototype.keyCode = null;
-
-    /**
-     * Should shift key be pressed
-     * @type {boolean}
-     */
-    Cuic.Shortcut.prototype.shiftKey = false;
-
 })(jQuery);

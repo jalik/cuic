@@ -38,22 +38,22 @@
 
         // Default options
         options = $.extend(true, {
-            animSpeed: grid.animSpeed,
-            autoResize: grid.autoResize,
-            cols: grid.cols,
-            colsWidth: grid.colsWidth,
-            editable: grid.editable,
-            fps: grid.fps,
-            maxCols: grid.maxCols,
-            maxRows: grid.maxRows,
-            minCols: grid.minCols,
-            minRows: grid.minRows,
-            onWidgetMoved: grid.onWidgetMoved,
-            onWidgetResized: grid.onWidgetResized,
-            rows: grid.rows,
-            rowsHeight: grid.rowsHeight,
-            spacing: grid.spacing,
-            widgetSelector: grid.widgetSelector
+            animSpeed: 200,
+            autoResize: true,
+            cols: null,
+            colsWidth: 100,
+            editable: true,
+            fps: 30,
+            maxCols: null,
+            maxRows: null,
+            minCols: null,
+            minRows: null,
+            onWidgetMoved: null,
+            onWidgetResized: null,
+            rows: null,
+            rowsHeight: 100,
+            spacing: 10,
+            widgetSelector: '.widget'
         }, options);
 
         // Set the options
@@ -70,6 +70,7 @@
         grid.onWidgetResized = options.onWidgetResized;
         grid.rowsHeight = parseFloat(options.rowsHeight);
         grid.spacing = parseFloat(options.spacing);
+        grid.widgets = {};
 
         // Get the grid
         grid.element = $(options.target);
@@ -588,23 +589,6 @@
         return grid;
     };
 
-    Cuic.Grid.prototype.animSpeed = 200;
-    Cuic.Grid.prototype.autoResize = true;
-    Cuic.Grid.prototype.cols = null;
-    Cuic.Grid.prototype.colsWidth = 100;
-    Cuic.Grid.prototype.editable = true;
-    Cuic.Grid.prototype.element = null;
-    Cuic.Grid.prototype.fps = 30;
-    Cuic.Grid.prototype.maxCols = null;
-    Cuic.Grid.prototype.maxRows = null;
-    Cuic.Grid.prototype.onWidgetMoved = null;
-    Cuic.Grid.prototype.onWidgetResized = null;
-    Cuic.Grid.prototype.rows = null;
-    Cuic.Grid.prototype.rowsHeight = 100;
-    Cuic.Grid.prototype.spacing = 10;
-    Cuic.Grid.prototype.widgets = {};
-    Cuic.Grid.prototype.widgetSelector = '.widget';
-
     /**
      * Creates a grid widget
      * @param options
@@ -615,17 +599,17 @@
 
         // Default options
         options = $.extend(true, {
-            col: self.col,
+            col: 1,
             content: null,
-            draggable: self.draggable,
-            maxSizeX: self.maxSizeX,
-            maxSizeY: self.maxSizeY,
-            minSizeX: self.minSizeX,
-            minSizeY: self.minSizeY,
-            resizable: self.resizable,
-            row: self.row,
-            sizeX: self.sizeX,
-            sizeY: self.sizeY,
+            draggable: true,
+            maxSizeX: null,
+            maxSizeY: null,
+            minSizeX: 1,
+            minSizeY: 1,
+            resizable: true,
+            row: 1,
+            sizeX: 1,
+            sizeY: 1,
             target: null
         }, options);
 
@@ -685,17 +669,5 @@
     Cuic.Grid.Widget.prototype.isResizing = function () {
         return this.element.hasClass('resizing');
     };
-
-    Cuic.Grid.Widget.prototype.col = 1;
-    Cuic.Grid.Widget.prototype.draggable = true;
-    Cuic.Grid.Widget.prototype.element = null;
-    Cuic.Grid.Widget.prototype.maxSizeX = null;
-    Cuic.Grid.Widget.prototype.maxSizeY = null;
-    Cuic.Grid.Widget.prototype.minSizeX = 1;
-    Cuic.Grid.Widget.prototype.minSizeY = 1;
-    Cuic.Grid.Widget.prototype.resizable = true;
-    Cuic.Grid.Widget.prototype.row = 1;
-    Cuic.Grid.Widget.prototype.sizeX = 1;
-    Cuic.Grid.Widget.prototype.sizeY = 1;
 
 })(jQuery);
