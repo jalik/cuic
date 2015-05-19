@@ -91,9 +91,9 @@
             ignoreEmpty: false
         }, options);
 
-        $(form).find('[name]').each(function () {
+        $(form).find('[name]').not(':disabled').each(function () {
             var name = this.name;
-            var safeName = name.replace(/\[\]/, '');
+            var safeName = name.replace(/\[[^\]]+\]/, '');
 
             // Check if the field should be collected
             if (options.fields && options.fields.indexOf(name) === -1) {
@@ -121,18 +121,15 @@
                                 checkboxes.filter(':checked').each(function () {
                                     fields[safeName].push(this.value === 'on' ? true : Cuic.parseValue(this.value));
                                 });
-                            }
-                            else if (field.checked) {
+                            } else if (field.checked) {
                                 fields[safeName] = (value === 'on' ? true : Cuic.parseValue(value));
                             }
                         }
-                    }
-                    else if (field.type === 'radio') {
+                    } else if (field.type === 'radio') {
                         if (field.checked) {
                             fields[safeName] = (value === 'on' ? true : Cuic.parseValue(value));
                         }
-                    }
-                    else if (field.type !== 'button' && field.type !== 'reset' && field.type !== 'submit') {
+                    } else if (field.type !== 'button' && field.type !== 'reset' && field.type !== 'submit') {
                         fields[safeName] = Cuic.parseValue(value);
                     }
                     break;
@@ -143,8 +140,7 @@
                         $(field).find('option:selected').each(function () {
                             fields[safeName].push(Cuic.parseValue(this.value));
                         });
-                    }
-                    else {
+                    } else {
                         fields[safeName] = Cuic.parseValue(value);
                     }
                     break;
