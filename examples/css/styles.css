@@ -70,12 +70,12 @@
 
 .grid {
     background-color: #eee;
-    border: solid 1px #ddd;
+    border: solid 1px #ccc;
     border-radius: 3px;
 }
 
 .grid > .widget {
-    background-color: #ddd;
+    background-color: #fff;
     border: solid 1px #ccc;
     margin: 2em;
     border-radius: 3px;
@@ -84,7 +84,7 @@
 }
 
 .grid > .widget:hover {
-    background-color: #e5e5e5;
+    border: solid 1px #65d0f3;
 }
 
 .grid > .widget * {
@@ -121,26 +121,7 @@
     display: block;
 }
 
-.navbar-dropdown {
-    background: #fff;
-    border-radius: 3px;
-    box-shadow: 0 1px 0.5em #888;
-    padding: 10px;
-}
-
-.navbar-dropdown-item {
-    border-bottom: solid 1px #eee;
-    cursor: pointer;
-    display: block;
-    padding: 0.5em;
-}
-
-.navbar-dropdown-item:hover {
-    background-color: #eee;
-}
-
-.navbar-item,
-.navbar-dropdown-button {
+.navbar-item {
     border-right: solid 1px #eee;
     cursor: pointer;
     display: inline-block;
@@ -150,8 +131,7 @@
     transition: all 200ms;
 }
 
-.navbar-item:hover,
-.navbar-dropdown-button:hover {
+.navbar-item:hover {
     background: rgba(87, 160, 190, 0.1);
     border-bottom: none;
 }

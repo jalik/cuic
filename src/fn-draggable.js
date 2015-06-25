@@ -38,30 +38,16 @@
         var element;
 
         // Default options
-        options = $.extend(true, {
-            className: self.className,
-            fps: self.fps,
-            horizontal: self.horizontal,
-            onDrag: self.onDrag,
-            onDragStart: self.onDragStart,
-            onDragStop: self.onDragStop,
-            rootOnly: self.rootOnly,
-            stepX: self.stepX,
-            stepY: self.stepY,
-            vertical: self.vertical
-        }, options);
+        options = $.extend(true, {}, Cuic.Draggable.prototype.options, options);
 
         // Define attributes
         self.className = options.className;
-        self.fps = options.fps;
-        self.horizontal = !!options.horizontal;
-        self.onDrag = options.onDrag;
-        self.onDragStart = options.onDragStart;
-        self.onDragStop = options.onDragStop;
-        self.rootOnly = options.rootOnly;
-        self.stepX = options.stepX;
-        self.stepY = options.stepY;
-        self.vertical = !!options.vertical;
+        self.fps = parseInt(options.fps);
+        self.horizontal = options.horizontal === true;
+        self.rootOnly = options.rootOnly === true;
+        self.stepX = parseInt(options.stepX);
+        self.stepY = parseInt(options.stepY);
+        self.vertical = options.vertical === true;
 
         /**
          * Returns the element
@@ -199,63 +185,35 @@
     };
 
     /**
-     * The class name
-     * @type {string}
-     */
-    Cuic.Draggable.prototype.className = 'draggable';
-
-    /**
-     * The animation speed
-     * @type {number}
-     */
-    Cuic.Draggable.prototype.fps = 30;
-
-    /**
-     * Allows horizontal dragging
-     * @type {boolean}
-     */
-    Cuic.Draggable.prototype.horizontal = true;
-
-    /**
-     * Called when the element is dragging
+     * Called when dragging element
      * @type {function}
      */
     Cuic.Draggable.prototype.onDrag = null;
 
     /**
-     * Called when the dragging starts
+     * Called when drag starts
      * @type {function}
      */
     Cuic.Draggable.prototype.onDragStart = null;
 
     /**
-     * Called when the dragging stops
+     * Called when drag stops
      * @type {function}
      */
     Cuic.Draggable.prototype.onDragStop = null;
 
     /**
-     * Only drags using the root node of the area
-     * @type {boolean}
+     * Default options
+     * @type {*}
      */
-    Cuic.Draggable.prototype.rootOnly = true;
-
-    /**
-     * The number of pixels to move horizontally
-     * @type {number}
-     */
-    Cuic.Draggable.prototype.stepX = 1;
-
-    /**
-     * The number of pixels to move vertically
-     * @type {number}
-     */
-    Cuic.Draggable.prototype.stepY = 1;
-
-    /**
-     * Allows vertical dragging
-     * @type {boolean}
-     */
-    Cuic.Draggable.prototype.vertical = true;
+    Cuic.Draggable.prototype.options = {
+        className: 'draggable',
+        fps: 60,
+        horizontal: true,
+        rootOnly: true,
+        stepX: 1,
+        stepY: 1,
+        vertical: true
+    };
 
 })(jQuery);

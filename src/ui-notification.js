@@ -42,27 +42,21 @@
         var timer;
 
         // Default options
-        options = $.extend(true, {
-            autoClose: true,
-            autoRemove: true,
-            className: 'notification',
-            closeButton: '×',
-            container: document.body,
-            content: null,
-            css: null,
-            duration: 2000,
-            position: 'center',
-            zIndex: 10
-        }, options);
+        options = $.extend(true, {}, Cuic.Notification.prototype.options, options);
 
         // Define attributes
-        self.autoClose = !!options.autoClose;
-        self.autoRemove = !!options.autoRemove;
-        self.duration = options.duration;
+        self.autoClose = options.autoClose === true;
+        self.autoRemove = options.autoRemove === true;
+        self.duration = parseInt(options.duration);
 
         // Define vars
         container = $(options.container);
         position = options.position;
+
+        // Use document body as container
+        if (container.length === 0) {
+            container = $(document.body);
+        }
 
         /**
          * Closes the notification
@@ -228,6 +222,23 @@
     };
 
     /**
+     * Default options
+     * @type {*}
+     */
+    Cuic.Notification.prototype.options = {
+        autoClose: true,
+        autoRemove: true,
+        className: 'notification',
+        closeButton: '×',
+        container: null,
+        content: null,
+        css: null,
+        duration: 2000,
+        position: 'center',
+        zIndex: 10
+    };
+
+    /**
      * Creates a notification stack
      * @param options
      * @constructor
@@ -239,17 +250,16 @@
         var position;
 
         // Set default options
-        options = $.extend(true, {
-            className: 'notification-area',
-            container: document.body,
-            css: null,
-            position: self.position,
-            zIndex: 10
-        }, options);
+        options = $.extend(true, {}, Cuic.Notification.Stack.prototype.options, options);
 
         // Define vars
         container = $(options.container);
         position = options.position;
+
+        // Use document body as container
+        if (container.length === 0) {
+            container = $(document.body);
+        }
 
         /**
          * Add a notification to the stack
@@ -357,6 +367,18 @@
 
         // Position the element
         Cuic.position(element, position, container);
+    };
+
+    /**
+     * Default options
+     * @type {*}
+     */
+    Cuic.Notification.Stack.prototype.options = {
+        className: 'notification-area',
+        container: null,
+        css: null,
+        position: 'right top',
+        zIndex: 10
     };
 
 })

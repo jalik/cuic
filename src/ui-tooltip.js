@@ -41,19 +41,11 @@
         var target;
 
         // Set default options
-        options = $.extend(true, {
-            attribute: 'title',
-            className: 'tooltip',
-            css: null,
-            followPointer: true,
-            position: 'right bottom',
-            target: null,
-            zIndex: 10
-        }, options);
+        options = $.extend(true, {}, Cuic.Tooltip.prototype.options, options);
 
         // Define attributes
         self.attribute = options.attribute;
-        self.followPointer = options.followPointer;
+        self.followPointer = options.followPointer === true;
 
         // Define vars
         position = options.position;
@@ -174,7 +166,6 @@
             zIndex: options.zIndex
         });
 
-        // Find the targets
         $(options.target).each(function () {
             var target = $(this);
             var content = target.attr(self.attribute);
@@ -197,17 +188,33 @@
             target.on('mousemove', function (ev) {
                 if (self.followPointer) {
                     Cuic.anchor(element, position, [ev.pageX, ev.pageY]);
+                } else {
+                    Cuic.anchor(element, position, target);
                 }
             });
 
             // Close the tooltip
-            target.on('mouseleave', function (ev) {
+            target.on('mouseleave', function () {
                 var text = target.attr('data-tooltip');
                 target.attr('data-tooltip', '');
                 target.attr(self.attribute, text);
                 self.close();
             });
         });
+    };
+
+    /**
+     * Default options
+     * @type {*}
+     */
+    Cuic.Tooltip.prototype.options = {
+        attribute: 'title',
+        className: 'tooltip',
+        css: null,
+        followPointer: true,
+        position: 'right bottom',
+        target: null,
+        zIndex: 10
     };
 
 })(jQuery);

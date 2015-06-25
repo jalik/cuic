@@ -290,20 +290,21 @@ tr {
 /* RUN */
 
 .run {
-    float: right;
+    border-radius: 0 0 0 5px;
     font-weight: bold;
-}
-
-.run:after {
-    content: " »";
+    margin: 0;
+    right: 0;
+    position: absolute;
+    top: 0;
+    z-index: 1;
 }
 
 /* SANDBOX */
 
 .sandbox {
-    background-color: #f5f5f5;
-    border: dashed 1px #aaa;
+    background-color: #fafafa;
+    border: solid 1px #ddd;
     box-sizing: border-box;
-    padding: 2em;
+    padding: 20px;
     position: relative;
 }

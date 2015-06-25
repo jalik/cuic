@@ -37,37 +37,18 @@
         var grid = this;
 
         // Default options
-        options = $.extend(true, {
-            animSpeed: 200,
-            autoResize: true,
-            cols: null,
-            colsWidth: 100,
-            editable: true,
-            fps: 30,
-            maxCols: null,
-            maxRows: null,
-            minCols: null,
-            minRows: null,
-            onWidgetMoved: null,
-            onWidgetResized: null,
-            rows: null,
-            rowsHeight: 100,
-            spacing: 10,
-            widgetSelector: '.widget'
-        }, options);
+        options = $.extend(true, Cuic.Grid.prototype.options, options);
 
         // Set the options
         grid.animSpeed = parseInt(options.animSpeed);
-        grid.autoResize = /^true$/gi.test(options.autoResize);
+        grid.autoResize = options.autoResize === true;
         grid.colsWidth = parseFloat(options.colsWidth);
-        grid.editable = /^true$/gi.test(options.editable);
+        grid.editable = options.editable === true;
         grid.fps = parseInt(options.fps);
         grid.maxCols = parseInt(options.maxCols);
         grid.maxRows = parseInt(options.maxRows);
         grid.minCols = parseInt(options.minCols);
         grid.minRows = parseInt(options.minRows);
-        grid.onWidgetMoved = options.onWidgetMoved;
-        grid.onWidgetResized = options.onWidgetResized;
         grid.rowsHeight = parseFloat(options.rowsHeight);
         grid.spacing = parseFloat(options.spacing);
         grid.widgets = {};
@@ -87,15 +68,15 @@
 
         // Set the grid resizable
         new Cuic.Resizable({
-            target: grid.element,
-            onResizeStop: function () {
-                var cols = grid.getSizeX(grid.element.outerWidth());
-                var rows = grid.getSizeY(grid.element.outerHeight());
-                grid.maxCols = cols;
-                grid.maxRows = rows;
-                grid.maximize();
-            }
-        });
+            target: grid.element
+
+        }).onResizeStop = function () {
+            var cols = grid.getSizeX(grid.element.outerWidth());
+            var rows = grid.getSizeY(grid.element.outerHeight());
+            grid.maxCols = cols;
+            grid.maxRows = rows;
+            grid.maximize();
+        };
 
         // Create the widget preview
         grid.preview = $('<div>', {
@@ -173,137 +154,151 @@
         var height;
         var width;
 
-        new Cuic.Resizable({
+        // Make the widget resizable
+        var resizable = new Cuic.Resizable({
             target: widget.element,
-            container: grid.element,
-            onResize: function () {
-                var tmpHeight = element.outerHeight();
-                var tmpWidth = element.outerWidth();
-                var sizeX = Math.round(tmpWidth / (grid.colsWidth + grid.spacing));
-                var sizeY = Math.round(tmpHeight / (grid.rowsHeight + grid.spacing));
-
-                // Make sure the widget does not overlap the grid
-                if (sizeX + widget.col - 1 > grid.maxCols) {
-                    sizeX = grid.maxCols - (widget.col - 1);
-                }
-                else if (sizeX < widget.minSizeX) {
-                    sizeX = widget.minSizeX;
-                }
-                // Make sure the widget does not overlap the grid
-                if (sizeY + widget.row - 1 > grid.maxRows) {
-                    sizeY = grid.maxRows - (widget.row - 1);
-                }
-                else if (sizeY < widget.minSizeY) {
-                    sizeY = widget.minSizeY;
-                }
-
-                // Resize the preview
-                preview.css({
-                    height: grid.calculateHeight(sizeY),
-                    width: grid.calculateWidth(sizeX)
-                });
-            },
-            onResizeStart: function () {
-                if (grid.editable && widget.resizable && !widget.isDragging()) {
-                    height = element.outerHeight();
-                    width = element.outerWidth();
-
-                    // Move widget to foreground
-                    element.css({zIndex: 2});
-
-                    // Display the widget preview
-                    grid.element.append(preview.css({
-                        left: element.css('left'),
-                        height: height,
-                        top: element.css('top'),
-                        width: width
-                    }));
-
-                    // Maximize the grid
-                    if (grid.autoResize) {
-                        grid.maximize();
-                    }
-                    return true;
-                }
-                return false;
-            },
-            onResizeStop: function () {
-                // Remove the preview
-                preview.detach();
-
-                // Resize the widget
-                var sizeX = grid.getSizeX(preview.outerWidth());
-                var sizeY = grid.getSizeY(preview.outerHeight());
-                grid.resizeWidget(widget, sizeX, sizeY);
-
-                // Fit the grid to its content
-                if (grid.autoResize) {
-                    grid.minimize();
-                }
-            }
+            container: grid.element
         });
 
-        new Cuic.Draggable({
+        // Set behavior when resizing widget
+        resizable.onResize = function () {
+            var tmpHeight = element.outerHeight();
+            var tmpWidth = element.outerWidth();
+            var sizeX = Math.round(tmpWidth / (grid.colsWidth + grid.spacing));
+            var sizeY = Math.round(tmpHeight / (grid.rowsHeight + grid.spacing));
+
+            // Make sure the widget does not overlap the grid
+            if (sizeX + widget.col - 1 > grid.maxCols) {
+                sizeX = grid.maxCols - (widget.col - 1);
+            }
+            else if (sizeX < widget.minSizeX) {
+                sizeX = widget.minSizeX;
+            }
+            // Make sure the widget does not overlap the grid
+            if (sizeY + widget.row - 1 > grid.maxRows) {
+                sizeY = grid.maxRows - (widget.row - 1);
+            }
+            else if (sizeY < widget.minSizeY) {
+                sizeY = widget.minSizeY;
+            }
+
+            // Resize the preview
+            preview.css({
+                height: grid.calculateHeight(sizeY),
+                width: grid.calculateWidth(sizeX)
+            });
+        };
+
+        // Set behavior when resizing starts
+        resizable.onResizeStart = function () {
+            if (grid.editable && widget.resizable && !widget.isDragging()) {
+                height = element.outerHeight();
+                width = element.outerWidth();
+
+                // Move widget to foreground
+                element.css({zIndex: 2});
+
+                // Display the widget preview
+                grid.element.append(preview.css({
+                    left: element.css('left'),
+                    height: height,
+                    top: element.css('top'),
+                    width: width
+                }));
+
+                // Maximize the grid
+                if (grid.autoResize) {
+                    grid.maximize();
+                }
+                return true;
+            }
+            return false;
+        };
+
+        // Set behavior when resizing stops
+        resizable.onResizeStop = function () {
+            // Remove the preview
+            preview.detach();
+
+            // Resize the widget
+            var sizeX = grid.getSizeX(preview.outerWidth());
+            var sizeY = grid.getSizeY(preview.outerHeight());
+            grid.resizeWidget(widget, sizeX, sizeY);
+
+            // Fit the grid to its content
+            if (grid.autoResize) {
+                grid.minimize();
+            }
+        };
+
+        // Make the widget draggable
+        var draggable = new Cuic.Draggable({
             target: widget.element,
             rootOnly: true,
-            container: grid.element,
-            onDrag: function () {
-                var left = parseFloat(element.css('left'));
-                var top = parseFloat(element.css('top'));
-                var col = grid.getPositionX(left);
-                var row = grid.getPositionY(top);
-
-                if (!(col > 0 && col + widget.sizeX <= grid.cols + 1
-                    && row > 0 && row + widget.sizeY <= grid.rows + 1)) {
-                    col = widget.col;
-                    row = widget.row;
-                }
-                preview.css({
-                    left: grid.calculateLeft(col),
-                    top: grid.calculateTop(row)
-                });
-            },
-            onDragStart: function (ev) {
-                if (grid.editable && widget.draggable && !widget.isResizing()) {
-                    height = element.outerHeight();
-                    width = element.outerWidth();
-
-                    // Move widget to foreground
-                    element.css({zIndex: 2});
-
-                    // Display the widget preview
-                    grid.element.append(preview.css({
-                        left: element.css('left'),
-                        height: height,
-                        top: element.css('top'),
-                        width: width
-                    }));
-
-                    // Maximize the grid
-                    if (grid.autoResize) {
-                        grid.maximize();
-                    }
-                    return true;
-                }
-                return false;
-            },
-            onDragStop: function () {
-                // Remove the preview
-                preview.detach();
-
-                // Position the widget
-                var left = parseFloat(element.css('left'));
-                var top = parseFloat(element.css('top'));
-                var col = grid.getSizeX(left) + 1;
-                var row = grid.getSizeY(top) + 1;
-                grid.moveWidget(widget, col, row);
-
-                // Fit the grid to its content
-                if (grid.autoResize) {
-                    grid.minimize();
-                }
-            }
+            container: grid.element
         });
+
+        // Set behavior when dragging widget
+        draggable.onDrag = function () {
+            var left = parseFloat(element.css('left'));
+            var top = parseFloat(element.css('top'));
+            var col = grid.getPositionX(left);
+            var row = grid.getPositionY(top);
+
+            if (!(col > 0 && col + widget.sizeX <= grid.cols + 1
+                && row > 0 && row + widget.sizeY <= grid.rows + 1)) {
+                col = widget.col;
+                row = widget.row;
+            }
+            preview.css({
+                left: grid.calculateLeft(col),
+                top: grid.calculateTop(row)
+            });
+        };
+
+        // Set behavior when dragging starts
+        draggable.onDragStart = function (ev) {
+            if (grid.editable && widget.draggable && !widget.isResizing()) {
+                height = element.outerHeight();
+                width = element.outerWidth();
+
+                // Move widget to foreground
+                element.css({zIndex: 2});
+
+                // Display the widget preview
+                grid.element.append(preview.css({
+                    left: element.css('left'),
+                    height: height,
+                    top: element.css('top'),
+                    width: width
+                }));
+
+                // Maximize the grid
+                if (grid.autoResize) {
+                    grid.maximize();
+                }
+                return true;
+            }
+            return false;
+        };
+
+        // Set behavior when dragging stops
+        draggable.onDragStop = function () {
+            // Remove the preview
+            preview.detach();
+
+            // Position the widget
+            var left = parseFloat(element.css('left'));
+            var top = parseFloat(element.css('top'));
+            var col = grid.getSizeX(left) + 1;
+            var row = grid.getSizeY(top) + 1;
+            grid.moveWidget(widget, col, row);
+
+            // Fit the grid to its content
+            if (grid.autoResize) {
+                grid.minimize();
+            }
+        };
         return widget;
     };
 
@@ -590,6 +585,39 @@
     };
 
     /**
+     * Called when widget has been moved
+     * @type {function}
+     */
+    Cuic.Grid.prototype.onWidgetMoved = null;
+
+    /**
+     * Called when widget has been resized
+     * @type {function}
+     */
+    Cuic.Grid.prototype.onWidgetResized = null;
+
+    /**
+     * Default options
+     * @type {*}
+     */
+    Cuic.Grid.prototype.options = {
+        animSpeed: 200,
+        autoResize: true,
+        cols: null,
+        colsWidth: 100,
+        editable: true,
+        fps: 30,
+        maxCols: null,
+        maxRows: null,
+        minCols: null,
+        minRows: null,
+        rows: null,
+        rowsHeight: 100,
+        spacing: 10,
+        widgetSelector: '.widget'
+    };
+
+    /**
      * Creates a grid widget
      * @param options
      * @constructor
@@ -598,25 +626,12 @@
         var self = this;
 
         // Default options
-        options = $.extend(true, {
-            col: 1,
-            content: null,
-            draggable: true,
-            maxSizeX: null,
-            maxSizeY: null,
-            minSizeX: 1,
-            minSizeY: 1,
-            resizable: true,
-            row: 1,
-            sizeX: 1,
-            sizeY: 1,
-            target: null
-        }, options);
+        options = $.extend(true, {}, Cuic.Grid.Widget.prototype.options, options);
 
         // Set the options
         self.col = parseInt(options.col);
-        self.draggable = /^true$/gi.test(options.draggable);
-        self.resizable = /^true$/gi.test(options.resizable);
+        self.draggable = options.draggable === true;
+        self.resizable = options.resizable === true;
         self.row = parseInt(options.row);
         self.maxSizeX = parseInt(options.maxSizeX);
         self.maxSizeY = parseInt(options.maxSizeY);
@@ -668,6 +683,25 @@
      */
     Cuic.Grid.Widget.prototype.isResizing = function () {
         return this.element.hasClass('resizing');
+    };
+
+    /**
+     * Default options
+     * @type {*}
+     */
+    Cuic.Grid.Widget.prototype.options = {
+        col: 1,
+        content: null,
+        draggable: true,
+        maxSizeX: null,
+        maxSizeY: null,
+        minSizeX: 1,
+        minSizeY: 1,
+        resizable: true,
+        row: 1,
+        sizeX: 1,
+        sizeY: 1,
+        target: null
     };
 
 })(jQuery);

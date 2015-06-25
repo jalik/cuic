@@ -45,33 +45,23 @@
         var title;
         var wrapper;
 
-        // Set default options
-        options = $.extend(true, {
-            autoRemove: true,
-            buttons: null,
-            className: 'dialog',
-            container: document.body,
-            content: null,
-            contentHeight: null,
-            contentWidth: null,
-            css: null,
-            draggable: true,
-            position: 'center',
-            modal: true,
-            target: null,
-            title: null,
-            zIndex: 5
-        }, options);
+        // Default options
+        options = $.extend(true, {}, Cuic.Dialog.prototype.options, options);
 
         // Define attributes
-        self.autoClose = !!options.autoClose;
-        self.autoRemove = !!options.autoRemove;
-        self.draggable = !!options.draggable;
-        self.modal = !!options.modal;
+        self.autoClose = options.autoClose === true;
+        self.autoRemove = options.autoRemove === true;
+        self.draggable = options.draggable === true;
+        self.modal = options.modal === true;
 
         // Define vars
         container = $(options.container);
         position = options.position;
+
+        // Use document body as container
+        if (container.length === 0) {
+            container = $(document.body);
+        }
 
         /**
          * Adds a button to the dialog
@@ -94,8 +84,7 @@
                 button.on('click', function (ev) {
                     listener.call(self, ev);
                 });
-            }
-            else {
+            } else {
                 switch (listener) {
                     case 'close':
                         button.on('click', function () {
@@ -111,8 +100,8 @@
             if (buttons.length > 1) {
                 footer.show();
                 buttons.css('display', 'inline-block');
-            }
-            else if (buttons.length > 0) {
+
+            } else if (buttons.length > 0) {
                 footer.show();
                 buttons.css('display', 'block');
             }
@@ -240,9 +229,10 @@
                             isOpening = false;
                             isOpened = true;
                         });
-
                         // Focus the last button
-                        footer.find('button:last').focus();
+                        if (element.find(':focus').length === 0) {
+                            footer.find('button:last').focus();
+                        }
                     });
                 } else {
                     element.fadeIn(200, function () {
@@ -253,7 +243,9 @@
                         isOpened = true;
 
                         // Focus the last button
-                        footer.find('button:last').focus();
+                        if (element.find(':focus').length === 0) {
+                            footer.find('button:last').focus();
+                        }
                     });
                 }
             }
@@ -358,7 +350,7 @@
                 position: fixed ? 'fixed' : 'absolute',
                 top: 0,
                 width: '100%',
-                zIndex: options.zIndex
+                zIndex: self.zIndex
             }
         }).appendTo(container);
 
@@ -367,7 +359,7 @@
             'class': options.className,
             css: {
                 display: 'none',
-                zIndex: options.zIndex
+                zIndex: self.zIndex
             }
         }).appendTo(wrapper);
 
@@ -457,6 +449,27 @@
                 self.close();
             }
         });
+    };
+
+    /**
+     * Default options
+     * @type {*}
+     */
+    Cuic.Dialog.prototype.options = {
+        autoRemove: true,
+        buttons: null,
+        className: 'dialog',
+        container: null,
+        content: null,
+        contentHeight: null,
+        contentWidth: null,
+        css: null,
+        draggable: true,
+        position: 'center',
+        modal: true,
+        target: null,
+        title: null,
+        zIndex: 5
     };
 
 })(jQuery);

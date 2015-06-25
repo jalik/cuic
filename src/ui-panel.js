@@ -42,36 +42,22 @@
         var isOpened = false;
         var isOpening = false;
         var position;
-        var target;
         var title;
 
-        // Set default options
-        options = $.extend(true, {
-            autoClose: false,
-            className: 'panel',
-            closeButton: '×',
-            container: null,
-            content: null,
-            css: null,
-            footer: null,
-            maximized: false,
-            onClosed: null,
-            onOpened: null,
-            position: 'left top',
-            target: null,
-            title: null,
-            visible: false,
-            zIndex: 1
-        }, options);
+        // Default options
+        options = $.extend(true, {}, Cuic.Panel.prototype.options, options);
 
         // Define attributes
-        self.autoClose = options.autoClose;
-        self.onClosed = options.onClosed;
-        self.onOpened = options.onOpened;
+        self.autoClose = options.autoClose === true;
 
         // Define vars
         container = $(options.container);
         position = options.position;
+
+        // Use document body as container
+        if (container.length === 0) {
+            container = $(document.body);
+        }
 
         /**
          * Closes the panel
@@ -507,6 +493,37 @@
                 }
             }
         });
+    };
+
+    /**
+     * Called when panel is closed
+     * @type {function}
+     */
+    Cuic.Panel.prototype.onClosed = null;
+
+    /**
+     * Called when panel is opened
+     * @type {function}
+     */
+    Cuic.Panel.prototype.onOpened = null;
+
+    /**
+     * Default options
+     * @type {*}
+     */
+    Cuic.Panel.prototype.options = {
+        autoClose: false,
+        className: 'panel',
+        closeButton: '×',
+        container: null,
+        content: null,
+        css: null,
+        footer: null,
+        maximized: false,
+        position: 'left top',
+        title: null,
+        visible: false,
+        zIndex: 1
     };
 
 })(jQuery);

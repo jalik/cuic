@@ -41,39 +41,20 @@
         var ratio = 1;
 
         // Default options
-        options = $.extend(true, {
-            className: 'resizable',
-            fps: 30,
-            handlerSize: 10,
-            horizontal: true,
-            keepRatio: false,
-            maxHeight: null,
-            maxWidth: null,
-            minHeight: 1,
-            minWidth: 1,
-            onResize: null,
-            onResizeStart: null,
-            onResizeStop: null,
-            stepX: 1,
-            stepY: 1,
-            vertical: true
-        }, options);
+        options = $.extend(true, Cuic.Resizable.prototype.options, options);
 
         // Define attributes
         self.className = options.className;
-        self.fps = options.fps || self.fps;
-        self.horizontal = !!options.horizontal;
-        self.keepRatio = !!options.keepRatio;
-        self.maxHeight = options.maxHeight || self.maxWidth;
-        self.maxWidth = options.maxWidth || self.maxWidth;
-        self.minHeight = options.minHeight || self.minHeight;
-        self.minWidth = options.minWidth || self.minWidth;
-        self.onResize = options.onResize || self.onResize;
-        self.onResizeStart = options.onResizeStart || self.onResizeStart;
-        self.onResizeStop = options.onResizeStop || self.onResizeStop;
-        self.stepX = options.stepX || self.stepX;
-        self.stepY = options.stepY || self.stepY;
-        self.vertical = !!options.vertical;
+        self.fps = parseInt(options.fps);
+        self.horizontal = options.horizontal === true;
+        self.keepRatio = options.keepRatio === true;
+        self.maxHeight = parseInt(options.maxHeight);
+        self.maxWidth = parseInt(options.maxWidth);
+        self.minHeight = parseInt(options.minHeight);
+        self.minWidth = parseInt(options.minWidth);
+        self.stepX = parseInt(options.stepX);
+        self.stepY = parseInt(options.stepY);
+        self.vertical = options.vertical === true;
 
         /**
          * Returns the element
@@ -292,6 +273,43 @@
     Cuic.Resizable.prototype.checkWidth = function (width) {
         return (!Number(this.maxWidth) || width <= this.maxWidth)
             && (!Number(this.minWidth) || width >= this.minWidth);
+    };
+
+    /**
+     * Called when element is resizing
+     * @type {function}
+     */
+    Cuic.Resizable.prototype.onResize = null;
+
+    /**
+     * Called when resize starts
+     * @type {function}
+     */
+    Cuic.Resizable.prototype.onResizeStart = null;
+
+    /**
+     * Called when resize stops
+     * @type {function}
+     */
+    Cuic.Resizable.prototype.onResizeStop = null;
+
+    /**
+     * Default options
+     * @type {*}
+     */
+    Cuic.Resizable.prototype.options = {
+        className: 'resizable',
+        fps: 30,
+        handlerSize: 10,
+        horizontal: true,
+        keepRatio: false,
+        maxHeight: null,
+        maxWidth: null,
+        minHeight: 1,
+        minWidth: 1,
+        stepX: 1,
+        stepY: 1,
+        vertical: true
     };
 
 })(jQuery);

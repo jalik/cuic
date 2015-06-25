@@ -40,7 +40,6 @@
     <script src="../src/fn-resizable.js"></script>
     <script src="../src/ui-dialog.js"></script>
     <script src="../src/ui-grid.js"></script>
-    <script src="../src/ui-navbar.js"></script>
     <script src="../src/ui-notification.js"></script>
     <script src="../src/ui-panel.js"></script>
     <script src="../src/ui-popup.js"></script>
@@ -58,7 +57,7 @@
         <ul class="menu">
             <li><a href="#ui-dialog">Dialog</a></li>
             <li><a href="#ui-grid">Grid</a></li>
-            <li><a href="#ui-navbar">Navbar</a></li>
+            <li><a href="#ui-hook">Hook</a></li>
             <li><a href="#ui-notification">Notification</a></li>
             <li><a href="#ui-panel">Panel</a></li>
             <li><a href="#ui-popup">Popup</a></li>
@@ -69,7 +68,7 @@
         </ul>
         <script>
             $(document).ready(function () {
-                Cuic.hook({
+                window.sidebar = new Cuic.Hook({
                     target: "#sidebar"
                 });
             });
@@ -255,51 +254,30 @@
             </script>
         </div>
 
-        <div id="ui-navbar">
-            <h2><a href="#">Cuic.</a>Navbar</h2>
+        <div id="ui-hook">
+            <h2><a href="#">Cuic.</a>Hook</h2>
 
-            <p>Navbars are used to keep navigation links accessible quickly.</p>
+            <p>Hooks allows you to keep elements visible while scrolling the page.</p>
 
-            <div class="sandbox" id="sb-navbar">
-                <label class="inline">
-                    <span class="label">collapse</span>
-                    <input type="checkbox" name="collapse" checked>
-                </label>
-                <label class="inline">
-                    <span class="label">scroll</span>
-                    <input type="checkbox" name="scroll" checked>
-                </label>
+            <div class="sandbox" id="sb-hook">
                 <button class="run">Run</button>
 
-                <div class="blueprint" style="height: 300px; margin-top: 1em; overflow: hidden">
+                <div class="blueprint">
                     <nav class="navbar">
                         <a href="#" class="navbar-item">Item 1</a>
                         <a href="#" class="navbar-item">Item 2</a>
                         <a href="#" class="navbar-item">Item 3</a>
                         <a href="#" class="navbar-item">Item 4</a>
                         <a href="#" class="navbar-item">Item 5</a>
-                        <a href="#" class="navbar-item">Item 6</a>
-                        <a href="#" class="navbar-item">Item 7</a>
-                        <a href="#" class="navbar-item">Item 8</a>
-                        <a href="#" class="navbar-item">Item 9</a>
-                        <a href="#" class="navbar-item navbar-close">Close</a>
                     </nav>
-                    <img src="css/square-100.png" style="float: left; margin: 20px">
                 </div>
             </div>
             <script>
                 $(document).ready(function () {
-                    var sandbox = $('#sb-navbar');
-                    var navbar = $('.navbar', sandbox);
-
+                    var sandbox = $('#sb-hook');
                     var run = function () {
-                        var collapse = sandbox.find('[name=collapse]').is(':checked');
-                        var scroll = sandbox.find('[name=scroll]').is(':checked');
-
-                        window.navbar = new Cuic.Navbar({
-                            collapse: collapse,
-                            scroll: scroll,
-                            target: navbar
+                        window.hook = new Cuic.Hook({
+                            target: $('.navbar', sandbox)
                         });
                     };
                     sandbox.find('.run').on('click', function (ev) {
@@ -741,6 +719,7 @@
                 <div class="blueprint" style="height: 400px;margin-top: 1em">
                     <div class="group1">
                         <img src="css/square-100.png" title="Top left" style="margin: 10px">
+                        <img src="css/square-100.png" title="Top right" style="margin: 10px">
                         <img src="css/square-100.png" title="Top right" style="margin: 10px">
                     </div>
                     <div class="group2">

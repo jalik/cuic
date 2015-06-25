@@ -41,20 +41,11 @@
         var target;
 
         // Default options
-        options = $.extend(true, {
-            autoClose: true,
-            autoRemove: true,
-            className: 'popup',
-            content: null,
-            css: null,
-            position: 'right',
-            target: null,
-            zIndex: 9
-        }, options);
+        options = $.extend(true, {}, Cuic.Popup.prototype.options, options);
 
         // Define attributes
-        self.autoClose = options.autoClose;
-        self.autoRemove = options.autoRemove;
+        self.autoClose = options.autoClose === true;
+        self.autoRemove = options.autoRemove === true;
 
         // Define vars
         position = options.position;
@@ -192,6 +183,21 @@
                 }
             }
         });
+    };
+
+    /**
+     * Default options
+     * @type {*}
+     */
+    Cuic.Popup.prototype.options = {
+        autoClose: true,
+        autoRemove: true,
+        className: 'popup',
+        content: null,
+        css: null,
+        position: 'right',
+        target: null,
+        zIndex: 9
     };
 
 })(jQuery);

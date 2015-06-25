@@ -32,22 +32,18 @@
      * @param options
      * @return {*}
      */
-    Cuic.hook = function (options) {
-        // Set default options
-        options = $.extend(true, {
-            hookedClass: 'hooked',
-            onHook: null,
-            onUnhook: null,
-            target: null,
-            zIndex: 4
-        }, options);
+    Cuic.Hook = function (options) {
+        var self = this;
+
+        // Default options
+        options = $.extend(true, {}, Cuic.Hook.prototype.options, options);
 
         var win = $(window);
 
         // Get the target
         var target = $(options.target);
-        if (target.length !== 1) {
-            throw new Error('Target not found : ' + options.target);
+        if (target.length === 0) {
+            throw new Error('No target found for : ' + options.target);
         }
 
         // This is a fix to avoid offsetTop > 0
@@ -64,9 +60,9 @@
         }).insertBefore(target);
 
         /**
-         * Hook the target to the viewport
+         * Hook the element
          */
-        target.hook = function () {
+        self.hook = function () {
             spacer.css({
                 display: target.css('display'),
                 float: target.css('float'),
@@ -91,9 +87,9 @@
         };
 
         /**
-         * Unhook the bar from the viewport
+         * Unhook the element
          */
-        target.unhook = function () {
+        self.unhook = function () {
             spacer.hide();
             target.css({
                 position: 'relative',
@@ -113,11 +109,10 @@
         var onScroll = function () {
             if (win.scrollTop() > offsetTop - parseFloat(target.css('margin-top'))) {
                 if (target.css('position') !== 'fixed') {
-                    target.hook();
+                    self.hook();
                 }
-            }
-            else if (target.css('position') !== 'relative') {
-                target.unhook();
+            } else if (target.css('position') !== 'relative') {
+                self.unhook();
             }
         };
 
@@ -129,8 +124,28 @@
         win.on('scroll.hook', function () {
             onScroll();
         });
+    };
 
-        return target;
+    /**
+     * Called when element is hooked
+     * @type {function}
+     */
+    Cuic.Hook.prototype.onHook = null;
+
+    /**
+     * Called when element is unhooked
+     * @type {function}
+     */
+    Cuic.Hook.prototype.onUnhook = null;
+
+    /**
+     * Default options
+     * @type {*}
+     */
+    Cuic.Hook.prototype.options = {
+        hookedClass: 'hooked',
+        target: null,
+        zIndex: 4
     };
 
 })(jQuery);

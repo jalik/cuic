@@ -44,7 +44,6 @@ module.exports = function (grunt) {
                     "src/fn-resizable.js",
                     "src/ui-dialog.js",
                     "src/ui-grid.js",
-                    "src/ui-navbar.js",
                     "src/ui-notification.js",
                     "src/ui-panel.js",
                     "src/ui-popup.js",
