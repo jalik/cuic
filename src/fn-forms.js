@@ -92,8 +92,16 @@
         }, options);
 
         $(form).find('[name]').not(':disabled').each(function () {
-            var name = this.name;
+            var field = this;
+            var name = field.name;
+            var value = field.value;
             var safeName = name.replace(/\[[^\]]+\]/, '');
+            var nodeName = field.nodeName.toUpperCase();
+
+            // Ignore non field elements
+            if (['INPUT', 'SELECT', 'TEXTAREA'].indexOf(nodeName) === -1) {
+                return;
+            }
 
             // Check if the field should be collected
             if (options.fields && options.fields.indexOf(name) === -1) {
@@ -105,10 +113,7 @@
                 return;
             }
 
-            var field = this;
-            var value = this.value;
-
-            switch (field.nodeName.toUpperCase()) {
+            switch (nodeName) {
                 case 'INPUT':
                     if (field.type === 'checkbox') {
                         // Ignore the field if it was already collected
@@ -119,7 +124,7 @@
                                 fields[safeName] = [];
 
                                 checkboxes.filter(':checked').each(function () {
-                                    fields[safeName].push(this.value === 'on' ? true : Cuic.parseValue(this.value));
+                                    fields[safeName].push(value === 'on' ? true : Cuic.parseValue(value));
                                 });
                             } else if (field.checked) {
                                 fields[safeName] = (value === 'on' ? true : Cuic.parseValue(value));
@@ -138,7 +143,7 @@
                     if (field.multiple) {
                         fields[safeName] = [];
                         $(field).find('option:selected').each(function () {
-                            fields[safeName].push(Cuic.parseValue(this.value));
+                            fields[safeName].push(Cuic.parseValue(value));
                         });
                     } else {
                         fields[safeName] = Cuic.parseValue(value);

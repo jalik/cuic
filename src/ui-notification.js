@@ -334,7 +334,7 @@
          * Returns the number of elements in the stack
          * @return {Number}
          */
-        self.getLength = function () {
+        self.getSize = function () {
             return element.children().length;
         };
 
