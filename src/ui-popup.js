@@ -46,6 +46,8 @@
         // Define attributes
         self.autoClose = options.autoClose === true;
         self.autoRemove = options.autoRemove === true;
+        self.closeable = options.closeable === true;
+        self.closeButton = options.closeButton;
 
         // Define vars
         position = options.position;
@@ -61,7 +63,7 @@
                 isClosing = true;
                 isOpening = false;
                 element.stop(true, false).fadeOut(200, function () {
-                    if (callback) {
+                    if (typeof callback === 'function') {
                         callback.call(self);
                     }
                     if (self.autoRemove) {
@@ -100,17 +102,24 @@
                 isClosing = false;
                 isOpening = true;
 
-                // Position the element
-                self.setAnchor(position, target);
+                // Add the close button
+                if (self.closeable) {
+                    $('.close-popup').remove();
+                    $('<span>', {
+                        class: 'close-popup',
+                        html: self.closeButton
+                    }).appendTo(element);
+                }
 
                 // If the content of the popup has changed,
                 // we need to check if there is a close button
-                element.find('.popup-close').one('click', function () {
-                    self.close();
-                });
+                element.find('.close-popup').one('click', self.close);
+
+                // Position the element
+                self.setAnchor(position, target);
 
                 element.stop(true, false).fadeIn(200, function () {
-                    if (callback) {
+                    if (typeof callback === 'function') {
                         callback.call(self);
                     }
                     isOpening = false;
@@ -159,7 +168,7 @@
 
         // Create the element
         element = $('<div>', {
-            'class': options.className,
+            class: options.className,
             html: options.content
         }).appendTo(document.body);
 
@@ -193,6 +202,8 @@
         autoClose: true,
         autoRemove: true,
         className: 'popup',
+        closeable: false,
+        closeButton: '×',
         content: null,
         css: null,
         position: 'right',

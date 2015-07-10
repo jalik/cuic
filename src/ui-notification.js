@@ -47,6 +47,8 @@
         // Define attributes
         self.autoClose = options.autoClose === true;
         self.autoRemove = options.autoRemove === true;
+        self.closeable = options.closeable === true;
+        self.closeButton = options.closeButton;
         self.duration = parseInt(options.duration);
 
         // Define vars
@@ -69,7 +71,7 @@
                 isOpening = false;
 
                 element.stop(true, false).fadeOut(200, function () {
-                    if (callback) {
+                    if (typeof callback === 'function') {
                         callback.call(self);
                     }
                     if (self.autoRemove) {
@@ -117,11 +119,18 @@
                 isClosing = false;
                 isOpening = true;
 
+                // Add the close button
+                if (self.closeable) {
+                    $('.close-notification').remove();
+                    $('<span>', {
+                        class: 'close-notification',
+                        html: self.closeButton
+                    }).appendTo(element);
+                }
+
                 // If the content of the notification has changed,
                 // we need to check if there is a close button
-                element.find('.notification-close').one('click', function () {
-                    self.close();
-                });
+                element.find('.close-notification').one('click', self.close);
 
                 // Avoid closing the notification if the mouse is over
                 element.hover(function () {
@@ -131,7 +140,7 @@
                 });
 
                 // Position the notification
-                element.css({position: container.get(0).tagName === 'BODY' ? 'fixed' : 'absolute'});
+                element.css({position: container.get(0).nodeName === 'BODY' ? 'fixed' : 'absolute'});
 
                 // Set the position
                 self.setPosition(position);
@@ -144,7 +153,7 @@
                         autoClose();
                     }
 
-                    if (callback) {
+                    if (typeof callback === 'function') {
                         callback.call(self);
                     }
                     isOpening = false;
@@ -229,6 +238,7 @@
         autoClose: true,
         autoRemove: true,
         className: 'notification',
+        closeable: false,
         closeButton: '×',
         container: null,
         content: null,
@@ -361,7 +371,7 @@
 
         // Override styles
         element.css({
-            position: container.get(0).tagName === 'BODY' ? 'fixed' : 'absolute',
+            position: container.get(0).nodeName === 'BODY' ? 'fixed' : 'absolute',
             zIndex: self.zIndex
         });
 

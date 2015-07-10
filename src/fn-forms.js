@@ -26,17 +26,22 @@
 (function ($) {
     'use strict';
 
+    var inputTypes = ['checkbox', 'color', 'date', 'datetime', 'email', 'month', 'number', 'password', 'radio', 'range', 'search', 'tel', 'text', 'time', 'url', 'week'];
+
     /**
      * Checks all form fields
+     * @param form
      * @param options
+     * @return {boolean}
      */
-    Cuic.checkForm = function (options) {
-        // Set default options
+    Cuic.checkForm = function (form, options) {
+        form = $(form);
+
+        // Default options
         options = $.extend(true, {
-            errorCallback: null,
             errorClass: 'error',
-            fields: null,
-            target: null
+            filter: null,
+            onError: null
         }, options);
 
         var errors = 0;
@@ -49,27 +54,35 @@
         form.find('.' + options.errorClass).removeClass(options.errorClass);
 
         function errorFound(field) {
-            if (typeof options.errorCallback === 'function') {
+            if (typeof options.onError === 'function') {
+                field = $(field);
                 field.addClass(options.errorClass);
-                options.errorCallback.call(field, field.attr('name'), field.val());
+                options.onError.call(field, field.attr('name'), field.val());
                 errors += 1;
             }
         }
 
-        fields.each(function () {
-            var field = $(this);
-            var value = field.val();
+        // Removes all errors
+        form.find('.' + options.errorClass).removeClass(options.errorClass);
 
-            // Filter field
-            if (!(options.fields instanceof Array) || options.fields.indexOf(field.attr('name')) !== -1) {
-                // Checks if the field is required
-                if (this.required && value == '') {
-                    errorFound(field);
-                } else {
-                    // Checks if the field value matches the pattern
-                    if (this.pattern && !new RegExp(this.pattern).test(value)) {
-                        errorFound(field);
-                    }
+        // Get enabled elements
+        form.find('[name]').not(':disabled').each(function () {
+            var value = this.value;
+
+            if (!Cuic.isField(this)) {
+                return;
+            }
+            if (!Cuic.isNodeFiltered(this, options.filter)) {
+                return;
+            }
+
+            // Checks if required
+            if (this.required && value !== undefined && value !== null) {
+                errorFound(this);
+            } else {
+                // Test pattern
+                if (this.pattern && !new RegExp(this.pattern).test(value)) {
+                    errorFound(this);
                 }
             }
         });
@@ -84,32 +97,25 @@
      */
     Cuic.getFields = function (form, options) {
         var fields = {};
+        form = $(form);
 
         options = $.extend(true, {
-            fields: null,
-            ignore: null,
+            filter: null,
             ignoreEmpty: false
         }, options);
 
-        $(form).find('[name]').not(':disabled').each(function () {
+        // Get enabled elements
+        form.find('[name]').not(':disabled').each(function () {
             var field = this;
-            var name = field.name;
-            var value = field.value;
+            var value = this.value;
+            var name = this.name;
             var safeName = name.replace(/\[[^\]]+\]/, '');
             var nodeName = field.nodeName.toUpperCase();
 
-            // Ignore non field elements
-            if (['INPUT', 'SELECT', 'TEXTAREA'].indexOf(nodeName) === -1) {
+            if (!Cuic.isField(this)) {
                 return;
             }
-
-            // Check if the field should be collected
-            if (options.fields && options.fields.indexOf(name) === -1) {
-                return;
-            }
-
-            // Check if the field should be ignored
-            if (options.ignore && options.ignore.indexOf(name) !== -1) {
+            if (!Cuic.isNodeFiltered(this, options.filter)) {
                 return;
             }
 
@@ -173,28 +179,51 @@
     };
 
     /**
-     * Returns a serialized version of the arguments
+     * Checks if node is a field
+     * @param node
+     * @return {boolean}
+     */
+    Cuic.isField = function (node) {
+        var nodeName = node.nodeName.toUpperCase();
+        return nodeName === 'TEXTAREA'
+            || nodeName === 'SELECT'
+            || (nodeName === 'INPUT' && inputTypes.indexOf(node.type) !== -1);
+    };
+
+    /**
+     * Checks if node is filtered
+     * @param node
+     * @param filter
+     * @return {boolean}
+     */
+    Cuic.isNodeFiltered = function (node, filter) {
+        return filter === undefined || filter === null
+            || (filter instanceof Array && filter.indexOf(node.name) !== -1)
+            || (typeof filter === 'function' && filter.call(node, node.name))
+    };
+
+    /**
+     * Returns the serialized query params
      * @param args
      * @returns {string}
      */
-    Cuic.serializeUrlArgs = function (args) {
+    Cuic.serializeQueryParams = function (args) {
         var output = '';
 
         if (args != null) {
             if (typeof args === 'string') {
                 output = args;
-            }
-            else if (typeof args === 'object') {
+
+            } else if (typeof args === 'object') {
                 var arr = [];
 
                 for (var key in args) {
                     if (args.hasOwnProperty(key)) {
                         if (args[key] != null) {
-                            var value = encodeURIComponent(args[key]);
                             arr.push('&');
-                            arr.push(key);
+                            arr.push(encodeURIComponent(key)).trim();
                             arr.push('=');
-                            arr.push(value.trim());
+                            arr.push(encodeURIComponent(args[key]).trim());
                         }
                     }
                 }
@@ -209,25 +238,27 @@
 
     /**
      * Returns the typed value of a string value
-     * @param str
+     * @param val
      * @returns {*}
      */
-    Cuic.parseValue = function (str) {
-        if (typeof str === 'string') {
-            if (str.toLowerCase() === 'true') {
+    Cuic.parseValue = function (val) {
+        if (typeof val === 'string') {
+            val = val.toLowerCase();
+
+            if (val === 'true') {
                 return true;
 
-            } else if (str.toLowerCase() === 'false') {
+            } else if (val === 'false') {
                 return false;
 
-            } else if (/^[0-9]+$/.test(str)) {
-                return parseInt(str);
+            } else if (/^[0-9]+$/.test(val)) {
+                return parseInt(val);
 
-            } else if (/^[0.9]+\.[0-9]+$/.test(str)) {
-                return parseFloat(str);
+            } else if (/^[0.9]+\.[0-9]+$/.test(val)) {
+                return parseFloat(val);
             }
         }
-        return str;
+        return val;
     };
 
     /**

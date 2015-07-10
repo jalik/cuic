@@ -49,6 +49,10 @@
 
         // Define attributes
         self.autoClose = options.autoClose === true;
+        self.closeable = options.closeable === true;
+        self.closeButton = options.closeButton;
+        self.onClosed = options.onClosed;
+        self.onOpened = options.onOpened;
 
         // Define vars
         container = $(options.container);
@@ -100,11 +104,11 @@
                     isClosing = false;
                     isOpened = false;
 
-                    if (callback) {
+                    if (typeof callback === 'function') {
                         callback.call(self);
                     }
 
-                    if (self.onClosed) {
+                    if (typeof self.onClosed === 'function') {
                         self.onClosed.call(self);
                     }
                 });
@@ -279,11 +283,11 @@
                     isOpening = false;
                     isOpened = true;
 
-                    if (callback) {
+                    if (typeof callback === 'function') {
                         callback.call(self);
                     }
 
-                    if (self.onOpened) {
+                    if (typeof self.onOpened === 'function') {
                         self.onOpened.call(self);
                     }
                 });
@@ -447,7 +451,7 @@
         self.setPosition(position, container || element.offsetParent());
 
         // If the panel is in the body, then we use the window as container
-        if (container.get(0).tagName === 'BODY') {
+        if (container.get(0).nodeName === 'BODY') {
             element.css('position', 'fixed');
         } else {
             // To hide the panel in the container,
@@ -469,19 +473,19 @@
             self.maximize(0);
         }
 
+        // Add the close button
+        if (self.closeable) {
+            $('<span>', {
+                class: 'close-panel',
+                html: self.closeButton
+            }).prependTo(header);
+        }
+
         // Find the close button
-        var closeButton = element.find('.panel-close');
-        closeButton.on('click', function (ev) {
-            ev.preventDefault();
-            self.close();
-        });
+        element.find('.close-panel').on('click', self.close);
 
         // Find the toggle button
-        var toggleButton = element.find('.panel-toggle');
-        toggleButton.on('click', function (ev) {
-            ev.preventDefault();
-            self.toggle();
-        });
+        element.find('.toggle-panel').on('click', self.toggle);
 
         // Close the panel when the user clicks outside of it
         $(document).on('mousedown.panel', function (ev) {
@@ -514,6 +518,7 @@
     Cuic.Panel.prototype.options = {
         autoClose: false,
         className: 'panel',
+        closeable: true,
         closeButton: '×',
         container: null,
         content: null,

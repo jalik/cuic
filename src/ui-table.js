@@ -69,7 +69,7 @@
         // Mark selected rows when clicked
         if (options.selectRowOnClick) {
             tbody.children('tr').off('click.table').on('click.table', function (ev) {
-                if (ev.target.tagName === 'TD') {
+                if (ev.target.nodeName === 'TD') {
                     $(this).toggleClass(options.selectedClass);
                 }
             });

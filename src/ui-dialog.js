@@ -51,6 +51,8 @@
         // Define attributes
         self.autoClose = options.autoClose === true;
         self.autoRemove = options.autoRemove === true;
+        self.closeable = options.closeable === true;
+        self.closeButton = options.closeButton;
         self.draggable = options.draggable === true;
         self.modal = options.modal === true;
 
@@ -125,7 +127,7 @@
                 });
 
                 element.stop(true, false).fadeOut(200, function () {
-                    if (callback) {
+                    if (typeof callback === 'function') {
                         callback.call(self);
                     }
                     if (self.autoRemove) {
@@ -208,13 +210,26 @@
                 });
 
                 // Position the notification
-                element.css({position: container.get(0).tagName === 'BODY' ? 'fixed' : 'absolute'});
+                element.css({position: container.get(0).nodeName === 'BODY' ? 'fixed' : 'absolute'});
 
                 // Set the position
                 self.setPosition(position);
 
                 // Stop animation
                 element.stop(true, false);
+
+                // Add the close button
+                if (self.closeable) {
+                    $('.close-dialog').remove();
+                    $('<span>', {
+                        class: 'close-dialog',
+                        html: self.closeButton
+                    }).prependTo(header);
+                }
+
+                // If the content of the dialog has changed,
+                // we need to check if there is a close button
+                element.find('.close-dialog').one('click', self.close);
 
                 if (self.modal) {
                     wrapper.css({
@@ -223,7 +238,7 @@
                     });
                     wrapper.fadeIn(200, function () {
                         element.fadeIn(200, function () {
-                            if (callback) {
+                            if (typeof callback === 'function') {
                                 callback.call(self);
                             }
                             isOpening = false;
@@ -236,7 +251,7 @@
                     });
                 } else {
                     element.fadeIn(200, function () {
-                        if (callback) {
+                        if (typeof callback === 'function') {
                             callback.call(self);
                         }
                         isOpening = false;
@@ -324,6 +339,18 @@
         };
 
         /**
+         * Sets the title
+         * @param html
+         * @return {Cuic.Dialog}
+         */
+        self.setTitle = function (html) {
+            if (title) {
+                title.html(html);
+            }
+            return self;
+        };
+
+        /**
          * Toggles the dialog visibility
          * @param callback
          * @return {Cuic.Dialog}
@@ -338,7 +365,7 @@
         };
 
         // If the dialog is not in a container, then it is fixed
-        var fixed = container.get(0).tagName === 'BODY';
+        var fixed = container.get(0).nodeName === 'BODY';
 
         // Create the wrapper
         wrapper = $('<div>', {
@@ -445,9 +472,7 @@
         new Cuic.Shortcut({
             keyCode: 27,
             target: element,
-            callback: function () {
-                self.close();
-            }
+            callback: self.close
         });
     };
 
@@ -459,6 +484,8 @@
         autoRemove: true,
         buttons: null,
         className: 'dialog',
+        closeable: true,
+        closeButton: '×',
         container: null,
         content: null,
         contentHeight: null,

@@ -336,6 +336,7 @@
                         window.notification = new Cuic.Notification({
                             autoClose: autoClose.is(":checked"),
                             autoRemove: true,
+                            closeable: true,
                             container: container.is(':checked') ? '#sb-notification .blueprint' : document.body,
                             content: 'Notification from <b>' + position.val() + '</b>',
                             duration: duration.val(),
@@ -467,8 +468,8 @@
                             </ul>
                         </div>
                         <footer class="panel-footer">Footer -
-                            <a href="#" class="panel-close">Close</a> -
-                            <a href="#" class="panel-toggle">Toggle</a>
+                            <a href="#" class="close-panel">Close</a> -
+                            <a href="#" class="toggle-panel">Toggle</a>
                         </footer>
                     </div>
                 </div>
@@ -542,15 +543,16 @@
                     var popupButton = $("#sb-popup .blueprint > button");
 
                     window.popup = new Cuic.Popup({
-                        autoClose: true,
+                        autoClose: false,
                         autoRemove: false,
+                        closeable: true,
                         target: popupButton
                     });
 
                     popupButton.on("click", function (ev) {
                         ev.stopPropagation();
                         if (!popup.isOpened()) {
-                            popup.setContent("Clicked on " + new Date() + " <span class='popup-close'>×</span>");
+                            popup.setContent("Clicked on " + new Date());
                         }
                         popup.toggle();
                     });

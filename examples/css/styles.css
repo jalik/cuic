@@ -5,9 +5,9 @@
 .dialog {
     background: #fff;
     border-radius: 5px;
-    box-shadow: 0 5px 1em #888;
-    margin: 2em;
-    padding: 1em;
+    box-shadow: 0 5px 15px #888;
+    margin: 10px;
+    padding: 10px;
 }
 
 .dialog-button {
@@ -53,6 +53,15 @@
 .dialog-header {
     border-bottom: solid 1px #eee;
     margin-bottom: 1em;
+}
+
+.dialog-header .close-dialog {
+    color: #888;
+    cursor: pointer;
+    float: right;
+    font-size: 1em;
+    font-weight: bolder;
+    margin-left: 10px;
 }
 
 .dialog-title {
@@ -159,12 +168,12 @@
     line-height: 1.2em;
 }
 
-.notification .close-button {
+.notification .close-notification {
     cursor: pointer;
     float: right;
-    font-size: 1.1em;
+    font-size: 1em;
     font-weight: bolder;
-    margin: 0 0 1em 1em;
+    margin-left: 10px;
 }
 
 /* PANEL */
@@ -193,6 +202,15 @@
     padding: 0 1em 0.5em 1em;
 }
 
+.panel-header .close-panel {
+    color: #888;
+    cursor: pointer;
+    float: right;
+    font-size: 1em;
+    font-weight: bolder;
+    margin-left: 10px;
+}
+
 .panel-title {
     font-weight: bold;
     font-size: 1em;
@@ -212,8 +230,12 @@
     padding: 1em;
 }
 
-.popup-close {
+.popup .close-popup {
     cursor: pointer;
+    float: right;
+    font-size: 1em;
+    font-weight: bolder;
+    margin-left: 10px;
 }
 
 /* TAB */

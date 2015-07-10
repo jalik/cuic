@@ -207,8 +207,8 @@
             // Use element's parent as reference
             container = $(container || elm.offsetParent());
 
-            if (container.length === 1 && container[0]) {
-                if (container[0].tagName === 'HTML') {
+            if (container.length === 1 && container.get(0)) {
+                if (container.get(0).nodeName === 'HTML') {
                     container = $(document.body);
                 }
                 container.append(elm);
@@ -248,8 +248,8 @@
 
             var targetHeight = elm.outerHeight(true);
             var targetWidth = elm.outerWidth(true);
-            var relativeLeft = fixed ? 0 : container[0].scrollLeft;
-            var relativeTop = fixed ? 0 : container[0].scrollTop;
+            var relativeLeft = fixed ? 0 : container.get(0).scrollLeft;
+            var relativeTop = fixed ? 0 : container.get(0).scrollTop;
             var relativeBottom = fixed ? 0 : -relativeTop;
             var relativeRight = fixed ? 0 : -relativeLeft;
 
@@ -364,10 +364,16 @@
     };
 
     $(document).ready(function () {
+        // Save mouse position on move
         $(document).on('mousemove', function (ev) {
             Cuic.mouseX = ev.clientX;
             Cuic.mouseY = ev.clientY;
         });
+
+        // Make root nodes fit screen,
+        // that allow dialogs and other floating elements
+        // to be positioned at the bottom.
+        $('html,body').css({height: '100%', minHeight: '100%'});
     });
 
 })(jQuery);
