@@ -235,7 +235,7 @@
                     if (args.hasOwnProperty(key)) {
                         if (args[key] != null) {
                             arr.push('&');
-                            arr.push(encodeURIComponent(key)).trim();
+                            arr.push(encodeURIComponent(key).trim());
                             arr.push('=');
                             arr.push(encodeURIComponent(args[key]).trim());
                         }
@@ -286,7 +286,7 @@
         var params = null;
 
         if (options.params) {
-            params = Cuic.serializeUrlArgs(options.params);
+            params = Cuic.serializeQueryParams(options.params);
         }
 
         $.each(files, function (key, value) {
