@@ -26,7 +26,25 @@
 (function ($) {
     'use strict';
 
-    var inputTypes = ['checkbox', 'color', 'date', 'datetime', 'email', 'month', 'number', 'password', 'radio', 'range', 'search', 'tel', 'text', 'time', 'url', 'week'];
+    var inputTypes = ['' +
+    'checkbox',
+        'color',
+        'date',
+        'datetime',
+        'email',
+        'hidden',
+        'month',
+        'number',
+        'password',
+        'radio',
+        'range',
+        'search',
+        'tel',
+        'text',
+        'time',
+        'url',
+        'week'
+    ];
 
     /**
      * Checks all form fields
@@ -45,10 +63,6 @@
         }, options);
 
         var errors = 0;
-
-        // Get the fields
-        var form = $(options.target);
-        var fields = form.find('[name]');
 
         // Removes all errors
         form.find('.' + options.errorClass).removeClass(options.errorClass);
