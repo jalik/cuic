@@ -123,7 +123,7 @@
             var field = this;
             var value = this.value;
             var name = this.name;
-            var safeName = name.replace(/\[[^\]]+\]/, '');
+            var safeName = name.replace(/\[[^\]]*]$/, '');
             var nodeName = field.nodeName.toUpperCase();
 
             if (!Cuic.isField(this)) {
@@ -176,9 +176,9 @@
             }
 
             if (value !== null || !options.ignoreEmpty) {
-                // If this name exists, regroup in an array
-                if (fields[safeName] && !(fields[safeName] instanceof Array)) {
-                    fields[safeName] = [fields[safeName]];
+                // Check if name is an array
+                if (/\[]$/.test(name) && !(fields[safeName] instanceof Array)) {
+                    fields[safeName] = [];
                 }
 
                 // Add field value
