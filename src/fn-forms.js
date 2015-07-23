@@ -251,24 +251,36 @@
     };
 
     /**
+     * Returns the value as a boolean
+     * @param val
+     * @return {boolean}
+     */
+    Cuic.parseBoolean = function (val) {
+        if (/^true$/i.test(val)) {
+            return true;
+        }
+        if (/^false$/i.test(val)) {
+            return false;
+        }
+    };
+
+    /**
      * Returns the typed value of a string value
      * @param val
      * @returns {*}
      */
     Cuic.parseValue = function (val) {
         if (typeof val === 'string') {
-            val = val.toLowerCase();
-
-            if (val === 'true') {
-                return true;
-
-            } else if (val === 'false') {
-                return false;
-
-            } else if (/^[0-9]+$/.test(val)) {
+            // Boolean
+            var bool = this.parseBoolean(val);
+            if (bool === true || bool === false) {
+                return bool;
+            }
+            // Number
+            if (/^[0-9]+$/.test(val)) {
                 return parseInt(val);
-
-            } else if (/^[0.9]+\.[0-9]+$/.test(val)) {
+            }
+            if (/^[0.9]+\.[0-9]+$/.test(val)) {
                 return parseFloat(val);
             }
         }
