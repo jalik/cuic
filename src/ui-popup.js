@@ -104,7 +104,7 @@
 
                 // Add the close button
                 if (self.closeable) {
-                    $('.close-popup').remove();
+                    element.find('.close-popup').remove();
                     $('<span>', {
                         class: 'close-popup',
                         html: self.closeButton

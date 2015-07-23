@@ -136,57 +136,57 @@
             switch (nodeName) {
                 case 'INPUT':
                     if (field.type === 'checkbox') {
-                        // Ignore the field if it was already collected
-                        if (!fields.hasOwnProperty(safeName)) {
-                            var checkboxes = $(form).find('[name="' + name + '"]');
-
-                            if (checkboxes.length > 1) {
-                                fields[safeName] = [];
-
-                                checkboxes.filter(':checked').each(function () {
-                                    fields[safeName].push(value === 'on' ? true : Cuic.parseValue(value));
-                                });
-                            } else if (field.checked) {
-                                fields[safeName] = (value === 'on' ? true : Cuic.parseValue(value));
-                            }
+                        if (field.checked) {
+                            value = (value === 'on' ? true : Cuic.parseValue(value));
                         }
                     } else if (field.type === 'radio') {
-                        if (field.checked) {
-                            fields[safeName] = (value === 'on' ? true : Cuic.parseValue(value));
+                        if (!field.checked) {
+                            return; // if radio not checked, stop there
                         }
+                        value = (value === 'on' ? true : Cuic.parseValue(value));
+
                     } else if (field.type !== 'button' && field.type !== 'reset' && field.type !== 'submit') {
-                        fields[safeName] = Cuic.parseValue(value);
+                        value = Cuic.parseValue(value);
                     }
                     break;
 
                 case 'SELECT':
                     if (field.multiple) {
-                        fields[safeName] = [];
+                        value = [];
                         $(field).find('option:selected').each(function () {
-                            fields[safeName].push(Cuic.parseValue(value));
+                            value.push(Cuic.parseValue(this.value));
                         });
                     } else {
-                        fields[safeName] = Cuic.parseValue(value);
+                        value = Cuic.parseValue(value);
                     }
                     break;
 
                 case 'TEXTAREA':
-                    fields[safeName] = Cuic.parseValue(value);
+                    value = Cuic.parseValue(value);
                     break;
             }
 
             // Remove extra spaces
-            if (typeof fields[safeName] === 'string') {
-                fields[safeName] = fields[safeName].trim();
+            if (typeof value === 'string') {
+                value = value.trim();
 
-                if (fields[safeName] === '') {
-                    fields[safeName] = null;
+                if (value === '') {
+                    value = null;
                 }
             }
 
-            // Remove empty fields
-            if (fields[safeName] === null && options.ignoreEmpty) {
-                delete fields[safeName];
+            if (value !== null || !options.ignoreEmpty) {
+                // If this name exists, regroup in an array
+                if (fields[safeName] && !(fields[safeName] instanceof Array)) {
+                    fields[safeName] = [fields[safeName]];
+                }
+
+                // Add field value
+                if (fields[safeName] instanceof Array) {
+                    fields[safeName].push(value);
+                } else {
+                    fields[safeName] = value;
+                }
             }
         });
         return fields;

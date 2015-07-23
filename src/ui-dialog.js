@@ -54,6 +54,7 @@
         self.closeable = options.closeable === true;
         self.closeButton = options.closeButton;
         self.draggable = options.draggable === true;
+        self.fullscreen = options.fullscreen === true;
         self.modal = options.modal === true;
 
         // Define vars
@@ -190,6 +191,14 @@
                 isClosing = false;
                 isOpening = true;
 
+                // Set fullscreen
+                if (self.fullscreen) {
+                    element.css({
+                        height: '100%',
+                        width: '100%'
+                    });
+                }
+
                 // Find images
                 var images = element.find('img');
 
@@ -220,7 +229,7 @@
 
                 // Add the close button
                 if (self.closeable) {
-                    $('.close-dialog').remove();
+                    header.find('.close-dialog').remove();
                     $('<span>', {
                         class: 'close-dialog',
                         html: self.closeButton
@@ -279,6 +288,14 @@
             // to get real height values
             wrapper.show();
             element.show();
+
+            // Set fullscreen
+            if (self.fullscreen) {
+                element.css({
+                    height: '100%',
+                    width: '100%'
+                });
+            }
 
             // Use container for max height
             if (container !== document.body) {
@@ -419,7 +436,6 @@
             }
         }).appendTo(element);
 
-
         // Set custom styles
         Cuic.applyCss(options.css, element);
 
@@ -492,6 +508,7 @@
         contentWidth: null,
         css: null,
         draggable: true,
+        fullscreen: false,
         position: 'center',
         modal: true,
         target: null,

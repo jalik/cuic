@@ -121,7 +121,7 @@
 
                 // Add the close button
                 if (self.closeable) {
-                    $('.close-notification').remove();
+                    element.find('.close-notification').remove();
                     $('<span>', {
                         class: 'close-notification',
                         html: self.closeButton
