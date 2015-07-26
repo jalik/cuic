@@ -238,7 +238,7 @@
         autoClose: true,
         autoRemove: true,
         className: 'notification',
-        closeable: false,
+        closeable: true,
         closeButton: '×',
         container: null,
         content: null,
