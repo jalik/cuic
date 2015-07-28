@@ -120,18 +120,18 @@
 
         // Get enabled elements
         form.find('[name]').not(':disabled').each(function () {
-            var field = this;
-            var value = this.value;
-            var name = this.name;
-            var safeName = name.replace(/\[[^\]]*]$/, '');
-            var nodeName = field.nodeName.toUpperCase();
-
             if (!Cuic.isField(this)) {
                 return;
             }
             if (!Cuic.isNodeFiltered(this, options.filter)) {
                 return;
             }
+
+            var field = this;
+            var value = this.value;
+            var name = this.name;
+            var safeName = name.replace(/\[[^\]]*]$/, '');
+            var nodeName = field.nodeName.toUpperCase();
 
             switch (nodeName) {
                 case 'INPUT':
