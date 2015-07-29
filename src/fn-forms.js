@@ -133,19 +133,25 @@
             var safeName = name.replace(/\[[^\]]*]$/, '');
             var nodeName = field.nodeName.toUpperCase();
 
+            // Check if name is an array
+            if (/\[]$/.test(name) && !(fields[safeName] instanceof Array)) {
+                fields[safeName] = [];
+            }
+
             switch (nodeName) {
                 case 'INPUT':
-                    if (field.type === 'checkbox') {
-                        if (field.checked) {
-                            value = (value === 'on' ? true : Cuic.parseValue(value));
-                        }
-                    } else if (field.type === 'radio') {
+                    // Field is checkable
+                    if (['checkbox', 'radio'].indexOf(field.type) !== -1) {
+                        // We don't want to return the value
+                        // if the field is not checked
                         if (!field.checked) {
-                            return; // if radio not checked, stop there
+                            return;
                         }
+                        // If value is not set but the field is checked, the browser returns 'on'
                         value = (value === 'on' ? true : Cuic.parseValue(value));
-
-                    } else if (field.type !== 'button' && field.type !== 'reset' && field.type !== 'submit') {
+                    }
+                    // Field is not a button
+                    else if (['button', 'reset', 'submit'].indexOf(field.type) === -1) {
                         value = Cuic.parseValue(value);
                     }
                     break;
@@ -153,8 +159,13 @@
                 case 'SELECT':
                     if (field.multiple) {
                         value = [];
-                        $(field).find('option:selected').each(function () {
-                            value.push(Cuic.parseValue(this.value));
+
+                        // Get selected options
+                        $(field).find('option').each(function () {
+                            var option = this;
+                            if (option.selected) {
+                                value.push(Cuic.parseValue(option.value));
+                            }
                         });
                     } else {
                         value = Cuic.parseValue(value);
@@ -176,11 +187,6 @@
             }
 
             if (value !== null || !options.ignoreEmpty) {
-                // Check if name is an array
-                if (/\[]$/.test(name) && !(fields[safeName] instanceof Array)) {
-                    fields[safeName] = [];
-                }
-
                 // Add field value
                 if (fields[safeName] instanceof Array) {
                     fields[safeName].push(value);
