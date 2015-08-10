@@ -293,34 +293,4 @@
         return val;
     };
 
-    /**
-     * Automatically uploads files when they are selected
-     * @param files
-     * @param options
-     * @return jQuery.ajax
-     */
-    Cuic.uploadFiles = function (files, options) {
-        var data = new FormData();
-        var params = null;
-
-        if (options.params) {
-            params = Cuic.serializeQueryParams(options.params);
-        }
-
-        $.each(files, function (key, value) {
-            data.append(key, value);
-        });
-
-        options = $.extend(true, options, {
-            url: options.url + (params ? '?' + params : ''),
-            type: 'POST',
-            data: data,
-            cache: false,
-            processData: false,
-            contentType: false
-        });
-
-        $.ajax(options);
-    };
-
 })(jQuery);
