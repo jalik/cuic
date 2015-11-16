@@ -124,6 +124,10 @@
                     <span class="label">modal</span>
                     <input type="checkbox" name="modal" checked>
                 </label>
+                <label class="inline">
+                    <span class="label">autoResize</span>
+                    <input type="checkbox" name="autoResize" checked>
+                </label>
                 <button class="run">Run</button>
 
                 <div class="blueprint" style="height: 500px; margin-top: 1em"></div>
@@ -135,9 +139,11 @@
                     var container = sandbox.find('[name=container]');
                     var css = sandbox.find('[name=css]');
                     var position = sandbox.find('[name=position]');
+                    var autoResize = sandbox.find('[name=autoResize]');
                     var run = function () {
 
                         window.dialog = new Cuic.Dialog({
+                            autoResize: autoResize.is(':checked'),
                             container: container.is(':checked') ? '#sb-dialog .blueprint' : document.body,
                             css: css.val(),
                             modal: modal.is(':checked'),

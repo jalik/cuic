@@ -49,8 +49,8 @@
         options = $.extend(true, {}, Cuic.Dialog.prototype.options, options);
 
         // Define attributes
-        self.autoClose = options.autoClose === true;
         self.autoRemove = options.autoRemove === true;
+        self.autoResize = options.autoResize === true;
         self.closeable = options.closeable === true;
         self.closeButton = options.closeButton;
         self.draggable = options.draggable === true;
@@ -322,6 +322,7 @@
                 maxHeight: contentMaxHeight,
                 overflow: 'auto'
             });
+            console.log('resize')
 
             Cuic.position(element, position, wrapper);
 
@@ -479,14 +480,17 @@
         var timer;
         $(window).on('resize.dialog', function () {
             clearTimeout(timer);
-            timer = setTimeout(function () {
-                self.resizeContent();
-            }, 50);
+
+            if (self.autoResize) {
+                timer = setTimeout(function () {
+                    self.resizeContent();
+                }, 50);
+            }
         });
 
         // Define the close shortcut
         new Cuic.Shortcut({
-            keyCode: 27,
+            keyCode: 27, //Esc
             target: element,
             callback: self.close
         });
@@ -498,6 +502,7 @@
      */
     Cuic.Dialog.prototype.options = {
         autoRemove: true,
+        autoResize: true,
         buttons: null,
         className: 'dialog',
         closeable: true,

@@ -259,7 +259,7 @@
     /**
      * Returns the value as a boolean
      * @param val
-     * @return {boolean}
+     * @return {null|boolean}
      */
     Cuic.parseBoolean = function (val) {
         if (/^true$/i.test(val)) {
@@ -268,6 +268,7 @@
         if (/^false$/i.test(val)) {
             return false;
         }
+        return null;
     };
 
     /**

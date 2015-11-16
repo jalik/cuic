@@ -232,18 +232,12 @@
                 fixed = true;
             }
 
-            // Check that the element is not bigger than the viewport
+            // Check that the element is not bigger than the container
             if (elm.outerWidth(true) > containerWidth) {
                 elm.width(containerWidth - (elm.outerWidth(true) - elm.width()));
             }
-            else if (elm.outerWidth(true) > windowWidth) {
-                elm.width(windowWidth - (elm.outerWidth(true) - elm.width()));
-            }
             if (elm.outerHeight(true) > containerHeight) {
                 elm.height(containerHeight - (elm.outerHeight(true) - elm.height()));
-            }
-            else if (elm.outerHeight(true) > windowHeight) {
-                elm.height(windowHeight - (elm.outerHeight(true) - elm.height()));
             }
 
             var targetHeight = elm.outerHeight(true);
