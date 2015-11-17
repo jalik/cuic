@@ -322,7 +322,6 @@
                 maxHeight: contentMaxHeight,
                 overflow: 'auto'
             });
-            console.log('resize')
 
             Cuic.position(element, position, wrapper);
 
