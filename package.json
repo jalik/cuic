@@ -1,6 +1,6 @@
 {
   "name": "cuic",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Common User Interface Components",
   "license": "MIT",
   "author": {
@@ -15,6 +15,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jalik/cuik.js.git"
+    "url": "https://github.com/jalik/cuic.js.git"
   }
 }

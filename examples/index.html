@@ -43,6 +43,7 @@
     <script src="../src/ui-notification.js"></script>
     <script src="../src/ui-panel.js"></script>
     <script src="../src/ui-popup.js"></script>
+    <script src="../src/ui-switcher.js"></script>
     <script src="../src/ui-table.js"></script>
     <script src="../src/ui-tabs.js"></script>
     <script src="../src/ui-tooltip.js"></script>
@@ -61,6 +62,7 @@
             <li><a href="#ui-notification">Notification</a></li>
             <li><a href="#ui-panel">Panel</a></li>
             <li><a href="#ui-popup">Popup</a></li>
+            <li><a href="#ui-switcher">Switcher</a></li>
             <li><a href="#ui-table">Table</a></li>
             <li><a href="#ui-tabs">Tabs</a></li>
             <li><a href="#ui-tooltip">Tooltip</a></li>
@@ -527,6 +529,83 @@
                     });
                     position.on("change", function () {
                         panel.setPosition(position.val());
+                    });
+                });
+            </script>
+        </div>
+
+        <div id="ui-switcher">
+            <h2><a href="#">Cuic.</a>Switcher</h2>
+
+            <p>The switcher is a container that take a group of elements and displays only one at a time, allowing to
+                navigate forward and backward.</p>
+
+            <div class="sandbox" id="sb-switcher">
+                <div>
+                    <label class="inline">
+                        <span class="label">repeat</span>
+                        <input type="checkbox" name="repeat" checked>
+                    </label>
+                    <button class="fn-start">start()</button>
+                    <button class="fn-stop">stop()</button>
+                    <button class="fn-first">first()</button>
+                    <button class="fn-next">next()</button>
+                    <button class="fn-previous">previous()</button>
+                    <button class="fn-last">last()</button>
+                </div>
+                <div class="blueprint switcher">
+                    <p>1. This is the first element</p>
+
+                    <p>2. This is the second element</p>
+
+                    <p>3. This is the third element</p>
+
+                    <p>4. This is the fourth element</p>
+
+                    <p>5. This is the fifth element</p>
+
+                    <p>6. This is the sixth element</p>
+                </div>
+            </div>
+
+            <script>
+                $(document).ready(function () {
+                    var sandbox = $("#sb-switcher");
+
+                    sandbox.find('[name=repeat]').on('change', function (ev) {
+                        ev.preventDefault();
+                        switcher.repeat = ev.target.checked;
+                    });
+                    sandbox.find('.fn-start').on('click', function (ev) {
+                        ev.preventDefault();
+                        switcher.start();
+                    });
+                    sandbox.find('.fn-stop').on('click', function (ev) {
+                        ev.preventDefault();
+                        switcher.stop();
+                    });
+                    sandbox.find('.fn-first').on('click', function (ev) {
+                        ev.preventDefault();
+                        switcher.first();
+                    });
+                    sandbox.find('.fn-previous').on('click', function (ev) {
+                        ev.preventDefault();
+                        switcher.previous();
+                    });
+                    sandbox.find('.fn-next').on('click', function (ev) {
+                        ev.preventDefault();
+                        switcher.next();
+                    });
+                    sandbox.find('.fn-last').on('click', function (ev) {
+                        ev.preventDefault();
+                        switcher.last();
+                    });
+
+                    window.switcher = new Cuic.Switcher({
+                        autoStart: true,
+                        delay: 1000,
+                        repeat: sandbox.find('[name=repeat]').is(':checked'),
+                        target: sandbox.find('.switcher')
                     });
                 });
             </script>
