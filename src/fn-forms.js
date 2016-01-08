@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Karl STEIN
+ * Copyright (c) 2016 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -104,44 +104,30 @@
     };
 
     /**
-     * Returns the form fields
-     * @param form
-     * @param options
-     * @returns {{}}
+     * Returns the field's value
+     * @param name
+     * @param parent
+     * @return {null}
      */
-    Cuic.getFields = function (form, options) {
-        var fields = {};
-        form = $(form);
-
-        options = $.extend(true, {
-            filter: null,
-            ignoreEmpty: false
-        }, options);
-
-        // Get enabled elements
-        form.find('[name]').not(':disabled').each(function () {
-            if (!Cuic.isField(this)) {
-                return;
-            }
-            if (!Cuic.isNodeFiltered(this, options.filter)) {
-                return;
-            }
-
+    Cuic.getField = function (name, parent) {
+        var result = null;
+        parent = $(parent);
+        parent.find('[name="' + name + '"]').not(':disabled').each(function () {
             var field = this;
-            var value = this.value;
-            var name = this.name;
-            var safeName = name.replace(/\[[^\]]*]$/, '');
+            var value = field.value;
             var nodeName = field.nodeName.toUpperCase();
 
             // Check if name is an array
-            if (/\[]$/.test(name) && !(fields[safeName] instanceof Array)) {
-                fields[safeName] = [];
+            if (/\[]$/.test(name) && !(result instanceof Array)) {
+                result = [];
             }
 
             switch (nodeName) {
                 case 'INPUT':
+                    var type = typeof field.type === 'string' ? field.type.toLowerCase() : '';
+
                     // Field is checkable
-                    if (['checkbox', 'radio'].indexOf(field.type) !== -1) {
+                    if (['checkbox', 'radio'].indexOf(type) !== -1) {
                         // We don't want to return the value
                         // if the field is not checked
                         if (!field.checked) {
@@ -151,7 +137,7 @@
                         value = (value === 'on' ? true : Cuic.parseValue(value));
                     }
                     // Field is not a button
-                    else if (['button', 'reset', 'submit'].indexOf(field.type) === -1) {
+                    else if (['button', 'reset', 'submit'].indexOf(type) === -1) {
                         value = Cuic.parseValue(value);
                     }
                     break;
@@ -177,17 +163,46 @@
                     break;
             }
 
-            // Remove extra spaces
-            if (typeof value === 'string') {
-                value = value.trim();
-
-                if (value === '') {
-                    value = null;
+            if (value !== null) {
+                // Add field value
+                if (result instanceof Array) {
+                    result.push(value);
+                } else {
+                    result = value;
                 }
             }
+        });
+        return result;
+    };
+
+    /**
+     * Returns the form fields
+     * @param parent
+     * @param options
+     * @returns {{}}
+     */
+    Cuic.getFields = function (parent, options) {
+        var fields = {};
+        parent = $(parent);
+
+        options = $.extend(true, {
+            filter: null,
+            ignoreEmpty: false
+        }, options);
+
+        parent.find('[name]').not(':disabled').each(function () {
+            if (!Cuic.isField(this)) {
+                return;
+            }
+            if (!Cuic.isNodeFiltered(this, options.filter)) {
+                return;
+            }
+            var field = this;
+            var name = field.name;
+            var safeName = name.replace(/\[[^\]]*]$/, '');
+            var value = Cuic.getField(name, parent);
 
             if (value !== null || !options.ignoreEmpty) {
-                // Add field value
                 if (fields[safeName] instanceof Array) {
                     fields[safeName].push(value);
                 } else {
@@ -278,6 +293,7 @@
      */
     Cuic.parseValue = function (val) {
         if (typeof val === 'string') {
+            val = val.trim();
             // Boolean
             var bool = this.parseBoolean(val);
             if (bool === true || bool === false) {
@@ -291,7 +307,7 @@
                 return parseFloat(val);
             }
         }
-        return val;
+        return val === '' ? null : val;
     };
 
 })(jQuery);
