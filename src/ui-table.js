@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Karl STEIN
+ * Copyright (c) 2016 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,7 @@
 (function ($) {
     'use strict';
 
-    var counter = 0;
+    var ns = Cuic.namespace('table');
 
     /**
      * Enables interactions on a table
@@ -68,7 +68,7 @@
 
         // Mark selected rows when clicked
         if (options.selectRowOnClick) {
-            tbody.children('tr').off('click.table').on('click.table', function (ev) {
+            tbody.children('tr').off(ns('click')).on(ns('click'), function (ev) {
                 if (ev.target.nodeName === 'TD') {
                     $(this).toggleClass(options.selectedClass);
                 }
@@ -149,7 +149,7 @@
         table.sort(defaultColumn.index(), defaultColumn.hasClass('descendant') ? 'desc' : 'asc');
 
         // Handle clicks on sortable columns
-        thead.find('tr > .' + options.sortableClass).off('click.table').on('click.table', function (ev) {
+        thead.find('tr > .' + options.sortableClass).off(ns('click')).on(ns('click'), function (ev) {
             if (ev.currentTarget === ev.target) {
                 var column = $(this);
                 var index = column.index();

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Karl STEIN
+ * Copyright (c) 2016 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,8 @@
 
 (function ($) {
     'use strict';
+
+    var ns = Cuic.namespace('popup');
 
     /**
      * Creates a popup
@@ -113,7 +115,7 @@
 
                 // If the content of the popup has changed,
                 // we need to check if there is a close button
-                element.find('.close-popup').one('click', self.close);
+                element.find('.close-popup').off('click').one(ns('click'), self.close);
 
                 // Position the element
                 self.setAnchor(position, target);
@@ -183,7 +185,7 @@
         });
 
         // Close the popup when the user clicks outside of it
-        $(document).on('mousedown.popup', function (ev) {
+        $(document).off(ns('mousedown')).on(ns('mousedown'), function (ev) {
             var target = $(ev.target);
 
             if (target !== element && target.closest(element).length === 0) {

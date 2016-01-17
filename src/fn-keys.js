@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Karl STEIN
+ * Copyright (c) 2016 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,8 @@
 
 (function ($) {
     'use strict';
+
+    var ns = Cuic.namespace('shortcut');
 
     Cuic.keys = {
         BACKSPACE: 8,
@@ -70,7 +72,7 @@
         var target = $(options.target);
 
         // Watch key up event
-        target.on('keyup', function (ev) {
+        target.off(ns('keyup')).on(ns('keyup'), function (ev) {
             if (self.keyCode === ev.keyCode
                 && self.altKey === ev.altKey
                 && self.ctrlKey === ev.ctrlKey

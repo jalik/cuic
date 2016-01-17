@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Karl STEIN
+ * Copyright (c) 2016 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -180,6 +180,18 @@
         },
 
         /**
+         * Creates a namespace helper
+         * @param ns
+         * @return {Function}
+         */
+        namespace: function (ns) {
+            return function (event, id) {
+                id = Cuic.slug(id);
+                return event + '.cuic.' + ns + (id ? '.' + id : '');
+            };
+        },
+
+        /**
          * Returns the element padding
          * @param elm
          * @return {{bottom: Number, left: Number, right: Number, top: Number}}
@@ -341,6 +353,19 @@
         },
 
         /**
+         * Removes all special characters
+         * @param text
+         * @return {string}
+         */
+        slug: function (text) {
+            if (typeof text === 'string') {
+                text = text.replace(/ +/g, '-');
+                text = text.replace(/[^a-zA-Z0-9_-]+/g, '');
+            }
+            return text;
+        },
+
+        /**
          * Returns the value depending of the type of the value,
          * for example, if it is a function, it will returns the result of the function.
          * @param value
@@ -357,16 +382,18 @@
         }
     };
 
+    var ns = Cuic.namespace('base');
+
     $(document).ready(function () {
         // Save mouse position on move
-        $(document).on('mousemove', function (ev) {
+        $(document).off(ns('mousemove')).on(ns('mousemove'), function (ev) {
             Cuic.mouseX = ev.clientX;
             Cuic.mouseY = ev.clientY;
         });
 
         // Make root nodes fit screen,
         // that allow dialogs and other floating elements
-        // to be positioned at the bottom.
+        // to be positioned on all the screen.
         $('html,body').css({height: '100%', minHeight: '100%'});
     });
 

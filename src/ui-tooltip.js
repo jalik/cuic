@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Karl STEIN
+ * Copyright (c) 2016 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,8 @@
 (function ($) {
     'use strict';
 
+    var ns = Cuic.namespace('tooltip');
+
     /**
      * Creates a tooltip
      * @param options
@@ -38,7 +40,7 @@
         var isOpened = false;
         var isOpening = false;
         var position;
-        var target;
+        var selector;
 
         // Set default options
         options = $.extend(true, {}, Cuic.Tooltip.prototype.options, options);
@@ -49,7 +51,7 @@
 
         // Define vars
         position = options.position;
-        target = $(options.target);
+        selector = options.selector;
 
         /**
          * Closes the tooltip
@@ -100,9 +102,6 @@
                 isClosing = false;
                 isOpening = true;
 
-                // Position the element
-                self.setAnchor(position, target);
-
                 element.stop(true, false).fadeIn(200, function () {
                     if (callback) {
                         callback.call(self);
@@ -115,25 +114,22 @@
         };
 
         /**
-         * Sets the position relative to a target
-         * @param pos
-         * @param targ
-         * @return {Cuic.Tooltip}
-         */
-        self.setAnchor = function (pos, targ) {
-            position = pos;
-            target = $(targ || target);
-            Cuic.anchor(element, pos, target);
-            return self;
-        };
-
-        /**
          * Sets the tooltip content
          * @param html
          * @return {Cuic.Tooltip}
          */
         self.setContent = function (html) {
             element.html(html);
+            return self;
+        };
+
+        /**
+         * Sets the position relative
+         * @param pos
+         * @return {Cuic.Tooltip}
+         */
+        self.setPosition = function (pos) {
+            position = pos;
             return self;
         };
 
@@ -166,40 +162,40 @@
             zIndex: options.zIndex
         });
 
-        $(options.target).each(function () {
-            var target = $(this);
-            var content = target.attr(self.attribute);
+        var body = $(document.body);
 
-            // Display the tooltip
-            target.on('mouseenter', function (ev) {
-                target.attr('data-tooltip', content);
-                target.attr(self.attribute, '');
-                element.html(content);
+        // Replace previous event listener
+        body.off(ns('mouseenter', selector)).on(ns('mouseenter', selector), selector, function (ev) {
+            var t = $(ev.target);
+            var text = t.attr(self.attribute);
+            t.attr('data-tooltip', text);
+            t.attr(self.attribute, '');
+            element.html(text);
 
-                if (self.followPointer) {
-                    Cuic.anchor(element, position, [ev.pageX, ev.pageY]);
-                } else {
-                    Cuic.anchor(element, position, target);
-                }
-                self.open();
-            });
+            if (self.followPointer) {
+                Cuic.anchor(element, position, [ev.pageX, ev.pageY]);
+            } else {
+                Cuic.anchor(element, position, ev.target);
+            }
+            self.open();
+        });
 
-            // Move the tooltip
-            target.on('mousemove', function (ev) {
-                if (self.followPointer) {
-                    Cuic.anchor(element, position, [ev.pageX, ev.pageY]);
-                } else {
-                    Cuic.anchor(element, position, target);
-                }
-            });
+        // Replace previous event listener
+        body.off(ns('mousemove', selector)).on(ns('mousemove', selector), selector, function (ev) {
+            if (self.followPointer) {
+                Cuic.anchor(element, position, [ev.pageX, ev.pageY]);
+            } else {
+                Cuic.anchor(element, position, ev.target);
+            }
+        });
 
-            // Close the tooltip
-            target.on('mouseleave', function () {
-                var text = target.attr('data-tooltip');
-                target.attr('data-tooltip', '');
-                target.attr(self.attribute, text);
-                self.close();
-            });
+        // Replace previous event listener
+        body.off(ns('mouseleave', selector)).on(ns('mouseleave', selector), selector, function (ev) {
+            var t = $(ev.target);
+            var text = t.attr('data-tooltip');
+            t.attr('data-tooltip', '');
+            t.attr(self.attribute, text);
+            self.close();
         });
     };
 
@@ -213,7 +209,7 @@
         css: null,
         followPointer: true,
         position: 'right bottom',
-        target: null,
+        selector: '[title]',
         zIndex: 10
     };
 

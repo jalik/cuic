@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Karl STEIN
+ * Copyright (c) 2016 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,8 @@
 
 (function ($) {
     'use strict';
+
+    var ns = Cuic.namespace('notification');
 
     /**
      * Creates a notification
@@ -130,7 +132,7 @@
 
                 // If the content of the notification has changed,
                 // we need to check if there is a close button
-                element.find('.close-notification').one('click', self.close);
+                element.find('.close-notification').off(ns('click')).one(ns('click'), self.close);
 
                 // Avoid closing the notification if the mouse is over
                 element.hover(function () {

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Karl STEIN
+ * Copyright (c) 2016 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,8 @@
 
 (function ($) {
     'use strict';
+
+    var ns = Cuic.namespace('tree');
 
     /**
      * Enables interactions on a tree
@@ -74,7 +76,7 @@
                 item.addClass(content.is(':visible') ? 'expanded' : 'collapsed');
             }
 
-            item.children('.' + options.itemNameClass).off('click.tree').on('click.tree', function () {
+            item.children('.' + options.itemNameClass).off(ns('click')).on(ns('click'), function () {
                 if (!item.hasClass('disabled')) {
                     if (content.length === 1) {
                         // Update the active item

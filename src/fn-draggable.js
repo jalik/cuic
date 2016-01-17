@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Karl STEIN
+ * Copyright (c) 2016 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,8 @@
 
 (function ($) {
     'use strict';
+
+    var ns = Cuic.namespace('draggable');
 
     /**
      * Makes an object draggable
@@ -72,7 +74,7 @@
             area.css('cursor', 'move');
 
             // Start dragging
-            area.on('mousedown', function (ev) {
+            area.off(ns('mousedown')).on(ns('mousedown'), function (ev) {
                 // Ignore dragging if the target is not the root
                 if (self.rootOnly && ev.target !== ev.currentTarget) return;
 
@@ -141,7 +143,7 @@
                 }, Math.round(1000 / self.fps));
 
                 // Stop dragging
-                $(document).one('mouseup', function (ev) {
+                $(document).off(ns('mouseup')).one(ns('mouseup'), function (ev) {
                     clearInterval(timer);
                     element.removeClass('dragging');
 

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Karl STEIN
+ * Copyright (c) 2016 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,8 @@
 
 (function ($) {
     'use strict';
+
+    var ns = Cuic.namespace('resizable');
 
     /**
      * Makes an object resizable
@@ -170,7 +172,7 @@
             }, Math.round(1000 / self.fps));
 
             // Stop resizing
-            $(document).one('mouseup', function (ev) {
+            $(document).off(ns('mouseup')).one(ns('mouseup'), function (ev) {
                 clearInterval(timer);
                 element.removeClass('resizing');
 
@@ -192,7 +194,7 @@
                 width: options.handlerSize,
                 zIndex: 1
             }
-        }).on('mousedown', resize).appendTo(element);
+        }).off(ns('mousedown')).on(ns('mousedown'), resize).appendTo(element);
 
         // Bottom handler
         var bottomHandler = $('<div>', {
@@ -206,7 +208,7 @@
                 width: '100%',
                 zIndex: 1
             }
-        }).on('mousedown', resize).appendTo(element);
+        }).off(ns('mousedown')).on(ns('mousedown'), resize).appendTo(element);
 
         // Bottom-Right handler
         var bottomRightHandler = $('<div>', {
@@ -220,7 +222,7 @@
                 width: options.handlerSize,
                 zIndex: 2
             }
-        }).on('mousedown', resize).appendTo(element);
+        }).off('mousedown').on(ns('mousedown'), resize).appendTo(element);
 
         handlers = [
             rightHandler,
@@ -237,7 +239,7 @@
         ];
 
         // Display all handlers when mouse enters the target
-        element.on('mouseenter', function () {
+        element.off('mouseenter').on(ns('mouseenter'), function () {
             if (!element.hasClass('resizing')) {
                 for (var i = 0; i < handlers.length; i += 1) {
                     handlers[i].stop(true, false).fadeIn(0);
@@ -246,7 +248,7 @@
         });
 
         // Hide all handlers when mouse leaves the target
-        element.on('mouseleave', function () {
+        element.off('mouseleave').on(ns('mouseleave'), function () {
             if (!element.hasClass('resizing')) {
                 for (var i = 0; i < handlers.length; i += 1) {
                     handlers[i].stop(true, false).fadeOut(0);

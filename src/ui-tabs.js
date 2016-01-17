@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Karl STEIN
+ * Copyright (c) 2016 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@
 (function ($) {
     'use strict';
 
+    var ns = Cuic.namespace('tabs');
     var tabIndex = 0;
 
     /**
@@ -77,7 +78,7 @@
         });
 
         // Display the content of the tab when it is focused
-        self.tabs.on('focus.tab', function (ev) {
+        self.tabs.off(ns('focus')).on(ns('focus'), function (ev) {
             self.selectTab($(ev.currentTarget).index());
         });
     };

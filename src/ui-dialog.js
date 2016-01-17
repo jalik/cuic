@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Karl STEIN
+ * Copyright (c) 2016 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,8 @@
 
 (function ($) {
     'use strict';
+
+    var ns = Cuic.namespace('dialog');
 
     /**
      * Creates a dialog
@@ -84,13 +86,13 @@
             }
 
             if (typeof listener === 'function') {
-                button.on('click', function (ev) {
+                button.off(ns('click')).on(ns('click'), function (ev) {
                     listener.call(self, ev);
                 });
             } else {
                 switch (listener) {
                     case 'close':
-                        button.on('click', function () {
+                        button.off(ns('click')).on(ns('click'), function () {
                             self.close();
                         });
                         break;
@@ -204,7 +206,7 @@
 
                 if (images.length > 0) {
                     // Position the dialog when images are loaded
-                    images.on('load', function () {
+                    images.off(ns('load')).on(ns('load'), function () {
                         self.resizeContent();
                     });
                 } else {
@@ -214,7 +216,7 @@
 
                 // If the content of the dialog has changed,
                 // we need to check if there is a close button
-                element.find('.dialog-close').one('click', function () {
+                element.find('.dialog-close').off(ns('click')).one(ns('click'), function () {
                     self.close();
                 });
 
@@ -238,7 +240,7 @@
 
                 // If the content of the dialog has changed,
                 // we need to check if there is a close button
-                element.find('.close-dialog').one('click', self.close);
+                element.find('.close-dialog').off(ns('click')).one(ns('click'), self.close);
 
                 if (self.modal) {
                     wrapper.css({
@@ -462,7 +464,7 @@
 
         // If the dialog is not modal,
         // a click on the wrapper will close the dialog
-        wrapper.on('click', function (ev) {
+        wrapper.off(ns('click')).on(ns('click'), function (ev) {
             if (!self.modal && ev.target == wrapper.get(0)) {
                 self.close();
             }
@@ -477,7 +479,7 @@
         });
 
         var timer;
-        $(window).on('resize.dialog', function () {
+        $(window).off(ns('resize')).on(ns('resize'), function () {
             clearTimeout(timer);
 
             if (self.autoResize) {

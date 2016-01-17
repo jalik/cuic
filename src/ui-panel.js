@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Karl STEIN
+ * Copyright (c) 2016 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,8 @@
 
 (function ($) {
     'use strict';
+
+    var ns = Cuic.namespace('panel');
 
     /**
      * Creates a panel
@@ -482,13 +484,13 @@
         }
 
         // Find the close button
-        element.find('.close-panel').on('click', self.close);
+        element.find('.close-panel').off(ns('click')).on(ns('click'), self.close);
 
         // Find the toggle button
-        element.find('.toggle-panel').on('click', self.toggle);
+        element.find('.toggle-panel').off(ns('click')).on(ns('click'), self.toggle);
 
         // Close the panel when the user clicks outside of it
-        $(document).on('mousedown.panel', function (ev) {
+        $(document).off(ns('mousedown')).on(ns('mousedown'), function (ev) {
             var target = $(ev.target);
 
             if (target !== element && target.closest(element).length === 0) {

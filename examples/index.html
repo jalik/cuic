@@ -2,7 +2,7 @@
 <!--
   ~ The MIT License (MIT)
   ~
-  ~ Copyright (c) 2015 Karl STEIN
+  ~ Copyright (c) 2016 Karl STEIN
   ~
   ~ Permission is hereby granted, free of charge, to any person obtaining a copy
   ~ of this software and associated documentation files (the "Software"), to deal
@@ -830,7 +830,7 @@
                             attribute: "title",
                             css: css,
                             followPointer: followPointer.is(":checked"),
-                            target: sandbox.find('.group1').children('[title]')
+                            selector: '.group1 [title]'
                         });
 
                         window.tooltipBlue = new Cuic.Tooltip({
@@ -838,7 +838,7 @@
                             attribute: "title",
                             css: css + ";background:rgba(93,190,221,0.9)",
                             followPointer: followPointer.is(":checked"),
-                            target: sandbox.find('.group2').children('[title]')
+                            selector: '.group2 [title]'
                         });
                     };
 
