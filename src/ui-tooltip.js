@@ -168,16 +168,24 @@
         body.off(ns('mouseenter', selector)).on(ns('mouseenter', selector), selector, function (ev) {
             var t = $(ev.target);
             var text = t.attr(self.attribute);
-            t.attr('data-tooltip', text);
-            t.attr(self.attribute, '');
-            element.html(text);
 
-            if (self.followPointer) {
-                Cuic.anchor(element, position, [ev.pageX, ev.pageY]);
-            } else {
-                Cuic.anchor(element, position, ev.target);
+            if (!text || !text.length) {
+                text = t.attr('data-tooltip');
             }
-            self.open();
+
+            if (text && text.length) {
+                t.attr(self.attribute, '');
+                t.attr('data-tooltip', text);
+
+                element.html(text);
+
+                if (self.followPointer) {
+                    Cuic.anchor(element, position, [ev.pageX, ev.pageY]);
+                } else {
+                    Cuic.anchor(element, position, ev.target);
+                }
+                self.open();
+            }
         });
 
         // Replace previous event listener
@@ -191,10 +199,6 @@
 
         // Replace previous event listener
         body.off(ns('mouseleave', selector)).on(ns('mouseleave', selector), selector, function (ev) {
-            var t = $(ev.target);
-            var text = t.attr('data-tooltip');
-            t.attr('data-tooltip', '');
-            t.attr(self.attribute, text);
             self.close();
         });
     };
