@@ -27,6 +27,7 @@
     'use strict';
 
     var ns = Cuic.namespace('tooltip');
+    var tooltips = [];
 
     /**
      * Creates a tooltip
@@ -52,6 +53,9 @@
         // Define vars
         position = options.position;
         selector = options.selector;
+
+        // Add the tooltip to the list
+        tooltips.push(self);
 
         /**
          * Closes the tooltip
@@ -216,5 +220,14 @@
         selector: '[title]',
         zIndex: 10
     };
+
+    $(document).ready(function () {
+        // Closes the tooltip on click (to avoid tooltip to remain if the page content changed)
+        $(document.body).off(ns('click')).on(ns('click'), function () {
+            for (var i = 0; i < tooltips.length; i += 1) {
+                tooltips[i].close();
+            }
+        });
+    });
 
 })(jQuery);
