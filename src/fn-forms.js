@@ -177,20 +177,20 @@
 
     /**
      * Returns the form fields
-     * @param parent
+     * @param container
      * @param options
      * @returns {{}}
      */
-    Cuic.getFields = function (parent, options) {
+    Cuic.getFields = function (container, options) {
         var fields = {};
-        parent = $(parent);
+        container = $(container);
 
         options = $.extend(true, {
             filter: null,
             ignoreEmpty: false
         }, options);
 
-        parent.find('[name]').not(':disabled').each(function () {
+        container.find('[name]').not(':disabled').each(function () {
             if (!Cuic.isField(this)) {
                 return;
             }
@@ -200,14 +200,10 @@
             var field = this;
             var name = field.name;
             var safeName = name.replace(/\[[^\]]*]$/, '');
-            var value = Cuic.getField(name, parent);
+            var value = Cuic.getField(name, container);
 
             if (value !== null || !options.ignoreEmpty) {
-                if (fields[safeName] instanceof Array) {
-                    fields[safeName].push(value);
-                } else {
-                    fields[safeName] = value;
-                }
+                fields[safeName] = value;
             }
         });
         return fields;
