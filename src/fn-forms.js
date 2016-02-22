@@ -296,10 +296,10 @@
                 return bool;
             }
             // Number
-            if (/^[0-9]+$/.test(val)) {
+            if (/^-?[0-9]+$/.test(val)) {
                 return parseInt(val);
             }
-            if (/^[0-9]+\.[0-9]+$/.test(val)) {
+            if (/^-?[0-9]+\.[0-9]+$/.test(val)) {
                 return parseFloat(val);
             }
         }
