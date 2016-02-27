@@ -123,7 +123,7 @@
          * @return {Cuic.Tooltip}
          */
         self.setContent = function (html) {
-            element.html(html);
+            content.html(html);
             return self;
         };
 
@@ -167,6 +167,59 @@
         });
 
         var body = $(document.body);
+        var content = $('<div>', {}).appendTo(element);
+        var tail = $('<span>', {
+            'class': 'tail',
+            style: {position: 'absolute', display: 'inline-block'}
+        }).appendTo(element);
+
+        function refreshTail() {
+            switch (position) {
+                case 'top':
+                    tail.removeClass('tail-top tail-left tail-right').addClass('tail-bottom');
+                    tail.css({
+                        left: '50%',
+                        right: 'auto',
+                        top: 'auto',
+                        bottom: -tail.height() + 'px',
+                        margin: '0 0 0 ' + (-tail.width() / 2) + 'px'
+                    });
+                    break;
+
+                case 'bottom':
+                    tail.removeClass('tail-bottom tail-left tail-right').addClass('tail-top');
+                    tail.css({
+                        left: '50%',
+                        right: 'auto',
+                        top: -tail.height() + 'px',
+                        bottom: 'auto',
+                        margin: '0 0 0 ' + (-tail.width() / 2) + 'px'
+                    });
+                    break;
+
+                case 'right':
+                    tail.removeClass('tail-top tail-bottom tail-right').addClass('tail-left');
+                    tail.css({
+                        left: -tail.width() + 'px',
+                        right: 'auto',
+                        top: '50%',
+                        bottom: 'auto',
+                        margin: (-tail.height() / 2) + 'px 0 0 0'
+                    });
+                    break;
+
+                case 'left':
+                    tail.removeClass('tail-top tail-bottom tail-left').addClass('tail-right');
+                    tail.css({
+                        left: 'auto',
+                        right: -tail.width() + 'px',
+                        top: '50%',
+                        bottom: 'auto',
+                        margin: (-tail.height() / 2) + 'px 0 0 0'
+                    });
+                    break;
+            }
+        }
 
         // Replace previous event listener
         body.off(ns('mouseenter', selector)).on(ns('mouseenter', selector), selector, function (ev) {
@@ -181,12 +234,13 @@
                 t.attr(self.attribute, '');
                 t.attr('data-tooltip', text);
 
-                element.html(text);
+                content.html(text);
 
                 if (self.followPointer) {
                     Cuic.anchor(element, position, [ev.pageX, ev.pageY]);
                 } else {
-                    Cuic.anchor(element, position, ev.target);
+                    Cuic.anchor(element, position, ev.currentTarget);
+                    refreshTail();
                 }
                 self.open();
             }
@@ -197,7 +251,8 @@
             if (self.followPointer) {
                 Cuic.anchor(element, position, [ev.pageX, ev.pageY]);
             } else {
-                Cuic.anchor(element, position, ev.target);
+                Cuic.anchor(element, position, ev.currentTarget);
+                refreshTail();
             }
         });
 
