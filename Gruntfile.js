@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Karl STEIN
+ * Copyright (c) 2016 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,8 @@ module.exports = function (grunt) {
         pkg: grunt.file.readJSON("package.json"),
         concat: {
             options: {
-                separator: ";"
+                //banner: grunt.file.read('grunt/intro'),
+                //footer: grunt.file.read('grunt/outro')
             },
             dist: {
                 src: [
@@ -58,9 +59,6 @@ module.exports = function (grunt) {
             }
         },
         uglify: {
-            options: {
-                banner: ""
-            },
             build: {
                 src: concatenatedFile,
                 dest: compressedFile

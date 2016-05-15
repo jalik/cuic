@@ -23,7 +23,7 @@
  *
  */
 
-(function ($) {
+(function ($, window) {
     'use strict';
 
     // Check if the namespace is not used
@@ -40,7 +40,7 @@
      * The Common User Interface Components
      * @type {*}
      */
-    window.Cuic = {
+    var Cuic = {
         /**
          * The mouse X position
          * @type {number}
@@ -382,9 +382,13 @@
         }
     };
 
-    var ns = Cuic.namespace('base');
+    if (window) {
+        window.Cuic = Cuic;
+    }
 
     $(document).ready(function () {
+        var ns = Cuic.namespace('base');
+
         // Save mouse position on move
         $(document).off(ns('mousemove')).on(ns('mousemove'), function (ev) {
             Cuic.mouseX = ev.clientX;
@@ -397,4 +401,4 @@
         $('html,body').css({height: '100%', minHeight: '100%'});
     });
 
-})(jQuery);
+})(jQuery, window);
