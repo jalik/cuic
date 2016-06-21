@@ -26,8 +26,6 @@
 (function ($) {
     'use strict';
 
-    var ns = Cuic.namespace('hook');
-
     /**
      * Hook an element to the viewport,
      * so it is scrolled with the viewport
@@ -36,6 +34,7 @@
      */
     Cuic.Hook = function (options) {
         var self = this;
+        var ns = Cuic.namespace('hook');
 
         // Default options
         options = $.extend(true, {}, Cuic.Hook.prototype.options, options);
@@ -61,6 +60,13 @@
             css: {display: 'none'}
         }).insertBefore(target);
 
+        // Get the target's offset
+        var offset = target.offset();
+
+        if (options.fixed) {
+            options.offsetTop = offset.top;
+        }
+
         /**
          * Hook the element
          */
@@ -77,7 +83,8 @@
             });
             target.css({
                 position: 'fixed',
-                top: 0,
+                left: offset.left,
+                top: options.offsetTop,
                 width: spacer.width(),
                 zIndex: options.zIndex
             }).addClass(options.hookedClass);
@@ -95,6 +102,9 @@
             spacer.hide();
             target.css({
                 position: 'relative',
+                bottom: '',
+                left: '',
+                right: '',
                 top: '',
                 width: ''
             }).removeClass(options.hookedClass);
@@ -105,16 +115,19 @@
             }
         };
 
-        // Get the target's top offset
-        var offsetTop = target.offset().top;
-
         var onScroll = function () {
-            if (win.scrollTop() > offsetTop - parseFloat(target.css('margin-top'))) {
+            if (options.fixed) {
                 if (target.css('position') !== 'fixed') {
                     self.hook();
                 }
-            } else if (target.css('position') !== 'relative') {
-                self.unhook();
+            } else {
+                if (win.scrollTop() > offset.top - parseFloat(target.css('margin-top'))) {
+                    if (target.css('position') !== 'fixed') {
+                        self.hook();
+                    }
+                } else if (target.css('position') !== 'relative') {
+                    self.unhook();
+                }
             }
         };
 
@@ -145,7 +158,12 @@
      * @type {*}
      */
     Cuic.Hook.prototype.options = {
+        fixed: false,
         hookedClass: 'hooked',
+        offsetBottom: 0,
+        offsetLeft: 0,
+        offsetRight: 0,
+        offsetTop: 0,
         target: null,
         zIndex: 4
     };
