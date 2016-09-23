@@ -73,11 +73,11 @@
 
         // Watch key up event
         target.off(ns('keyup')).on(ns('keyup'), function (ev) {
-            if (self.keyCode === ev.keyCode
+            if ((self.keyCode === ev.keyCode || self.keyCode === ev.which)
                 && self.altKey === ev.altKey
                 && self.ctrlKey === ev.ctrlKey
                 && self.shiftKey === ev.shiftKey) {
-                options.callback.call(target);
+                options.callback.call(target, ev);
             }
         });
     };
