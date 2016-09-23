@@ -53,6 +53,7 @@
         var self = this;
 
         options = $.extend(true, {
+            active: true,
             altKey: false,
             callback: null,
             ctrlKey: false,
@@ -67,19 +68,38 @@
         self.ctrlKey = options.ctrlKey;
         self.keyCode = options.keyCode;
         self.shiftKey = options.shiftKey;
+        self.callback = options.callback;
 
         // Get the target
         var target = $(options.target);
 
-        // Watch key up event
-        target.off(ns('keyup')).on(ns('keyup'), function (ev) {
-            if ((self.keyCode === ev.keyCode || self.keyCode === ev.which)
-                && self.altKey === ev.altKey
-                && self.ctrlKey === ev.ctrlKey
-                && self.shiftKey === ev.shiftKey) {
-                options.callback.call(target, ev);
-            }
-        });
+        /**
+         * Deactivates shortcut
+         */
+        self.deactivate = function () {
+            target.off(ns('keydown'));
+        };
+
+        /**
+         * Activates shortcut
+         */
+        self.activate = function () {
+            target.off(ns('keydown')).on(ns('keydown'), function (ev) {
+                if (self.keyCode === ev.keyCode
+                    && self.altKey === ev.altKey
+                    && self.ctrlKey === ev.ctrlKey
+                    && self.shiftKey === ev.shiftKey) {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    self.callback.call(target, ev);
+                    return false;
+                }
+            });
+        };
+
+        if (options.active) {
+            self.activate();
+        }
     };
 
 })(jQuery);
