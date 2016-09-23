@@ -57,8 +57,9 @@
             altKey: false,
             callback: null,
             ctrlKey: false,
-            shiftKey: false,
+            key: null,
             keyCode: null,
+            shiftKey: false,
             target: document.body
         }, options);
 
@@ -66,6 +67,7 @@
         self.altKey = options.altKey;
         self.callback = options.callback;
         self.ctrlKey = options.ctrlKey;
+        self.key = options.key;
         self.keyCode = options.keyCode;
         self.shiftKey = options.shiftKey;
         self.callback = options.callback;
@@ -73,19 +75,13 @@
         // Get the target
         var target = $(options.target);
 
-        /**
-         * Deactivates shortcut
-         */
         self.deactivate = function () {
-            target.off(ns('keydown'));
+            target.off(ns('keydown.' + self.key));
         };
 
-        /**
-         * Activates shortcut
-         */
         self.activate = function () {
-            target.off(ns('keydown')).on(ns('keydown'), function (ev) {
-                if (self.keyCode === ev.keyCode
+            target.off(ns('keydown.' + self.key)).on(ns('keydown.' + self.key), function (ev) {
+                if ((self.keyCode === ev.keyCode || self.key === ev.key)
                     && self.altKey === ev.altKey
                     && self.ctrlKey === ev.ctrlKey
                     && self.shiftKey === ev.shiftKey) {
