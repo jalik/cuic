@@ -104,78 +104,6 @@
     };
 
     /**
-     * Returns the field's value
-     * @param name
-     * @param parent
-     * @return {null}
-     */
-    Cuic.getField = function (name, parent) {
-        var result = null;
-        parent = $(parent);
-        parent.find('[name="' + name + '"]').not(':disabled').each(function () {
-            var field = this;
-            var value = field.value;
-            var nodeName = field.nodeName.toUpperCase();
-
-            // Check if name is an array
-            if (/\[]$/.test(name) && !(result instanceof Array)) {
-                result = [];
-            }
-
-            switch (nodeName) {
-                case 'INPUT':
-                    var type = typeof field.type === 'string' ? field.type.toLowerCase() : '';
-
-                    // Field is checkable
-                    if (['checkbox', 'radio'].indexOf(type) !== -1) {
-                        // We don't want to return the value
-                        // if the field is not checked
-                        if (!field.checked) {
-                            return;
-                        }
-                        // If value is not set but the field is checked, the browser returns 'on'
-                        value = (value === 'on' ? true : Cuic.parseValue(value));
-                    }
-                    // Field is not a button
-                    else if (['button', 'reset', 'submit'].indexOf(type) === -1) {
-                        value = Cuic.parseValue(value);
-                    }
-                    break;
-
-                case 'SELECT':
-                    if (field.multiple) {
-                        value = [];
-
-                        // Get selected options
-                        $(field).find('option').each(function () {
-                            var option = this;
-                            if (option.selected) {
-                                value.push(Cuic.parseValue(option.value));
-                            }
-                        });
-                    } else {
-                        value = Cuic.parseValue(value);
-                    }
-                    break;
-
-                case 'TEXTAREA':
-                    value = Cuic.parseValue(value);
-                    break;
-            }
-
-            if (value !== null) {
-                // Add field value
-                if (result instanceof Array) {
-                    result.push(value);
-                } else {
-                    result = value;
-                }
-            }
-        });
-        return result;
-    };
-
-    /**
      * Returns the form fields
      * @param container
      * @param options
@@ -186,27 +114,152 @@
         container = $(container);
 
         options = $.extend(true, {
+            dynamicTyping: true,
             filter: null,
-            ignoreEmpty: false
+            ignoreButtons: true,
+            ignoreEmpty: false,
+            smartTyping: true
         }, options);
 
         container.find('[name]').not(':disabled').each(function () {
-            if (!Cuic.isField(this)) {
-                return;
-            }
-            if (!Cuic.isNodeFiltered(this, options.filter)) {
-                return;
-            }
             var field = this;
             var name = field.name;
-            var safeName = name.replace(/\[[^\]]*]$/, '');
-            var value = Cuic.getField(name, container);
+            var type = field.type;
 
-            if (value !== null || !options.ignoreEmpty) {
-                fields[safeName] = value;
+            // Check if node is a form field
+            if (!Cuic.isField(field)) {
+                return;
+            }
+            // Check if field matches the filter
+            if (!Cuic.isNodeFiltered(field, options.filter)) {
+                return;
+            }
+            // Ignore buttons
+            if (options.ignoreButtons && ['button', 'reset', 'submit'].indexOf(type) !== -1) {
+                return;
+            }
+            var value = Cuic.getFieldValue(field, options);
+
+            if ((value !== null && value !== undefined) || !options.ignoreEmpty) {
+                // Check if field is multidimensional
+                if (name.indexOf('[') !== -1) {
+                    var rootName = name.substr(0, name.indexOf('['));
+                    var dimensions = name.substr(name.indexOf('['));
+                    var match = /\[([0-9]+)?](?:\[([a-zA-Z_]+[a-zA-Z0-9_]*)])?/g.exec(dimensions);
+
+                    if (!(fields[rootName] instanceof Array)) {
+                        fields[rootName] = [];
+                    }
+                    var arr = fields[rootName];
+
+                    if (match) {
+                        var index = match[1];
+                        var attr = match[2];
+
+                        // index array
+                        if (index) {
+                            if (!arr.hasOwnProperty(index)) {
+                                if (attr) {
+                                    arr[index] = {};
+                                }
+                            }
+                            if (attr) {
+                                if ((value !== null && value !== undefined)) {
+                                    arr[index][attr] = value;
+                                }
+                            } else {
+                                if ((value !== null && value !== undefined)) {
+                                    arr[index] = value;
+                                }
+                            }
+                        } else {
+                            if ((value !== null && value !== undefined)) {
+                                arr.push(value);
+                            }
+                        }
+                    }
+                    // Replace name and value by the array name and values
+                    name = rootName;
+                    value = arr;
+                }
+
+                // Add field
+                fields[name] = value;
             }
         });
         return fields;
+    };
+
+    /**
+     * Returns the value of the field
+     * @param field
+     * @param options
+     * @returns {*|Number|string|string}
+     */
+    Cuic.getFieldValue = function (field, options) {
+        options = $.extend({
+            dynamicTyping: true,
+            smartTyping: true
+        }, options);
+
+        var value = field.value;
+        var node = field.nodeName.toUpperCase();
+
+        switch (node) {
+            case 'INPUT':
+                var type = typeof field.type === 'string' ? field.type.toLowerCase() : '';
+
+                // Field is checkable
+                if (['checkbox', 'radio'].indexOf(type) !== -1) {
+                    if (field.checked) {
+                        // If value is not set but the field is checked, the browser returns 'on'
+                        value = (value === 'on' ? true : value);
+                    } else {
+                        // We don't want to return the value if the field is not checked
+                        value = undefined; //todo return false
+                    }
+                }
+                // Field is a button
+                else if (['button', 'reset', 'submit'].indexOf(type) !== -1) {
+                }
+                // Field is a number
+                else if (['number'].indexOf(type) !== -1) {
+                    if (options.smartTyping) {
+                        value = Cuic.parseValue(value);
+                    }
+                }
+                break;
+
+            case 'SELECT':
+                if (field.multiple) {
+                    var list = [];
+
+                    // Get selected options
+                    $(field).find('option').each(function () {
+                        var option = this;
+
+                        if (option.selected) {
+                            list.push(option.value);
+                        }
+                    });
+                }
+                break;
+
+            case 'TEXTAREA':
+                break;
+        }
+
+        if (options.dynamicTyping && value !== null && value !== undefined) {
+            // Add field value
+            if (value instanceof Array) {
+                for (var i = 0; i < value.length; i += 1) {
+                    value[i] = Cuic.parseValue(value[i]);
+                }
+            } else {
+                value = Cuic.parseValue(value);
+            }
+        }
+        return value;
     };
 
     /**
@@ -231,40 +284,6 @@
         return filter === undefined || filter === null
             || (filter instanceof Array && filter.indexOf(node.name) !== -1)
             || (typeof filter === 'function' && filter.call(node, node.name))
-    };
-
-    /**
-     * Returns the serialized query params
-     * @param args
-     * @returns {string}
-     */
-    Cuic.serializeQueryParams = function (args) {
-        var output = '';
-
-        if (args != null) {
-            if (typeof args === 'string') {
-                output = args;
-
-            } else if (typeof args === 'object') {
-                var arr = [];
-
-                for (var key in args) {
-                    if (args.hasOwnProperty(key)) {
-                        if (args[key] != null) {
-                            arr.push('&');
-                            arr.push(encodeURIComponent(key).trim());
-                            arr.push('=');
-                            arr.push(encodeURIComponent(args[key]).trim());
-                        }
-                    }
-                }
-                if (arr.length > 0) {
-                    arr.unshift(arr);
-                    output = arr.join('');
-                }
-            }
-        }
-        return output;
     };
 
     /**
@@ -304,6 +323,40 @@
             }
         }
         return val === '' ? null : val;
+    };
+
+    /**
+     * Returns the serialized query params
+     * @param args
+     * @returns {string}
+     */
+    Cuic.serializeQueryParams = function (args) {
+        var output = '';
+
+        if (args != null) {
+            if (typeof args === 'string') {
+                output = args;
+
+            } else if (typeof args === 'object') {
+                var arr = [];
+
+                for (var key in args) {
+                    if (args.hasOwnProperty(key)) {
+                        if (args[key] != null) {
+                            arr.push('&');
+                            arr.push(encodeURIComponent(key).trim());
+                            arr.push('=');
+                            arr.push(encodeURIComponent(args[key]).trim());
+                        }
+                    }
+                }
+                if (arr.length > 0) {
+                    arr.unshift(arr);
+                    output = arr.join('');
+                }
+            }
+        }
+        return output;
     };
 
 })(jQuery);

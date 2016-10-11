@@ -54,9 +54,10 @@
 
 <div id="page">
     <aside id="sidebar">
-        <h4> Composants </h4>
+        <h4>Composants</h4>
         <ul class="menu">
             <li><a href="#ui-dialog">Dialog</a></li>
+            <li><a href="#ui-form">Form</a></li>
             <li><a href="#ui-grid">Grid</a></li>
             <li><a href="#ui-hook">Hook</a></li>
             <li><a href="#ui-notification">Notification</a></li>
@@ -166,6 +167,74 @@
                         ev.stopPropagation();
                         run();
                     });
+                });
+            </script>
+        </div>
+
+        <div id="ui-form">
+            <h2><a href="#">Cuic.</a>Form</h2>
+
+            <p>Form helpers.</p>
+
+            <form class="sandbox" id="sb-form">
+                <fieldset>
+                    <legend>Fields</legend>
+                    <div class="form-group">
+                        <label>Text</label>
+                        <input type="text" name="text" value="text">
+                    </div>
+                    <div class="form-group">
+                        <label>Text Number</label>
+                        <input type="text" name="text_number" value="0.123">
+                    </div>
+                    <div class="form-group">
+                        <label>Number</label>
+                        <input type="number" name="number" value="0.987">
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>Multi-dimension fields</legend>
+
+                    <div>
+                        <label>Value 1</label>
+                        <input type="text" name="values[]" value="1">
+                        <label>Value 2</label>
+                        <input type="text" name="values[]" value="2">
+                    </div>
+
+                    <div>
+                        <label>Field 1 name</label>
+                        <input type="text" name="fields[0][name]" value="name1">
+                        <label>Field 1 value</label>
+                        <input type="text" name="fields[0][value]" value="value1">
+                    </div>
+                    <div>
+                        <label>Field 2 name</label>
+                        <input type="text" name="fields[1][name]" value="name2">
+                        <label>Field 2 value</label>
+                        <input type="text" name="fields[1][value]" value="value2">
+                    </div>
+                    <div>
+                        <label>Field 3 name</label>
+                        <input type="text" name="fields[2][name]" value="name3">
+                        <label>Field 3 value</label>
+                        <input type="text" name="fields[2][value]" value="value3">
+                    </div>
+                </fieldset>
+                <button class="run">Submit</button>
+            </form>
+            <script>
+                $(document).ready(function () {
+                    var sandbox = $('#sb-form');
+
+                    sandbox.on('submit', function (ev) {
+                        ev.preventDefault();
+//                        var field = Cuic.getField("fields[][name]");
+//                        console.log("Field:", field);
+
+                        var fields = Cuic.getFields(ev.target);
+                        console.log("Fields:", fields);
+                    }).click();
                 });
             </script>
         </div>
