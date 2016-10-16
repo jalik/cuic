@@ -138,6 +138,10 @@
             if (options.ignoreButtons && ['button', 'reset', 'submit'].indexOf(type) !== -1) {
                 return;
             }
+            // Ignore unchecked input
+            if (['checkbox', 'radio'].indexOf(type) !== -1 && !field.checked) {
+                return;
+            }
             var value = Cuic.getFieldValue(field, options);
 
             if ((value !== null && value !== undefined) || !options.ignoreEmpty) {
