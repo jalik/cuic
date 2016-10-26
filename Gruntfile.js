@@ -39,6 +39,7 @@ module.exports = function (grunt) {
             dist: {
                 src: [
                     "src/base.js",
+                    "src/fn-benchmark.js",
                     "src/fn-draggable.js",
                     "src/fn-forms.js",
                     "src/fn-hook.js",
