@@ -72,16 +72,16 @@
                 isClosing = true;
                 isOpening = false;
 
-                element.stop(true, false).fadeOut(200, function () {
-                    if (typeof callback === 'function') {
-                        callback.call(self);
-                    }
-                    if (self.autoRemove) {
-                        element.remove();
-                    }
-                    isClosing = false;
-                    isOpened = false;
-                });
+                element.stop(true, false).hide();
+
+                if (typeof callback === 'function') {
+                    callback.call(self);
+                }
+                if (self.autoRemove) {
+                    element.remove();
+                }
+                isClosing = false;
+                isOpened = false;
             }
             return self;
         };
@@ -122,13 +122,13 @@
                 isOpening = true;
 
                 // Add the close button
-                if (self.closeable) {
-                    element.find('.close-notification').remove();
-                    $('<span>', {
-                        class: 'close-notification',
-                        html: self.closeButton
-                    }).appendTo(element);
-                }
+                // if (self.closeable) {
+                //     element.find('.close-notification').remove();
+                //     $('<span>', {
+                //         class: 'close-notification',
+                //         html: self.closeButton
+                //     }).appendTo(element);
+                // }
 
                 // If the content of the notification has changed,
                 // we need to check if there is a close button
@@ -149,18 +149,18 @@
 
                 // Stop animation
                 element.stop(true, false);
+                element.show();
 
-                self.animateOpen(200, function () {
-                    if (self.autoClose) {
-                        autoClose();
-                    }
+                if (typeof callback === 'function') {
+                    callback.call(self);
+                }
+                isOpening = false;
+                isOpened = true;
 
-                    if (typeof callback === 'function') {
-                        callback.call(self);
-                    }
-                    isOpening = false;
-                    isOpened = true;
-                });
+                if (self.autoClose) {
+                    autoClose();
+                }
+
             } else if (isOpened) {
                 // Restart timeout
                 autoClose();
@@ -223,16 +223,6 @@
     };
 
     /**
-     * The opening animation
-     * @param duration
-     * @param callback
-     * @return {jQuery}
-     */
-    Cuic.Notification.prototype.animateOpen = function (duration, callback) {
-        return this.getElement().fadeIn(200, callback);
-    };
-
-    /**
      * Default options
      * @type {*}
      */
@@ -281,56 +271,28 @@
          */
         self.add = function (options, callback) {
             options = $.extend({}, options, {
-                container: self.element,
+                container: element,
                 position: ''
             });
 
             // Create the notification
             var notif = new Cuic.Notification(options);
+            var notifElement = notif.getElement();
 
-            // Replace opening animation
-            notif.animateOpen = function (duration, callback) {
-                var element = this.getElement();
-
-                // Insert the notification
-                if (position.indexOf('bottom') !== -1) {
-                    self.getElement().append(element);
-                } else {
-                    self.getElement().prepend(element);
-                }
-
-                element.css({
-                    display: 'block',
-                    height: '',
-                    position: 'static'
-                });
-
-                var margin = Cuic.margin(element);
-                var padding = Cuic.padding(element);
-
-                var original = {
-                    height: element.height(),
-                    marginBottom: margin.bottom,
-                    marginTop: margin.top,
-                    opacity: 1,
-                    overflow: '',
-                    paddingBottom: padding.bottom,
-                    paddingTop: padding.top
-                };
-
-                // Display the notification
-                element.css({
-                    display: 'block',
-                    height: 0,
-                    marginBottom: 0,
-                    marginTop: 0,
-                    opacity: 0,
-                    overflow: 'hidden',
-                    paddingBottom: 0,
-                    paddingTop: 0
-                }).animate(original, duration, callback);
-            };
+            // Insert the notification
+            if (position.indexOf('bottom') !== -1) {
+                element.append(notifElement);
+            } else {
+                element.prepend(notifElement);
+            }
             notif.open(callback);
+
+            notifElement.css({
+                position: 'static',
+                display: 'block',
+                height: '',
+                width: ''
+            });
             return notif;
         };
 
