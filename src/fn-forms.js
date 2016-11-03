@@ -145,23 +145,35 @@
             var value = Cuic.getFieldValue(field, options);
 
             if ((value !== null && value !== undefined) || !options.ignoreEmpty) {
-                // Check if field is multidimensional
+                // Check if field is an array or object
                 if (name.indexOf('[') !== -1) {
                     var rootName = name.substr(0, name.indexOf('['));
                     var dimensions = name.substr(name.indexOf('['));
-                    var match = /\[([0-9]+)?](?:\[([a-zA-Z_]+[a-zA-Z0-9_]*)])?/g.exec(dimensions);
-
-                    if (!(fields[rootName] instanceof Array)) {
-                        fields[rootName] = [];
-                    }
-                    var arr = fields[rootName];
+                    var match = /\[([0-9]+|[a-zA-Z_]+[a-zA-Z0-9_]*)?](?:\[([a-zA-Z_]+[a-zA-Z0-9_]*)])?/g.exec(dimensions);
 
                     if (match) {
-                        var index = match[1];
+                        var index = match[1]; // [], [0], [abc]
                         var attr = match[2];
+                        var arr = fields[rootName];
+                        var createArray = function () {
+                            if (!(arr instanceof Array)) {
+                                arr = [];
+                            }
+                            return arr;
+                        };
 
-                        // index array
-                        if (index) {
+                        // Index is null (array)
+                        if (!index.length) {
+                            arr = createArray();
+
+                            if ((value !== null && value !== undefined)) {
+                                arr.push(value);
+                            }
+                        }
+                        // Index is numeric (array)
+                        else if (/^[0-9]+$/.test(index)) {
+                            arr = createArray();
+
                             if (!arr.hasOwnProperty(index)) {
                                 if (attr) {
                                     arr[index] = {};
@@ -176,15 +188,24 @@
                                     arr[index] = value;
                                 }
                             }
-                        } else {
-                            if ((value !== null && value !== undefined)) {
-                                arr.push(value);
+                        }
+                        // Index is alphanumeric (object)
+                        else {
+                            if (!arr || typeof arr !== 'object') {
+                                arr = {};
+                            }
+                            if (!attr) {
+                                arr[index] = value;
+                            } else {
+                                console.error('multi-dimensionnal input names are not supported !');
+                                // arr[index][attr] = value;
                             }
                         }
+
+                        // Replace name and value by the array name and values
+                        name = rootName;
+                        value = arr;
                     }
-                    // Replace name and value by the array name and values
-                    name = rootName;
-                    value = arr;
                 }
 
                 // Add field
