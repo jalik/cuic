@@ -163,7 +163,7 @@
                         };
 
                         // Index is null (array)
-                        if (!index.length) {
+                        if (typeof index !== 'string' || !index.length) {
                             arr = createArray();
 
                             if ((value !== null && value !== undefined)) {
