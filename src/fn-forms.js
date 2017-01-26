@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Karl STEIN
+ * Copyright (c) 2017 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -107,7 +107,7 @@
      * Returns the form fields
      * @param container
      * @param options
-     * @returns {{}}
+     * @returns {Object}
      */
     Cuic.getFields = function (container, options) {
         var fields = {};
@@ -118,6 +118,7 @@
             filter: null,
             ignoreButtons: true,
             ignoreEmpty: false,
+            ignoreUnchecked: false,
             smartTyping: true
         }, options);
 
@@ -139,7 +140,7 @@
                 return;
             }
             // Ignore unchecked input
-            if (['checkbox', 'radio'].indexOf(type) !== -1 && !field.checked) {
+            if (options.ignoreUnchecked && ['checkbox', 'radio'].indexOf(type) !== -1 && !field.checked) {
                 return;
             }
             var value = Cuic.getFieldValue(field, options);
@@ -209,7 +210,15 @@
                 }
 
                 // Add field
-                fields[name] = value;
+                if (['checkbox', 'radio'].indexOf(type) !== -1 && !field.checked) {
+                    if (['true', 'TRUE'].indexOf(value) !== -1) {
+                        fields[name] = false;
+                    } else {
+                        fields[name] = null;
+                    }
+                } else {
+                    fields[name] = value;
+                }
             }
         });
         return fields;
@@ -219,7 +228,7 @@
      * Returns the value of the field
      * @param field
      * @param options
-     * @returns {*|Number|string|string}
+     * @returns {*}
      */
     Cuic.getFieldValue = function (field, options) {
         options = $.extend({
