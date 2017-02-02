@@ -36,8 +36,8 @@
      */
     Cuic.Tooltip = function (options) {
         var self = this;
-        var elm;
-        var $elm;
+        var element;
+        var $element;
         var position;
         var selector;
 
@@ -62,21 +62,21 @@
          */
         self.close = function (callback) {
             if (self.isOpened()) {
-                Cuic.once('transitionend', elm, function () {
+                Cuic.once('transitionend', element, function () {
                     Cuic.debug('Tooltip.closed');
                     // $elm.removeClass('closing');
                     Cuic.call(callback, self);
-                    $elm.css({display: 'none'});
+                    $element.css({display: 'none'});
 
                     if (self.autoRemove) {
-                        $elm.remove();
+                        $element.remove();
                     }
                 });
                 Cuic.debug('Tooltip.close');
-                $elm.addClass('closed');
+                $element.addClass('closed');
                 // $elm.addClass('closing');
-                $elm.removeClass('opening');
-                $elm.removeClass('opened');
+                $element.removeClass('opening');
+                $element.removeClass('opened');
             }
             return self;
         };
@@ -86,7 +86,7 @@
          * @return {*}
          */
         self.getElement = function () {
-            return $elm;
+            return $element;
         };
 
         /**
@@ -94,7 +94,7 @@
          * @return {boolean}
          */
         self.isClosing = function () {
-            return $elm.hasClass('closing');
+            return $element.hasClass('closing');
         };
 
         /**
@@ -102,7 +102,7 @@
          * @return {boolean}
          */
         self.isOpened = function () {
-            return $elm.hasClass('opened');
+            return $element.hasClass('opened');
         };
 
         /**
@@ -110,7 +110,7 @@
          * @return {boolean}
          */
         self.isOpening = function () {
-            return $elm.hasClass('opening');
+            return $element.hasClass('opening');
         };
 
         /**
@@ -120,17 +120,17 @@
          */
         self.open = function (callback) {
             if (!self.isOpened()) {
-                Cuic.once('transitionend', elm, function () {
+                Cuic.once('transitionend', element, function () {
                     Cuic.debug('Tooltip.opened');
                     // $elm.removeClass('opening');
                     Cuic.call(callback, self);
                 });
                 Cuic.debug('Tooltip.open');
-                $elm.addClass('opened');
+                $element.addClass('opened');
                 // $elm.addClass('opening');
-                $elm.removeClass('closing');
-                $elm.removeClass('closed');
-                $elm.css({display: 'block'});
+                $element.removeClass('closing');
+                $element.removeClass('closed');
+                $element.css({display: 'block'});
             }
             return self;
         };
@@ -170,29 +170,29 @@
         };
 
         // Create the element
-        $elm = $('<div>', {
+        $element = $('<div>', {
             'class': options.className
         }).appendTo(document.body);
 
         // Get element reference
-        elm = $elm.get(0);
+        element = $element.get(0);
 
         // Set custom styles
-        Cuic.applyCss(options.css, $elm);
+        Cuic.applyCss(options.css, $element);
 
         // Set required styles
-        $elm.css({
+        $element.css({
             display: 'none',
             position: 'absolute',
             zIndex: options.zIndex
         });
 
         var body = $(document.body);
-        var content = $('<div>', {}).appendTo($elm);
+        var content = $('<div>', {}).appendTo($element);
         var tail = $('<span>', {
             'class': 'tail',
             style: {position: 'absolute', display: 'inline-block'}
-        }).appendTo($elm);
+        }).appendTo($element);
 
         function refreshTail() {
             switch (position) {
@@ -258,9 +258,9 @@
                 content.html(text);
 
                 if (self.followPointer) {
-                    Cuic.anchor($elm, position, [ev.pageX, ev.pageY]);
+                    Cuic.anchor($element, position, [ev.pageX, ev.pageY]);
                 } else {
-                    Cuic.anchor($elm, position, ev.currentTarget);
+                    Cuic.anchor($element, position, ev.currentTarget);
                     refreshTail();
                 }
                 self.open();
@@ -271,9 +271,9 @@
         // todo optimize
         body.off(ns('mousemove', selector)).on(ns('mousemove', selector), selector, function (ev) {
             if (self.followPointer) {
-                Cuic.anchor($elm, position, [ev.pageX, ev.pageY]);
+                Cuic.anchor($element, position, [ev.pageX, ev.pageY]);
             } else {
-                Cuic.anchor($elm, position, ev.currentTarget);
+                Cuic.anchor($element, position, ev.currentTarget);
                 refreshTail();
             }
         });

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Karl STEIN
+ * Copyright (c) 2017 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,9 +35,9 @@
      */
     Cuic.Draggable = function (options) {
         var self = this;
-        var area;
-        var container;
-        var element;
+        var $area;
+        var $container;
+        var $element;
 
         // Default options
         options = $.extend(true, {}, Cuic.Draggable.prototype.options, options);
@@ -56,7 +56,7 @@
          * @return {*}
          */
         self.getElement = function () {
-            return element;
+            return $element;
         };
 
         /**
@@ -65,16 +65,16 @@
          * @return {*}
          */
         self.setArea = function (obj) {
-            area = $(obj);
+            $area = $(obj);
 
             // Add the draggable classes
-            area.addClass(self.className);
+            $area.addClass(self.className);
 
             // Change cursor icon over dragging area
-            area.css('cursor', 'move');
+            $area.css('cursor', 'move');
 
             // Start dragging
-            area.off(ns('mousedown')).on(ns('mousedown'), function (ev) {
+            $area.off(ns('mousedown')).on(ns('mousedown'), function (ev) {
                 // Ignore dragging if the target is not the root
                 if (self.rootOnly && ev.target !== ev.currentTarget) return;
 
@@ -87,22 +87,22 @@
                 ev.preventDefault();
 
                 // Change element style
-                element.addClass('dragging');
+                $element.addClass('dragging');
 
-                var margin = Cuic.margin(element);
-                var height = element.outerHeight();
-                var width = element.outerWidth();
-                var isInBody = container.get(0) == document.body;
-                var startOffset = element.offset();
+                var margin = Cuic.margin($element);
+                var height = $element.outerHeight();
+                var width = $element.outerWidth();
+                var isInBody = $container.get(0) == document.body;
+                var startOffset = $element.offset();
                 var startX = Cuic.mouseX;
                 var startY = Cuic.mouseY;
                 var scrollX = window.scrollX;
                 var scrollY = window.scrollY;
 
                 var timer = setInterval(function () {
-                    var containerOffset = container.offset() || {left: 0, top: 0};
-                    var containerHeight = container.innerHeight();
-                    var containerWidth = container.innerWidth();
+                    var containerOffset = $container.offset() || {left: 0, top: 0};
+                    var containerHeight = $container.innerHeight();
+                    var containerWidth = $container.innerWidth();
                     var minX = (isInBody ? scrollX : 0) + containerOffset.left + margin.left;
                     var minY = (isInBody ? scrollY : 0) + containerOffset.top + margin.top;
                     var maxX = minX - margin.left + containerWidth - margin.right;
@@ -133,19 +133,19 @@
 
                     // Move horizontally
                     if (self.horizontal) {
-                        element.offset({left: left});
+                        $element.offset({left: left});
                     }
 
                     // Move vertically
                     if (self.vertical) {
-                        element.offset({top: top});
+                        $element.offset({top: top});
                     }
                 }, Math.round(1000 / self.fps));
 
                 // Stop dragging
                 $(document).off(ns('mouseup')).one(ns('mouseup'), function (ev) {
                     clearInterval(timer);
-                    element.removeClass('dragging');
+                    $element.removeClass('dragging');
 
                     if (self.onDragStop) {
                         self.onDragStop.call(self, ev);
@@ -157,27 +157,27 @@
 
         /**
          * Set the container
-         * @param elm
+         * @param element
          * @return {*}
          */
-        self.setContainer = function (elm) {
-            container = $(elm);
+        self.setContainer = function (element) {
+            $container = $(element);
             return self;
         };
 
         // Find the target
-        if (options.target) element = $(options.target);
+        if (options.target) $element = $(options.target);
 
         // Force the target to be the relative parent
-        if (element.css('position') === 'static') {
-            element.css('position', 'relative');
+        if ($element.css('position') === 'static') {
+            $element.css('position', 'relative');
         }
 
         // Set the dragging area
-        self.setArea(options.area || element);
+        self.setArea(options.area || $element);
 
         // Set the top container of the element
-        self.setContainer(options.container || element.offsetParent());
+        self.setContainer(options.container || $element.offsetParent());
 
         $(document).ready(function () {
             $(document.head).append($('<style>', {

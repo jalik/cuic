@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Karl STEIN
+ * Copyright (c) 2017 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,12 +35,12 @@
      */
     Cuic.Popup = function (options) {
         var self = this;
-        var element;
+        var $element;
         var isClosing = false;
         var isOpened = false;
         var isOpening = false;
         var position;
-        var target;
+        var $target;
 
         // Default options
         options = $.extend(true, {}, Cuic.Popup.prototype.options, options);
@@ -53,7 +53,7 @@
 
         // Define vars
         position = options.position;
-        target = $(options.target);
+        $target = $(options.target);
 
         /**
          * Closes the popup
@@ -64,12 +64,12 @@
             if (isOpening || (isOpened && !isClosing)) {
                 isClosing = true;
                 isOpening = false;
-                element.stop(true, false).fadeOut(200, function () {
+                $element.stop(true, false).fadeOut(200, function () {
                     if (typeof callback === 'function') {
                         callback.call(self);
                     }
                     if (self.autoRemove) {
-                        element.remove();
+                        $element.remove();
                     }
                     isClosing = false;
                     isOpened = false;
@@ -83,7 +83,7 @@
          * @return {*}
          */
         self.getElement = function () {
-            return element;
+            return $element;
         };
 
         /**
@@ -106,21 +106,21 @@
 
                 // Add the close button
                 if (self.closeable) {
-                    element.find('.close-popup').remove();
+                    $element.find('.close-popup').remove();
                     $('<span>', {
                         class: 'close-popup',
                         html: self.closeButton
-                    }).appendTo(element);
+                    }).appendTo($element);
                 }
 
                 // If the content of the popup has changed,
                 // we need to check if there is a close button
-                element.find('.close-popup').off('click').one(ns('click'), self.close);
+                $element.find('.close-popup').off('click').one(ns('click'), self.close);
 
                 // Position the element
-                self.setAnchor(position, target);
+                self.setAnchor(position, $target);
 
-                element.stop(true, false).fadeIn(200, function () {
+                $element.stop(true, false).fadeIn(200, function () {
                     if (typeof callback === 'function') {
                         callback.call(self);
                     }
@@ -139,8 +139,8 @@
          */
         self.setAnchor = function (pos, targ) {
             position = pos;
-            target = $(targ || target);
-            Cuic.anchor(element, pos, target);
+            $target = $(targ || $target);
+            Cuic.anchor($element, pos, $target);
             return self;
         };
 
@@ -150,7 +150,7 @@
          * @return {Cuic.Popup}
          */
         self.setContent = function (html) {
-            element.html(html);
+            $element.html(html);
             return self;
         };
 
@@ -169,16 +169,16 @@
         };
 
         // Create the element
-        element = $('<div>', {
+        $element = $('<div>', {
             class: options.className,
             html: options.content
         }).appendTo(document.body);
 
         // Set custom styles
-        Cuic.applyCss(options.css, element);
+        Cuic.applyCss(options.css, $element);
 
         // Set required styles
-        element.css({
+        $element.css({
             display: 'none',
             position: 'absolute',
             zIndex: options.zIndex
@@ -188,7 +188,7 @@
         $(document).off(ns('mousedown')).on(ns('mousedown'), function (ev) {
             var target = $(ev.target);
 
-            if (target !== element && target.closest(element).length === 0) {
+            if (target !== $element && target.closest($element).length === 0) {
                 if (self.autoClose && isOpened) {
                     self.close();
                 }

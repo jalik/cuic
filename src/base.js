@@ -70,23 +70,24 @@
             if (typeof element.addEventListener === 'function') {
                 return element.addEventListener(event, listener);
             }
-            else if (typeof element.attachEvent) {
+            else if (typeof element.attachEvent === 'function') {
                 return element.attachEvent(event, listener);
             }
         },
 
         /**
          * Position an object from the exterior
-         * @param elm
+         * @param element
          * @param position
          * @param target
          * @return {jQuery}
          */
-        anchor: function (elm, position, target) {
-            var prop = this.calculateAnchor(elm, position, target);
+        anchor: function (element, position, target) {
+            var $element = $(element);
+            var prop = this.calculateAnchor($element, position, target);
             this.debug('Cuic.anchor:', prop);
-            elm.css(prop);
-            return elm;
+            $element.css(prop);
+            return $element;
         },
 
         /**
@@ -106,27 +107,29 @@
          * Applies the styles to the target.
          * Styles can be a string or an object.
          * @param styles
-         * @param elm
+         * @param element
          */
-        applyCss: function (styles, elm) {
+        applyCss: function (styles, element) {
+            var $element = $(element);
+
             if (styles != null) {
                 if (typeof styles === 'object') {
-                    elm.css(styles);
+                    $element.css(styles);
                 }
                 else if (typeof styles === 'string') {
-                    elm.attr('style', elm.attr('style') + ';' + styles);
+                    $element.attr('style', $element.attr('style') + ';' + styles);
                 }
             }
         },
 
         /**
          * Position an object from the exterior
-         * @param elm
+         * @param element
          * @param position
          * @param target
          * @return {*}
          */
-        calculateAnchor: function (elm, position, target) {
+        calculateAnchor: function (element, position, target) {
             var isPixel = target instanceof Array && target.length === 2;
 
             if (!isPixel) {
@@ -138,9 +141,9 @@
             var targetWidth = isPixel ? 1 : target.outerWidth();
             var targetWidthHalf = targetWidth / 2;
 
-            var objWidth = elm.outerWidth(true);
+            var objWidth = element.outerWidth(true);
             var objWidthHalf = objWidth / 2;
-            var objHeight = elm.outerHeight(true);
+            var objHeight = element.outerHeight(true);
             var objHeightHalf = objHeight / 2;
 
             var offset = isPixel ? {left: target[0], top: target[1]} : target.offset();
@@ -188,7 +191,7 @@
                     break;
             }
 
-            if (elm.css('position') === 'fixed') {
+            if (element.css('position') === 'fixed') {
                 prop.left -= window.scrollX;
                 prop.top -= window.scrollY;
             }
@@ -217,15 +220,17 @@
          * @return {{bottom: string, height: number, left: string, right: string, top: string, width: number}}
          */
         calculateMaximize: function (element, position, container) {
-            var ctnPadding = Cuic.padding(container);
-            var elmMargin = Cuic.margin(element);
+            var $element = $(element);
+            var $container = $(container || $element.offsetParent());
+            var ctnPadding = Cuic.padding($container);
+            var elmMargin = Cuic.margin($element);
             var prop = {
                 bottom: '',
-                height: container.height() - elmMargin.vertical,
+                height: $container.height() - elmMargin.vertical,
                 left: '',
                 right: '',
                 top: '',
-                width: container.width() - elmMargin.horizontal
+                width: $container.width() - elmMargin.horizontal
             };
 
             // Horizontal position
@@ -245,22 +250,6 @@
         },
 
         /**
-         * Maximizes the element
-         * @param element
-         * @param position
-         * @param container
-         * @return {*|HTMLElement}
-         */
-        maximize: function (element, position, container) {
-            var prop = Cuic.calculateMaximize(element, position, container);
-            var $elm = $(element);
-            Cuic.debug('Cuic.maximize', prop);
-            $elm.addClass('maximized');
-            $elm.css(prop);
-            return $elm;
-        },
-
-        /**
          * Position an object inside another
          * @param element
          * @param position
@@ -268,24 +257,23 @@
          * @return {*}
          */
         calculatePosition: function (element, position, container) {
-            var $elm = $(element);
-            var $container = $(container || $elm.offsetParent());
+            var $element = $(element);
+            var $container = $(container || $element.offsetParent());
 
             if ($container.length === 1 && $container.get(0)) {
                 if ($container.get(0).nodeName === 'HTML') {
                     $container = $(document.body);
                 }
-                $container.append($elm);
+                $container.append($element);
             } else {
                 throw new TypeError('Cannot position element, invalid container');
             }
 
             var containerHeight = $container.innerHeight();
             var containerWidth = $container.innerWidth();
-            var containerMargin = Cuic.margin($container);
             var containerPadding = Cuic.padding($container);
-            var targetHeight = $elm.outerHeight(true);
-            var targetWidth = $elm.outerWidth(true);
+            var targetHeight = $element.outerHeight(true);
+            var targetWidth = $element.outerWidth(true);
             var relativeLeft = $container.get(0).scrollLeft;
             var relativeTop = $container.get(0).scrollTop;
             var relativeBottom = -relativeTop;
@@ -298,7 +286,7 @@
             };
 
             // If the target is fixed, we use the window as container
-            if ($elm.css('position') === 'fixed') {
+            if ($element.css('position') === 'fixed') {
                 // Use jQuery to get window's size because
                 // it returns the value without scrollbars
                 $container = $(window);
@@ -311,19 +299,19 @@
             }
 
             function getCenterX() {
-                return relativeLeft + (containerWidth / 2 - targetWidth / 2);
+                return relativeLeft + ($container.width() / 2 - targetWidth / 2);
             }
 
             function getCenterY() {
-                return relativeTop + (containerHeight / 2 - targetHeight / 2);
+                return relativeTop + ($container.height() / 2 - targetHeight / 2);
             }
 
             // Check that the element is not bigger than the container
             if (targetWidth > containerWidth) {
-                prop.width = containerWidth - (targetWidth - $elm.width());
+                prop.width = containerWidth - (targetWidth - $element.width());
             }
             if (targetHeight > containerHeight) {
-                prop.height = containerHeight - (targetHeight - $elm.height());
+                prop.height = containerHeight - (targetHeight - $element.height());
             }
 
             // Vertical position
@@ -343,7 +331,6 @@
             } else {
                 prop.left = getCenterX() + containerPadding.left;
             }
-
             return prop;
         },
 
@@ -377,15 +364,15 @@
 
         /**
          * Returns the element margins
-         * @param elm
+         * @param element
          * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
          */
-        margin: function (elm) {
-            elm = $(elm);
-            var bottom = parseInt(elm.css('margin-bottom'));
-            var left = parseInt(elm.css('margin-left'));
-            var right = parseInt(elm.css('margin-right'));
-            var top = parseInt(elm.css('margin-top'));
+        margin: function (element) {
+            var $element = $(element);
+            var bottom = parseInt($element.css('margin-bottom'));
+            var left = parseInt($element.css('margin-left'));
+            var right = parseInt($element.css('margin-right'));
+            var top = parseInt($element.css('margin-top'));
             return {
                 bottom: bottom,
                 horizontal: left + right,
@@ -394,6 +381,22 @@
                 top: top,
                 vertical: bottom + top
             };
+        },
+
+        /**
+         * Maximizes the element
+         * @param element
+         * @param position
+         * @param container
+         * @return {*|HTMLElement}
+         */
+        maximize: function (element, position, container) {
+            var prop = Cuic.calculateMaximize(element, position, container);
+            var $element = $(element);
+            Cuic.debug('Cuic.maximize', prop);
+            $element.addClass('maximized');
+            $element.css(prop);
+            return $element;
         },
 
         /**
@@ -453,15 +456,15 @@
 
         /**
          * Returns the element padding
-         * @param elm
+         * @param element
          * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
          */
-        padding: function (elm) {
-            elm = $(elm);
-            var bottom = parseInt(elm.css('padding-bottom'));
-            var left = parseInt(elm.css('padding-left'));
-            var right = parseInt(elm.css('padding-right'));
-            var top = parseInt(elm.css('padding-top'));
+        padding: function (element) {
+            var $element = $(element);
+            var bottom = parseInt($element.css('padding-bottom'));
+            var left = parseInt($element.css('padding-left'));
+            var right = parseInt($element.css('padding-right'));
+            var top = parseInt($element.css('padding-top'));
             return {
                 bottom: bottom,
                 horizontal: left + right,
@@ -474,16 +477,17 @@
 
         /**
          * Positions the element
-         * @param elm
+         * @param element
          * @param position
          * @param container
          * @return {*}
          */
-        position: function (elm, position, container) {
-            var prop = this.calculatePosition(elm, position, container);
-            Cuic.debug('Cuic.position:', prop);
-            elm.css(prop);
-            return elm;
+        position: function (element, position, container) {
+            var $element = $(element);
+            var prop = this.calculatePosition(element, position, container);
+            // Cuic.debug('Cuic.position', prop);
+            $element.css(prop);
+            return $element;
         },
 
         /**
@@ -497,7 +501,7 @@
             if (typeof element.removeEventListener === 'function') {
                 return element.removeEventListener(event, listener);
             }
-            else if (typeof element.detachEvent) {
+            else if (typeof element.detachEvent === 'function') {
                 return element.detachEvent(event, listener);
             }
         },

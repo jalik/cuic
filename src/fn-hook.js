@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Karl STEIN
+ * Copyright (c) 2017 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,13 +44,13 @@
         var win = $(window);
 
         // Get the target
-        var target = $(options.target);
-        if (target.length === 0) {
+        var $target = $(options.target);
+        if ($target.length === 0) {
             throw new Error('No target found for : ' + options.target);
         }
 
         // This is a fix to avoid offsetTop > 0
-        target.css({
+        $target.css({
             position: 'relative',
             top: '',
             width: ''
@@ -58,50 +58,50 @@
 
         // Create the spacer item that will replace
         // the bar when it is scrolled
-        var spacer = $('<div>', {
+        var $spacer = $('<div>', {
             css: {display: 'none'}
-        }).insertAfter(target);
+        }).insertAfter($target);
 
         // Get the target's offset
-        var offset = target.offset();
+        var offset = $target.offset();
 
         /**
          * Hook the element
          */
         self.hook = function () {
-            if (target.css('position') !== 'fixed') {
-                offset = target.offset();
+            if ($target.css('position') !== 'fixed') {
+                offset = $target.offset();
 
                 if (options.fixed) {
                     options.offsetTop = offset.top;
                 }
-                spacer.css({
-                    display: target.css('display'),
-                    float: target.css('float'),
+                $spacer.css({
+                    display: $target.css('display'),
+                    float: $target.css('float'),
                     // height: target.height(),
-                    marginBottom: target.css('margin-bottom'),
-                    marginLeft: target.css('margin-left'),
-                    marginRight: target.css('margin-right'),
-                    marginTop: target.css('margin-top'),
+                    marginBottom: $target.css('margin-bottom'),
+                    marginLeft: $target.css('margin-left'),
+                    marginRight: $target.css('margin-right'),
+                    marginTop: $target.css('margin-top'),
                     // width: target.width()
                 });
-                target.css({
+                $target.css({
                     position: 'fixed',
                     left: offset.left,
                     top: options.offsetTop,
-                    width: spacer.width(),
+                    width: $spacer.width(),
                     zIndex: options.zIndex
                 }).addClass(options.hookedClass);
 
                 // Execute the hooked listener
                 if (typeof options.onHook === 'function') {
-                    options.onHook.call(target);
+                    options.onHook.call($target);
                 }
-            } else if (spacer) {
-                offset = spacer.offset();
-                target.css({
+            } else if ($spacer) {
+                offset = $spacer.offset();
+                $target.css({
                     left: offset.left,
-                    width: spacer.width()
+                    width: $spacer.width()
                 });
             }
         };
@@ -110,9 +110,9 @@
          * Unhook the element
          */
         self.unhook = function () {
-            if (target.css('position') !== 'relative') {
-                spacer.hide();
-                target.css({
+            if ($target.css('position') !== 'relative') {
+                $spacer.hide();
+                $target.css({
                     position: 'relative',
                     bottom: '',
                     left: '',
@@ -123,19 +123,19 @@
 
                 // Execute the unhooked listener
                 if (typeof options.onUnhook === 'function') {
-                    options.onUnhook.call(target);
+                    options.onUnhook.call($target);
                 }
             }
         };
 
         var onScroll = function () {
-            var targetFitsInScreen = (target.outerHeight(true) + offset.top) <= window.screen.availHeight;
+            var targetFitsInScreen = $target.outerHeight(true) <= window.screen.availHeight;
 
             if (targetFitsInScreen) {
                 if (options.fixed) {
                     self.hook();
                 } else {
-                    var marginTop = parseFloat(target.css('margin-top'));
+                    var marginTop = parseFloat($target.css('margin-top'));
 
                     if (win.scrollTop() > offset.top - marginTop) {
                         self.hook();

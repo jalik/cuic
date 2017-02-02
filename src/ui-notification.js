@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Karl STEIN
+ * Copyright (c) 2017 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,8 +35,8 @@
      */
     Cuic.Notification = function (options) {
         var self = this;
-        var container;
-        var element;
+        var $container;
+        var $element;
         var isClosing = false;
         var isOpened = false;
         var isOpening = false;
@@ -54,12 +54,12 @@
         self.duration = parseInt(options.duration);
 
         // Define vars
-        container = $(options.container);
+        $container = $(options.container);
         position = options.position;
 
         // Use document body as container
-        if (container.length === 0) {
-            container = $(document.body);
+        if ($container.length === 0) {
+            $container = $(document.body);
         }
 
         /**
@@ -72,13 +72,13 @@
                 isClosing = true;
                 isOpening = false;
 
-                element.stop(true, false).hide();
+                $element.stop(true, false).hide();
 
                 if (typeof callback === 'function') {
                     callback.call(self);
                 }
                 if (self.autoRemove) {
-                    element.remove();
+                    $element.remove();
                 }
                 isClosing = false;
                 isOpened = false;
@@ -91,7 +91,7 @@
          * @return {*}
          */
         self.getElement = function () {
-            return element;
+            return $element;
         };
 
         /**
@@ -132,24 +132,24 @@
 
                 // If the content of the notification has changed,
                 // we need to check if there is a close button
-                element.find('.close-notification').off(ns('click')).one(ns('click'), self.close);
+                $element.find('.close-notification').off(ns('click')).one(ns('click'), self.close);
 
                 // Avoid closing the notification if the mouse is over
-                element.hover(function () {
+                $element.hover(function () {
                     clearTimeout(timer);
                 }, function () {
                     autoClose();
                 });
 
                 // Position the notification
-                element.css({position: container.get(0).nodeName === 'BODY' ? 'fixed' : 'absolute'});
+                $element.css({position: $container.get(0).nodeName === 'BODY' ? 'fixed' : 'absolute'});
 
                 // Set the position
                 self.setPosition(position);
 
                 // Stop animation
-                element.stop(true, false);
-                element.show();
+                $element.stop(true, false);
+                $element.show();
 
                 if (typeof callback === 'function') {
                     callback.call(self);
@@ -174,7 +174,7 @@
          * @return {Cuic.Notification}
          */
         self.setContent = function (html) {
-            element.html(html);
+            $element.html(html);
             return self;
         };
 
@@ -186,8 +186,8 @@
          */
         self.setPosition = function (pos, cont) {
             position = pos;
-            container = $(cont || container);
-            Cuic.position(element, position, container);
+            $container = $(cont || $container);
+            Cuic.position($element, position, $container);
             return self;
         };
 
@@ -206,16 +206,16 @@
         };
 
         // Create the element
-        element = $('<div>', {
+        $element = $('<div>', {
             'class': options.className,
             html: options.content
         });
 
         // Set custom styles
-        Cuic.applyCss(options.css, element);
+        Cuic.applyCss(options.css, $element);
 
         // Override styles
-        element.css({
+        $element.css({
             display: 'none',
             position: 'absolute',
             zIndex: options.zIndex

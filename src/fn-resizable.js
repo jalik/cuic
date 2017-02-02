@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Karl STEIN
+ * Copyright (c) 2017 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,8 +35,8 @@
      */
     Cuic.Resizable = function (options) {
         var self = this;
-        var container;
-        var element;
+        var $container;
+        var $element;
         var handlers = [];
         var horizontalHandlers = [];
         var verticalHandlers = [];
@@ -63,7 +63,7 @@
          * @return {*}
          */
         self.getElement = function () {
-            return element;
+            return $element;
         };
 
         /**
@@ -72,23 +72,23 @@
          * @return {*}
          */
         self.setContainer = function (obj) {
-            container = $(obj);
+            $container = $(obj);
             return self;
         };
 
         // Find the target
-        if (options.target) element = $(options.target);
+        if (options.target) $element = $(options.target);
 
         // Add the resizable classes
-        element.addClass(self.className);
+        $element.addClass(self.className);
 
         // Force the target to be the relative parent
-        if (element.css('position') === 'static') {
-            element.css('position', 'relative');
+        if ($element.css('position') === 'static') {
+            $element.css('position', 'relative');
         }
 
         // Set the top container of the element
-        self.setContainer(options.container || element.offsetParent());
+        self.setContainer(options.container || $element.offsetParent());
 
         /**
          * This method is called the element is resizing
@@ -104,22 +104,22 @@
             ev.preventDefault();
 
             // Change element style
-            element.addClass('resizing');
+            $element.addClass('resizing');
 
-            var containerLeft = container.offset().left;
-            var containerTop = container.offset().top;
-            var height = element.height();
-            var width = element.width();
-            var padding = Cuic.padding(element);
+            var containerLeft = $container.offset().left;
+            var containerTop = $container.offset().top;
+            var height = $element.height();
+            var width = $element.width();
+            var padding = Cuic.padding($element);
 
             // Calculate the ratio
             ratio = height / width;
 
             var timer = setInterval(function () {
-                var containerHeight = container.innerHeight();
-                var containerWidth = container.innerWidth();
-                var elementLeft = element.offset().left;
-                var elementTop = element.offset().top;
+                var containerHeight = $container.innerHeight();
+                var containerWidth = $container.innerWidth();
+                var elementLeft = $element.offset().left;
+                var elementTop = $element.offset().top;
                 var maxHeight = containerHeight - (elementTop - containerTop + padding.left + padding.right);
                 var maxWidth = containerWidth - (elementLeft - containerLeft + padding.bottom + padding.top);
                 var diffX = Cuic.mouseX - ev.clientX;
@@ -161,12 +161,12 @@
 
                 // Resize horizontally
                 if (self.horizontal && newWidth !== null && self.checkWidth(newWidth)) {
-                    element.width(self.stepX ? Math.round(newWidth / self.stepX) * self.stepX : newWidth);
+                    $element.width(self.stepX ? Math.round(newWidth / self.stepX) * self.stepX : newWidth);
                 }
 
                 // Resize vertically
                 if (self.vertical && newHeight !== null && self.checkHeight(newHeight)) {
-                    element.height(self.stepY ? Math.round(newHeight / self.stepY) * self.stepY : newHeight);
+                    $element.height(self.stepY ? Math.round(newHeight / self.stepY) * self.stepY : newHeight);
                 }
 
             }, Math.round(1000 / self.fps));
@@ -174,7 +174,7 @@
             // Stop resizing
             $(document).off(ns('mouseup')).one(ns('mouseup'), function (ev) {
                 clearInterval(timer);
-                element.removeClass('resizing');
+                $element.removeClass('resizing');
 
                 if (self.onResizeStop) {
                     self.onResizeStop.call(self, ev);
@@ -194,7 +194,7 @@
                 width: options.handlerSize,
                 zIndex: 1
             }
-        }).off(ns('mousedown')).on(ns('mousedown'), resize).appendTo(element);
+        }).off(ns('mousedown')).on(ns('mousedown'), resize).appendTo($element);
 
         // Bottom handler
         var bottomHandler = $('<div>', {
@@ -208,7 +208,7 @@
                 width: '100%',
                 zIndex: 1
             }
-        }).off(ns('mousedown')).on(ns('mousedown'), resize).appendTo(element);
+        }).off(ns('mousedown')).on(ns('mousedown'), resize).appendTo($element);
 
         // Bottom-Right handler
         var bottomRightHandler = $('<div>', {
@@ -222,7 +222,7 @@
                 width: options.handlerSize,
                 zIndex: 2
             }
-        }).off('mousedown').on(ns('mousedown'), resize).appendTo(element);
+        }).off('mousedown').on(ns('mousedown'), resize).appendTo($element);
 
         handlers = [
             rightHandler,
@@ -239,8 +239,8 @@
         ];
 
         // Display all handlers when mouse enters the target
-        element.off('mouseenter').on(ns('mouseenter'), function () {
-            if (!element.hasClass('resizing')) {
+        $element.off('mouseenter').on(ns('mouseenter'), function () {
+            if (!$element.hasClass('resizing')) {
                 for (var i = 0; i < handlers.length; i += 1) {
                     handlers[i].stop(true, false).fadeIn(0);
                 }
@@ -248,8 +248,8 @@
         });
 
         // Hide all handlers when mouse leaves the target
-        element.off('mouseleave').on(ns('mouseleave'), function () {
-            if (!element.hasClass('resizing')) {
+        $element.off('mouseleave').on(ns('mouseleave'), function () {
+            if (!$element.hasClass('resizing')) {
                 for (var i = 0; i < handlers.length; i += 1) {
                     handlers[i].stop(true, false).fadeOut(0);
                 }
