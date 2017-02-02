@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Karl STEIN
+ * Copyright (c) 2017 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,10 +36,8 @@
      */
     Cuic.Tooltip = function (options) {
         var self = this;
-        var element;
-        var isClosing = false;
-        var isOpened = false;
-        var isOpening = false;
+        var elm;
+        var $elm;
         var position;
         var selector;
 
@@ -63,19 +61,22 @@
          * @return {Cuic.Tooltip}
          */
         self.close = function (callback) {
-            if (isOpening || (isOpened && !isClosing)) {
-                isClosing = true;
-                isOpening = false;
-                element.stop(true, false).fadeOut(200, function () {
-                    if (callback) {
-                        callback.call(self);
-                    }
+            if (self.isOpened()) {
+                Cuic.once('transitionend', elm, function () {
+                    Cuic.debug('Tooltip.closed');
+                    // $elm.removeClass('closing');
+                    Cuic.call(callback, self);
+                    $elm.css({display: 'none'});
+
                     if (self.autoRemove) {
-                        element.remove();
+                        $elm.remove();
                     }
-                    isClosing = false;
-                    isOpened = false;
                 });
+                Cuic.debug('Tooltip.close');
+                $elm.addClass('closed');
+                // $elm.addClass('closing');
+                $elm.removeClass('opening');
+                $elm.removeClass('opened');
             }
             return self;
         };
@@ -85,7 +86,15 @@
          * @return {*}
          */
         self.getElement = function () {
-            return element;
+            return $elm;
+        };
+
+        /**
+         * Checks if the tooltip is closing
+         * @return {boolean}
+         */
+        self.isClosing = function () {
+            return $elm.hasClass('closing');
         };
 
         /**
@@ -93,7 +102,15 @@
          * @return {boolean}
          */
         self.isOpened = function () {
-            return isOpened;
+            return $elm.hasClass('opened');
+        };
+
+        /**
+         * Checks if the tooltip is opening
+         * @return {boolean}
+         */
+        self.isOpening = function () {
+            return $elm.hasClass('opening');
         };
 
         /**
@@ -102,17 +119,18 @@
          * @return {Cuic.Tooltip}
          */
         self.open = function (callback) {
-            if (isClosing || (!isOpened && !isOpening)) {
-                isClosing = false;
-                isOpening = true;
-
-                element.stop(true, false).fadeIn(200, function () {
-                    if (callback) {
-                        callback.call(self);
-                    }
-                    isOpening = false;
-                    isOpened = true;
+            if (!self.isOpened()) {
+                Cuic.once('transitionend', elm, function () {
+                    Cuic.debug('Tooltip.opened');
+                    // $elm.removeClass('opening');
+                    Cuic.call(callback, self);
                 });
+                Cuic.debug('Tooltip.open');
+                $elm.addClass('opened');
+                // $elm.addClass('opening');
+                $elm.removeClass('closing');
+                $elm.removeClass('closed');
+                $elm.css({display: 'block'});
             }
             return self;
         };
@@ -143,7 +161,7 @@
          * @return {Cuic.Tooltip}
          */
         self.toggle = function (callback) {
-            if (isClosing || (!isOpened && !isOpening)) {
+            if (self.isClosing() || !self.isOpened()) {
                 self.open(callback);
             } else {
                 self.close(callback);
@@ -152,26 +170,29 @@
         };
 
         // Create the element
-        element = $('<div>', {
+        $elm = $('<div>', {
             'class': options.className
         }).appendTo(document.body);
 
+        // Get element reference
+        elm = $elm.get(0);
+
         // Set custom styles
-        Cuic.applyCss(options.css, element);
+        Cuic.applyCss(options.css, $elm);
 
         // Set required styles
-        element.css({
+        $elm.css({
             display: 'none',
             position: 'absolute',
             zIndex: options.zIndex
         });
 
         var body = $(document.body);
-        var content = $('<div>', {}).appendTo(element);
+        var content = $('<div>', {}).appendTo($elm);
         var tail = $('<span>', {
             'class': 'tail',
             style: {position: 'absolute', display: 'inline-block'}
-        }).appendTo(element);
+        }).appendTo($elm);
 
         function refreshTail() {
             switch (position) {
@@ -221,9 +242,9 @@
             }
         }
 
-        // Replace previous event listener
+        // Open tooltip when mouse enter area
         body.off(ns('mouseenter', selector)).on(ns('mouseenter', selector), selector, function (ev) {
-            var t = $(ev.target);
+            var t = $(ev.currentTarget);
             var text = t.attr(self.attribute);
 
             if (!text || !text.length) {
@@ -237,26 +258,27 @@
                 content.html(text);
 
                 if (self.followPointer) {
-                    Cuic.anchor(element, position, [ev.pageX, ev.pageY]);
+                    Cuic.anchor($elm, position, [ev.pageX, ev.pageY]);
                 } else {
-                    Cuic.anchor(element, position, ev.currentTarget);
+                    Cuic.anchor($elm, position, ev.currentTarget);
                     refreshTail();
                 }
                 self.open();
             }
         });
 
-        // Replace previous event listener
+        // Move tooltip when mouse moves over area
+        // todo optimize
         body.off(ns('mousemove', selector)).on(ns('mousemove', selector), selector, function (ev) {
             if (self.followPointer) {
-                Cuic.anchor(element, position, [ev.pageX, ev.pageY]);
+                Cuic.anchor($elm, position, [ev.pageX, ev.pageY]);
             } else {
-                Cuic.anchor(element, position, ev.currentTarget);
+                Cuic.anchor($elm, position, ev.currentTarget);
                 refreshTail();
             }
         });
 
-        // Replace previous event listener
+        // Close tooltip when mouse leaves area
         body.off(ns('mouseleave', selector)).on(ns('mouseleave', selector), selector, function (ev) {
             self.close();
         });

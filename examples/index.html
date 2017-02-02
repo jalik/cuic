@@ -2,7 +2,7 @@
 <!--
   ~ The MIT License (MIT)
   ~
-  ~ Copyright (c) 2016 Karl STEIN
+  ~ Copyright (c) 2017 Karl STEIN
   ~
   ~ Permission is hereby granted, free of charge, to any person obtaining a copy
   ~ of this software and associated documentation files (the "Software"), to deal
@@ -28,10 +28,17 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Cuic.js - Examples</title>
-    <link href="css/base.css" rel="stylesheet" type="text/css">
-    <link href="css/styles.css" rel="stylesheet" type="text/css">
 
-    <script src="libs/jquery-2.1.1.min.js"></script>
+    <!-- CSS -->
+    <link href="./css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="./css/cuic.css" rel="stylesheet" type="text/css">
+    <link href="./css/styles.css" rel="stylesheet" type="text/css">
+
+    <!-- JS -->
+    <script src="./js/jquery-2.1.1.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+
+    <!-- Cuic -->
     <script src="../src/base.js"></script>
     <script src="../src/fn-benchmark.js"></script>
     <script src="../src/fn-draggable.js"></script>
@@ -49,6 +56,10 @@
     <script src="../src/ui-tabs.js"></script>
     <script src="../src/ui-tooltip.js"></script>
     <script src="../src/ui-tree.js"></script>
+
+    <script type="application/javascript">
+        Cuic.DEBUG = true;
+    </script>
 </head>
 <body>
 
@@ -82,7 +93,7 @@
 
         <h1>Cuic.js - Common User Interface Components</h1>
 
-        <p>
+        <p class="alert alert-info">
             Cuic.js is a library that provides various components used in dynamic UIs (like notifications, tooltips,
             tabs...). It was designed to be simple and easy to use, with convention over configuration pattern.
         </p>
@@ -90,13 +101,14 @@
         <div id="ui-dialog">
             <h2><a href="#">Cuic.</a>Dialog</h2>
 
-            <p>Dialogs are used to display things that needs interactions, for example a confirmation, or a login
+            <p class="alert alert-info">Dialogs are used to display things that needs interactions, for example a
+                confirmation, or a login
                 form.</p>
 
             <div class="sandbox" id="sb-dialog">
                 <label class="inline">
-                    <span class="label">position</span>
-                    <select name="position">
+                    <span class="help-block">position</span>
+                    <select class="form-control" name="position">
                         <option>left top</option>
                         <option>left</option>
                         <option>left bottom</option>
@@ -109,30 +121,30 @@
                     </select>
                 </label>
                 <label class="inline">
-                    <span class="label">css</span>
-                    <input type="text" name="css" value="width: 400px">
+                    <span class="help-block">css</span>
+                    <input class="form-control" type="text" name="css" value="width: 400px">
                 </label>
                 <label class="inline">
-                    <span class="label">container</span>
+                    <span class="help-block">container</span>
                     <input type="checkbox" name="container" checked>
                 </label>
                 <label class="inline">
-                    <span class="label">buttons</span>
+                    <span class="help-block">buttons</span>
                     <input type="checkbox" name="buttons" checked>
                 </label>
                 <label class="inline">
-                    <span class="label">title</span>
+                    <span class="help-block">title</span>
                     <input type="checkbox" name="title" checked>
                 </label>
                 <label class="inline">
-                    <span class="label">modal</span>
+                    <span class="help-block">modal</span>
                     <input type="checkbox" name="modal" checked>
                 </label>
                 <label class="inline">
-                    <span class="label">autoResize</span>
+                    <span class="help-block">autoResize</span>
                     <input type="checkbox" name="autoResize" checked>
                 </label>
-                <button class="run">Run</button>
+                <button class="btn btn-primary btn-run" type="submit">Run</button>
 
                 <div class="blueprint" style="height: 500px; margin-top: 1em"></div>
             </div>
@@ -155,16 +167,16 @@
                             title: sandbox.find("[name=title]").is(":checked") ? 'Header & title' : null,
                             content: 'This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p>',
                             buttons: sandbox.find("[name=buttons]").is(":checked") ? [
-                                {
-                                    label: 'Accept'
-                                },
-                                {
-                                    label: 'Close'
-                                }
-                            ] : null
+                                    {
+                                        label: 'Accept'
+                                    },
+                                    {
+                                        label: 'Close'
+                                    }
+                                ] : null
                         }).open();
                     };
-                    sandbox.find('.run').on('click', function (ev) {
+                    sandbox.find('.btn-run').on('click', function (ev) {
                         ev.stopPropagation();
                         run();
                     });
@@ -175,54 +187,67 @@
         <div id="ui-form">
             <h2><a href="#">Cuic.</a>Form</h2>
 
-            <p>Form helpers.</p>
+            <p class="alert alert-info">Form helpers.</p>
 
             <form class="sandbox" id="sb-form">
                 <fieldset>
                     <legend>Fields</legend>
+
                     <div class="form-group">
                         <label>Text</label>
-                        <input type="text" name="text" value="text">
+                        <input class="form-control" type="text" name="text" value="text">
                     </div>
                     <div class="form-group">
                         <label>Text Number</label>
-                        <input type="text" name="text_number" value="0.123">
+                        <input class="form-control" type="text" name="text_number" value="0.123">
                     </div>
                     <div class="form-group">
                         <label>Number</label>
-                        <input type="number" name="number" value="0.987">
+                        <input class="form-control" type="number" name="number" value="0.987">
                     </div>
                 </fieldset>
+
+                <fieldset>
+                    <legend>Dynamic Arrays</legend>
+
+                    <div class="form-group">
+                        <label>Value 0</label>
+                        <input class="form-control" type="text" name="arr[]" value="arr[0]">
+                    </div>
+                    <div class="form-group">
+                        <label>Value 1</label>
+                        <input class="form-control" type="text" name="arr[]" value="arr[1]">
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Static Arrays with attributes</legend>
+
+                    <div class="form-group">
+                        <label>Field 0 name</label>
+                        <input class="form-control" type="text" name="arrIndex[0][name]" value="arrIndex[0].name">
+                        <label>Field 0 value</label>
+                        <input class="form-control" type="text" name="arrIndex[0][value]" value="arrIndex[0].value">
+                    </div>
+                    <div class="form-group">
+                        <label>Field 1 name</label>
+                        <input class="form-control" type="text" name="arrIndex[1][name]" value="arrIndex[1].name">
+                        <label>Field 1 value</label>
+                        <input class="form-control" type="text" name="arrIndex[1][value]" value="arrIndex[1].value">
+                    </div>
+                </fieldset>
+
                 <fieldset>
                     <legend>Multi-dimension fields</legend>
 
-                    <div>
-                        <label>Value 1</label>
-                        <input type="text" name="values[]" value="1">
-                        <label>Value 2</label>
-                        <input type="text" name="values[]" value="2">
-                    </div>
-
-                    <div>
-                        <label>Field 1 name</label>
-                        <input type="text" name="fields[0][name]" value="name1">
-                        <label>Field 1 value</label>
-                        <input type="text" name="fields[0][value]" value="value1">
-                    </div>
-                    <div>
-                        <label>Field 2 name</label>
-                        <input type="text" name="fields[1][name]" value="name2">
-                        <label>Field 2 value</label>
-                        <input type="text" name="fields[1][value]" value="value2">
-                    </div>
-                    <div>
+                    <div class="form-group">
                         <label>Field 3 name</label>
-                        <input type="text" name="fields[2][name]" value="name3">
+                        <input class="form-control" type="text" name="fields[name]" value="fields.name">
                         <label>Field 3 value</label>
-                        <input type="text" name="fields[2][value]" value="value3">
+                        <input class="form-control" type="text" name="fields[value]" value="fields.value">
                     </div>
                 </fieldset>
-                <button class="run">Submit</button>
+                <button class="btn btn-primary btn-run" type="submit">Submit</button>
             </form>
             <script>
                 $(document).ready(function () {
@@ -243,38 +268,39 @@
         <div id="ui-grid">
             <h2><a href="#">Cuic.</a>Grid</h2>
 
-            <p>The grid is a good way to dispose components using a coordinate system, allowing to drag them.</p>
+            <p class="alert alert-info">The grid is a good way to dispose components using a coordinate system, allowing
+                to drag them.</p>
 
             <div class="sandbox" id="sb-grid">
                 <label class="inline">
-                    <span class="label">cols</span>
-                    <input type="text" name="cols" value="6" size="2">
+                    <span class="help-block">cols</span>
+                    <input class="form-control" type="text" name="cols" value="6" size="2">
                 </label>
                 <label class="inline">
-                    <span class="label">rows</span>
-                    <input type="text" name="rows" value="5" size="2">
+                    <span class="help-block">rows</span>
+                    <input class="form-control" type="text" name="rows" value="5" size="2">
                 </label>
                 <label class="inline">
-                    <span class="label">colsWidth</span>
-                    <input type="text" name="colsWidth" value="100" size="4">
+                    <span class="help-block">colsWidth</span>
+                    <input class="form-control" type="text" name="colsWidth" value="100" size="4">
                 </label>
                 <label class="inline">
-                    <span class="label">rowsHeight</span>
-                    <input type="text" name="rowsHeight" value="100" size="4">
+                    <span class="help-block">rowsHeight</span>
+                    <input class="form-control" type="text" name="rowsHeight" value="100" size="4">
                 </label>
                 <label class="inline">
-                    <span class="label">spacing</span>
-                    <input type="text" name="spacing" value="10" size="2">
+                    <span class="help-block">spacing</span>
+                    <input class="form-control" type="text" name="spacing" value="10" size="2">
                 </label>
                 <label class="inline">
-                    <span class="label">editable</span>
+                    <span class="help-block">editable</span>
                     <input type="checkbox" name="editable" checked>
                 </label>
                 <label class="inline">
-                    <span class="label">autoResize</span>
+                    <span class="help-block">autoResize</span>
                     <input type="checkbox" name="autoResize" checked>
                 </label>
-                <button class="run">Run</button>
+                <button class="btn btn-primary btn-run" type="submit">Run</button>
 
                 <div id="grid" class="grid" style="margin-top: 1em">
                     <div class="widget" id="widgetA" data-col="1" data-row="1" data-size-x="3" data-size-y="3"
@@ -302,7 +328,7 @@
                     var rowsHeight = sandbox.find('[name=rowsHeight]');
                     var spacing = sandbox.find('[name=spacing]');
 
-                    sandbox.find('.run').on('click', function (ev) {
+                    sandbox.find('.btn-run').on('click', function (ev) {
                         ev.stopPropagation();
                         var gridHeight = sandbox.find('[name=gridHeight]').val();
                         var gridWidth = sandbox.find('[name=gridWidth]').val();
@@ -335,10 +361,10 @@
         <div id="ui-hook">
             <h2><a href="#">Cuic.</a>Hook</h2>
 
-            <p>Hooks allows you to keep elements visible while scrolling the page.</p>
+            <p class="alert alert-info">Hooks allows you to keep elements visible while scrolling the page.</p>
 
             <div class="sandbox" id="sb-hook">
-                <button class="run">Run</button>
+                <button class="btn btn-primary btn-run" type="submit">Run</button>
 
                 <div class="blueprint">
                     <nav class="navbar">
@@ -358,7 +384,7 @@
                             target: $('.navbar', sandbox)
                         });
                     };
-                    sandbox.find('.run').on('click', function (ev) {
+                    sandbox.find('.btn-run').on('click', function (ev) {
                         ev.stopPropagation();
                         run();
                     });
@@ -369,12 +395,13 @@
         <div id="ui-notification">
             <h2><a href="#">Cuic.</a>Notification</h2>
 
-            <p>Notifications are used to display messages that does not require any interaction.</p>
+            <p class="alert alert-info">Notifications are used to display messages that does not require any
+                interaction.</p>
 
             <div class="sandbox" id="sb-notification">
                 <label class="inline">
-                    <span class="label">position</span>
-                    <select name="position">
+                    <span class="help-block">position</span>
+                    <select class="form-control" name="position">
                         <option>left top</option>
                         <option>left</option>
                         <option>left bottom</option>
@@ -387,18 +414,18 @@
                     </select>
                 </label>
                 <label class="inline">
-                    <span class="label">duration</span>
-                    <input type="number" name="duration" value="2000">
+                    <span class="help-block">duration</span>
+                    <input class="form-control" type="number" name="duration" value="2000">
                 </label>
                 <label class="inline">
-                    <span class="label">autoClose</span>
+                    <span class="help-block">autoClose</span>
                     <input type="checkbox" name="autoClose" checked>
                 </label>
                 <label class="inline">
-                    <span class="label">container</span>
+                    <span class="help-block">container</span>
                     <input type="checkbox" name="container" checked>
                 </label>
-                <button class="run">Run</button>
+                <button class="btn btn-primary btn-run" type="submit">Run</button>
 
                 <div class="blueprint" style="height: 300px;margin-top: 1em"></div>
             </div>
@@ -421,7 +448,7 @@
                             position: position.val()
                         }).open();
                     };
-                    sandbox.find('.run').on('click', function (ev) {
+                    sandbox.find('.btn-run').on('click', function (ev) {
                         ev.stopPropagation();
                         run();
                     });
@@ -435,12 +462,12 @@
         <div id="ui-notification-stack">
             <h2><a href="#">Cuic.</a>Notification.Stack</h2>
 
-            <p>Notification areas are used to centralize notifications display.</p>
+            <p class="alert alert-info">Notification areas are used to centralize notifications display.</p>
 
             <div class="sandbox" id="sb-notification-stack">
                 <label class="inline">
-                    <span class="label">position</span>
-                    <select name="position">
+                    <span class="help-block">position</span>
+                    <select class="form-control" name="position">
                         <option>left top</option>
                         <option>left</option>
                         <option>left bottom</option>
@@ -452,7 +479,7 @@
                         <option>bottom</option>
                     </select>
                 </label>
-                <button class="run">Run</button>
+                <button class="btn btn-primary btn-run" type="submit">Run</button>
 
                 <div class="blueprint" style="height: 300px;margin-top: 1em;overflow: auto"></div>
             </div>
@@ -467,7 +494,7 @@
                             position: position.val()
                         });
                     };
-                    sandbox.find('.run').on('click', function (ev) {
+                    sandbox.find('.btn-run').on('click', function (ev) {
                         ev.stopPropagation();
                         run();
                         setInterval(function () {
@@ -487,12 +514,14 @@
         <div id="ui-panel">
             <h2><a href="#">Cuic.</a>Panel</h2>
 
-            <p>Panels are used to display content that could be hidden when more screen space is needed.</p>
+            <p class="alert alert-info">Panels are used to display content that could be hidden when more screen space
+                is needed.</p>
 
             <div class="sandbox" id="sb-panel">
                 <label class="inline">
-                    <span class="label">position</span>
-                    <select name="position">
+                    <span class="help-block">position</span>
+                    <select class="form-control" name="position">
+                        <option>center</option>
                         <option>left top</option>
                         <option selected>left</option>
                         <option>left bottom</option>
@@ -504,39 +533,39 @@
                     </select>
                 </label>
                 <label class="inline">
-                    <span class="label">css</span>
-                    <input type="text" name="css" value="width: 200px">
+                    <span class="help-block">css</span>
+                    <input class="form-control" type="text" name="css" value="width: 200px">
                 </label>
                 <label class="inline">
-                    <span class="label">autoClose</span>
+                    <span class="help-block">autoClose</span>
                     <input type="checkbox" name="autoClose">
                 </label>
                 <label class="inline">
-                    <span class="label">container</span>
+                    <span class="help-block">container</span>
                     <input type="checkbox" name="container" checked>
                 </label>
                 <label class="inline">
-                    <span class="label">maximized</span>
+                    <span class="help-block">maximized</span>
                     <input type="checkbox" name="maximized" checked>
                 </label>
                 <label class="inline">
-                    <span class="label">visible</span>
+                    <span class="help-block">visible</span>
                     <input type="checkbox" name="visible" checked>
                 </label>
 
                 <div>
-                    <button class="run">Run</button>
-                    <button class="fn-close">close()</button>
-                    <button class="fn-open">open()</button>
-                    <button class="fn-toggle">toggle()</button>
+                    <button class="btn btn-primary btn-run" type="submit">Run</button>
+                    <button class="btn btn-default fn-close" type="button">close()</button>
+                    <button class="btn btn-default fn-open" type="button">open()</button>
+                    <button class="btn btn-default fn-toggle" type="button">toggle()</button>
                 </div>
 
-                <div class="blueprint" style="height: 500px;margin-top: 1em">
-                    <div id="panel" class="panel">
-                        <header class="panel-header">
+                <div class="blueprint" style="height: 400px;margin-top: 1em">
+                    <div id="panel" class="panel panel-default">
+                        <header class="panel-heading">
                             <h5 class="panel-title">Title</h5>
                         </header>
-                        <div class="panel-content">
+                        <div class="panel-body">
                             <ul>
                                 <li>Item 1</li>
                                 <li>Item 2</li>
@@ -574,7 +603,7 @@
                             visible: visible.is(':checked')
                         });
                     };
-                    sandbox.find('.run').on('click', function (ev) {
+                    sandbox.find('.btn-run').on('click', function (ev) {
                         ev.stopPropagation();
                         run();
                     }).click();
@@ -607,21 +636,22 @@
         <div id="ui-switcher">
             <h2><a href="#">Cuic.</a>Switcher</h2>
 
-            <p>The switcher is a container that take a group of elements and displays only one at a time, allowing to
+            <p class="alert alert-info">The switcher is a container that take a group of elements and displays only one
+                at a time, allowing to
                 navigate forward and backward.</p>
 
             <div class="sandbox" id="sb-switcher">
                 <div>
                     <label class="inline">
-                        <span class="label">repeat</span>
+                        <span class="help-block">repeat</span>
                         <input type="checkbox" name="repeat" checked>
                     </label>
-                    <button class="fn-start">start()</button>
-                    <button class="fn-stop">stop()</button>
-                    <button class="fn-first">first()</button>
-                    <button class="fn-next">next()</button>
-                    <button class="fn-previous">previous()</button>
-                    <button class="fn-last">last()</button>
+                    <button class="btn btn-default fn-start" type="button">start()</button>
+                    <button class="btn btn-default fn-stop" type="button">stop()</button>
+                    <button class="btn btn-default fn-first" type="button">first()</button>
+                    <button class="btn btn-default fn-next" type="button">next()</button>
+                    <button class="btn btn-default fn-previous" type="button">previous()</button>
+                    <button class="btn btn-default fn-last" type="button">last()</button>
                 </div>
                 <div class="blueprint switcher">
                     <p>1. This is the first element</p>
@@ -684,13 +714,14 @@
         <div id="ui-popup">
             <h2><a href="#">Cuic.</a>Popup</h2>
 
-            <p>Popups are often used to display menus, for example, when a user clicks on a button, a popup menu appears
+            <p class="alert alert-info">Popups are often used to display menus, for example, when a user clicks on a
+                button, a popup menu appears
                 next to
                 it.</p>
 
             <div class="sandbox" id="sb-popup">
                 <div class="blueprint">
-                    <button>Toggle popup</button>
+                    <button class="btn btn-default" type="button">Toggle popup</button>
                 </div>
             </div>
             <script>
@@ -718,7 +749,7 @@
         <div id="ui-table">
             <h2><a href="#">Cuic.</a>Table</h2>
 
-            <p>Tables are useful to represent data that could need filtering and ordering.</p>
+            <p class="alert alert-info">Tables are useful to represent data that could need filtering and ordering.</p>
 
             <div class="sandbox" id="sb-table">
                 <table>
@@ -785,7 +816,7 @@
         <div id="ui-tabs">
             <h2><a href="#">Cuic.</a>Tabs</h2>
 
-            <p>Tabs are used to organize data and avoid scrolling the page.</p>
+            <p class="alert alert-info">Tabs are used to organize data and avoid scrolling the page.</p>
 
             <div class="sandbox" id="sb-tabs">
                 <div class="tabs">
@@ -797,7 +828,7 @@
                 <div class="tab-content">
                     <div id="tab1-content">
                         <b>Content of tab1</b>.
-                        <img src="css/square-100.png" style="float: left; margin: 0 1em 1em 0">
+                        <img src="images/square-100.png" style="float: left; margin: 0 1em 1em 0">
 
                         <p>
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in pharetra tortor. Mauris
@@ -822,7 +853,7 @@
                         <b>This tab is disabled.</b>.
                     </div>
                     <div id="tab4-content">
-                        <img src="css/square-100.png" style="float: right; margin: 0 0 1em 1em">
+                        <img src="images/square-100.png" style="float: right; margin: 0 0 1em 1em">
                         <b>Content of tab4</b>.
                         <p>
                             Curabitur vitae est tellus. Ut quis tempus lectus, blandit sollicitudin tortor. Curabitur
@@ -847,12 +878,13 @@
         <div id="ui-tooltip">
             <h2><a href="#">Cuic.</a>Tooltip</h2>
 
-            <p>Tooltips are used to display a short description (eg: help, tips, etc.) next to an element.</p>
+            <p class="alert alert-info">Tooltips are used to display a short description (eg: help, tips, etc.) next to
+                an element.</p>
 
             <div class="sandbox" id="sb-tooltip">
                 <label class="inline">
-                    <span class="label">position</span>
-                    <select name="position">
+                    <span class="help-block">position</span>
+                    <select class="form-control" name="position">
                         <option>left top</option>
                         <option>left</option>
                         <option>left bottom</option>
@@ -864,25 +896,25 @@
                     </select>
                 </label>
                 <label class="inline">
-                    <span class="label">css</span>
-                    <input type="text" name="css" value="margin: 10px">
+                    <span class="help-block">css</span>
+                    <input class="form-control" type="text" name="css" value="margin: 10px">
                 </label>
                 <label class="inline">
-                    <span class="label">followPointer</span>
+                    <span class="help-block">followPointer</span>
                     <input type="checkbox" name="followPointer" checked>
                 </label>
-                <button class="run">Run</button>
+                <button class="btn btn-primary btn-run" type="submit">Run</button>
 
                 <div class="blueprint" style="height: 400px;margin-top: 1em">
                     <div class="group1">
-                        <img src="css/square-100.png" title="Top left" style="margin: 10px">
-                        <img src="css/square-100.png" title="Top right" style="margin: 10px">
-                        <img src="css/square-100.png" title="Top right" style="margin: 10px">
+                        <img src="images/square-100.png" title="Top left" style="margin: 10px">
+                        <img src="images/square-100.png" title="Top right" style="margin: 10px">
+                        <img src="images/square-100.png" title="Top right" style="margin: 10px">
                     </div>
                     <div class="group2">
-                        <img src="css/square-100.png" title="Bottom left" style="margin: 10px">
-                        <img src="css/square-100.png" title="Bottom right" style="margin: 10px">
-                        <img src="css/square-100.png" style="margin: 10px"
+                        <img src="images/square-100.png" title="Bottom left" style="margin: 10px">
+                        <img src="images/square-100.png" title="Bottom right" style="margin: 10px">
+                        <img src="images/square-100.png" style="margin: 10px"
                              title="<em>Description</em><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in pharetra tortor. Mauris tortor dui, malesuada sit amet dolor ut, tincidunt porttitor mauris. Cras rutrum risus nec justo sollicitudin ultricies. Phasellus fringilla posuere erat, bibendum blandit turpis aliquet quis. Nam sagittis libero eget neque imperdiet facilisis nec vitae lacus. Morbi. ">
                     </div>
                 </div>
@@ -913,16 +945,16 @@
                     };
 
                     position.on("change", function () {
-                        tooltip.setAnchor(position.val());
-                        tooltipBlue.setAnchor(position.val());
+                        window.tooltip.setPosition(position.val());
+                        window.tooltipBlue.setPosition(position.val());
                     });
 
                     followPointer.on("change", function () {
-                        tooltip.followPointer = followPointer.is(":checked");
-                        tooltipBlue.followPointer = followPointer.is(":checked");
+                        window.tooltip.followPointer = followPointer.is(":checked");
+                        window.tooltipBlue.followPointer = followPointer.is(":checked");
                     });
 
-                    sandbox.find('.run').on('click', function (ev) {
+                    sandbox.find('.btn-run').on('click', function (ev) {
                         ev.stopPropagation();
                         run();
                     });
@@ -933,7 +965,7 @@
         <div id="ui-tree">
             <h2><a href="#">Cuic.</a>Tree</h2>
 
-            <p>Trees are used to organize nested objects, so they can be browsed.</p>
+            <p class="alert alert-info">Trees are used to organize nested objects, so they can be browsed.</p>
 
             <div class="sandbox" id="sb-tree">
                 <ul class="tree" style="height: 250px">
