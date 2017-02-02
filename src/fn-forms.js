@@ -149,64 +149,15 @@
                 // Check if field is an array or object
                 if (name.indexOf('[') !== -1) {
                     var rootName = name.substr(0, name.indexOf('['));
-                    var dimensions = name.substr(name.indexOf('['));
-                    var match = /\[([0-9]+|[a-zA-Z_]+[a-zA-Z0-9_]*)?](?:\[([a-zA-Z_]+[a-zA-Z0-9_]*)])?/g.exec(dimensions);
+                    var tree = name.substr(name.indexOf('['));
 
-                    if (match) {
-                        var index = match[1]; // [], [0], [abc]
-                        var attr = match[2];
-                        var arr = fields[rootName];
-                        var createArray = function () {
-                            if (!(arr instanceof Array)) {
-                                arr = [];
-                            }
-                            return arr;
-                        };
+                    fields[rootName] = Cuic.resolveDimensionsTree(tree, fields[rootName], value);
 
-                        // Index is null (array)
-                        if (typeof index !== 'string' || !index.length) {
-                            arr = createArray();
+                    // Replace name and value by the array name and values
+                    // name = rootName;
+                    // value = arr;
 
-                            if ((value !== null && value !== undefined)) {
-                                arr.push(value);
-                            }
-                        }
-                        // Index is numeric (array)
-                        else if (/^[0-9]+$/.test(index)) {
-                            arr = createArray();
-
-                            if (!arr.hasOwnProperty(index)) {
-                                if (attr) {
-                                    arr[index] = {};
-                                }
-                            }
-                            if (attr) {
-                                if ((value !== null && value !== undefined)) {
-                                    arr[index][attr] = value;
-                                }
-                            } else {
-                                if ((value !== null && value !== undefined)) {
-                                    arr[index] = value;
-                                }
-                            }
-                        }
-                        // Index is alphanumeric (object)
-                        else {
-                            if (!arr || typeof arr !== 'object') {
-                                arr = {};
-                            }
-                            if (!attr) {
-                                arr[index] = value;
-                            } else {
-                                console.error('multi-dimensionnal input names are not supported !');
-                                // arr[index][attr] = value;
-                            }
-                        }
-
-                        // Replace name and value by the array name and values
-                        name = rootName;
-                        value = arr;
-                    }
+                    return;
                 }
 
                 // Add field
@@ -222,6 +173,63 @@
             }
         });
         return fields;
+    };
+
+    /**
+     * Resolves a dimensions tree (ex: [colors][0][code])
+     * @param tree
+     * @param obj
+     * @param value
+     * @return {*}
+     */
+    Cuic.resolveDimensionsTree = function (tree, obj, value) {
+        if (tree.length === 0) {
+            return value;
+        }
+
+        // Check missing brackets
+        if (obj === undefined || obj === null) {
+            var opening = tree.match(/\[/g).length;
+            var closing = tree.match(/]/g).length;
+
+            if (opening > closing) {
+                throw new SyntaxError("Missing closing ']' in '" + tree + "'");
+            } else if (closing < opening) {
+                throw new SyntaxError("Missing opening '[' in '" + tree + "'");
+            }
+        }
+
+        var index = tree.indexOf('[');
+
+        if (index !== -1) {
+            var end = tree.indexOf(']', index + 1);
+            var subtree = tree.substr(end + 1);
+            var key = tree.substring(index + 1, end);
+            var keyLen = key.length;
+
+            // Object
+            if (keyLen && /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(key)) {
+                if (obj === undefined || obj === null) {
+                    obj = {};
+                }
+                obj[key] = this.resolveDimensionsTree(subtree, obj[key], value);
+            }
+            // Array
+            else {
+                if (obj === undefined || obj === null) {
+                    obj = [];
+                }
+                // Dynamic index
+                if (keyLen === 0) {
+                    obj.push(this.resolveDimensionsTree(subtree, obj[key], value));
+                }
+                // Static index
+                else if (/^[0-9]+$/.test(key)) {
+                    obj[parseInt(key)] = this.resolveDimensionsTree(subtree, obj[key], value);
+                }
+            }
+        }
+        return obj;
     };
 
     /**

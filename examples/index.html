@@ -191,7 +191,7 @@
 
             <form class="sandbox" id="sb-form">
                 <fieldset>
-                    <legend>Fields</legend>
+                    <legend>Classic Fields</legend>
 
                     <div class="form-group">
                         <label>Text</label>
@@ -208,45 +208,125 @@
                 </fieldset>
 
                 <fieldset>
-                    <legend>Dynamic Arrays</legend>
+                    <legend>Dynamic Array</legend>
 
                     <div class="form-group">
-                        <label>Value 0</label>
-                        <input class="form-control" type="text" name="arr[]" value="arr[0]">
+                        <label>a[]</label>
+                        <input class="form-control" type="text" name="a[]" value="a1">
                     </div>
                     <div class="form-group">
-                        <label>Value 1</label>
-                        <input class="form-control" type="text" name="arr[]" value="arr[1]">
-                    </div>
-                </fieldset>
-
-                <fieldset>
-                    <legend>Static Arrays with attributes</legend>
-
-                    <div class="form-group">
-                        <label>Field 0 name</label>
-                        <input class="form-control" type="text" name="arrIndex[0][name]" value="arrIndex[0].name">
-                        <label>Field 0 value</label>
-                        <input class="form-control" type="text" name="arrIndex[0][value]" value="arrIndex[0].value">
-                    </div>
-                    <div class="form-group">
-                        <label>Field 1 name</label>
-                        <input class="form-control" type="text" name="arrIndex[1][name]" value="arrIndex[1].name">
-                        <label>Field 1 value</label>
-                        <input class="form-control" type="text" name="arrIndex[1][value]" value="arrIndex[1].value">
+                        <label>a[]</label>
+                        <input class="form-control" type="text" name="a[]" value="a2">
                     </div>
                 </fieldset>
 
                 <fieldset>
-                    <legend>Multi-dimension fields</legend>
+                    <legend>Indexed Array</legend>
 
                     <div class="form-group">
-                        <label>Field 3 name</label>
-                        <input class="form-control" type="text" name="fields[name]" value="fields.name">
-                        <label>Field 3 value</label>
-                        <input class="form-control" type="text" name="fields[value]" value="fields.value">
+                        <label>b[3]</label>
+                        <input class="form-control" type="text" name="b[3]" value="b1">
+                    </div>
+                    <div class="form-group">
+                        <label>b[4]</label>
+                        <input class="form-control" type="text" name="b[4]" value="b2">
                     </div>
                 </fieldset>
+
+                <fieldset>
+                    <legend>Hash Map</legend>
+
+                    <div class="form-group">
+                        <label>c.name</label>
+                        <input class="form-control" type="text" name="c[name]" value="c1">
+                    </div>
+                    <div class="form-group">
+                        <label>c.value</label>
+                        <input class="form-control" type="text" name="c[value]" value="c2">
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Indexed Array + Hash Maps</legend>
+
+                    <div class="form-group">
+                        <label>d[0][name]</label>
+                        <input class="form-control" type="text" name="d[0][name]" value="d1">
+                    </div>
+                    <div class="form-group">
+                        <label>d[0][value]</label>
+                        <input class="form-control" type="text" name="d[0][value]" value="d2">
+                    </div>
+                    <div class="form-group">
+                        <label>d[3][name]</label>
+                        <input class="form-control" type="text" name="d[3][name]" value="d3">
+                    </div>
+                    <div class="form-group">
+                        <label>d[3][value]</label>
+                        <input class="form-control" type="text" name="d[3][value]" value="d4">
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Hash Map + Dynamic Array</legend>
+                    <div class="form-group">
+                        <label>e[names][]</label>
+                        <input class="form-control" type="text" name="e[names][]" value="e1">
+                    </div>
+                    <div class="form-group">
+                        <label>e[names][]</label>
+                        <input class="form-control" type="text" name="e[names][]" value="e2">
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Hash Map + Indexed Array</legend>
+                    <div class="form-group">
+                        <label>f[names][1]</label>
+                        <input class="form-control" type="text" name="f[names][1]" value="f1">
+                    </div>
+                    <div class="form-group">
+                        <label>f[names][5]</label>
+                        <input class="form-control" type="text" name="f[names][5]" value="f2">
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Multi Dimension Mixed Arrays</legend>
+                    <div class="form-group">
+                        <label>g[3][4][]</label>
+                        <input class="form-control" type="text" name="g[3][4][]" value="g1">
+                    </div>
+                    <div class="form-group">
+                        <label>g[3][4][]</label>
+                        <input class="form-control" type="text" name="g[3][4][]" value="g2">
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Multi Dimension Hash Maps</legend>
+                    <div class="form-group">
+                        <label>h[x][y][z]</label>
+                        <input class="form-control" type="text" name="h[x][y][z]" value="h1">
+                    </div>
+                    <div class="form-group">
+                        <label>h[x][y][z]</label>
+                        <input class="form-control" type="text" name="h[x][y][z]" value="h2">
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Multi Dimension Mixed Arrays and Hash Maps</legend>
+                    <div class="form-group">
+                        <label>i[x][y][z][3][]</label>
+                        <input class="form-control" type="text" name="i[x][y][z][3][]" value="i1">
+                    </div>
+                    <div class="form-group">
+                        <label>i[x][y][z][3][]</label>
+                        <input class="form-control" type="text" name="i[x][y][z][3][]" value="i2">
+                    </div>
+                </fieldset>
+
                 <button class="btn btn-primary btn-run" type="submit">Submit</button>
             </form>
             <script>
