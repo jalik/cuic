@@ -84,8 +84,8 @@
          */
         anchor: function (element, position, target) {
             var $element = $(element);
-            var prop = this.calculateAnchor($element, position, target);
-            this.debug('Cuic.anchor:', prop);
+            var prop = Cuic.calculateAnchor($element, position, target);
+            Cuic.debug('Cuic.anchor:', prop);
             $element.css(prop);
             return $element;
         },
@@ -350,15 +350,15 @@
             else if (args.length > 0) {
                 fn = args.shift();
             }
-            return this.apply(fn, context, args);
+            return Cuic.apply(fn, context, args);
         },
 
         /**
          * Displays a message in the console
          */
         debug: function () {
-            if (this.DEBUG && console !== undefined) {
-                console.log.apply(this, Array.prototype.slice.call(arguments));
+            if (Cuic.DEBUG && console !== undefined) {
+                console.log.apply(Cuic, Array.prototype.slice.call(arguments));
             }
         },
 
@@ -419,7 +419,7 @@
          * @return {*}
          */
         off: function (event, element, callback) {
-            // return this.removeEventListener(element, event, callback);
+            // return Cuic.removeEventListener(element, event, callback);
             return $(element).off(event, callback);
         },
 
@@ -431,7 +431,7 @@
          * @return {*}
          */
         on: function (event, element, callback) {
-            // return this.addEventListener(element, event, callback);
+            // return Cuic.addEventListener(element, event, callback);
             return $(element).on(event, callback);
         },
 
@@ -447,10 +447,10 @@
             // event = Cuic.whichEvent(event);
 
             var listener = function (ev) {
-                // this.removeEventListener(element, event, callback);
-                Cuic.apply(callback, this, Array.prototype.slice.call(arguments));
+                // Cuic.removeEventListener(element, event, callback);
+                Cuic.apply(callback, Cuic, Array.prototype.slice.call(arguments));
             };
-            // return this.addEventListener(element, event, listener);
+            // return Cuic.addEventListener(element, event, listener);
             return $(element).one(event, listener);
         },
 
@@ -484,7 +484,7 @@
          */
         position: function (element, position, container) {
             var $element = $(element);
-            var prop = this.calculatePosition(element, position, container);
+            var prop = Cuic.calculatePosition(element, position, container);
             // Cuic.debug('Cuic.position', prop);
             $element.css(prop);
             return $element;

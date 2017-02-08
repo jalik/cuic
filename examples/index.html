@@ -194,6 +194,62 @@
                     <legend>Classic Fields</legend>
 
                     <div class="form-group">
+                        <label>Number
+                            <input class="form-control" type="number" name="type_number" value="0.987">
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>Password
+                            <input class="form-control" type="password" name="type_password" value="pass">
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>Text
+                            <input class="form-control" type="text" name="type_input" value="text">
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>Radio 1
+                            <input type="radio" name="type_radio" value="1">
+                        </label>
+                        <label>Radio 2
+                            <input type="radio" name="type_radio" value="2">
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>Checkbox 1
+                            <input type="checkbox" name="type_checkboxes[]" value="1">
+                        </label>
+                        <label>Checkbox 2
+                            <input type="checkbox" name="type_checkboxes[]" value="2">
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>Select
+                            <select class="form-control" name="type_select">
+                                <option>A</option>
+                                <option>B</option>
+                                <option>C</option>
+                                <option>D</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Multiple
+                            <select class="form-control" name="type_select_multiple[]" multiple>
+                                <option>A</option>
+                                <option>B</option>
+                                <option>C</option>
+                                <option>D</option>
+                            </select>
+                        </label>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Smart typing</legend>
+
+                    <div class="form-group">
                         <label>Text</label>
                         <input class="form-control" type="text" name="text" value="text">
                     </div>
@@ -988,7 +1044,7 @@
                 <div class="blueprint" style="height: 400px;margin-top: 1em">
                     <div class="group1">
                         <img src="images/square-100.png" title="Top left" style="margin: 10px">
-                        <img src="images/square-100.png" title="Top right" style="margin: 10px">
+                        <img src="images/square-100.png" title="Top center" style="margin: 10px">
                         <img src="images/square-100.png" title="Top right" style="margin: 10px">
                     </div>
                     <div class="group2">

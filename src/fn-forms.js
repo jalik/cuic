@@ -126,6 +126,8 @@
             var field = this;
             var name = field.name;
             var type = field.type;
+            var isButton = ['button', 'reset', 'submit'].indexOf(type) !== -1;
+            var isCheckbox = ['checkbox', 'radio'].indexOf(type) !== -1;
 
             // Check if node is a form field
             if (!Cuic.isField(field)) {
@@ -136,35 +138,37 @@
                 return;
             }
             // Ignore buttons
-            if (options.ignoreButtons && ['button', 'reset', 'submit'].indexOf(type) !== -1) {
+            if (options.ignoreButtons && isButton) {
                 return;
             }
             // Ignore unchecked input
-            if (options.ignoreUnchecked && ['checkbox', 'radio'].indexOf(type) !== -1 && !field.checked) {
+            if (options.ignoreUnchecked && isCheckbox && !field.checked) {
                 return;
             }
             var value = Cuic.getFieldValue(field, options);
 
             if ((value !== null && value !== undefined) || !options.ignoreEmpty) {
+
+                // Handle multiple select specific case
+                if (field.multiple === true) {
+                    name = name.replace(/\[]$/g, '');
+                }
+
                 // Check if field is an array or object
                 if (name.indexOf('[') !== -1) {
                     var rootName = name.substr(0, name.indexOf('['));
                     var tree = name.substr(name.indexOf('['));
-
                     fields[rootName] = Cuic.resolveDimensionsTree(tree, fields[rootName], value);
-
-                    // Replace name and value by the array name and values
-                    // name = rootName;
-                    // value = arr;
-
                     return;
                 }
 
                 // Add field
-                if (['checkbox', 'radio'].indexOf(type) !== -1 && !field.checked) {
-                    if (['true', 'TRUE'].indexOf(value) !== -1) {
+                if (isCheckbox) {
+                    if (field.checked) {
+                        fields[name] = value;
+                    } else if (['true', 'TRUE'].indexOf(value) !== -1) {
                         fields[name] = false;
-                    } else {
+                    } else if (fields[name] === undefined) {
                         fields[name] = null;
                     }
                 } else {
@@ -212,7 +216,11 @@
                 if (obj === undefined || obj === null) {
                     obj = {};
                 }
-                obj[key] = this.resolveDimensionsTree(subtree, obj[key], value);
+                const result = this.resolveDimensionsTree(subtree, obj[key], value);
+
+                if (result !== undefined) {
+                    obj[key] = result;
+                }
             }
             // Array
             else {
@@ -221,11 +229,19 @@
                 }
                 // Dynamic index
                 if (keyLen === 0) {
-                    obj.push(this.resolveDimensionsTree(subtree, obj[key], value));
+                    const result = this.resolveDimensionsTree(subtree, obj[key], value);
+
+                    if (result !== undefined) {
+                        obj.push(result);
+                    }
                 }
                 // Static index
                 else if (/^[0-9]+$/.test(key)) {
-                    obj[parseInt(key)] = this.resolveDimensionsTree(subtree, obj[key], value);
+                    const result = this.resolveDimensionsTree(subtree, obj[key], value);
+
+                    if (result !== undefined) {
+                        obj[parseInt(key)] = result;
+                    }
                 }
             }
         }
@@ -274,14 +290,14 @@
 
             case 'SELECT':
                 if (field.multiple) {
-                    var list = [];
+                    value = [];
 
                     // Get selected options
                     $(field).find('option').each(function () {
                         var option = this;
 
                         if (option.selected) {
-                            list.push(option.value);
+                            value.push(option.value);
                         }
                     });
                 }
