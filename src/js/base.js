@@ -419,14 +419,68 @@
         },
 
         /**
+         * Checks if the browser is Chrome 1+
+         * @return {boolean}
+         */
+        isChrome() {
+            return !!window.chrome && !!window.chrome.webstore;
+        },
+
+        /**
+         * Checks if the browser is Edge 20+
+         * @return {boolean}
+         */
+        isEdge(){
+            return !isIE && !!window.StyleMedia;
+        },
+
+        /**
+         * Checks if the browser is Firefox 1.0+
+         * @return {boolean}
+         */
+        isFirefox() {
+            return typeof InstallTrigger !== 'undefined';
+        },
+
+        /**
          * Checks if full screen is enabled
          * @return {boolean}
          */
         isFullScreenEnabled() {
-            return (document.fullscreenEnabled ||
-                document.webkitFullscreenEnabled ||
-                document.mozFullScreenEnabled ||
-                document.msFullscreenEnabled) === true;
+            return (document.fullscreenEnabled
+                || document.webkitFullscreenEnabled
+                || document.mozFullScreenEnabled
+                || document.msFullscreenEnabled) === true;
+        },
+
+        /**
+         * Checks if the browser is Internet Explorer 6-11
+         * @return {boolean}
+         */
+        isIE() {
+            return /*@cc_on!@*/!!document.documentMode;
+        },
+
+        /**
+         * Checks if the browser is Opera 8.0+
+         * @return {boolean}
+         */
+        isOpera() {
+            return (!!window.opr && !!opr.addons)
+                || !!window.opera
+                || navigator.userAgent.indexOf(' OPR/') >= 0;
+        },
+
+        /**
+         * Checks if the browser is Safari 3.0+
+         * @return {boolean}
+         */
+        isSafari() {
+            return /constructor/i.test(window.HTMLElement)
+                || (function (p) {
+                    return p.toString() === "[object SafariRemoteNotification]";
+                })(!window['safari']
+                    || safari.pushNotification);
         },
 
         /**
