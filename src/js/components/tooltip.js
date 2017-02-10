@@ -178,7 +178,7 @@
         element = $element.get(0);
 
         // Set custom styles
-        Cuic.applyCss(options.css, $element);
+        Cuic.css($element, options.css);
 
         // Set required styles
         $element.css({

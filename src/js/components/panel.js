@@ -413,7 +413,7 @@
         $element.addClass(options.className);
 
         // Set custom styles
-        Cuic.applyCss(options.css, $element);
+        Cuic.css($element, options.css);
 
         // Override styles
         $element.css({

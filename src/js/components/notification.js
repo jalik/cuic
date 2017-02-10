@@ -212,7 +212,7 @@
         });
 
         // Set custom styles
-        Cuic.applyCss(options.css, $element);
+        Cuic.css($element, options.css);
 
         // Override styles
         $element.css({
@@ -331,7 +331,7 @@
         }).appendTo(container);
 
         // Set custom styles
-        Cuic.applyCss(options.css, element);
+        Cuic.css($element, options.css);
 
         // Override styles
         element.css({

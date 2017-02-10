@@ -69,10 +69,10 @@ Cuic.Component = class {
     /**
      * Adds the class
      * @param className
-     * @return {*}
+     * @return {Array}
      */
     addClass(className) {
-        return this.$element.addClass(className);
+        return Cuic.addClass(this.getElement(), className);
     }
 
     /**
@@ -83,7 +83,7 @@ Cuic.Component = class {
         if (element instanceof Cuic.Component) {
             element = element.getElement();
         }
-        this.element.append(element);
+        this.getElement().append(element);
     }
 
     /**
@@ -94,7 +94,7 @@ Cuic.Component = class {
         if (element instanceof Cuic.Component) {
             element = element.getElement();
         }
-        element.append(this.element);
+        element.append(this.getElement());
     }
 
     /**
@@ -102,9 +102,10 @@ Cuic.Component = class {
      * @param callback
      */
     close(callback) {
-        this.onClose(callback);
-        this.addClass('closed');
         this.removeClass('opened');
+        this.addClass('closed');
+        // todo watch transition/animation
+        this.onClose(callback);
     }
 
     /**
@@ -112,14 +113,14 @@ Cuic.Component = class {
      * @param styles
      */
     css(styles) {
-        this.$element.css(styles);
+        return Cuic.css(this.getElement(), styles);
     }
 
     /**
      * Disables the component
      */
     disable() {
-        this.element.disabled = true;
+        this.getElement().disabled = true;
         this.addClass('disabled');
     }
 
@@ -127,16 +128,24 @@ Cuic.Component = class {
      * Enables the component
      */
     enable() {
-        this.element.disabled = false;
+        this.getElement().disabled = false;
         this.removeClass('disabled');
     }
 
     /**
+     * Returns component CSS classes
+     * @return {Array|*}
+     */
+    getClasses() {
+        return Cuic.getClasses(this.getElement());
+    }
+
+    /**
      * Returns the component element
-     * @return {*|jQuery|HTMLElement|null}
+     * @return {HTMLElement}
      */
     getElement() {
-        return this.$element;
+        return this.element;
     }
 
     /**
@@ -145,7 +154,7 @@ Cuic.Component = class {
      * @return {*}
      */
     hasClass(className) {
-        return this.$element.hasClass(className);
+        return Cuic.hasClass(this.getElement(), className);
     }
 
     /**
@@ -153,7 +162,7 @@ Cuic.Component = class {
      * @return {boolean}
      */
     isEnabled() {
-        return this.element.disabled !== true
+        return this.getElement().disabled !== true
             || !this.hasClass('disabled');
     }
 
@@ -162,7 +171,7 @@ Cuic.Component = class {
      * @param position
      */
     maximize(position) {
-        Cuic.maximize(this.element, position);
+        Cuic.maximize(this.getElement(), position);
     }
 
     /**
@@ -170,7 +179,7 @@ Cuic.Component = class {
      * @param position
      */
     minimize(position) {
-        Cuic.minimize(this.element, position);
+        Cuic.minimize(this.getElement(), position);
     }
 
     onClick() {
@@ -187,9 +196,10 @@ Cuic.Component = class {
      * @param callback
      */
     open(callback) {
-        this.onOpen(callback);
-        this.addClass('opened');
         this.removeClass('closed');
+        this.addClass('opened');
+        // todo watch transition/animation
+        this.onOpen(callback);
     }
 
     /**
@@ -198,7 +208,7 @@ Cuic.Component = class {
      * @return {*}
      */
     removeClass(className) {
-        return this.$element.removeClass(className);
+        return Cuic.removeClass(this.getElement(), className);
     }
 
     /**

@@ -228,7 +228,7 @@ Cuic.Dialog = class extends Cuic.Component {
 
             // Set maximized
             if (self.maximized) {
-                self.$element.css({
+                self.css({
                     height: '100%',
                     width: '100%'
                 });
@@ -360,7 +360,7 @@ Cuic.Dialog = class extends Cuic.Component {
         }).appendTo($footer);
 
         // Set custom styles
-        Cuic.applyCss(options.css, self.$element);
+        Cuic.css(self.$element, options.css);
 
         // Set content height
         if (parseFloat(options.contentHeight) > 0) {

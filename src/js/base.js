@@ -76,6 +76,23 @@
         },
 
         /**
+         * Adds CSS class to the element
+         * @param element
+         * @param className
+         * @return {Array|*}
+         */
+        addClass(element, className) {
+            let classes = this.getClasses(element);
+            const target = (className || '').split(' ');
+
+            for (let i = 0; i < target.length; i += 1) {
+                classes.push(target[i]);
+            }
+            element.className = classes.join(' ');
+            return classes;
+        },
+
+        /**
          * Position an object from the exterior
          * @param element
          * @param position
@@ -100,25 +117,6 @@
         apply(fn, context, args) {
             if (typeof fn === 'function') {
                 return fn.apply(context, args);
-            }
-        },
-
-        /**
-         * Applies the styles to the target.
-         * Styles can be a string or an object.
-         * @param styles
-         * @param element
-         */
-        applyCss(styles, element) {
-            let $element = $(element);
-
-            if (styles != null) {
-                if (typeof styles === 'object') {
-                    $element.css(styles);
-                }
-                else if (typeof styles === 'string') {
-                    $element.attr('style', $element.attr('style') + ';' + styles);
-                }
             }
         },
 
@@ -379,6 +377,37 @@
         },
 
         /**
+         * Applies the styles to the target.
+         * Styles can be a string or an object.
+         * @param element
+         * @param styles
+         */
+        css(element, styles) {
+            let $element = $(element);
+            element = $element.get(0);
+
+            // Writing styles
+            if (styles) {
+                let final = '';
+
+                if (typeof styles === 'object') {
+                    for (let style in styles) {
+                        if (styles.hasOwnProperty(style)) {
+                            final += `${style}: ${styles[style]};`;
+                        }
+                    }
+                } else {
+                    final = styles;
+                }
+                element.style = final;
+            }
+            // Reading styles
+            else {
+                return element.style;
+            }
+        },
+
+        /**
          * Displays a message in the console
          */
         debug() {
@@ -419,6 +448,33 @@
         },
 
         /**
+         * Returns CSS classes
+         * @param element
+         * @return {Array}
+         */
+        getClasses(element) {
+            return element.className.split(' ');
+        },
+
+        /**
+         * Checks if the element has the CSS class
+         * @param element
+         * @param className
+         * @return {boolean}
+         */
+        hasClass(element, className) {
+            const classes = this.getClasses(element);
+            const target = (className || '').split(' ');
+
+            for (let i = 0; i < target.length; i += 1) {
+                if (!classes.indexOf(target[i])) {
+                    return false;
+                }
+            }
+            return true;
+        },
+
+        /**
          * Checks if the browser is Chrome 1+
          * @return {boolean}
          */
@@ -430,7 +486,7 @@
          * Checks if the browser is Edge 20+
          * @return {boolean}
          */
-        isEdge(){
+        isEdge() {
             return !isIE && !!window.StyleMedia;
         },
 
@@ -622,6 +678,27 @@
             // Cuic.debug('Cuic.position', prop);
             $element.css(prop);
             return $element;
+        },
+
+        /**
+         * Removes CSS class from the element
+         * @param element
+         * @param className
+         * @return {*|Array}
+         */
+        removeClass(element, className) {
+            let classes = this.getClasses(element);
+            const target = (className || '').split(' ');
+
+            for (let i = 0; i < target.length; i += 1) {
+                let index = classes.indexOf(target[i]);
+
+                if (index !== -1) {
+                    classes.splice(index, 1);
+                }
+            }
+            element.className = classes.join(' ');
+            return classes;
         },
 
         /**
