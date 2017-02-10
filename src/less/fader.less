@@ -23,44 +23,23 @@
  *
  */
 
-/**
- * Basic button
- */
-Cuic.Button = class extends Cuic.Component {
+.fader {
+  background: rgba(240, 240, 240, 0.7);
+  //left: 50%;
+  //top: 50%;
+  //height: 0;
+  //width: 0;
+  opacity: 0;
+  position: absolute;
+  transition: all 0.5s;
+  z-index: 1;
+}
 
-    constructor(options) {
-        // Set default options
-        options = $.extend({}, Cuic.Button.prototype.options, options);
-
-        // Create element
-        super('button', {
-            className: options.className,
-            disabled: false,
-            html: options.label,
-            title: options.title,
-            type: options.type
-        }, options);
-
-        const self = this;
-
-        // Create shortcut
-        if (typeof options.shortcut === 'number') {
-            self.shortcut = new Cuic.Shortcut({
-                keyCode: options.shortcut,
-                target: self.element,
-                callback: self.onClick
-            });
-        }
-    }
-};
-
-/**
- * Basic button default options
- */
-Cuic.Button.prototype.options = {
-    className: 'btn btn-default',
-    disabled: false,
-    shortcut: null,
-    title: null,
-    type: 'button'
-};
+.fader.opened {
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 1;
+  transition: all 0.2s;
+}

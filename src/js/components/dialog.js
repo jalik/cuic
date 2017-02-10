@@ -23,34 +23,33 @@
  *
  */
 
-(function ($) {
-    'use strict';
+/**
+ * Basic dialog
+ */
+Cuic.Dialog = class extends Cuic.Component {
 
-    let ns = Cuic.namespace('dialog');
+    constructor(options) {
+        const ns = Cuic.namespace('dialog');
 
-    /**
-     * Creates a dialog
-     * @param options
-     * @constructor
-     */
-    Cuic.Dialog = function (options) {
+        // Set default options
+        options = $.extend({}, Cuic.Dialog.prototype.options, options);
+
+        // Create element
+        super('div', {
+            className: options.className,
+            role: 'dialog'
+        }, options);
+
         const self = this;
-
-        // Default options
-        options = $.extend(Cuic.Dialog.prototype.options, options);
 
         let buttons = [];
         let $buttons;
+        let $closeButton;
         let $container;
         let $content;
-        let $element;
         let $footer;
         let $header;
         let $title;
-        let $wrapper;
-        let isClosing = false;
-        let isOpened = false;
-        let isOpening = false;
         let position;
 
         // Define attributes
@@ -59,7 +58,7 @@
         self.closeable = options.closeable === true;
         self.closeButton = options.closeButton;
         self.draggable = options.draggable === true;
-        self.fullscreen = options.fullscreen === true;
+        self.maximized = options.maximized === true;
         self.modal = options.modal === true;
 
         // Define vars
@@ -73,32 +72,33 @@
 
         /**
          * Adds a button to the dialog
-         * @param label
-         * @param callback
          * @return {Cuic.Button}
+         * @param button
          */
-        self.addButton = function (label, callback) {
-            const button = new Cuic.Button({
-                className: 'btn btn-default',
-                label: label
-            });
+        self.addButton = function (button) {
+            if (!(button instanceof Cuic.Button)) {
+                const callback = button.callback;
+
+                button = new Cuic.Button({
+                    className: 'btn btn-default',
+                    label: button.label
+                });
+
+                // Set button callback
+                if (typeof callback === 'function') {
+                    button.onClick = function (ev) {
+                        callback.call(self, ev);
+                    };
+                } else if (callback === 'close') {
+                    button.onClick = function () {
+                        self.close();
+                    };
+                }
+            }
 
             // Add button in footer
             $buttons.append(button.getElement());
             buttons.push(button);
-
-            // Set button callback
-            if (typeof callback === 'function') {
-                button.onClick = function (ev) {
-                    callback.call(self, ev);
-                };
-            } else if (callback === 'close') {
-                button.onClick = function () {
-                    self.close();
-                };
-            } else {
-                console.warn(`Cuic.Dialog.addButton: callback not defined`);
-            }
 
             // Hide footer if empty
             if (buttons.length > 1) {
@@ -120,38 +120,19 @@
          * @param callback
          * @return {Cuic.Dialog}
          */
-        self.close = function (callback) {
-            if (isOpening || (isOpened && !isClosing)) {
-                isClosing = true;
-                isOpening = false;
-
-                $wrapper.stop(true, false).fadeOut(200, function () {
-                    if (self.autoRemove) {
-                        $wrapper.remove();
-                    }
-                });
-
-                $element.stop(true, false).fadeOut(200, function () {
-                    if (typeof callback === 'function') {
-                        callback.call(self);
-                    }
-                    if (self.autoRemove) {
-                        $element.remove();
-                    }
-                    isClosing = false;
-                    isOpened = false;
-                });
+        self.onClose = function (callback) {
+            fader.close(function () {
+                // if (self.autoRemove) {
+                //     fader.remove();
+                // }
+            });
+            if (typeof callback === 'function') {
+                callback.call(self);
             }
+            // if (self.autoRemove) {
+            //     self.$element.remove();
+            // }
             return self;
-        };
-
-        /**
-         * Returns the body
-         * @deprecated
-         * @return {jQuery}
-         */
-        self.getBody = function () {
-            return $content;
         };
 
         /**
@@ -160,14 +141,6 @@
          */
         self.getContent = function () {
             return $content;
-        };
-
-        /**
-         * Returns the element
-         * @return {jQuery}
-         */
-        self.getElement = function () {
-            return $element;
         };
 
         /**
@@ -187,105 +160,45 @@
         };
 
         /**
-         * Checks if the dialog is opened
-         * @return {boolean}
-         */
-        self.isOpened = function () {
-            return isOpened;
-        };
-
-        /**
          * Opens the dialog
          * @param callback
          * @return {Cuic.Dialog}
          */
-        self.open = function (callback) {
-            if (isClosing || (!isOpened && !isOpening)) {
-                isClosing = false;
-                isOpening = true;
-
-                // Set fullscreen
-                if (self.fullscreen) {
-                    $element.css({
-                        height: '100%',
-                        width: '100%'
-                    });
+        self.onOpen = function (callback) {
+            const dialogOpened = function () {
+                if (typeof callback === 'function') {
+                    callback.call(self);
                 }
-
-                // Find images
-                let images = $element.find('img');
-
-                if (images.length > 0) {
-                    // Position the dialog when images are loaded
-                    images.off(ns('load')).on(ns('load'), function () {
-                        self.resizeContent();
-                    });
-                } else {
-                    // Position the dialog in the wrapper
-                    self.resizeContent();
+                // Focus the last button
+                if (self.$element.find(':focus').length === 0) {
+                    $footer.find('button:last').focus();
                 }
+            };
 
-                // If the content of the dialog has changed,
-                // we need to check if there is a close button
-                $element.find('.dialog-close').off(ns('click')).one(ns('click'), function () {
-                    self.close();
-                });
-
-                // Position the notification
-                $element.css({position: $container.get(0).nodeName === 'BODY' ? 'fixed' : 'absolute'});
-
-                // Set the position
+            if (self.maximized) {
+                self.maximize();
+            } else {
                 self.setPosition(position);
-
-                // Stop animation
-                $element.stop(true, false);
-
-                // Add the close button
-                if (self.closeable) {
-                    $header.find('.close-dialog').remove();
-                    $('<span>', {
-                        class: 'close-dialog',
-                        html: self.closeButton
-                    }).prependTo($header);
-                }
-
-                // If the content of the dialog has changed,
-                // we need to check if there is a close button
-                $element.find('.close-dialog').off(ns('click')).one(ns('click'), self.close);
-
-                if (self.modal) {
-                    $wrapper.css({
-                        height: '100%',
-                        width: '100%'
-                    });
-                    $wrapper.fadeIn(200, function () {
-                        $element.fadeIn(200, function () {
-                            if (typeof callback === 'function') {
-                                callback.call(self);
-                            }
-                            isOpening = false;
-                            isOpened = true;
-                        });
-                        // Focus the last button
-                        if ($element.find(':focus').length === 0) {
-                            $footer.find('button:last').focus();
-                        }
-                    });
-                } else {
-                    $element.fadeIn(200, function () {
-                        if (typeof callback === 'function') {
-                            callback.call(self);
-                        }
-                        isOpening = false;
-                        isOpened = true;
-
-                        // Focus the last button
-                        if ($element.find(':focus').length === 0) {
-                            $footer.find('button:last').focus();
-                        }
-                    });
-                }
             }
+
+            // // Find images
+            // let images = self.$element.find('img');
+            //
+            // if (images.length > 0) {
+            //     // Position the dialog when images are loaded
+            //     images.off(ns('load')).on(ns('load'), function () {
+            //         self.resizeContent();
+            //     });
+            // } else {
+            //     // Position the dialog in the wrapper
+            //     self.resizeContent();
+            // }
+
+            if (self.modal) {
+                fader.open();
+            }
+            dialogOpened();
+
             return self;
         };
 
@@ -294,17 +207,20 @@
          * @return {Cuic.Dialog}
          */
         self.resizeContent = function () {
-            let display = $wrapper.css('display');
+            let display = fader.css('display');
             let maxHeight = window.innerHeight;
+
+            console.warn('dialog.resizeContent disabled');
+            return;
 
             // Temporary display the dialog
             // to get real height values
-            $wrapper.show();
-            $element.show();
+            fader.show();
+            self.$element.show();
 
-            // Set fullscreen
-            if (self.fullscreen) {
-                $element.css({
+            // Set maximized
+            if (self.maximized) {
+                self.$element.css({
                     height: '100%',
                     width: '100%'
                 });
@@ -316,8 +232,8 @@
             }
 
             // Set dialog max height
-            maxHeight -= $element.outerHeight(true) - $element.height();
-            $element.css('max-height', maxHeight);
+            maxHeight -= self.$element.outerHeight(true) - self.$element.height();
+            self.$element.css('max-height', maxHeight);
 
             // Set content max height
             let contentMaxHeight = maxHeight;
@@ -336,11 +252,11 @@
                 overflow: 'auto'
             });
 
-            Cuic.position($element, position, $wrapper);
+            Cuic.position(self.$element, position, fader);
 
             // Restore the initial display state
-            $wrapper.css('display', display);
-            $element.css('display', display);
+            fader.css('display', display);
+            self.$element.css('display', display);
 
             return self;
         };
@@ -364,7 +280,7 @@
         self.setPosition = function (pos, cont) {
             position = pos;
             $container = $(cont || $container);
-            Cuic.position($element, position, $container);
+            Cuic.position(self.$element, position, $container);
             return self;
         };
 
@@ -374,91 +290,69 @@
          * @return {Cuic.Dialog}
          */
         self.setTitle = function (html) {
-            if ($title) {
-                $title.html(html);
-            }
-            return self;
-        };
-
-        /**
-         * Toggles the dialog visibility
-         * @param callback
-         * @return {Cuic.Dialog}
-         */
-        self.toggle = function (callback) {
-            if (isClosing || (!isOpened && !isOpening)) {
-                self.open(callback);
-            } else {
-                self.close(callback);
-            }
+            $title.html(html);
             return self;
         };
 
         // If the dialog is not in a container, then it is fixed
         let fixed = $container.get(0).nodeName === 'BODY';
 
-        // Create the wrapper
-        $wrapper = $('<div>', {
-            'class': 'dialog-wrapper',
-            css: {
-                display: 'none',
-                height: '100%',
-                left: 0,
-                position: fixed ? 'fixed' : 'absolute',
-                top: 0,
-                width: '100%',
-                zIndex: self.zIndex
-            }
-        }).appendTo($container);
+        // Set dialog position
+        self.$element.css({position: fixed ? 'fixed' : 'absolute'});
 
-        // Create the dialog
-        $element = $('<div>', {
-            'class': options.className,
-            css: {
-                display: 'none',
-                zIndex: self.zIndex
-            }
-        }).appendTo($wrapper);
+        // Create the fader
+        const fader = new Cuic.Fader({className: 'fader dialog-fader'});
+        fader.appendTo($container);
 
-        // Add the header
+        // Set fader position
+        if (fixed) {
+            fader.css({position: 'fixed'});
+        }
+
+        // If the dialog is not modal,
+        // a click on the wrapper will close the dialog
+        fader.onClick(function (ev) {
+            self.close();
+        });
+
+        // Add header
         $header = $('<header>', {
             'class': 'dialog-header',
-            css: {
-                display: options.title != null ? 'block' : 'none'
-            }
-        }).appendTo($element);
+            css: {display: options.title != null ? 'block' : 'none'}
+        }).appendTo(self.$element);
 
-        // Add the title
+        // Add title
         $title = $('<h3>', {
             html: options.title,
             'class': 'dialog-title'
         }).appendTo($header);
 
-        // Add the content
+        // Add close button
+        $closeButton = $('<span>', {
+            'class': 'dialog-close-btn glyphicon glyphicon-remove-sign'
+        }).prependTo($header);
+
+        // Add content
         $content = $('<section>', {
             'html': options.content,
             'class': 'dialog-content',
             style: 'overflow: auto'
-        }).appendTo($element);
+        }).appendTo(self.$element);
 
-        // Add the footer
+        // Add footer
         $footer = $('<footer>', {
             'class': 'dialog-footer',
-            css: {
-                display: options.buttons != null ? 'block' : 'none'
-            }
-        }).appendTo($element);
+            css: {display: options.buttons != null ? 'block' : 'none'}
+        }).appendTo(self.$element);
 
+        // Add buttons group
         $buttons = $('<div>', {
             'class': 'btn-group',
             role: 'group'
         }).appendTo($footer);
 
         // Set custom styles
-        Cuic.applyCss(options.css, $element);
-
-        // Override styles
-        $element.css({position: fixed ? 'fixed' : 'absolute'});
+        Cuic.applyCss(options.css, self.$element);
 
         // Set content height
         if (parseFloat(options.contentHeight) > 0) {
@@ -469,72 +363,72 @@
             $content.css('width', options.contentWidth);
         }
 
-        // Add the buttons
+        // Add buttons
         if (options.buttons instanceof Array) {
             for (let i = 0; i < options.buttons.length; i += 1) {
-                let btn = options.buttons[i];
-                self.addButton(btn.label, btn.callback);
+                self.addButton(options.buttons[i]);
             }
         }
 
-        // If the dialog is not modal,
-        // a click on the wrapper will close the dialog
-        $wrapper.off(ns('click')).on(ns('click'), function (ev) {
-            if (!self.modal && ev.target == $wrapper.get(0)) {
-                self.close();
-            }
+        // Close dialog when close button is clicked
+        $closeButton.off(ns('click')).on(ns('click'), function () {
+            self.close();
         });
+
+        // let timer;
+        // $(window).off(ns('resize')).on(ns('resize'), function () {
+        //     clearTimeout(timer);
+        //
+        //     if (self.autoResize) {
+        //         timer = setTimeout(function () {
+        //             self.resizeContent();
+        //         }, 50);
+        //     }
+        // });
+
+        // Add dialog in container
+        self.appendTo($container);
 
         // Make the dialog draggable
         self.draggable = new Cuic.Draggable({
             area: $title,
             container: $container,
             rootOnly: false,
-            target: $element
-        });
-
-        let timer;
-        $(window).off(ns('resize')).on(ns('resize'), function () {
-            clearTimeout(timer);
-
-            if (self.autoResize) {
-                timer = setTimeout(function () {
-                    self.resizeContent();
-                }, 50);
-            }
+            target: self.$element
         });
 
         // Define the close shortcut
         new Cuic.Shortcut({
             keyCode: 27, //Esc
-            target: $element,
-            callback: self.close
+            target: self.$element,
+            callback() {
+                self.close();
+            }
         });
-    };
+    }
+};
 
-    /**
-     * Default options
-     * @type {*}
-     */
-    Cuic.Dialog.prototype.options = {
-        autoRemove: true,
-        autoResize: true,
-        buttons: [],
-        className: 'dialog',
-        closeable: true,
-        closeButton: '×',
-        container: null,
-        content: null,
-        contentHeight: null,
-        contentWidth: null,
-        css: null,
-        draggable: true,
-        fullscreen: false,
-        position: 'center',
-        modal: true,
-        target: null,
-        title: null,
-        zIndex: 5
-    };
-
-})(jQuery);
+/**
+ * Default options
+ * @type {*}
+ */
+Cuic.Dialog.prototype.options = {
+    autoRemove: true,
+    autoResize: true,
+    buttons: [],
+    className: 'dialog',
+    closeable: true,
+    closeButton: '<span class="glyphicon glyphicon-remove-sign">',
+    container: null,
+    content: null,
+    contentHeight: null,
+    contentWidth: null,
+    css: null,
+    draggable: true,
+    maximized: false,
+    position: 'center',
+    modal: true,
+    target: null,
+    title: null,
+    zIndex: 5
+};

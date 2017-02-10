@@ -71,6 +71,7 @@ gulp.task('compress:css', function () {
 gulp.task('build:js', function (cb) {
     return gulp.src([
         "src/js/base.js",
+        "src/js/ui/component.js",
         "src/js/ui/*.js",
         "src/js/**/*.js"
     ])

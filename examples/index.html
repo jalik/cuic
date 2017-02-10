@@ -37,7 +37,7 @@
     <!-- JS -->
     <script src="./js/jquery-2.1.1.min.js"></script>
     <script src="./js/bootstrap.min.js"></script>
-    <script src="../build/0.3.0-dev/js/cuic.0.3.0-dev.min.js"></script>
+    <script src="../build/0.3.0-dev/js/cuic.0.3.0-dev.js"></script>
 
     <script type="application/javascript">
         Cuic.DEBUG = true;
@@ -158,7 +158,8 @@
                                         callback: 'close'
                                     }
                                 ] : null
-                        }).open();
+                        });
+                        dialog.open();
                     };
                     sandbox.find('.btn-run').on('click', function (ev) {
                         ev.stopPropagation();

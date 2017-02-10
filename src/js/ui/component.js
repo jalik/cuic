@@ -29,6 +29,7 @@
 Cuic.Component = class {
 
     constructor(node, attributes, options) {
+        const ns = Cuic.namespace('ui');
         const self = this;
 
         // Set default options
@@ -37,7 +38,6 @@ Cuic.Component = class {
         // Create element
         self.element = document.createElement(node);
         self.$element = $(self.element);
-        // self.$element = $(`<${node}>`, attributes);
 
         // Set element attributes
         for (let attr in attributes) {
@@ -47,9 +47,11 @@ Cuic.Component = class {
                 if (value !== null && value !== undefined) {
                     if (self.element[attr] !== undefined) {
                         self.element[attr] = value;
-                    } else if (attr === 'html') {
+                    }
+                    else if (attr === 'html') {
                         self.element.innerHTML = value;
-                    } else if (attr === 'text') {
+                    }
+                    else if (attr === 'text') {
                         self.element.innerText = value;
                     }
                 }
@@ -57,37 +59,164 @@ Cuic.Component = class {
         }
 
         // Handle click events
-        self.$element.on('click', (ev) => {
+        self.$element.on(ns('click'), (ev) => {
             if (typeof self.onClick === 'function') {
                 self.onClick.call(self, ev);
             }
         });
     }
 
+    /**
+     * Adds the class
+     * @param className
+     * @return {*}
+     */
+    addClass(className) {
+        return this.$element.addClass(className);
+    }
+
+    /**
+     * Appends the element to the component
+     * @param element
+     */
+    append(element) {
+        if (element instanceof Cuic.Component) {
+            element = element.getElement();
+        }
+        this.element.append(element);
+    }
+
+    /**
+     * Appends the component to the element
+     * @param element
+     */
+    appendTo(element) {
+        if (element instanceof Cuic.Component) {
+            element = element.getElement();
+        }
+        element.append(this.element);
+    }
+
+    /**
+     * Closes the component
+     * @param callback
+     */
+    close(callback) {
+        this.onClose(callback);
+        this.addClass('closed');
+        this.removeClass('opened');
+    }
+
+    /**
+     * Set styles
+     * @param styles
+     */
+    css(styles) {
+        this.$element.css(styles);
+    }
+
+    /**
+     * Disables the component
+     */
     disable() {
         this.element.disabled = true;
-        this.$element.addClass('disabled');
+        this.addClass('disabled');
     }
 
+    /**
+     * Enables the component
+     */
     enable() {
         this.element.disabled = false;
-        this.$element.removeClass('disabled');
+        this.removeClass('disabled');
     }
 
+    /**
+     * Returns the component element
+     * @return {*|jQuery|HTMLElement|null}
+     */
     getElement() {
         return this.$element;
     }
 
+    /**
+     * Checks if the component has the class
+     * @param className
+     * @return {*}
+     */
+    hasClass(className) {
+        return this.$element.hasClass(className);
+    }
+
+    /**
+     * Checks if the component is enabled
+     * @return {boolean}
+     */
     isEnabled() {
         return this.element.disabled !== true
-            || !this.$element.hasClass('disabled');
+            || !this.hasClass('disabled');
+    }
+
+    /**
+     * Maximizes the component in its container
+     * @param position
+     */
+    maximize(position) {
+        Cuic.maximize(this.element, position);
+    }
+
+    /**
+     * Minimizes the component in its container
+     * @param position
+     */
+    minimize(position) {
+        Cuic.minimize(this.element, position);
     }
 
     onClick() {
+    }
+
+    onClose() {
+    }
+
+    onOpen() {
+    }
+
+    /**
+     * Opens the component
+     * @param callback
+     */
+    open(callback) {
+        this.onOpen(callback);
+        this.addClass('opened');
+        this.removeClass('closed');
+    }
+
+    /**
+     * Removes the class from the component
+     * @param className
+     * @return {*}
+     */
+    removeClass(className) {
+        return this.$element.removeClass(className);
+    }
+
+    /**
+     * Toggles the component
+     * @param callback
+     */
+    toggle(callback) {
+        if (this.isOpened()) {
+            this.close(callback);
+        } else {
+            this.open(callback);
+        }
     }
 };
 
 /**
  * Generic component default options
  */
-Cuic.Component.prototype.options = {};
+Cuic.Component.prototype.options = {
+    closeable: false
+};

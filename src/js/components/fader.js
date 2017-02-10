@@ -24,33 +24,16 @@
  */
 
 /**
- * Basic button
+ * Basic screen fader
  */
-Cuic.Button = class extends Cuic.Component {
+Cuic.Fader = class extends Cuic.Component {
 
     constructor(options) {
         // Set default options
-        options = $.extend({}, Cuic.Button.prototype.options, options);
+        options = $.extend({}, Cuic.Fader.prototype.options, options);
 
         // Create element
-        super('button', {
-            className: options.className,
-            disabled: false,
-            html: options.label,
-            title: options.title,
-            type: options.type
-        }, options);
-
-        const self = this;
-
-        // Create shortcut
-        if (typeof options.shortcut === 'number') {
-            self.shortcut = new Cuic.Shortcut({
-                keyCode: options.shortcut,
-                target: self.element,
-                callback: self.onClick
-            });
-        }
+        super('div', {className: options.className}, options);
     }
 };
 
@@ -58,9 +41,5 @@ Cuic.Button = class extends Cuic.Component {
  * Basic button default options
  */
 Cuic.Button.prototype.options = {
-    className: 'btn btn-default',
-    disabled: false,
-    shortcut: null,
-    title: null,
-    type: 'button'
+    className: 'ui-fader'
 };

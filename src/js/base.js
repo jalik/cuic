@@ -40,7 +40,7 @@
      * The Common User Interface Components
      * @type {*}
      */
-    var Cuic = {
+    const Cuic = {
 
         /**
          * Use debug mode
@@ -66,7 +66,7 @@
          * @param listener
          * @return {*}
          */
-        addEventListener: function (element, event, listener) {
+        addEventListener(element, event, listener) {
             if (typeof element.addEventListener === 'function') {
                 return element.addEventListener(event, listener);
             }
@@ -82,9 +82,9 @@
          * @param target
          * @return {jQuery}
          */
-        anchor: function (element, position, target) {
-            var $element = $(element);
-            var prop = Cuic.calculateAnchor($element, position, target);
+        anchor(element, position, target) {
+            let $element = $(element);
+            let prop = Cuic.calculateAnchor($element, position, target);
             Cuic.debug('Cuic.anchor:', prop);
             $element.css(prop);
             return $element;
@@ -97,7 +97,7 @@
          * @param args
          * @return {*}
          */
-        apply: function (fn, context, args) {
+        apply(fn, context, args) {
             if (typeof fn === 'function') {
                 return fn.apply(context, args);
             }
@@ -109,8 +109,8 @@
          * @param styles
          * @param element
          */
-        applyCss: function (styles, element) {
-            var $element = $(element);
+        applyCss(styles, element) {
+            let $element = $(element);
 
             if (styles != null) {
                 if (typeof styles === 'object') {
@@ -129,28 +129,28 @@
          * @param target
          * @return {*}
          */
-        calculateAnchor: function (element, position, target) {
-            var isPixel = target instanceof Array && target.length === 2;
+        calculateAnchor(element, position, target) {
+            let isPixel = target instanceof Array && target.length === 2;
 
             if (!isPixel) {
                 target = $(target);
             }
 
-            var targetHeight = isPixel ? 1 : target.outerHeight();
-            var targetHeightHalf = targetHeight / 2;
-            var targetWidth = isPixel ? 1 : target.outerWidth();
-            var targetWidthHalf = targetWidth / 2;
+            let targetHeight = isPixel ? 1 : target.outerHeight();
+            let targetHeightHalf = targetHeight / 2;
+            let targetWidth = isPixel ? 1 : target.outerWidth();
+            let targetWidthHalf = targetWidth / 2;
 
-            var objWidth = element.outerWidth(true);
-            var objWidthHalf = objWidth / 2;
-            var objHeight = element.outerHeight(true);
-            var objHeightHalf = objHeight / 2;
+            let objWidth = element.outerWidth(true);
+            let objWidthHalf = objWidth / 2;
+            let objHeight = element.outerHeight(true);
+            let objHeightHalf = objHeight / 2;
 
-            var offset = isPixel ? {left: target[0], top: target[1]} : target.offset();
+            let offset = isPixel ? {left: target[0], top: target[1]} : target.offset();
 
-            var pos = position.split(' ');
+            let pos = position.split(' ');
 
-            var prop = {
+            let prop = {
                 bottom: '',
                 right: ''
             };
@@ -213,18 +213,18 @@
         },
 
         /**
-         * Calculates maximize properties
+         * Calculates maximized properties
          * @param element
          * @param position
-         * @param container
          * @return {{bottom: string, height: number, left: string, right: string, top: string, width: number}}
          */
-        calculateMaximize: function (element, position, container) {
-            var $element = $(element);
-            var $container = $(container || $element.offsetParent());
-            var ctnPadding = Cuic.padding($container);
-            var elmMargin = Cuic.margin($element);
-            var prop = {
+        calculateMaximize(element, position) {
+            position = position || '';
+            let $element = $(element);
+            let $container = $($element.offsetParent());
+            let ctnPadding = Cuic.padding($container);
+            let elmMargin = Cuic.margin($element);
+            let prop = {
                 bottom: '',
                 height: $container.height() - elmMargin.vertical,
                 left: '',
@@ -250,15 +250,40 @@
         },
 
         /**
+         * Calculates minimized properties
+         * @param element
+         * @param position
+         * @return {*}
+         */
+        calculateMinimize(element, position) {
+            position = position || '';
+            let $element = $(element);
+            let $container = $element.offsetParent();
+
+            // Create a clone with minimal size
+            let $clone = $(element.cloneNode(true));
+            $clone.css({height: 'auto', width: 'auto'});
+
+            // Calculate minimized size
+            let prop = Cuic.calculatePosition($clone, position, $container);
+            prop.height = $clone.outerHeight();
+            prop.width = $clone.outerWidth();
+            $clone.remove();
+
+            return prop;
+        },
+
+        /**
          * Position an object inside another
          * @param element
          * @param position
          * @param container
          * @return {*}
          */
-        calculatePosition: function (element, position, container) {
-            var $element = $(element);
-            var $container = $(container || $element.offsetParent());
+        calculatePosition(element, position, container) {
+            let $element = $(element);
+            let $container = $(container || $element.offsetParent());
+            position = position || '';
 
             if ($container.length === 1 && $container.get(0)) {
                 if ($container.get(0).nodeName === 'HTML') {
@@ -269,16 +294,16 @@
                 throw new TypeError('Cannot position element, invalid container');
             }
 
-            var containerHeight = $container.innerHeight();
-            var containerWidth = $container.innerWidth();
-            var containerPadding = Cuic.padding($container);
-            var targetHeight = $element.outerHeight(true);
-            var targetWidth = $element.outerWidth(true);
-            var relativeLeft = $container.get(0).scrollLeft;
-            var relativeTop = $container.get(0).scrollTop;
-            var relativeBottom = -relativeTop;
-            var relativeRight = -relativeLeft;
-            var prop = {
+            let containerHeight = $container.innerHeight();
+            let containerWidth = $container.innerWidth();
+            let containerPadding = Cuic.padding($container);
+            let targetHeight = $element.outerHeight(true);
+            let targetWidth = $element.outerWidth(true);
+            let relativeLeft = $container.get(0).scrollLeft;
+            let relativeTop = $container.get(0).scrollTop;
+            let relativeBottom = -relativeTop;
+            let relativeRight = -relativeLeft;
+            let prop = {
                 bottom: '',
                 left: '',
                 right: '',
@@ -338,10 +363,10 @@
          * Calls the function with arguments
          * @return {*}
          */
-        call: function () {
-            var context;
-            var fn;
-            var args = Array.prototype.slice.call(arguments);
+        call() {
+            let context;
+            let fn;
+            let args = Array.prototype.slice.call(arguments);
 
             if (args.length >= 2) {
                 fn = args.shift();
@@ -356,7 +381,7 @@
         /**
          * Displays a message in the console
          */
-        debug: function () {
+        debug() {
             if (Cuic.DEBUG && console !== undefined) {
                 console.log.apply(Cuic, Array.prototype.slice.call(arguments));
             }
@@ -366,7 +391,7 @@
          * Enters full screen
          * @param element
          */
-        enterFullScreen: function (element) {
+        enterFullScreen(element) {
             if (element.requestFullscreen) {
                 element.requestFullscreen();
             } else if (element.webkitRequestFullscreen) {
@@ -381,7 +406,7 @@
         /**
          * Exits full screen
          */
-        exitFullScreen: function () {
+        exitFullScreen() {
             if (document.exitFullscreen) {
                 document.exitFullscreen();
             } else if (document.webkitExitFullscreen) {
@@ -397,7 +422,7 @@
          * Checks if full screen is enabled
          * @return {boolean}
          */
-        isFullScreenEnabled: function () {
+        isFullScreenEnabled() {
             return (document.fullscreenEnabled ||
                 document.webkitFullscreenEnabled ||
                 document.mozFullScreenEnabled ||
@@ -409,12 +434,12 @@
          * @param element
          * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
          */
-        margin: function (element) {
-            var $element = $(element);
-            var bottom = parseInt($element.css('margin-bottom'));
-            var left = parseInt($element.css('margin-left'));
-            var right = parseInt($element.css('margin-right'));
-            var top = parseInt($element.css('margin-top'));
+        margin(element) {
+            let $element = $(element);
+            let bottom = parseInt($element.css('margin-bottom'));
+            let left = parseInt($element.css('margin-left'));
+            let right = parseInt($element.css('margin-right'));
+            let top = parseInt($element.css('margin-top'));
             return {
                 bottom: bottom,
                 horizontal: left + right,
@@ -429,14 +454,27 @@
          * Maximizes the element
          * @param element
          * @param position
-         * @param container
          * @return {*|HTMLElement}
          */
-        maximize: function (element, position, container) {
-            var prop = Cuic.calculateMaximize(element, position, container);
-            var $element = $(element);
-            Cuic.debug('Cuic.maximize', prop);
+        maximize(element, position) {
+            let prop = Cuic.calculateMaximize(element, position);
+            let $element = $(element);
             $element.addClass('maximized');
+            $element.css(prop);
+            return $element;
+        },
+
+        /**
+         * Minimizes the element
+         * @param element
+         * @param position
+         * @return {*|HTMLElement}
+         */
+        minimize(element, position) {
+            let prop = Cuic.calculateMinimize(element, position);
+            let $element = $(element);
+            $element.addClass('minimized');
+            $element.removeClass('maximized');
             $element.css(prop);
             return $element;
         },
@@ -446,7 +484,7 @@
          * @param ns
          * @return {Function}
          */
-        namespace: function (ns) {
+        namespace(ns) {
             return function (event, id) {
                 id = Cuic.slug(id);
                 return event + '.cuic.' + ns + (id ? '.' + id : '');
@@ -460,7 +498,7 @@
          * @param callback
          * @return {*}
          */
-        off: function (event, element, callback) {
+        off(event, element, callback) {
             // return Cuic.removeEventListener(element, event, callback);
             return $(element).off(event, callback);
         },
@@ -472,7 +510,7 @@
          * @param callback
          * @return {*}
          */
-        on: function (event, element, callback) {
+        on(event, element, callback) {
             // return Cuic.addEventListener(element, event, callback);
             return $(element).on(event, callback);
         },
@@ -484,11 +522,11 @@
          * @param callback
          * @return {*}
          */
-        once: function (event, element, callback) {
+        once(event, element, callback) {
             // Use correct event
             // event = Cuic.whichEvent(event);
 
-            var listener = function (ev) {
+            let listener = function (ev) {
                 // Cuic.removeEventListener(element, event, callback);
                 Cuic.apply(callback, Cuic, Array.prototype.slice.call(arguments));
             };
@@ -501,12 +539,12 @@
          * @param element
          * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
          */
-        padding: function (element) {
-            var $element = $(element);
-            var bottom = parseInt($element.css('padding-bottom'));
-            var left = parseInt($element.css('padding-left'));
-            var right = parseInt($element.css('padding-right'));
-            var top = parseInt($element.css('padding-top'));
+        padding(element) {
+            let $element = $(element);
+            let bottom = parseInt($element.css('padding-bottom'));
+            let left = parseInt($element.css('padding-left'));
+            let right = parseInt($element.css('padding-right'));
+            let top = parseInt($element.css('padding-top'));
             return {
                 bottom: bottom,
                 horizontal: left + right,
@@ -524,9 +562,9 @@
          * @param container
          * @return {*}
          */
-        position: function (element, position, container) {
-            var $element = $(element);
-            var prop = Cuic.calculatePosition(element, position, container);
+        position(element, position, container) {
+            let $element = $(element);
+            let prop = Cuic.calculatePosition(element, position, container);
             // Cuic.debug('Cuic.position', prop);
             $element.css(prop);
             return $element;
@@ -539,7 +577,7 @@
          * @param listener
          * @return {*}
          */
-        removeEventListener: function (element, event, listener) {
+        removeEventListener(element, event, listener) {
             if (typeof element.removeEventListener === 'function') {
                 return element.removeEventListener(event, listener);
             }
@@ -553,7 +591,7 @@
          * @param text
          * @return {string}
          */
-        slug: function (text) {
+        slug(text) {
             if (typeof text === 'string') {
                 text = text.replace(/ +/g, '-');
                 text = text.replace(/[^a-zA-Z0-9_-]+/g, '');
@@ -568,7 +606,7 @@
          * @param context
          * @return {*}
          */
-        valueOf: function (value, context) {
+        valueOf(value, context) {
             switch (typeof value) {
                 case 'function':
                     value = value.call(context);
@@ -582,10 +620,10 @@
          * @param event
          * @return {*}
          */
-        whichEvent: function (event) {
-            var ev;
-            var el = document.createElement('div');
-            var resolver = {};
+        whichEvent(event) {
+            let ev;
+            let el = document.createElement('div');
+            let resolver = {};
 
             switch (event) {
                 case 'transitionend':
@@ -612,7 +650,7 @@
     }
 
     $(document).ready(function () {
-        var ns = Cuic.namespace('base');
+        let ns = Cuic.namespace('base');
 
         // Save mouse position on move
         $(document).off(ns('mousemove')).on(ns('mousemove'), function (ev) {

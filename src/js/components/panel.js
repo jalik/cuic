@@ -173,7 +173,7 @@
          */
         self.maximize = function () {
             self.resizeContent();
-            return Cuic.maximize(element, position, $container);
+            return Cuic.maximize(element, position);
         };
 
         /**

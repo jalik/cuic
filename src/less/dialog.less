@@ -4,6 +4,16 @@
   box-shadow: @shadow-x @shadow-y @shadow-size @shadow-color;
   margin: @margin;
   padding: 0;
+  opacity: 0;
+  transition: all 0.5s;
+  transform: scale(0);
+  z-index: 5;
+}
+
+.dialog.opened {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 1s, height 1s, width 1s;
 }
 
 .dialog-content {
@@ -21,13 +31,19 @@
   padding: @content-padding;
 }
 
-.dialog-header .close-dialog {
-  color: #888;
+.dialog-header .dialog-close-btn {
+  color: #aaa;
   cursor: pointer;
-  float: right;
-  font-size: 1.2em;
-  font-weight: bold;
-  margin-left: 10px;
+  font-size: 1em;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: @content-padding;
+}
+
+.dialog-header .dialog-close-btn:focus,
+.dialog-header .dialog-close-btn:hover {
+  color: #888;
 }
 
 .dialog-title {
@@ -37,6 +53,7 @@
   padding: 0;
 }
 
-.dialog-wrapper {
-  background: rgba(240, 240, 240, 0.5);
+.dialog-fader {
+  //background: rgba(240, 240, 240, 0.5);
+  //transition: opacity 0.5s;
 }

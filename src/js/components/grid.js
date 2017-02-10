@@ -470,7 +470,7 @@
                 left: grid.calculateLeft(col),
                 top: grid.calculateTop(row)
             }, {
-                complete: function () {
+                complete() {
                     widget.element.removeClass('dragging');
                     widget.element.css({zIndex: 1});
 
@@ -500,7 +500,7 @@
                 height: 0,
                 width: 0
             }, {
-                complete: function () {
+                complete() {
                     $(this).remove();
                 },
                 duration: this.animSpeed,
@@ -568,7 +568,7 @@
                 height: sizeY * (grid.rowsHeight + grid.spacing) - grid.spacing,
                 width: sizeX * (grid.colsWidth + grid.spacing) - grid.spacing
             }, {
-                complete: function () {
+                complete() {
                     widget.element.removeClass('resizing');
                     widget.element.css({zIndex: 1});
 
