@@ -23,26 +23,25 @@
  *
  */
 
-(function () {
-    'use strict';
+/**
+ * Benchmark tool to monitor code execution time
+ */
+Cuic.Benchmark = class {
 
-    /**
-     * Benchmark tool to monitor code execution time
-     * @constructor
-     */
-    Cuic.Benchmark = function () {
-        var started = false;
-        var times = [];
+    constructor() {
+        const self = this;
+        let started = false;
+        let times = [];
 
         /**
          * Returns benchmark time
          * @returns {number}
          */
-        this.getTime = function () {
-            var total = 0;
-            var lastEvent = null;
+        self.getTime = () => {
+            let total = 0;
+            let lastEvent = null;
 
-            for (var i = 1; i < times.length; i += 1) {
+            for (let i = 1; i < times.length; i += 1) {
                 if (lastEvent === 'start') {
                     lastEvent = 'stop';
                 } else {
@@ -51,10 +50,9 @@
                 }
             }
 
-            if (this.isStarted()) {
+            if (self.isStarted()) {
                 total += Date.now() - times[times.length - 1];
             }
-
             return total;
         };
 
@@ -62,14 +60,14 @@
          * Checks if benchmark is started
          * @returns {boolean}
          */
-        this.isStarted = function () {
+        self.isStarted = function () {
             return started;
         };
 
         /**
          * Resets the benchmark
          */
-        this.reset = function () {
+        self.reset = function () {
             times = [];
         };
 
@@ -77,9 +75,9 @@
          * Starts the benchmark
          * @returns {*}
          */
-        this.start = function () {
-            if (!this.isStarted()) {
-                var time = Date.now();
+        self.start = function () {
+            if (!self.isStarted()) {
+                let time = Date.now();
                 times.push(time);
                 started = true;
                 return time;
@@ -91,15 +89,14 @@
          * Stops the benchmark
          * @returns {*}
          */
-        this.stop = function () {
-            if (this.isStarted()) {
-                var time = Date.now();
+        self.stop = function () {
+            if (self.isStarted()) {
+                let time = Date.now();
                 times.push(time);
                 started = false;
                 return time;
             }
             return false;
         };
-    };
-
-})();
+    }
+};
