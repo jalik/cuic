@@ -23,6 +23,21 @@
  *
  */
 
+let dialogZIndex = 0;
+
+/**
+ * Collection of dialogs
+ */
+Cuic.dialogs = new Cuic.Collection();
+
+Cuic.dialogs.onAdded = function (value) {
+    dialogZIndex += 1;
+};
+
+Cuic.dialogs.onRemoved = function (value) {
+    dialogZIndex -= 1;
+};
+
 /**
  * Basic dialog
  */
@@ -150,41 +165,36 @@ Cuic.Dialog = class extends Cuic.Component {
          * Called when the dialog is closing
          */
         self.onClose = function () {
-            fader.onClosed = function () {
-                console.log('FADER closed');
-            };
             // Close fader
-            fader.close(function () {
+            fader.close(() => {
                 if (self.autoRemove) {
                     fader.remove();
                 }
-                console.log('WIN !!! FADER closed');
             });
         };
 
         /**
          * Called when the dialog is closed
-         * @param callback
          */
-        self.onClosed = function (callback) {
-            if (typeof callback === 'function') {
-                callback.call(self);
-            }
+        self.onClosed = function () {
             if (self.autoRemove) {
                 self.remove();
             }
-            console.log('dialog closed');
         };
 
         /**
          * Called when the dialog is opening
          */
         self.onOpen = function () {
+            // Calculate z-index
+            let zIndex = options.zIndex + dialogZIndex;
+            self.css({'z-index': zIndex});
+
             // Open fader
             if (self.modal) {
-                fader.open(() => {
-                    console.log('fader opened')
-                });
+                self.css({'z-index': zIndex + 1});
+                fader.css({'z-index': zIndex});
+                fader.open();
             }
             // Maximize or position the dialog
             if (self.maximized) {
@@ -200,12 +210,8 @@ Cuic.Dialog = class extends Cuic.Component {
 
         /**
          * Called when the dialog is opened
-         * @param callback
          */
-        self.onOpened = function (callback) {
-            if (typeof callback === 'function') {
-                callback.call(self);
-            }
+        self.onOpened = function () {
             // // Find images
             // let images = self.$element.find('img');
             //
@@ -218,7 +224,6 @@ Cuic.Dialog = class extends Cuic.Component {
             //     // Position the dialog in the wrapper
             //     self.resizeContent();
             // }
-            console.log('dialog opened', self.bench.getTime() + ' ms');
         };
 
         /**
@@ -320,12 +325,13 @@ Cuic.Dialog = class extends Cuic.Component {
         self.$element.css({position: fixed ? 'fixed' : 'absolute'});
 
         // Create the fader
-        const fader = new Cuic.Fader({className: 'fader dialog-fader'});
-        fader.appendTo($container);
+        const fader = new Cuic.Fader({
+            className: 'fader dialog-fader'
+        }).appendTo($container);
 
         // Set fader position
         if (fixed) {
-            fader.css('position: fixed');
+            fader.css({position: 'fixed'});
         }
 
         // If the dialog is not modal,
@@ -406,6 +412,9 @@ Cuic.Dialog = class extends Cuic.Component {
         // Add dialog in container
         self.appendTo($container);
 
+        // Add dialog to collection
+        Cuic.dialogs.add(self);
+
         // Make the dialog draggable
         self.draggable = new Cuic.Draggable({
             area: $title,
@@ -422,6 +431,10 @@ Cuic.Dialog = class extends Cuic.Component {
                 self.close();
             }
         });
+    }
+
+    onRemove() {
+        Cuic.dialogs.remove(this);
     }
 };
 

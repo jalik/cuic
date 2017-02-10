@@ -23,19 +23,55 @@
  *
  */
 
-.fader {
-  background: rgba(240, 240, 240, 0.7);
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 100%;
-  opacity: 0;
-  position: absolute;
-  transition: opacity @anim-close-duration, height @anim-close-duration, width @anim-close-duration;
-  z-index: 1;
-}
+Cuic.Collection = class {
 
-.fader.opened {
-  opacity: 1;
-  transition: opacity @anim-open-duration, height @anim-open-duration, width @anim-open-duration;
-}
+    constructor(values) {
+        this.values = values instanceof Array ? values : [];
+        this.length = this.values.length;
+    }
+
+    /**
+     * Adds the value to the collection
+     * @param value
+     */
+    add(value) {
+        this.values.push(value);
+        this.length += 1;
+        this.onAdded(value);
+    }
+
+    /**
+     * Called when a value is added
+     * @param value
+     */
+    onAdded(value) {
+    }
+
+    /**
+     * Called when a value is removed
+     * @param value
+     */
+    onRemoved(value) {
+    }
+
+    /**
+     * Removes the value from the collection
+     * @param value
+     */
+    remove(value) {
+        const index = this.values.indexOf(value);
+
+        if (index !== -1) {
+            this.values.splice(index, 1);
+            this.length -= 1;
+            this.onRemoved(value);
+        }
+    }
+
+    /**
+     * Returns the collection size
+     */
+    size() {
+        return this.values.length;
+    }
+};

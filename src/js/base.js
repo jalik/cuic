@@ -382,36 +382,50 @@
          * @param styles
          */
         css(element, styles) {
-            let $element = $(element);
-            element = $element.get(0);
+            if (element instanceof jQuery) {
+                element = element.get(0);
+            }
 
             // Writing styles
             if (styles) {
-                let final = '';
-
                 if (typeof styles === 'object') {
+                    let mergedStyles = '';
+
+                    // Get current styles
+                    for (let i = 0; i < element.style.length; i += 1) {
+                        const property = element.style[i];
+                        let value = element.style[property];
+                        mergedStyles += `${property}: ${value};`;
+                    }
+                    // Add new styles
                     for (let style in styles) {
                         if (styles.hasOwnProperty(style)) {
-                            final += `${style}: ${styles[style]};`;
+                            let value = styles[style];
+                            mergedStyles += `${style}: ${value};`;
                         }
                     }
-                } else {
-                    final = styles;
+                    element.style = mergedStyles;
                 }
-                element.style = final;
+                else if (typeof styles === 'string') {
+                    // Set styles
+                    if (styles.indexOf(':') !== -1) {
+                        element.style = styles;
+                    } else {
+                        // Return specific style
+                        return element.style[styles];
+                    }
+                }
             }
-            // Reading styles
-            else {
-                return element.style;
-            }
+            // Return all styles
+            return element.style;
         },
 
         /**
          * Displays a message in the console
          */
         debug() {
-            if (Cuic.DEBUG && console !== undefined) {
-                console.log.apply(Cuic, Array.prototype.slice.call(arguments));
+            if (this.DEBUG && console !== undefined) {
+                console.log.apply(this, Array.prototype.slice.call(arguments));
             }
         },
 

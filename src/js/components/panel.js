@@ -90,7 +90,6 @@
                 }
 
                 Cuic.once('transitionend', element, function () {
-                    Cuic.debug('Panel.closed');
                     // $elm.removeClass('closing');
                     Cuic.call(callback, self);
                     Cuic.call(self.onClosed, self);
@@ -101,7 +100,6 @@
                 });
 
                 // Hide panel
-                Cuic.debug('Panel.close', prop);
                 $element.css(prop);
                 $element.addClass('closed');
                 // $elm.addClass('closing');
@@ -210,7 +208,6 @@
             }
 
             // Minimize panel
-            Cuic.debug('Panel.minimize', prop);
             $element.removeClass('maximized');
             $element.css(prop);
 
@@ -225,7 +222,6 @@
         self.open = function (callback) {
             if (self.isClosing() || (!self.isOpened() && !self.isOpening())) {
                 Cuic.once('transitionend', element, function () {
-                    Cuic.debug('Panel.opened');
                     // $elm.removeClass('opening');
                     Cuic.call(callback, self);
                     Cuic.call(self.onOpened, self);
@@ -235,7 +231,6 @@
                 var prop = Cuic.calculatePosition(element, position, $container);
 
                 // Display the panel
-                Cuic.debug('Panel.open', prop);
                 self.resizeContent();
                 $element.addClass('opened');
                 // $elm.addClass('opening');
@@ -328,7 +323,6 @@
                     prop.top = -$element.outerHeight(true);
                     prop.bottom = '';
                 }
-                Cuic.debug('Panel.position', prop);
                 $element.css(prop);
             }
             return self;

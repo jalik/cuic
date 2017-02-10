@@ -68,11 +68,12 @@ gulp.task('compress:css', function () {
 /**
  * Compile Javascript files
  */
-gulp.task('build:js', function (cb) {
+gulp.task('build:js', function () {
     return gulp.src([
         "src/js/base.js",
-        "src/js/ui/component.js",
-        "src/js/ui/*.js",
+        "src/js/utils/**/*.js",
+        "src/js/ui/**/component.js",
+        "src/js/ui/**/*.js",
         "src/js/**/*.js"
     ])
     // .pipe(eslint())

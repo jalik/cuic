@@ -81,23 +81,27 @@ Cuic.Component = class {
     /**
      * Appends the element to the component
      * @param element
+     * @return {Cuic.Component}
      */
     append(element) {
         if (element instanceof Cuic.Component) {
             element = element.getElement();
         }
         this.getElement().append(element);
+        return this;
     }
 
     /**
      * Appends the component to the element
      * @param element
+     * @return {Cuic.Component}
      */
     appendTo(element) {
         if (element instanceof Cuic.Component) {
             element = element.getElement();
         }
         element.append(this.getElement());
+        return this;
     }
 
     /**
@@ -109,7 +113,11 @@ Cuic.Component = class {
         this.removeClass('opened');
         this.addClass('closed');
         this.once('transitionend', (ev) => {
-            this.onClosed(callback, ev);
+            this.onClosed(ev);
+
+            if (typeof callback === 'function') {
+                callback.call(this, ev);
+            }
         });
     }
 
@@ -174,17 +182,39 @@ Cuic.Component = class {
     /**
      * Maximizes the component in its container
      * @param position
+     * @param callback
      */
-    maximize(position) {
+    maximize(position, callback) {
+        this.onMaximize();
+        this.removeClass('minimized');
+        this.addClass('maximized');
         Cuic.maximize(this.getElement(), position);
+        this.once('transitionend', (ev) => {
+            this.onMaximized(ev);
+
+            if (typeof callback === 'function') {
+                callback.call(this, ev);
+            }
+        });
     }
 
     /**
      * Minimizes the component in its container
      * @param position
+     * @param callback
      */
-    minimize(position) {
+    minimize(position, callback) {
+        this.onMinimize();
+        this.removeClass('maximized');
+        this.addClass('minimized');
         Cuic.minimize(this.getElement(), position);
+        this.once('transitionend', (ev) => {
+            this.onMinimized(ev);
+
+            if (typeof callback === 'function') {
+                callback.call(this, ev);
+            }
+        });
     }
 
     /**
@@ -233,6 +263,30 @@ Cuic.Component = class {
     }
 
     /**
+     * Called when the component is maximizing
+     */
+    onMaximize() {
+    }
+
+    /**
+     * Called when the component is maximized
+     */
+    onMaximized() {
+    }
+
+    /**
+     * Called when the component is minimizing
+     */
+    onMinimize() {
+    }
+
+    /**
+     * Called when the component is minimized
+     */
+    onMinimized() {
+    }
+
+    /**
      * Called when the component is opened
      */
     onOpen() {
@@ -245,17 +299,25 @@ Cuic.Component = class {
     }
 
     /**
+     * Called when the component is removed from the DOM
+     */
+    onRemove() {
+    }
+
+    /**
      * Opens the component
      * @param callback
      */
     open(callback) {
-        this.bench = new Cuic.Benchmark();
-        this.bench.start();
         this.onOpen();
         this.removeClass('closed');
         this.addClass('opened');
         this.once('transitionend', (ev) => {
-            this.onOpened(callback, ev);
+            this.onOpened(ev);
+
+            if (typeof callback === 'function') {
+                callback.call(this, ev);
+            }
         });
     }
 
@@ -263,6 +325,7 @@ Cuic.Component = class {
      * Removes the element from the DOM
      */
     remove() {
+        this.onRemove();
         this.getElement().remove();
     }
 

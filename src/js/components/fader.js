@@ -41,5 +41,5 @@ Cuic.Fader = class extends Cuic.Component {
  * Basic button default options
  */
 Cuic.Button.prototype.options = {
-    className: 'ui-fader'
+    className: 'fader'
 };
