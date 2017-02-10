@@ -363,6 +363,48 @@
         },
 
         /**
+         * Enters full screen
+         * @param element
+         */
+        enterFullScreen: function (element) {
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.webkitRequestFullscreen) {
+                element.webkitRequestFullscreen();
+            } else if (element.mozRequestFullScreen) {
+                element.mozRequestFullScreen();
+            } else if (element.msRequestFullscreen) {
+                element.msRequestFullscreen();
+            }
+        },
+
+        /**
+         * Exits full screen
+         */
+        exitFullScreen: function () {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        },
+
+        /**
+         * Checks if full screen is enabled
+         * @return {boolean}
+         */
+        isFullScreenEnabled: function () {
+            return (document.fullscreenEnabled ||
+                document.webkitFullscreenEnabled ||
+                document.mozFullScreenEnabled ||
+                document.msFullscreenEnabled) === true;
+        },
+
+        /**
          * Returns the element margins
          * @param element
          * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}

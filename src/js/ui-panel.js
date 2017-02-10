@@ -35,7 +35,7 @@
      */
     Cuic.Panel = function (options) {
         var self = this;
-        var $body;
+        var $content;
         var $container;
         var $element;
         var $footer;
@@ -116,7 +116,7 @@
          * @return {jQuery}
          */
         self.getBody = function () {
-            return $body;
+            return $content;
         };
 
         /**
@@ -172,6 +172,7 @@
          * @return {Cuic.Panel}
          */
         self.maximize = function () {
+            self.resizeContent();
             return Cuic.maximize(element, position, $container);
         };
 
@@ -235,6 +236,7 @@
 
                 // Display the panel
                 Cuic.debug('Panel.open', prop);
+                self.resizeContent();
                 $element.addClass('opened');
                 // $elm.addClass('opening');
                 $element.removeClass('closing');
@@ -250,7 +252,7 @@
          */
         self.resizeContent = function () {
             var display = $element.css('display');
-            var maxHeight = window.innerHeight;
+            var panelMaxHeight = window.innerHeight;
 
             // Temporary display the panel
             // to get real height values
@@ -258,26 +260,25 @@
 
             // Use container for max height
             if ($container && $container !== document.body) {
-                maxHeight = $container.innerHeight();
+                panelMaxHeight = $container.height();
             }
 
             // Set panel max height
-            maxHeight -= $element.outerHeight(true) - $element.height();
-            $element.css('max-height', maxHeight);
+            panelMaxHeight -= $element.outerHeight(true) - $element.height();
+            $element.css('max-height', panelMaxHeight);
 
             // Set content max height
-            var contentMaxHeight = maxHeight;
-            contentMaxHeight -= $body.outerHeight(true) - $body.height();
+            var contentMaxHeight = panelMaxHeight;
+            // contentMaxHeight -= $content.outerHeight(true) - $content.height();
 
             if ($header) {
                 contentMaxHeight -= $header.outerHeight(true);
             }
-
             if ($footer) {
                 contentMaxHeight -= $footer.outerHeight(true);
             }
 
-            $body.css({
+            $content.css({
                 maxHeight: contentMaxHeight,
                 overflow: 'auto'
             });
@@ -294,7 +295,7 @@
          * @return {Cuic.Panel}
          */
         self.setContent = function (html) {
-            $body.html(html);
+            $content.html(html);
             return self;
         };
 
@@ -364,7 +365,7 @@
             // Find panel parts
             $header = $element.find('.panel-header');
             $title = $element.find('.panel-title');
-            $body = $element.find('.panel-content');
+            $content = $element.find('.panel-content');
             $footer = $element.find('.panel-footer');
 
         } else {
@@ -383,7 +384,7 @@
             }).appendTo($header);
 
             // Add the body
-            $body = $('<section>', {
+            $content = $('<section>', {
                 'class': 'panel-content',
                 html: options.content
             }).appendTo($element);
@@ -420,6 +421,8 @@
             position: 'absolute',
             zIndex: options.zIndex
         });
+
+        self.resizeContent();
 
         // Set the top container of the element
         self.setPosition(position, $container || $element.offsetParent());
