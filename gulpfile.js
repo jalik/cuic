@@ -46,7 +46,7 @@ const baseFile = pkg.name + '.' + pkg.version;
  */
 gulp.task('build:css', function () {
     return gulp.src([
-        'src/css/base.less',
+        'src/less/base.less',
         'src/**/*.less'
     ])
         .pipe(concat(baseFile + '.css'))

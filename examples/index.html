@@ -31,31 +31,13 @@
 
     <!-- CSS -->
     <link href="./css/bootstrap.min.css" rel="stylesheet" type="text/css">
-    <link href="./css/cuic.css" rel="stylesheet" type="text/css">
+    <link href="../build/0.3.0-dev/css/cuic.0.3.0-dev.min.css" rel="stylesheet" type="text/css">
     <link href="./css/styles.css" rel="stylesheet" type="text/css">
 
     <!-- JS -->
     <script src="./js/jquery-2.1.1.min.js"></script>
     <script src="./js/bootstrap.min.js"></script>
-
-    <!-- Cuic -->
-    <script src="../src/base.js"></script>
-    <script src="../src/fn-benchmark.js"></script>
-    <script src="../src/fn-draggable.js"></script>
-    <script src="../src/fn-forms.js"></script>
-    <script src="../src/fn-hook.js"></script>
-    <script src="../src/fn-keys.js"></script>
-    <script src="../src/fn-resizable.js"></script>
-    <script src="../src/ui-dialog.js"></script>
-    <script src="../src/ui-grid.js"></script>
-    <script src="../src/ui-notification.js"></script>
-    <script src="../src/ui-panel.js"></script>
-    <script src="../src/ui-popup.js"></script>
-    <script src="../src/ui-switcher.js"></script>
-    <script src="../src/ui-table.js"></script>
-    <script src="../src/ui-tabs.js"></script>
-    <script src="../src/ui-tooltip.js"></script>
-    <script src="../src/ui-tree.js"></script>
+    <script src="../build/0.3.0-dev/js/cuic.0.3.0-dev.min.js"></script>
 
     <script type="application/javascript">
         Cuic.DEBUG = true;
@@ -168,10 +150,12 @@
                             content: 'This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p>',
                             buttons: sandbox.find("[name=buttons]").is(":checked") ? [
                                     {
-                                        label: 'Accept'
+                                        label: 'Accept',
+                                        callback: 'close'
                                     },
                                     {
-                                        label: 'Close'
+                                        label: 'Close',
+                                        callback: 'close'
                                     }
                                 ] : null
                         }).open();

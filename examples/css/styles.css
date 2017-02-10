@@ -226,6 +226,30 @@ tr {
     top: 0;
 }
 
+/* NAVBAR */
+
+.navbar {
+    background: #fff;
+    border-bottom: solid 3px #57a0be;
+    box-shadow: 0 1px 0.5em #888;
+    display: block;
+}
+
+.navbar-item {
+    border-right: solid 1px #eee;
+    cursor: pointer;
+    display: inline-block;
+    height: 60px;
+    line-height: 60px;
+    padding: 0 1em;
+    transition: all 200ms;
+}
+
+.navbar-item:hover {
+    background: rgba(87, 160, 190, 0.1);
+    border-bottom: none;
+}
+
 /* SANDBOX */
 
 .sandbox {
