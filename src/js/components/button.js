@@ -56,7 +56,6 @@ Cuic.Button = class extends Cuic.Component {
 
 /**
  * Basic button default options
- * @type {{className: string}}
  */
 Cuic.Button.prototype.options = {
     className: 'btn btn-default',

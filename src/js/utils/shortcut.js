@@ -23,45 +23,17 @@
  *
  */
 
-(function ($) {
-    'use strict';
+/**
+ * Creates a shortcut
+ */
+Cuic.Shortcut = class {
 
-    var ns = Cuic.namespace('shortcut');
+    constructor(options) {
+        const self = this;
+        const ns = Cuic.namespace('shortcut');
 
-    Cuic.keys = {
-        BACKSPACE: 8,
-        DEL: 46,
-        DOWN: 40,
-        ENTER: 13,
-        ESC: 27,
-        INSERT: 45,
-        LEFT: 37,
-        MINUS: 109,
-        PAGE_UP: 33,
-        PAGE_DOWN: 34,
-        PLUS: 107,
-        RIGHT: 39,
-        TAB: 9,
-        UP: 38
-    };
-
-    /**
-     * Creates a shortcut
-     * @param options
-     */
-    Cuic.Shortcut = function (options) {
-        var self = this;
-
-        options = $.extend(true, {
-            active: true,
-            altKey: false,
-            callback: null,
-            ctrlKey: false,
-            key: null,
-            keyCode: null,
-            shiftKey: false,
-            target: document.body
-        }, options);
+        // Set default options
+        options = $.extend({}, Cuic.Shortcut.prototype.options, options);
 
         // Define attributes
         self.altKey = options.altKey;
@@ -73,29 +45,73 @@
         self.callback = options.callback;
 
         // Get the target
-        var target = $(options.target);
+        const $target = $(options.target);
 
-        self.deactivate = function () {
-            target.off(ns('keydown.' + self.key));
-        };
-
+        /**
+         * Activates the shortcut
+         */
         self.activate = function () {
-            target.off(ns('keydown.' + self.key)).on(ns('keydown.' + self.key), function (ev) {
+            $target.off(ns(`keydown.${self.key}`)).on(ns(`keydown.${self.key}`), function (ev) {
                 if ((self.keyCode === ev.keyCode || self.key === ev.key)
                     && self.altKey === ev.altKey
                     && self.ctrlKey === ev.ctrlKey
                     && self.shiftKey === ev.shiftKey) {
                     ev.preventDefault();
                     ev.stopPropagation();
-                    self.callback.call(target, ev);
+                    self.callback.call($target, ev);
                     return false;
                 }
             });
         };
 
+        /**
+         * Deactivates the shortcut
+         */
+        self.deactivate = function () {
+            $target.off(ns(`keydown.${self.key}`));
+        };
+
+        /**
+         * Returns the target
+         * @return {*|jQuery|HTMLElement}
+         */
+        self.getTarget = () => {
+            return $target;
+        };
+
         if (options.active) {
             self.activate();
         }
-    };
+    }
+};
 
-})(jQuery);
+/**
+ * Shortcut default options
+ */
+Cuic.Shortcut.prototype.options = {
+    active: true,
+    altKey: false,
+    callback: null,
+    ctrlKey: false,
+    key: null,
+    keyCode: null,
+    shiftKey: false,
+    target: document.body
+};
+
+Cuic.keys = {
+    BACKSPACE: 8,
+    DEL: 46,
+    DOWN: 40,
+    ENTER: 13,
+    ESC: 27,
+    INSERT: 45,
+    LEFT: 37,
+    MINUS: 109,
+    PAGE_UP: 33,
+    PAGE_DOWN: 34,
+    PLUS: 107,
+    RIGHT: 39,
+    TAB: 9,
+    UP: 38
+};
