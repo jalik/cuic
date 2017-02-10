@@ -24,6 +24,7 @@
  */
 
 const gulp = require('gulp');
+const autoprefixer = require('gulp-autoprefixer');
 const babel = require('gulp-babel');
 const concat = require('gulp-concat');
 const eslint = require('gulp-eslint');
@@ -33,29 +34,44 @@ const pump = require('pump');
 const rename = require('gulp-rename');
 const standard = require('gulp-standard');
 const uglify = require('gulp-uglify');
+const watch = require('gulp-watch');
 
-const Package = require('./package.json');
+const pkg = require('./package.json');
+const buildDir = 'build/' + pkg.version;
+const baseFile = pkg.name + '.' + pkg.version;
 
 
-gulp.task('js', function (cb) {
+/**
+ * Compile CSS/LESS files
+ */
+gulp.task('build:css', function () {
+    return gulp.src([
+        'src/css/base.less',
+        'src/**/*.less'
+    ])
+        .pipe(concat(baseFile + '.css'))
+        .pipe(less())
+        .pipe(autoprefixer())
+        .pipe(gulp.dest(buildDir + '/css'));
+});
+
+/**
+ * Compress CSS/LESS files
+ */
+gulp.task('compress:css', function () {
+    return gulp.src(buildDir + '/css/' + baseFile + '.css')
+        .pipe(minifyCSS())
+        .pipe(rename({suffix: '.min'}))
+        .pipe(gulp.dest(buildDir + '/css'));
+});
+
+/**
+ * Compile Javascript files
+ */
+gulp.task('build:js', function (cb) {
     return gulp.src([
         "src/js/base.js",
-        "src/js/fn-benchmark.js",
-        "src/js/fn-draggable.js",
-        "src/js/fn-forms.js",
-        "src/js/fn-hook.js",
-        "src/js/fn-keys.js",
-        "src/js/fn-resizable.js",
-        "src/js/ui-dialog.js",
-        "src/js/ui-grid.js",
-        "src/js/ui-notification.js",
-        "src/js/ui-panel.js",
-        "src/js/ui-popup.js",
-        "src/js/ui-switcher.js",
-        "src/js/ui-table.js",
-        "src/js/ui-tabs.js",
-        "src/js/ui-tooltip.js",
-        "src/js/ui-tree.js"
+        "src/js/**/*.js"
     ])
     // .pipe(eslint())
     // .pipe(eslint.format())
@@ -65,30 +81,38 @@ gulp.task('js', function (cb) {
     //     breakOnError: true,
     //     quiet: true
     // }))
-        .pipe(concat(Package.name + '.' + Package.version + '.js'))
+        .pipe(concat(baseFile + '.js'))
         .pipe(babel({presets: ['es2015']}))
-        .pipe(gulp.dest('dist/js'));
+        .pipe(gulp.dest(buildDir + '/js'));
 });
 
-gulp.task('compress', function (cb) {
+/**
+ * Compress Javascript files
+ */
+gulp.task('compress:js', function (cb) {
     pump([
-            gulp.src('dist/js/*.js'),
+            gulp.src(buildDir + '/js/' + baseFile + '.js'),
             uglify(),
-            rename({
-                suffix: '.min'
-            }),
-            // concat(Package.name + '.' + Package.version + '.min.js'),
-            gulp.dest('dist/js')
+            rename({suffix: '.min'}),
+            gulp.dest(buildDir + '/js')
         ],
         cb
     );
 });
 
-gulp.task('css', function () {
-    return gulp.src('src/**/*.less')
-        .pipe(less())
-        .pipe(minifyCSS())
-        .pipe(gulp.dest('build/css'));
-});
+// Concat + compile files
+gulp.task('build', ['build:css', 'build:js']);
 
-gulp.task('default', ['js', 'compress', 'css']);
+// Compress files
+gulp.task('compress', ['compress:css', 'compress:js']);
+
+// Concat + compress files
+gulp.task('default', ['build', 'compress']);
+
+// Automatic rebuild
+gulp.task('watch', function () {
+    gulp.watch(['src/**/*.less'], ['build:css']);
+    gulp.watch(['src/**/*.js'], ['build:js']);
+    gulp.watch(['build/**/*.css', '!build/**/*.min.css'], ['compress:css']);
+    gulp.watch(['build/**/*.js', '!build/**/*.min.js'], ['compress:js']);
+});
