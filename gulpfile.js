@@ -38,7 +38,7 @@ const watch = require('gulp-watch');
 
 const pkg = require('./package.json');
 const buildDir = 'build/' + pkg.version;
-const baseFile = pkg.name + '.' + pkg.version;
+const baseFile = pkg.name + '-' + pkg.version;
 
 
 /**

@@ -56,7 +56,6 @@ Cuic.Dialog = class extends Cuic.Component {
         self.autoRemove = options.autoRemove === true;
         self.autoResize = options.autoResize === true;
         self.closeable = options.closeable === true;
-        self.closeButton = options.closeButton;
         self.draggable = options.draggable === true;
         self.maximized = options.maximized === true;
         self.modal = options.modal === true;
@@ -133,6 +132,15 @@ Cuic.Dialog = class extends Cuic.Component {
             //     self.$element.remove();
             // }
             return self;
+        };
+
+        /**
+         * Returns the content
+         * @deprecated
+         * @return {jQuery}
+         */
+        self.getBody = function () {
+            return $content;
         };
 
         /**
@@ -418,7 +426,6 @@ Cuic.Dialog.prototype.options = {
     buttons: [],
     className: 'dialog',
     closeable: true,
-    closeButton: '<span class="glyphicon glyphicon-remove-sign">',
     container: null,
     content: null,
     contentHeight: null,
