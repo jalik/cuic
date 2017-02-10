@@ -26,28 +26,22 @@
 /**
  * Basic button
  */
-Cuic.Button = class {
+Cuic.Button = class extends Cuic.Component {
 
     constructor(options) {
-        const self = this;
-
         // Set default options
-        options = $.extend({
-            className: 'btn btn-default',
-            disabled: false,
-            shortcut: null,
-            title: null,
-            type: 'button'
-        }, options);
+        options = $.extend({}, Cuic.Button.prototype.options, options);
 
         // Create element
-        self.$element = $('<button>', {
-            'class': options.className,
+        super('button', {
+            className: options.className,
             disabled: false,
             html: options.label,
             title: options.title,
             type: options.type
-        });
+        }, options);
+
+        const self = this;
 
         // Create shortcut
         if (typeof options.shortcut === 'number') {
@@ -57,19 +51,17 @@ Cuic.Button = class {
                 callback: self.onClick
             });
         }
-
-        // Handle click events
-        self.$element.on('click', (ev) => {
-            if (typeof self.onClick === 'function') {
-                self.onClick.call(self, ev);
-            }
-        });
     }
+};
 
-    getElement() {
-        return this.$element;
-    }
-
-    onClick() {
-    }
+/**
+ * Basic button default options
+ * @type {{className: string}}
+ */
+Cuic.Button.prototype.options = {
+    className: 'btn btn-default',
+    disabled: false,
+    shortcut: null,
+    title: null,
+    type: 'button'
 };

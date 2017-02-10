@@ -34,7 +34,11 @@
      * @constructor
      */
     Cuic.Dialog = function (options) {
-        let self = this;
+        const self = this;
+
+        // Default options
+        options = $.extend(Cuic.Dialog.prototype.options, options);
+
         let buttons = [];
         let $buttons;
         let $container;
@@ -48,9 +52,6 @@
         let isOpened = false;
         let isOpening = false;
         let position;
-
-        // Default options
-        options = $.extend(true, {}, Cuic.Dialog.prototype.options, options);
 
         // Define attributes
         self.autoRemove = options.autoRemove === true;
