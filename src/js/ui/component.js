@@ -58,6 +58,9 @@ Cuic.Component = class {
             }
         }
 
+        // Set element styles
+        self.css(options.css);
+
         // Handle click events
         self.$element.on(ns('click'), (ev) => {
             if (typeof self.onClick === 'function') {
@@ -102,10 +105,12 @@ Cuic.Component = class {
      * @param callback
      */
     close(callback) {
+        this.onClose();
         this.removeClass('opened');
         this.addClass('closed');
-        // todo watch transition/animation
-        this.onClose(callback);
+        this.once('transitionend', (ev) => {
+            this.onClosed(callback, ev);
+        });
     }
 
     /**
@@ -182,13 +187,61 @@ Cuic.Component = class {
         Cuic.minimize(this.getElement(), position);
     }
 
+    /**
+     * Remove the callback attached to the event
+     * @param event
+     * @param callback
+     */
+    off(event, callback) {
+        Cuic.off(event, this.getElement(), callback);
+    }
+
+    /**
+     * Executes the callback each time the event is triggered
+     * @param event
+     * @param callback
+     */
+    on(event, callback) {
+        Cuic.on(event, this.getElement(), callback);
+    }
+
+    /**
+     * Executes the callback once when the event is triggered
+     * @param event
+     * @param callback
+     */
+    once(event, callback) {
+        Cuic.once(event, this.getElement(), callback);
+    }
+
+    /**
+     * Called when the component is clicked
+     */
     onClick() {
     }
 
+    /**
+     * Called when the component is closing
+     */
     onClose() {
     }
 
+    /**
+     * Called when the component is closed
+     */
+    onClosed() {
+    }
+
+    /**
+     * Called when the component is opened
+     */
     onOpen() {
+    }
+
+    /**
+     * Called when the component is opened
+     */
+    onOpened() {
     }
 
     /**
@@ -196,10 +249,21 @@ Cuic.Component = class {
      * @param callback
      */
     open(callback) {
+        this.bench = new Cuic.Benchmark();
+        this.bench.start();
+        this.onOpen();
         this.removeClass('closed');
         this.addClass('opened');
-        // todo watch transition/animation
-        this.onOpen(callback);
+        this.once('transitionend', (ev) => {
+            this.onOpened(callback, ev);
+        });
+    }
+
+    /**
+     * Removes the element from the DOM
+     */
+    remove() {
+        this.getElement().remove();
     }
 
     /**
@@ -228,5 +292,6 @@ Cuic.Component = class {
  * Generic component default options
  */
 Cuic.Component.prototype.options = {
-    closeable: false
+    closeable: false,
+    css: null
 };

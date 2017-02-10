@@ -30,30 +30,24 @@ Cuic.Benchmark = class {
 
     constructor() {
         const self = this;
-        let started = false;
-        let times = [];
+        let startTime = null;
+        let stopTime = null;
+        let time = 0;
 
         /**
          * Returns benchmark time
          * @returns {number}
          */
         self.getTime = () => {
-            let total = 0;
-            let lastEvent = null;
-
-            for (let i = 1; i < times.length; i += 1) {
-                if (lastEvent === 'start') {
-                    lastEvent = 'stop';
-                } else {
-                    lastEvent = 'start';
-                    total += times[i] - times[i - 1];
-                }
+            if (startTime && stopTime) {
+                return stopTime - startTime;
             }
-
-            if (self.isStarted()) {
-                total += Date.now() - times[times.length - 1];
+            else if (startTime) {
+                return Date.now() - startTime;
             }
-            return total;
+            else {
+                return 0;
+            }
         };
 
         /**
@@ -61,14 +55,16 @@ Cuic.Benchmark = class {
          * @returns {boolean}
          */
         self.isStarted = function () {
-            return started;
+            return typeof startTime === 'number';
         };
 
         /**
          * Resets the benchmark
          */
         self.reset = function () {
-            times = [];
+            time = 0;
+            startTime = null;
+            stopTime = null;
         };
 
         /**
@@ -76,13 +72,8 @@ Cuic.Benchmark = class {
          * @returns {*}
          */
         self.start = function () {
-            if (!self.isStarted()) {
-                let time = Date.now();
-                times.push(time);
-                started = true;
-                return time;
-            }
-            return false;
+            startTime = Date.now();
+            stopTime = null;
         };
 
         /**
@@ -90,13 +81,8 @@ Cuic.Benchmark = class {
          * @returns {*}
          */
         self.stop = function () {
-            if (self.isStarted()) {
-                let time = Date.now();
-                times.push(time);
-                started = false;
-                return time;
-            }
-            return false;
+            startTime = null;
+            stopTime = Date.now();
         };
     }
 };

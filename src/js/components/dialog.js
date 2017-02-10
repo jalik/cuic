@@ -55,7 +55,6 @@ Cuic.Dialog = class extends Cuic.Component {
         // Define attributes
         self.autoRemove = options.autoRemove === true;
         self.autoResize = options.autoResize === true;
-        self.closeable = options.closeable === true;
         self.draggable = options.draggable === true;
         self.maximized = options.maximized === true;
         self.modal = options.modal === true;
@@ -115,26 +114,6 @@ Cuic.Dialog = class extends Cuic.Component {
         };
 
         /**
-         * Closes the dialog
-         * @param callback
-         * @return {Cuic.Dialog}
-         */
-        self.onClose = function (callback) {
-            fader.close(function () {
-                // if (self.autoRemove) {
-                //     fader.remove();
-                // }
-            });
-            if (typeof callback === 'function') {
-                callback.call(self);
-            }
-            // if (self.autoRemove) {
-            //     self.$element.remove();
-            // }
-            return self;
-        };
-
-        /**
          * Returns the content
          * @deprecated
          * @return {jQuery}
@@ -168,27 +147,65 @@ Cuic.Dialog = class extends Cuic.Component {
         };
 
         /**
-         * Opens the dialog
-         * @param callback
-         * @return {Cuic.Dialog}
+         * Called when the dialog is closing
          */
-        self.onOpen = function (callback) {
-            const dialogOpened = function () {
-                if (typeof callback === 'function') {
-                    callback.call(self);
-                }
-                // Focus the last button
-                if (self.$element.find(':focus').length === 0) {
-                    $footer.find('button:last').focus();
-                }
+        self.onClose = function () {
+            fader.onClosed = function () {
+                console.log('FADER closed');
             };
+            // Close fader
+            fader.close(function () {
+                if (self.autoRemove) {
+                    fader.remove();
+                }
+                console.log('WIN !!! FADER closed');
+            });
+        };
 
+        /**
+         * Called when the dialog is closed
+         * @param callback
+         */
+        self.onClosed = function (callback) {
+            if (typeof callback === 'function') {
+                callback.call(self);
+            }
+            if (self.autoRemove) {
+                self.remove();
+            }
+            console.log('dialog closed');
+        };
+
+        /**
+         * Called when the dialog is opening
+         */
+        self.onOpen = function () {
+            // Open fader
+            if (self.modal) {
+                fader.open(() => {
+                    console.log('fader opened')
+                });
+            }
+            // Maximize or position the dialog
             if (self.maximized) {
                 self.maximize();
             } else {
                 self.setPosition(position);
             }
+            // Focus the last button
+            if (self.$element.find(':focus').length === 0) {
+                $footer.find('button:last').focus();
+            }
+        };
 
+        /**
+         * Called when the dialog is opened
+         * @param callback
+         */
+        self.onOpened = function (callback) {
+            if (typeof callback === 'function') {
+                callback.call(self);
+            }
             // // Find images
             // let images = self.$element.find('img');
             //
@@ -201,13 +218,7 @@ Cuic.Dialog = class extends Cuic.Component {
             //     // Position the dialog in the wrapper
             //     self.resizeContent();
             // }
-
-            if (self.modal) {
-                fader.open();
-            }
-            dialogOpened();
-
-            return self;
+            console.log('dialog opened', self.bench.getTime() + ' ms');
         };
 
         /**
@@ -314,14 +325,14 @@ Cuic.Dialog = class extends Cuic.Component {
 
         // Set fader position
         if (fixed) {
-            fader.css({position: 'fixed'});
+            fader.css('position: fixed');
         }
 
         // If the dialog is not modal,
         // a click on the wrapper will close the dialog
-        fader.onClick(function (ev) {
+        fader.onClick = function (ev) {
             self.close();
-        });
+        };
 
         // Add header
         $header = $('<header>', {
@@ -359,13 +370,11 @@ Cuic.Dialog = class extends Cuic.Component {
             role: 'group'
         }).appendTo($footer);
 
-        // Set custom styles
-        Cuic.css(self.$element, options.css);
-
         // Set content height
         if (parseFloat(options.contentHeight) > 0) {
             $content.css('height', options.contentHeight);
         }
+
         // Set content width
         if (parseFloat(options.contentWidth) > 0) {
             $content.css('width', options.contentWidth);
@@ -379,7 +388,7 @@ Cuic.Dialog = class extends Cuic.Component {
         }
 
         // Close dialog when close button is clicked
-        $closeButton.off(ns('click')).on(ns('click'), function () {
+        $closeButton.on(ns('click'), function () {
             self.close();
         });
 
@@ -425,7 +434,6 @@ Cuic.Dialog.prototype.options = {
     autoResize: true,
     buttons: [],
     className: 'dialog',
-    closeable: true,
     container: null,
     content: null,
     contentHeight: null,

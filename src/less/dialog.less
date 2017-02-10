@@ -5,7 +5,8 @@
   margin: @margin;
   padding: 0;
   opacity: 0;
-  transition: all 0.5s;
+  position: relative;
+  transition: all @anim-close-duration;
   transform: scale(0);
   z-index: 5;
 }
@@ -13,7 +14,7 @@
 .dialog.opened {
   opacity: 1;
   transform: scale(1);
-  transition: opacity 1s, height 1s, width 1s;
+  transition: opacity @anim-open-duration, height @anim-open-duration, width @anim-open-duration;
 }
 
 .dialog-content {

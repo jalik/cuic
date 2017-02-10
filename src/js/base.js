@@ -102,7 +102,6 @@
         anchor(element, position, target) {
             let $element = $(element);
             let prop = Cuic.calculateAnchor($element, position, target);
-            Cuic.debug('Cuic.anchor:', prop);
             $element.css(prop);
             return $element;
         },
@@ -275,12 +274,12 @@
          * Position an object inside another
          * @param element
          * @param position
-         * @param container
+         * @param parent
          * @return {*}
          */
-        calculatePosition(element, position, container) {
+        calculatePosition(element, position, parent) {
             let $element = $(element);
-            let $container = $(container || $element.offsetParent());
+            let $container = $(parent || $element.offsetParent());
             position = position || '';
 
             if ($container.length === 1 && $container.get(0)) {
@@ -289,7 +288,7 @@
                 }
                 $container.append($element);
             } else {
-                throw new TypeError('Cannot position element, invalid container');
+                throw new TypeError('Cannot position element, invalid parent');
             }
 
             let containerHeight = $container.innerHeight();
@@ -308,7 +307,7 @@
                 top: ''
             };
 
-            // If the target is fixed, we use the window as container
+            // If the target is fixed, we use the window as parent
             if ($element.css('position') === 'fixed') {
                 // Use jQuery to get window's size because
                 // it returns the value without scrollbars
@@ -329,7 +328,7 @@
                 return relativeTop + ($container.height() / 2 - targetHeight / 2);
             }
 
-            // Check that the element is not bigger than the container
+            // Check that the element is not bigger than the parent
             if (targetWidth > containerWidth) {
                 prop.width = containerWidth - (targetWidth - $element.width());
             }
@@ -454,6 +453,26 @@
          */
         getClasses(element) {
             return element.className.split(' ');
+        },
+
+        /**
+         * Returns the CSS style prefix depending of the browser
+         * @return {*}
+         */
+        getStylePrefix() {
+            const element = document.createElement('div');
+
+            // Check with animation
+            if (element.WebkitAnimation == '') return '-webkit-';
+            if (element.MozAnimation == '') return '-moz-';
+            if (element.OAnimation == '') return '-o-';
+
+            // Check with transition
+            if (element.WebkitTransition == '') return '-webkit-';
+            if (element.MozTransition == '') return '-moz-';
+            if (element.OTransition == '') return '-o-';
+
+            return '';
         },
 
         /**
@@ -609,8 +628,32 @@
          * @return {*}
          */
         off(event, element, callback) {
-            // return Cuic.removeEventListener(element, event, callback);
-            return $(element).off(event, callback);
+            const browserEvent = this.whichEvent(event);
+
+            // Event is a animation
+            if (event.indexOf('animation') !== -1) {
+                const duration = this.prefixStyle('animation-duration');
+
+                // Execute callback now
+                if (!browserEvent && !('animation' in element.style) || getComputedStyle(element)[duration] == '0s') {
+                    this.apply(callback, this, Array.prototype.slice.call(arguments));
+                }
+            }
+            // Event is a transition
+            else if (event.indexOf('transition') !== -1) {
+                const duration = this.prefixStyle('transition-duration');
+
+                // Execute callback now
+                if (!browserEvent && !('transition' in element.style) || getComputedStyle(element)[duration] == '0s') {
+                    this.apply(callback, this, Array.prototype.slice.call(arguments));
+                }
+            }
+            // Check if event is supported
+            if (browserEvent) {
+                return this.removeEventListener(element, browserEvent, callback);
+            } else {
+                console.warn(`Event "${event}" is not supported by this browser.`);
+            }
         },
 
         /**
@@ -621,8 +664,32 @@
          * @return {*}
          */
         on(event, element, callback) {
-            // return Cuic.addEventListener(element, event, callback);
-            return $(element).on(event, callback);
+            const browserEvent = this.whichEvent(event);
+
+            // Event is a animation
+            if (event.indexOf('animation') !== -1) {
+                const duration = this.prefixStyle('animation-duration');
+
+                // Execute callback now
+                if (!browserEvent && !('animation' in element.style) || getComputedStyle(element)[duration] == '0s') {
+                    this.apply(callback, this, Array.prototype.slice.call(arguments));
+                }
+            }
+            // Event is a transition
+            else if (event.indexOf('transition') !== -1) {
+                const duration = this.prefixStyle('transition-duration');
+
+                // Execute callback now
+                if (!browserEvent && !('transition' in element.style) || getComputedStyle(element)[duration] == '0s') {
+                    this.apply(callback, this, Array.prototype.slice.call(arguments));
+                }
+            }
+            // Check if event is supported
+            if (browserEvent) {
+                return this.addEventListener(element, browserEvent, callback);
+            } else {
+                console.warn(`Event "${event}" is not supported by this browser.`);
+            }
         },
 
         /**
@@ -633,15 +700,36 @@
          * @return {*}
          */
         once(event, element, callback) {
-            // Use correct event
-            // event = Cuic.whichEvent(event);
+            const browserEvent = this.whichEvent(event);
 
-            let listener = function (ev) {
-                // Cuic.removeEventListener(element, event, callback);
-                Cuic.apply(callback, Cuic, Array.prototype.slice.call(arguments));
-            };
-            // return Cuic.addEventListener(element, event, listener);
-            return $(element).one(event, listener);
+            // Event is a animation
+            if (event.indexOf('animation') !== -1) {
+                const duration = this.prefixStyle('animation-duration');
+
+                // Execute callback now
+                if (!browserEvent && !('animation' in element.style) || getComputedStyle(element)[duration] == '0s') {
+                    this.apply(callback, this, Array.prototype.slice.call(arguments));
+                }
+            }
+            // Event is a transition
+            else if (event.indexOf('transition') !== -1) {
+                const duration = this.prefixStyle('transition-duration');
+
+                // Execute callback now
+                if (!browserEvent && !('transition' in element.style) || getComputedStyle(element)[duration] == '0s') {
+                    this.apply(callback, this, Array.prototype.slice.call(arguments));
+                }
+            }
+            // Check if event is supported
+            if (browserEvent) {
+                const listener = function (ev) {
+                    Cuic.removeEventListener(element, browserEvent, listener);
+                    Cuic.apply(callback, this, Array.prototype.slice.call(arguments));
+                };
+                return this.addEventListener(element, browserEvent, listener);
+            } else {
+                console.warn(`Event "${event}" is not supported by this browser.`);
+            }
         },
 
         /**
@@ -669,15 +757,24 @@
          * Positions the element
          * @param element
          * @param position
-         * @param container
+         * @param parent
          * @return {*}
          */
-        position(element, position, container) {
+        position(element, position, parent) {
             let $element = $(element);
-            let prop = Cuic.calculatePosition(element, position, container);
-            // Cuic.debug('Cuic.position', prop);
+            let prop = Cuic.calculatePosition(element, position, parent);
             $element.css(prop);
             return $element;
+        },
+
+        /**
+         * Returns the prefixed style
+         * @param style
+         * @return {string}
+         */
+        prefixStyle(style) {
+            const prefix = this.getStylePrefix();
+            return typeof prefix === 'string' && prefix.length ? prefix + style : style;
         },
 
         /**
@@ -772,7 +869,6 @@
                     return resolver[ev];
                 }
             }
-            return event;
         }
     };
 
