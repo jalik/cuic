@@ -46,13 +46,17 @@ Cuic.NotificationStack = class extends Cuic.GroupComponent {
         if (self.options.position) {
             let isFixed = self.getParentElement() === document.body;
             self.css({position: isFixed ? 'fixed' : 'absolute'});
+            self.setPosition(self.options.position);
         }
     }
 
     onComponentAdded(component) {
         // Display the notification when it's added to the stack
         if (component instanceof Cuic.Notification) {
-            component.open();
+            // fixme Not using a timeout to open blocks the animation
+            setTimeout(function () {
+                component.open();
+            }, 10);
         }
     }
 

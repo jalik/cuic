@@ -28,6 +28,7 @@
   border-radius: @border-radius;
   box-shadow: @shadow-x @shadow-y @shadow-size @shadow-color;
   color: #fff;
+  display: inline-block;
   font-size: 1.3rem;
   line-height: 1.2rem;
   margin: @margin;
@@ -63,4 +64,8 @@
 
 .notification-stack {
   transition: all @anim-open-duration;
+}
+
+.notification-stack .notification {
+  display: block;
 }

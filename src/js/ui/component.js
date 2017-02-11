@@ -42,6 +42,9 @@ Cuic.Component = class {
         if (options.parent instanceof jQuery) {
             options.parent = options.parent.get(0);
         }
+        if (options.parent instanceof Cuic.Component) {
+            options.parent = options.parent.getElement();
+        }
 
         // Set element attributes
         for (let attr in attributes) {

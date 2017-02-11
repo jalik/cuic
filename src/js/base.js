@@ -797,7 +797,7 @@
          */
         position(element, position, parent) {
             let $element = $(element);
-            let prop = Cuic.calculatePosition(element, position, parent);
+            let prop = this.calculatePosition(element, position, parent);
             $element.css(prop);
             return $element;
         },
