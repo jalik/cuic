@@ -33,11 +33,20 @@ Cuic.Component = class {
         const self = this;
 
         // Set default options
-        options = $.extend({}, Cuic.Component.prototype.options, options);
+        self.options = $.extend({}, Cuic.Component.prototype.options, options);
 
         // Create element
         self.element = document.createElement(node);
         self.$element = $(self.element);
+
+        if (options.parent instanceof jQuery) {
+            options.parent = options.parent.get(0);
+        }
+
+        // Put component in parent node
+        if (options.parent instanceof HTMLElement) {
+            self.appendTo(options.parent);
+        }
 
         // Set element attributes
         for (let attr in attributes) {
@@ -60,6 +69,11 @@ Cuic.Component = class {
 
         // Set element styles
         self.css(options.css);
+
+        // Position the component
+        if (options.position) {
+            self.setPosition(options.position);
+        }
 
         // Handle click events
         self.$element.on(ns('click'), (ev) => {
@@ -159,6 +173,14 @@ Cuic.Component = class {
      */
     getElement() {
         return this.element;
+    }
+
+    /**
+     * Returns the parent of the element
+     * @return {HTMLElement}
+     */
+    getParentElement() {
+        return this.getElement().parentNode;
     }
 
     /**
@@ -322,6 +344,32 @@ Cuic.Component = class {
     }
 
     /**
+     * Prepends the element to the component
+     * @param element
+     * @return {Cuic.Component}
+     */
+    prepend(element) {
+        if (element instanceof Cuic.Component) {
+            element = element.getElement();
+        }
+        this.getElement().prepend(element);
+        return this;
+    }
+
+    /**
+     * Prepends the component to the element
+     * @param element
+     * @return {Cuic.Component}
+     */
+    prependTo(element) {
+        if (element instanceof Cuic.Component) {
+            element = element.getElement();
+        }
+        element.prependTo(this.getElement());
+        return this;
+    }
+
+    /**
      * Removes the element from the DOM
      */
     remove() {
@@ -336,6 +384,33 @@ Cuic.Component = class {
      */
     removeClass(className) {
         return Cuic.removeClass(this.getElement(), className);
+    }
+
+    /**
+     * Sets content HTML
+     * @param html
+     */
+    setHtml(html) {
+        this.getElement().innerHTML = html;
+    }
+
+    /**
+     * Sets the position of the dialog and optionally its container
+     * @param position
+     * @return {Cuic.Component}
+     */
+    setPosition(position) {
+        Cuic.position(this.getElement(), position);
+        this.options.position = position;
+        return this;
+    }
+
+    /**
+     * Sets content text
+     * @param text
+     */
+    setText(text) {
+        this.getElement().innerText = text;
     }
 
     /**
@@ -356,5 +431,7 @@ Cuic.Component = class {
  */
 Cuic.Component.prototype.options = {
     closeable: false,
-    css: null
+    css: null,
+    parent: null,
+    position: null
 };

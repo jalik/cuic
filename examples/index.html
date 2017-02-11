@@ -55,6 +55,7 @@
             <li><a href="#ui-grid">Grid</a></li>
             <li><a href="#ui-hook">Hook</a></li>
             <li><a href="#ui-notification">Notification</a></li>
+            <li><a href="#ui-notification-stack">NotificationStack</a></li>
             <li><a href="#ui-panel">Panel</a></li>
             <li><a href="#ui-popup">Popup</a></li>
             <li><a href="#ui-switcher">Switcher</a></li>
@@ -91,15 +92,15 @@
                 <label class="inline">
                     <span class="help-block">position</span>
                     <select class="form-control" name="position">
-                        <option>left top</option>
-                        <option>left</option>
-                        <option>left bottom</option>
-                        <option>top</option>
                         <option selected>center</option>
+                        <option>left top</option>
+                        <option>top</option>
                         <option>right top</option>
                         <option>right</option>
                         <option>right bottom</option>
                         <option>bottom</option>
+                        <option>left bottom</option>
+                        <option>left</option>
                     </select>
                 </label>
                 <label class="inline">
@@ -142,7 +143,7 @@
 
                         window.dialog = new Cuic.Dialog({
                             autoResize: autoResize.is(':checked'),
-                            container: container.is(':checked') ? '#sb-dialog .blueprint' : document.body,
+                            parent: container.is(':checked') ? $('#sb-dialog .blueprint') : document.body,
                             css: css.val(),
                             modal: modal.is(':checked'),
                             position: position.val(),
@@ -523,15 +524,15 @@
                 <label class="inline">
                     <span class="help-block">position</span>
                     <select class="form-control" name="position">
-                        <option>left top</option>
-                        <option>left</option>
-                        <option>left bottom</option>
-                        <option>top</option>
                         <option selected>center</option>
+                        <option>left top</option>
+                        <option>top</option>
                         <option>right top</option>
                         <option>right</option>
                         <option>right bottom</option>
                         <option>bottom</option>
+                        <option>left bottom</option>
+                        <option>left</option>
                     </select>
                 </label>
                 <label class="inline">
@@ -563,11 +564,12 @@
                             autoClose: autoClose.is(":checked"),
                             autoRemove: true,
                             closeable: true,
-                            container: container.is(':checked') ? '#sb-notification .blueprint' : document.body,
+                            parent: container.is(':checked') ? $('#sb-notification .blueprint') : document.body,
                             content: 'Notification from <b>' + position.val() + '</b>',
                             duration: duration.val(),
                             position: position.val()
-                        }).open();
+                        });
+                        notification.open();
                     };
                     sandbox.find('.btn-run').on('click', function (ev) {
                         ev.stopPropagation();
@@ -581,7 +583,7 @@
         </div>
 
         <div id="ui-notification-stack">
-            <h2><a href="#">Cuic.</a>Notification.Stack</h2>
+            <h2><a href="#">Cuic.</a>NotificationStack</h2>
 
             <p class="alert alert-info">Notification areas are used to centralize notifications display.</p>
 
@@ -589,15 +591,15 @@
                 <label class="inline">
                     <span class="help-block">position</span>
                     <select class="form-control" name="position">
+                        <option selected>center</option>
                         <option>left top</option>
-                        <option>left</option>
-                        <option>left bottom</option>
-                        <option selected>top</option>
-                        <option>center</option>
+                        <option>top</option>
                         <option>right top</option>
                         <option>right</option>
                         <option>right bottom</option>
                         <option>bottom</option>
+                        <option>left bottom</option>
+                        <option>left</option>
                     </select>
                 </label>
                 <button class="btn btn-primary btn-run" type="submit">Run</button>
@@ -609,8 +611,8 @@
                     var sandbox = $('#sb-notification-stack');
                     var position = sandbox.find('[name=position]');
                     var run = function () {
-                        window.notificationStack = new Cuic.Notification.Stack({
-                            container: '#sb-notification-stack .blueprint',
+                        window.notificationStack = new Cuic.NotificationStack({
+                            parent: $('#sb-notification-stack .blueprint'),
                             css: "width:200px",
                             position: position.val()
                         });
@@ -619,11 +621,12 @@
                         ev.stopPropagation();
                         run();
                         setInterval(function () {
-                            notificationStack.add({
+                            notificationStack.add(new Cuic.Notification({
+                                position: null,
                                 autoClose: true,
                                 content: "Custom event at <em>" + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds() + "</em>"
-                            });
-                        }, 1000);
+                            }));
+                        }, 3000);
                     });
                     position.on("change", function () {
                         notificationStack.setPosition(position.val());
@@ -642,15 +645,15 @@
                 <label class="inline">
                     <span class="help-block">position</span>
                     <select class="form-control" name="position">
-                        <option>center</option>
+                        <option selected>center</option>
                         <option>left top</option>
-                        <option selected>left</option>
-                        <option>left bottom</option>
                         <option>top</option>
                         <option>right top</option>
                         <option>right</option>
                         <option>right bottom</option>
                         <option>bottom</option>
+                        <option>left bottom</option>
+                        <option>left</option>
                     </select>
                 </label>
                 <label class="inline">
@@ -1021,14 +1024,15 @@
                 <label class="inline">
                     <span class="help-block">position</span>
                     <select class="form-control" name="position">
+                        <option selected>center</option>
                         <option>left top</option>
-                        <option>left</option>
-                        <option>left bottom</option>
                         <option>top</option>
                         <option>right top</option>
                         <option>right</option>
-                        <option selected>right bottom</option>
+                        <option>right bottom</option>
                         <option>bottom</option>
+                        <option>left bottom</option>
+                        <option>left</option>
                     </select>
                 </label>
                 <label class="inline">

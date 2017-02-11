@@ -60,28 +60,10 @@ Cuic.Dialog = class extends Cuic.Component {
         let buttons = [];
         let $buttons;
         let $closeButton;
-        let $container;
         let $content;
         let $footer;
         let $header;
         let $title;
-        let position;
-
-        // Define attributes
-        self.autoRemove = options.autoRemove === true;
-        self.autoResize = options.autoResize === true;
-        self.draggable = options.draggable === true;
-        self.maximized = options.maximized === true;
-        self.modal = options.modal === true;
-
-        // Define vars
-        $container = $(options.container);
-        position = options.position;
-
-        // Use document body as container
-        if ($container.length === 0) {
-            $container = $(document.body);
-        }
 
         /**
          * Adds a button to the dialog
@@ -103,7 +85,7 @@ Cuic.Dialog = class extends Cuic.Component {
                         callback.call(self, ev);
                     };
                 } else if (callback === 'close') {
-                    button.onClick = function () {
+                    button.onClick = () => {
                         self.close();
                     };
                 }
@@ -133,7 +115,7 @@ Cuic.Dialog = class extends Cuic.Component {
          * @deprecated
          * @return {jQuery}
          */
-        self.getBody = function () {
+        self.getBody = () => {
             return $content;
         };
 
@@ -141,7 +123,7 @@ Cuic.Dialog = class extends Cuic.Component {
          * Returns the content
          * @return {jQuery}
          */
-        self.getContent = function () {
+        self.getContent = () => {
             return $content;
         };
 
@@ -149,7 +131,7 @@ Cuic.Dialog = class extends Cuic.Component {
          * Returns the footer
          * @return {jQuery}
          */
-        self.getFooter = function () {
+        self.getFooter = () => {
             return $footer;
         };
 
@@ -157,17 +139,16 @@ Cuic.Dialog = class extends Cuic.Component {
          * Returns the header
          * @return {jQuery}
          */
-        self.getHeader = function () {
+        self.getHeader = () => {
             return $header;
         };
 
         /**
          * Called when the dialog is closing
          */
-        self.onClose = function () {
-            // Close fader
+        self.onClose = () => {
             fader.close(() => {
-                if (self.autoRemove) {
+                if (self.options.autoRemove) {
                     fader.remove();
                 }
             });
@@ -176,8 +157,8 @@ Cuic.Dialog = class extends Cuic.Component {
         /**
          * Called when the dialog is closed
          */
-        self.onClosed = function () {
-            if (self.autoRemove) {
+        self.onClosed = () => {
+            if (self.options.autoRemove) {
                 self.remove();
             }
         };
@@ -185,22 +166,22 @@ Cuic.Dialog = class extends Cuic.Component {
         /**
          * Called when the dialog is opening
          */
-        self.onOpen = function () {
+        self.onOpen = () => {
             // Calculate z-index
             let zIndex = options.zIndex + dialogZIndex;
             self.css({'z-index': zIndex});
 
             // Open fader
-            if (self.modal) {
+            if (self.options.modal) {
                 self.css({'z-index': zIndex + 1});
                 fader.css({'z-index': zIndex});
                 fader.open();
             }
             // Maximize or position the dialog
-            if (self.maximized) {
+            if (self.options.maximized) {
                 self.maximize();
             } else {
-                self.setPosition(position);
+                self.setPosition(self.options.position);
             }
             // Focus the last button
             if (self.$element.find(':focus').length === 0) {
@@ -211,13 +192,13 @@ Cuic.Dialog = class extends Cuic.Component {
         /**
          * Called when the dialog is opened
          */
-        self.onOpened = function () {
+        self.onOpened = () => {
             // // Find images
             // let images = self.$element.find('img');
             //
             // if (images.length > 0) {
             //     // Position the dialog when images are loaded
-            //     images.off(ns('load')).on(ns('load'), function () {
+            //     images.off(ns('load')).on(ns('load'), () => {
             //         self.resizeContent();
             //     });
             // } else {
@@ -230,7 +211,7 @@ Cuic.Dialog = class extends Cuic.Component {
          * Resizes the content
          * @return {Cuic.Dialog}
          */
-        self.resizeContent = function () {
+        self.resizeContent = () => {
             let display = fader.css('display');
             let maxHeight = window.innerHeight;
 
@@ -243,16 +224,16 @@ Cuic.Dialog = class extends Cuic.Component {
             self.$element.show();
 
             // Set maximized
-            if (self.maximized) {
+            if (self.options.maximized) {
                 self.css({
                     height: '100%',
                     width: '100%'
                 });
             }
 
-            // Use container for max height
-            if ($container !== document.body) {
-                maxHeight = $container.innerHeight();
+            // Use parent for max height
+            if (self.getParentElement() !== document.body) {
+                maxHeight = self.getParentElement().innerHeight();
             }
 
             // Set dialog max height
@@ -276,35 +257,12 @@ Cuic.Dialog = class extends Cuic.Component {
                 overflow: 'auto'
             });
 
-            Cuic.position(self.$element, position, fader);
+            self.position(position);
 
             // Restore the initial display state
             fader.css('display', display);
             self.$element.css('display', display);
 
-            return self;
-        };
-
-        /**
-         * Sets the content
-         * @param html
-         * @return {Cuic.Dialog}
-         */
-        self.setContent = function (html) {
-            $content.html(html);
-            return self;
-        };
-
-        /**
-         * Sets the position of the dialog and optionally its container
-         * @param pos
-         * @param cont
-         * @return {Cuic.Dialog}
-         */
-        self.setPosition = function (pos, cont) {
-            position = pos;
-            $container = $(cont || $container);
-            Cuic.position(self.$element, position, $container);
             return self;
         };
 
@@ -318,16 +276,14 @@ Cuic.Dialog = class extends Cuic.Component {
             return self;
         };
 
-        // If the dialog is not in a container, then it is fixed
-        let fixed = $container.get(0).nodeName === 'BODY';
-
         // Set dialog position
+        let fixed = self.getParentElement() === document.body;
         self.$element.css({position: fixed ? 'fixed' : 'absolute'});
 
         // Create the fader
         const fader = new Cuic.Fader({
             className: 'fader dialog-fader'
-        }).appendTo($container);
+        }).appendTo(options.parent);
 
         // Set fader position
         if (fixed) {
@@ -344,7 +300,7 @@ Cuic.Dialog = class extends Cuic.Component {
         $header = $('<header>', {
             'class': 'dialog-header',
             css: {display: options.title != null ? 'block' : 'none'}
-        }).appendTo(self.$element);
+        }).appendTo(self.getElement());
 
         // Add title
         $title = $('<h3>', {
@@ -362,13 +318,13 @@ Cuic.Dialog = class extends Cuic.Component {
             'html': options.content,
             'class': 'dialog-content',
             style: 'overflow: auto'
-        }).appendTo(self.$element);
+        }).appendTo(self.getElement());
 
         // Add footer
         $footer = $('<footer>', {
             'class': 'dialog-footer',
             css: {display: options.buttons != null ? 'block' : 'none'}
-        }).appendTo(self.$element);
+        }).appendTo(self.getElement());
 
         // Add buttons group
         $buttons = $('<div>', {
@@ -394,39 +350,38 @@ Cuic.Dialog = class extends Cuic.Component {
         }
 
         // Close dialog when close button is clicked
-        $closeButton.on(ns('click'), function () {
+        $closeButton.on(ns('click'), () => {
             self.close();
         });
 
         // let timer;
-        // $(window).off(ns('resize')).on(ns('resize'), function () {
+        // $(window).off(ns('resize')).on(ns('resize'), () => {
         //     clearTimeout(timer);
         //
-        //     if (self.autoResize) {
-        //         timer = setTimeout(function () {
+        //     if (self.options.autoResize) {
+        //         timer = setTimeout(() => {
         //             self.resizeContent();
         //         }, 50);
         //     }
         // });
 
-        // Add dialog in container
-        self.appendTo($container);
-
         // Add dialog to collection
         Cuic.dialogs.add(self);
 
         // Make the dialog draggable
-        self.draggable = new Cuic.Draggable({
-            area: $title,
-            container: $container,
-            rootOnly: false,
-            target: self.$element
-        });
+        if (self.options.draggable) {
+            self.draggable = new Cuic.Draggable({
+                area: $title,
+                container: self.getParentElement(),
+                rootOnly: false,
+                target: self.getElement()
+            });
+        }
 
         // Define the close shortcut
         new Cuic.Shortcut({
             keyCode: 27, //Esc
-            target: self.$element,
+            target: self.getElement(),
             callback() {
                 self.close();
             }
@@ -447,13 +402,12 @@ Cuic.Dialog.prototype.options = {
     autoResize: true,
     buttons: [],
     className: 'dialog',
-    container: null,
     content: null,
     contentHeight: null,
     contentWidth: null,
-    css: null,
     draggable: true,
     maximized: false,
+    parent: document.body,
     position: 'center',
     modal: true,
     target: null,

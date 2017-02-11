@@ -561,6 +561,30 @@
         },
 
         /**
+         * Checks if the element is at the position
+         * @param position
+         * @param element
+         * @return {boolean}
+         */
+        isPosition(position, element) {
+            const style = element.style;
+
+            if (position.indexOf('bottom') !== -1) {
+                return style.bottom && !style.top;
+            }
+            if (position.indexOf('top') !== -1) {
+                return style.top && !style.bottom;
+            }
+            if (position.indexOf('left') !== -1) {
+                return style.left && !style.right;
+            }
+            if (position.indexOf('right') !== -1) {
+                return style.right && !style.left;
+            }
+            return false;
+        },
+
+        /**
          * Checks if the browser is Safari 3.0+
          * @return {boolean}
          */
@@ -663,11 +687,10 @@
                 }
             }
             // Check if event is supported
-            if (browserEvent) {
-                return this.removeEventListener(element, browserEvent, callback);
-            } else {
+            if (!browserEvent) {
                 console.warn(`Event "${event}" is not supported by this browser.`);
             }
+            return this.removeEventListener(element, browserEvent, callback);
         },
 
         /**
@@ -699,11 +722,10 @@
                 }
             }
             // Check if event is supported
-            if (browserEvent) {
-                return this.addEventListener(element, browserEvent, callback);
-            } else {
+            if (!browserEvent) {
                 console.warn(`Event "${event}" is not supported by this browser.`);
             }
+            return this.addEventListener(element, browserEvent, callback);
         },
 
         /**
@@ -735,15 +757,14 @@
                 }
             }
             // Check if event is supported
-            if (browserEvent) {
-                const listener = function (ev) {
-                    Cuic.removeEventListener(element, browserEvent, listener);
-                    Cuic.apply(callback, this, Array.prototype.slice.call(arguments));
-                };
-                return this.addEventListener(element, browserEvent, listener);
-            } else {
+            if (!browserEvent) {
                 console.warn(`Event "${event}" is not supported by this browser.`);
             }
+            const listener = function (ev) {
+                Cuic.removeEventListener(element, browserEvent, listener);
+                Cuic.apply(callback, this, Array.prototype.slice.call(arguments));
+            };
+            return this.addEventListener(element, browserEvent, listener);
         },
 
         /**
@@ -876,12 +897,17 @@
                         'WebkitTransition': 'webkitTransitionEnd'
                     };
                     break;
-            }
 
+            }
+            // Check in resolver
             for (ev in resolver) {
                 if (el.style[ev] !== undefined) {
                     return resolver[ev];
                 }
+            }
+            // Check in document
+            if (document[event] !== undefined || document[`on${event}`] !== undefined) {
+                return event;
             }
         }
     };
