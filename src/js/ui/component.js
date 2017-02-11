@@ -43,11 +43,6 @@ Cuic.Component = class {
             options.parent = options.parent.get(0);
         }
 
-        // Put component in parent node
-        if (options.parent instanceof HTMLElement) {
-            self.appendTo(options.parent);
-        }
-
         // Set element attributes
         for (let attr in attributes) {
             if (attributes.hasOwnProperty(attr)) {
@@ -70,9 +65,14 @@ Cuic.Component = class {
         // Set element styles
         self.css(options.css);
 
-        // Position the component
-        if (options.position) {
-            self.setPosition(options.position);
+        // Put component in parent node
+        if (options.parent instanceof HTMLElement) {
+            self.appendTo(options.parent);
+
+            // Position the component
+            if (options.position) {
+                self.setPosition(options.position);
+            }
         }
 
         // Handle click events
@@ -199,6 +199,14 @@ Cuic.Component = class {
     isEnabled() {
         return this.getElement().disabled !== true
             || !this.hasClass('disabled');
+    }
+
+    /**
+     * Checks if the component is opened
+     * @return {boolean}
+     */
+    isOpened() {
+        return this.hasClass('opened');
     }
 
     /**
@@ -365,7 +373,7 @@ Cuic.Component = class {
         if (element instanceof Cuic.Component) {
             element = element.getElement();
         }
-        element.prependTo(this.getElement());
+        element.prepend(this.getElement());
         return this;
     }
 

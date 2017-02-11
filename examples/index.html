@@ -589,6 +589,12 @@
 
             <div class="sandbox" id="sb-notification-stack">
                 <label class="inline">
+                    <div>
+                        <button class="btn btn-default" name="add-notif">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            <span>Add a notification</span>
+                        </button>
+                    </div>
                     <span class="help-block">position</span>
                     <select class="form-control" name="position">
                         <option selected>center</option>
@@ -602,7 +608,7 @@
                         <option>left</option>
                     </select>
                 </label>
-                <button class="btn btn-primary btn-run" type="submit">Run</button>
+                <!--<button class="btn btn-primary btn-run" type="submit">Run</button>-->
 
                 <div class="blueprint" style="height: 300px;margin-top: 1em;overflow: auto"></div>
             </div>
@@ -610,26 +616,20 @@
                 $(document).ready(function () {
                     var sandbox = $('#sb-notification-stack');
                     var position = sandbox.find('[name=position]');
-                    var run = function () {
-                        window.notificationStack = new Cuic.NotificationStack({
-                            parent: $('#sb-notification-stack .blueprint'),
-                            css: "width:200px",
-                            position: position.val()
-                        });
-                    };
-                    sandbox.find('.btn-run').on('click', function (ev) {
-                        ev.stopPropagation();
-                        run();
-                        setInterval(function () {
-                            notificationStack.add(new Cuic.Notification({
-                                position: null,
-                                autoClose: true,
-                                content: "Custom event at <em>" + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds() + "</em>"
-                            }));
-                        }, 3000);
+                    window.notificationStack = new Cuic.NotificationStack({
+                        parent: $('#sb-notification-stack .blueprint'),
+                        css: "width:200px",
+                        position: position.val()
                     });
                     position.on("change", function () {
                         notificationStack.setPosition(position.val());
+                    });
+                    sandbox.find('[name="add-notif"]').on('click', function (ev) {
+                        notificationStack.add(new Cuic.Notification({
+                            position: null,
+                            autoClose: true,
+                            content: "Custom event at <em>" + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds() + "</em>"
+                        }));
                     });
                 });
             </script>
