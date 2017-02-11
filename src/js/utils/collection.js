@@ -41,6 +41,15 @@ Cuic.Collection = class {
     }
 
     /**
+     * Returns the specified value
+     * @param index
+     * @return {Array.<T>}
+     */
+    get(index) {
+        return this.values[index];
+    }
+
+    /**
      * Called when a value is added
      * @param value
      */

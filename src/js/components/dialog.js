@@ -57,13 +57,15 @@ Cuic.Dialog = class extends Cuic.Component {
 
         const self = this;
 
-        let buttons = [];
-        let $buttons;
+        let $buttons;//todo use a GroupComponent
         let $closeButton;
         let $content;
         let $footer;
         let $header;
         let $title;
+
+        // Attributes
+        self.buttons = new Cuic.Collection();
 
         /**
          * Adds a button to the dialog
@@ -93,14 +95,14 @@ Cuic.Dialog = class extends Cuic.Component {
 
             // Add button in footer
             $buttons.append(button.getElement());
-            buttons.push(button);
+            self.buttons.add(button);
 
             // Hide footer if empty
-            if (buttons.length > 1) {
+            if (self.buttons.length > 1) {
                 $footer.show();
             }
             // Maximize the only one button
-            else if (buttons.length === 1) {
+            else if (self.buttons.length === 1) {
                 $footer.show();
             }
             // Hide footer if empty
@@ -184,8 +186,9 @@ Cuic.Dialog = class extends Cuic.Component {
                 self.setPosition(self.options.position);
             }
             // Focus the last button
-            if (self.$element.find(':focus').length === 0) {
-                $footer.find('button:last').focus();
+            if (self.buttons.length > 0) {
+                const button = self.buttons.get(self.buttons.length - 1);
+                button.getElement().focus();
             }
         };
 
@@ -212,58 +215,58 @@ Cuic.Dialog = class extends Cuic.Component {
          * @return {Cuic.Dialog}
          */
         self.resizeContent = () => {
-            let display = fader.css('display');
-            let maxHeight = window.innerHeight;
-
-            console.warn('dialog.resizeContent disabled');
-            return;
-
-            // Temporary display the dialog
-            // to get real height values
-            fader.show();
-            self.$element.show();
-
-            // Set maximized
-            if (self.options.maximized) {
-                self.css({
-                    height: '100%',
-                    width: '100%'
-                });
-            }
-
-            // Use parent for max height
-            if (self.getParentElement() !== document.body) {
-                maxHeight = self.getParentElement().innerHeight();
-            }
-
-            // Set dialog max height
-            maxHeight -= self.$element.outerHeight(true) - self.$element.height();
-            self.$element.css('max-height', maxHeight);
-
-            // Set content max height
-            let contentMaxHeight = maxHeight;
-            contentMaxHeight -= $content.outerHeight(true) - $content.height();
-
-            if ($header) {
-                contentMaxHeight -= $header.outerHeight(true);
-            }
-
-            if ($footer) {
-                contentMaxHeight -= $footer.outerHeight(true);
-            }
-
-            $content.css({
-                maxHeight: contentMaxHeight,
-                overflow: 'auto'
-            });
-
-            self.position(position);
-
-            // Restore the initial display state
-            fader.css('display', display);
-            self.$element.css('display', display);
-
-            return self;
+            // let display = fader.css('display');
+            // let maxHeight = window.innerHeight;
+            //
+            // console.warn('dialog.resizeContent disabled');
+            // return;
+            //
+            // // Temporary display the dialog
+            // // to get real height values
+            // fader.show();
+            // self.$element.show();
+            //
+            // // Set maximized
+            // if (self.options.maximized) {
+            //     self.css({
+            //         height: '100%',
+            //         width: '100%'
+            //     });
+            // }
+            //
+            // // Use parent for max height
+            // if (self.getParentElement() !== document.body) {
+            //     maxHeight = self.getParentElement().innerHeight();
+            // }
+            //
+            // // Set dialog max height
+            // maxHeight -= self.$element.outerHeight(true) - self.$element.height();
+            // self.$element.css('max-height', maxHeight);
+            //
+            // // Set content max height
+            // let contentMaxHeight = maxHeight;
+            // contentMaxHeight -= $content.outerHeight(true) - $content.height();
+            //
+            // if ($header) {
+            //     contentMaxHeight -= $header.outerHeight(true);
+            // }
+            //
+            // if ($footer) {
+            //     contentMaxHeight -= $footer.outerHeight(true);
+            // }
+            //
+            // $content.css({
+            //     maxHeight: contentMaxHeight,
+            //     overflow: 'auto'
+            // });
+            //
+            // self.position(position);
+            //
+            // // Restore the initial display state
+            // fader.css('display', display);
+            // self.$element.css('display', display);
+            //
+            // return self;
         };
 
         /**
@@ -278,7 +281,7 @@ Cuic.Dialog = class extends Cuic.Component {
 
         // Set dialog position
         let fixed = self.getParentElement() === document.body;
-        self.$element.css({position: fixed ? 'fixed' : 'absolute'});
+        self.css({position: fixed ? 'fixed' : 'absolute'});
 
         // Create the fader
         const fader = new Cuic.Fader({

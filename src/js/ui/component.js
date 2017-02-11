@@ -37,7 +37,6 @@ Cuic.Component = class {
 
         // Create element
         self.element = document.createElement(node);
-        self.$element = $(self.element);
 
         if (options.parent instanceof jQuery) {
             options.parent = options.parent.get(0);
@@ -79,7 +78,7 @@ Cuic.Component = class {
         }
 
         // Handle click events
-        self.$element.on(ns('click'), (ev) => {
+        self.on('click', (ev) => {
             if (typeof self.onClick === 'function') {
                 self.onClick.call(self, ev);
             }

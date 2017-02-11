@@ -749,11 +749,11 @@
 
                         window.panel = new Cuic.Panel({
                             autoClose: autoClose.is(':checked'),
-                            container: container.is(':checked') ? '#sb-panel .blueprint' : document.body,
+                            parent: container.is(':checked') ? $('#sb-panel .blueprint') : document.body,
                             css: css.val(),
                             position: position.val(),
                             maximized: maximized.is(':checked'),
-                            target: '#panel',
+                            target: document.getElementById('panel'),
                             visible: visible.is(':checked')
                         });
                     };
