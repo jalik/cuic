@@ -23,113 +23,51 @@
  *
  */
 
-(function ($) {
-    'use strict';
+Cuic.Panel = class extends Cuic.Component {
 
-    var ns = Cuic.namespace('panel');
+    constructor(options) {
+        const ns = Cuic.namespace('panel');
 
-    /**
-     * Creates a panel
-     * @param options
-     * @constructor
-     */
-    Cuic.Panel = function (options) {
-        var self = this;
-        var $content;
-        var $container;
-        var $element;
-        var $footer;
-        var $header;
-        var position;
-        var $title;
+        // Set default options
+        options = $.extend({}, Cuic.Panel.prototype.options, options);
 
-        // Default options
-        options = $.extend(true, {}, Cuic.Panel.prototype.options, options);
+        // Create element
+        super('div', {
+            className: options.className
+        }, options);
+
+        const self = this;
+
+        let $content;
+        let $footer;
+        let $header;
+        let $title;
 
         // Define attributes
-        self.autoClose = options.autoClose === true;
-        self.closeable = options.closeable === true;
         self.closeButton = options.closeButton;
-        self.onClosed = options.onClosed;
-        self.onOpened = options.onOpened;
-
-        // Define vars
-        $container = $(options.container);
-        position = options.position;
-
-        // Use document body as container
-        if ($container.length === 0) {
-            $container = $(document.body);
-        }
 
         /**
-         * Closes the panel
-         * @param callback
-         * @return {Cuic.Panel}
-         */
-        self.close = function (callback) {
-            if (self.isOpening() || (self.isOpened() && !self.isClosing())) {
-                var prop = {};
-
-                // Horizontal position
-                if (position.indexOf('left') !== -1) {
-                    prop.left = -$element.outerWidth(true);
-                    prop.right = '';
-                } else if (position.indexOf('right') !== -1) {
-                    prop.right = -$element.outerWidth(true);
-                    prop.left = '';
-                }
-
-                // Vertical position
-                if (position.indexOf('bottom') !== -1) {
-                    prop.bottom = -$element.outerHeight(true);
-                    prop.top = '';
-                } else if (position.indexOf('top') !== -1) {
-                    prop.top = -$element.outerHeight(true);
-                    prop.bottom = '';
-                }
-
-                Cuic.once('transitionend', element, function () {
-                    // $elm.removeClass('closing');
-                    Cuic.call(callback, self);
-                    Cuic.call(self.onClosed, self);
-
-                    if (self.autoRemove) {
-                        $element.remove();
-                    }
-                });
-
-                // Hide panel
-                $element.css(prop);
-                $element.addClass('closed');
-                // $elm.addClass('closing');
-                $element.removeClass('opening');
-                $element.removeClass('opened');
-            }
-            return self;
-        };
-
-        /**
-         * Returns the body
+         * Returns the content
+         * @deprecated
          * @return {jQuery}
          */
-        self.getBody = function () {
+        self.getBody = () => {
             return $content;
         };
 
         /**
-         * Returns the element
+         * Returns the content
          * @return {jQuery}
          */
-        self.getElement = function () {
-            return $element;
+        self.getContent = () => {
+            return $content;
         };
 
         /**
          * Returns the footer
          * @return {jQuery}
          */
-        self.getFooter = function () {
+        self.getFooter = () => {
             return $footer;
         };
 
@@ -137,134 +75,138 @@
          * Returns the header
          * @return {jQuery}
          */
-        self.getHeader = function () {
+        self.getHeader = () => {
             return $header;
-        };
-
-        /**
-         * Checks if the panel is closing
-         * @return {boolean}
-         */
-        self.isClosing = function () {
-            return $element.hasClass('closing');
-        };
-
-        /**
-         * Checks if the panel is opened
-         * @return {boolean}
-         */
-        self.isOpened = function () {
-            return $element.hasClass('opened');
-        };
-
-        /**
-         * Checks if the panel is opening
-         * @return {boolean}
-         */
-        self.isOpening = function () {
-            return $element.hasClass('opening');
         };
 
         /**
          * Make the panel fit its parent
          * @return {Cuic.Panel}
          */
-        self.maximize = function () {
-            self.resizeContent();
-            return Cuic.maximize(element, position);
-        };
+        // self.maximize = () => {
+        //     self.resizeContent();
+        //     return Cuic.maximize(element, position);
+        // };
 
         /**
          * Make the panel fit its content
          * @return {Cuic.Panel}
          */
-        self.minimize = function () {
-            var $clone = $(element.cloneNode(true));
-            $clone.css({height: 'auto', width: 'auto'});
+        // self.minimize = () => {
+        //     let $clone = $(element.cloneNode(true));
+        //     $clone.css({height: 'auto', width: 'auto'});
+        //
+        //     // Calculate minimized size
+        //     let prop = Cuic.calculatePosition($clone, position);
+        //     prop.height = $clone.outerHeight();
+        //     prop.width = $clone.outerWidth();
+        //     $clone.remove();
+        //
+        //     if (!self.isOpened()) {
+        //         // Horizontal position
+        //         if (position.indexOf('left') !== -1) {
+        //             prop.left = -self.getElement().outerWidth(true);
+        //             prop.right = '';
+        //         } else if (position.indexOf('right') !== -1) {
+        //             prop.right = -self.getElement().outerWidth(true);
+        //             prop.left = '';
+        //         }
+        //         // Vertical position
+        //         if (position.indexOf('bottom') !== -1) {
+        //             prop.bottom = -self.getElement().outerHeight(true);
+        //             prop.top = '';
+        //         } else if (position.indexOf('top') !== -1) {
+        //             prop.top = -self.getElement().outerHeight(true);
+        //             prop.bottom = '';
+        //         }
+        //     }
+        //
+        //     // Minimize panel
+        //     self.getElement().removeClass('maximized');
+        //     self.getElement().css(prop);
+        //
+        //     return self;
+        // };
 
-            // Calculate minimized size
-            var prop = Cuic.calculatePosition($clone, position, $container);
-            prop.height = $clone.outerHeight();
-            prop.width = $clone.outerWidth();
-            $clone.remove();
+        /**
+         * Called when the panel is closing
+         */
+        self.onClose = () => {
+            let prop = {};
+            const elm = self.getElement();
+            const $elm = $(elm);
+            const position = self.options.position;
 
-            if (!self.isOpened()) {
-                // Horizontal position
-                if (position.indexOf('left') !== -1) {
-                    prop.left = -$element.outerWidth(true);
-                    prop.right = '';
-                } else if (position.indexOf('right') !== -1) {
-                    prop.right = -$element.outerWidth(true);
-                    prop.left = '';
-                }
-                // Vertical position
-                if (position.indexOf('bottom') !== -1) {
-                    prop.bottom = -$element.outerHeight(true);
-                    prop.top = '';
-                } else if (position.indexOf('top') !== -1) {
-                    prop.top = -$element.outerHeight(true);
-                    prop.bottom = '';
-                }
+            // Horizontal position
+            if (position.indexOf('left') !== -1) {
+                prop.left = -$elm.outerWidth(true);
+                prop.right = '';
+            } else if (position.indexOf('right') !== -1) {
+                prop.right = -$elm.outerWidth(true);
+                prop.left = '';
             }
 
-            // Minimize panel
-            $element.removeClass('maximized');
-            $element.css(prop);
+            // Vertical position
+            if (position.indexOf('bottom') !== -1) {
+                prop.bottom = -$elm.outerHeight(true);
+                prop.top = '';
+            } else if (position.indexOf('top') !== -1) {
+                prop.top = -$elm.outerHeight(true);
+                prop.bottom = '';
+            }
 
-            return self;
+            console.log('close', prop);
+
+            // Hide panel
+            self.css(prop);
         };
 
         /**
-         * Opens the panel
-         * @param callback
-         * @return {Cuic.Panel}
+         * Called when the panel is closed
          */
-        self.open = function (callback) {
-            if (self.isClosing() || (!self.isOpened() && !self.isOpening())) {
-                Cuic.once('transitionend', element, function () {
-                    // $elm.removeClass('opening');
-                    Cuic.call(callback, self);
-                    Cuic.call(self.onOpened, self);
-                });
+        self.onClosed = () => {
+            console.log('closed');
+        };
 
-                // Recalculate position
-                var prop = Cuic.calculatePosition(element, position, $container);
+        /**
+         * Called when the panel is opening
+         */
+        self.onOpen = () => {
+            console.log('open');
+            // Recalculate position
+            self.setPosition(self.options.position);
+            // Resize content
+            self.resizeContent();
+        };
 
-                // Display the panel
-                self.resizeContent();
-                $element.addClass('opened');
-                // $elm.addClass('opening');
-                $element.removeClass('closing');
-                $element.removeClass('closed');
-                $element.css(prop);
-            }
-            return self;
+        /**
+         * Called when the panel is opening
+         */
+        self.onOpened = () => {
+            console.log('opened');
         };
 
         /**
          * Resizes the content
          * @return {Cuic.Panel}
          */
-        self.resizeContent = function () {
-            var display = $element.css('display');
-            var panelMaxHeight = window.innerHeight;
-
-            // Temporary display the panel
-            // to get real height values
-            $element.show();
+        self.resizeContent = () => {
+            const elm = self.getElement();
+            const parent = self.getParentElement();
+            let display = elm.style.display;
+            let panelMaxHeight = window.innerHeight;
 
             // Use container for max height
-            if ($container && $container !== document.body) {
-                panelMaxHeight = $container.height();
+            if (parent && parent !== document.body) {
+                panelMaxHeight = $(parent).height();
             }
 
             // Set panel max height
-            panelMaxHeight -= $element.outerHeight(true) - $element.height();
-            $element.css('max-height', panelMaxHeight);
+            panelMaxHeight -= $(elm).outerHeight(true) - $(elm).height();
+            self.css({'max-height': panelMaxHeight});
 
             // Set content max height
-            var contentMaxHeight = panelMaxHeight;
-            // contentMaxHeight -= $content.outerHeight(true) - $content.height();
+            let contentMaxHeight = panelMaxHeight;
 
             if ($header) {
                 contentMaxHeight -= $header.outerHeight(true);
@@ -278,52 +220,44 @@
                 overflow: 'auto'
             });
 
-            // Restore the initial display state
-            $element.css('display', display);
+            // Restore initial display state
+            self.css({display: display});
 
-            return self;
-        };
-
-        /**
-         * Sets the content
-         * @param html
-         * @return {Cuic.Panel}
-         */
-        self.setContent = function (html) {
-            $content.html(html);
             return self;
         };
 
         /**
          * Sets the position of the panel
-         * @param pos
+         * @param position
          * @return {Cuic.Panel}
          */
-        self.setPosition = function (pos) {
-            position = pos;
+        self.setPosition = function (position) {
+            const elm = self.getElement();
 
             if (self.isOpened()) {
-                Cuic.position($element, position, $container);
-            } else {
-                var prop = Cuic.calculatePosition(element, position, $container);
+                Cuic.position(elm, position);
+            }
+            else {
+                let prop = Cuic.calculatePosition(elm, position);
 
                 // Horizontal position
                 if (position.indexOf('left') !== -1) {
-                    prop.left = -$element.outerWidth(true);
+                    prop.left = -$(elm).outerWidth(true);
                     prop.right = '';
                 } else if (position.indexOf('right') !== -1) {
-                    prop.right = -$element.outerWidth(true);
+                    prop.right = -$(elm).outerWidth(true);
                     prop.left = '';
                 }
                 // Vertical position
                 if (position.indexOf('bottom') !== -1) {
-                    prop.bottom = -$element.outerHeight(true);
+                    prop.bottom = -$(elm).outerHeight(true);
                     prop.top = '';
                 } else if (position.indexOf('top') !== -1) {
-                    prop.top = -$element.outerHeight(true);
+                    prop.top = -$(elm).outerHeight(true);
                     prop.bottom = '';
                 }
-                $element.css(prop);
+                self.css(prop);
+                self.options.position = position;
             }
             return self;
         };
@@ -338,38 +272,18 @@
             return self;
         };
 
-        /**
-         * Toggles the panel visibility
-         * @param callback
-         * @return {Cuic.Panel}
-         */
-        self.toggle = function (callback) {
-            if (self.isClosing() || (!self.isOpened() && !self.isOpening())) {
-                self.open(callback);
-            } else {
-                self.close(callback);
-            }
-            return self;
-        };
-
         if (options.target) {
-            // Use the target as panel
-            $element = $(options.target);
-
             // Find panel parts
-            $header = $element.find('.panel-header');
-            $title = $element.find('.panel-title');
-            $content = $element.find('.panel-content');
-            $footer = $element.find('.panel-footer');
-
-        } else {
-            // Create the panel
-            $element = $('<div>');
-
+            $header = $(self.getElement()).find('.panel-header');
+            $title = $(self.getElement()).find('.panel-title');
+            $content = $(self.getElement()).find('.panel-content');
+            $footer = $(self.getElement()).find('.panel-footer');
+        }
+        else {
             // Add the header
             $header = $('<header>', {
                 'class': 'panel-header'
-            }).appendTo($element);
+            }).appendTo(self.getElement());
 
             // Add the title
             $title = $('<h5>', {
@@ -381,13 +295,13 @@
             $content = $('<section>', {
                 'class': 'panel-content',
                 html: options.content
-            }).appendTo($element);
+            }).appendTo(self.getElement());
 
             // Add the footer
             $footer = $('<footer>', {
                 'class': 'panel-footer',
                 html: options.footer
-            }).appendTo($element);
+            }).appendTo(self.getElement());
 
             // Hide the header if not used
             if (!options.title) {
@@ -400,35 +314,15 @@
             }
         }
 
-        // Reference to DOM element
-        var element = $element.get(0);
-
-        // Add the class
-        $element.addClass(options.className);
-
-        // Set custom styles
-        Cuic.css($element, options.css);
-
-        // Override styles
-        $element.css({
-            // display: 'none',
-            position: 'absolute',
-            zIndex: options.zIndex
-        });
+        // Set panel position
+        let fixed = self.getParentElement() === document.body;
+        self.css({position: fixed ? 'fixed' : 'absolute'});
 
         self.resizeContent();
 
-        // Set the top container of the element
-        self.setPosition(position, $container || $element.offsetParent());
-
-        // If the panel is in the body, then we use the window as container
-        if ($container.get(0).nodeName === 'BODY') {
-            $element.css('position', 'fixed');
-        } else {
-            // To hide the panel in the container,
-            // the container must have a hidden overflow
-            $container.css('overflow', 'hidden');
-        }
+        // To hide the panel in the container,
+        // the container must have a hidden overflow
+        Cuic.css(self.getParentElement(), {overflow: 'hidden'});
 
         // Set the panel visibility
         // Since the visible option is used to check if the panel is visible
@@ -445,61 +339,49 @@
         }
 
         // Add the close button
-        if (self.closeable) {
+        if (self.options.closeable) {
             $('<span>', {
                 class: 'close-panel',
                 html: self.closeButton
             }).prependTo($header);
         }
 
-        // Find the close button
-        $element.find('.close-panel').off(ns('click')).on(ns('click'), self.close);
-
-        // Find the toggle button
-        $element.find('.toggle-panel').off(ns('click')).on(ns('click'), self.toggle);
+        // // Find the close button
+        // self.getElement().find('.close-panel').off(ns('click')).on(ns('click'), self.close);
+        //
+        // // Find the toggle button
+        // self.getElement().find('.toggle-panel').off(ns('click')).on(ns('click'), self.toggle);
 
         // Close the panel when the user clicks outside of it
-        $(document).off(ns('mousedown')).on(ns('mousedown'), function (ev) {
-            var target = $(ev.target);
+        // $(document).off(ns('mousedown')).on(ns('mousedown'), function (ev) {
+        //     let target = $(ev.target);
+        //
+        //     if (target !== self.getElement() && target.closest(self.getElement()).length === 0) {
+        //         if (self.options.autoClose && self.isOpened()) {
+        //             self.close();
+        //         }
+        //     }
+        // });
+    }
+};
 
-            if (target !== $element && target.closest($element).length === 0) {
-                if (self.autoClose && self.isOpened()) {
-                    self.close();
-                }
-            }
-        });
-    };
-
-    /**
-     * Called when panel is closed
-     * @type {function}
-     */
-    Cuic.Panel.prototype.onClosed = null;
-
-    /**
-     * Called when panel is opened
-     * @type {function}
-     */
-    Cuic.Panel.prototype.onOpened = null;
-
-    /**
-     * Default options
-     * @type {*}
-     */
-    Cuic.Panel.prototype.options = {
-        autoClose: false,
-        className: 'panel',
-        closeable: true,
-        closeButton: '×',
-        container: null,
-        content: null,
-        css: null,
-        footer: null,
-        maximized: false,
-        position: 'left top',
-        title: null,
-        visible: false,
-        zIndex: 1
-    };
-
-})(jQuery);
+/**
+ *
+ }Default options
+ * @type {*}
+ */
+Cuic.Panel.prototype.options = {
+    autoClose: false,
+    className: 'panel',
+    closeable: true,
+    closeButton: '×',
+    parent: null,
+    content: null,
+    css: null,
+    footer: null,
+    maximized: false,
+    position: 'left top',
+    title: null,
+    visible: false,
+    zIndex: 1
+};
