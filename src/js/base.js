@@ -86,7 +86,10 @@
             const target = (className || '').split(' ');
 
             for (let i = 0; i < target.length; i += 1) {
-                classes.push(target[i]);
+                // Check if class is already assigned
+                if (classes.indexOf(target[i]) === -1) {
+                    classes.push(target[i]);
+                }
             }
             element.className = classes.join(' ');
             return classes;
@@ -498,13 +501,16 @@
         hasClass(element, className) {
             const classes = this.getClasses(element);
             const target = (className || '').split(' ');
+            let result = false;
 
             for (let i = 0; i < target.length; i += 1) {
-                if (!classes.indexOf(target[i])) {
-                    return false;
+                if (classes.indexOf(target[i]) !== -1) {
+                    result = true;
+                } else {
+                    result = false;
                 }
             }
-            return true;
+            return result;
         },
 
         /**

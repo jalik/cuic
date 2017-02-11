@@ -35,8 +35,17 @@ Cuic.Component = class {
         // Set default options
         self.options = $.extend({}, Cuic.Component.prototype.options, options);
 
+        // Use existing element
+        if (options.target instanceof HTMLElement) {
+            self.element = options.target;
+        }
         // Create element
-        self.element = document.createElement(node);
+        else if (typeof node === 'string') {
+            self.element = document.createElement(node);
+        }
+        else {
+            throw new TypeError(`Cannot create component without node or target.`);
+        }
 
         if (options.parent instanceof jQuery) {
             options.parent = options.parent.get(0);
@@ -67,13 +76,16 @@ Cuic.Component = class {
         // Set element styles
         self.css(options.css);
 
-        // Put component in parent node
-        if (options.parent instanceof HTMLElement) {
-            self.appendTo(options.parent);
+        // Element is not in the DOM
+        if (!self.element.parentNode) {
+            // Put component in parent node
+            if (options.parent instanceof HTMLElement) {
+                self.appendTo(options.parent);
 
-            // Position the component
-            if (options.position) {
-                self.setPosition(options.position);
+                // Position the component
+                if (options.position) {
+                    self.setPosition(options.position);
+                }
             }
         }
 
@@ -395,6 +407,17 @@ Cuic.Component = class {
     removeClass(className) {
         return Cuic.removeClass(this.getElement(), className);
     }
+
+    /**
+     * Sets the content
+     * @param html
+     * @deprecated
+     * @return {Cuic.Component}
+     */
+    setContent(html) {
+        this.setHtml(html);
+        return this;
+    };
 
     /**
      * Sets content HTML
