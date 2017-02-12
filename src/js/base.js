@@ -104,7 +104,7 @@
          */
         anchor(element, position, target) {
             let $element = $(element);
-            let prop = Cuic.calculateAnchor($element, position, target);
+            let prop = this.calculateAnchor($element, position, target);
             $element.css(prop);
             return $element;
         },
@@ -216,35 +216,34 @@
          * Calculates maximized properties
          * @param element
          * @param position
-         * @return {{bottom: string, height: number, left: string, right: string, top: string, width: number}}
+         * @return {{bottom: string, min-height: number, left: string, right: string, top: string, min-width: number}}
          */
         calculateMaximize(element, position) {
             position = position || '';
-            let $element = $(element);
-            let $container = $($element.offsetParent());
-            let ctnPadding = Cuic.padding($container);
-            let elmMargin = Cuic.margin($element);
+            const $element = $(element);
+            const $parent = $element.offsetParent();
+            let ctnPadding = this.padding($parent);
+            let elmMargin = this.margin($element);
             let prop = {
                 bottom: '',
-                height: $container.height() - elmMargin.vertical,
+                height: ($parent.height() - elmMargin.vertical) + 'px',
                 left: '',
                 right: '',
                 top: '',
-                width: $container.width() - elmMargin.horizontal
+                width: ($parent.width() - elmMargin.horizontal) + 'px'
             };
 
             // Horizontal position
             if (position.indexOf('right') !== -1) {
-                prop.right = ctnPadding.right;
+                prop.right = ctnPadding.right + 'px';
             } else {
-                prop.left = ctnPadding.left;
+                prop.left = ctnPadding.left + 'px';
             }
-
             // Vertical position
             if (position.indexOf('bottom') !== -1) {
-                prop.bottom = ctnPadding.bottom;
+                prop.bottom = ctnPadding.bottom + 'px';
             } else {
-                prop.top = ctnPadding.top;
+                prop.top = ctnPadding.top + 'px';
             }
             return prop;
         },
@@ -257,17 +256,17 @@
          */
         calculateMinimize(element, position) {
             position = position || '';
-            let $element = $(element);
-            let $container = $element.offsetParent();
+            const $element = $(element);
+            const $parent = $element.offsetParent();
 
             // Create a clone with minimal size
             let $clone = $(element.cloneNode(true));
             $clone.css({height: 'auto', width: 'auto'});
 
             // Calculate minimized size
-            let prop = Cuic.calculatePosition($clone, position, $container);
-            prop.height = $clone.outerHeight();
-            prop.width = $clone.outerWidth();
+            let prop = this.calculatePosition($clone, position, $parent);
+            prop.height = $clone.outerHeight() + 'px';
+            prop.width = $clone.outerWidth() + 'px';
             $clone.remove();
 
             return prop;
@@ -630,11 +629,10 @@
          * @return {*|HTMLElement}
          */
         maximize(element, position) {
-            let prop = Cuic.calculateMaximize(element, position);
-            let $element = $(element);
-            $element.addClass('maximized');
-            $element.css(prop);
-            return $element;
+            this.removeClass(element, 'minimized');
+            this.addClass(element, 'maximized');
+            this.css(element, this.calculateMaximize(element, position));
+            return element;
         },
 
         /**
@@ -644,12 +642,10 @@
          * @return {*|HTMLElement}
          */
         minimize(element, position) {
-            let prop = Cuic.calculateMinimize(element, position);
-            let $element = $(element);
-            $element.addClass('minimized');
-            $element.removeClass('maximized');
-            $element.css(prop);
-            return $element;
+            this.removeClass(element, 'maximized');
+            this.addClass(element, 'minimized');
+            this.css(element, this.calculateMinimize(element, position));
+            return element;
         },
 
         /**

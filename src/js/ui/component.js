@@ -47,11 +47,13 @@ Cuic.Component = class {
             throw new TypeError(`Cannot create component without node or target.`);
         }
 
-        if (options.parent instanceof jQuery) {
-            options.parent = options.parent.get(0);
-        }
+        // Convert parent from Cuic
         if (options.parent instanceof Cuic.Component) {
             options.parent = options.parent.getElement();
+        }
+        // Convert parent from jQuery
+        else if (options.parent instanceof jQuery) {
+            options.parent = options.parent.get(0);
         }
 
         // Set element attributes
@@ -73,6 +75,9 @@ Cuic.Component = class {
             }
         }
 
+        // Add generic class
+        self.addClass('component');
+
         // Set element styles
         self.css(options.css);
 
@@ -82,7 +87,7 @@ Cuic.Component = class {
             if (options.parent instanceof HTMLElement) {
                 self.appendTo(options.parent);
 
-                // Position the component
+                // Place the component
                 if (options.position) {
                     self.setPosition(options.position);
                 }

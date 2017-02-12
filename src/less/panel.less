@@ -28,8 +28,8 @@
   border: solid 1px #ccc;
   box-shadow: @shadow-x @shadow-y @shadow-size @shadow-color;
   margin: @margin;
-  //opacity: 0;
-  transition: bottom, left, right, top, height, width, opacity;
+  //transition: bottom, left, right, top, height, max-height, max-width, width, opacity;
+  transition-property: all;
   transition-duration: 0.2s;
   z-index: 5;
 }
@@ -39,7 +39,6 @@
 }
 
 .panel.opened {
-  //opacity: 1;
 }
 
 .panel-content {
