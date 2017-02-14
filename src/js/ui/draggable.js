@@ -91,12 +91,12 @@ Cuic.Draggable = class extends Cuic.Component {
                     // Calculate minimal values
                     let minX = (isInBody ? scrollX : 0) + spaceLeft;
                     let minY = (isInBody ? scrollY : 0) + spaceTop;
-                    minX = 0;
-                    minY = 0;
+                    minX = spaceLeft;
+                    minY = spaceTop;
 
                     // Calculate maximal values
-                    let maxX = parentWidth - parentPadding.horizontal;
-                    let maxY = parentHeight - parentPadding.vertical;
+                    let maxX = parentWidth - parentPadding.horizontal - margin.right;
+                    let maxY = parentHeight - parentPadding.vertical - margin.bottom;
 
                     const stepX = self.options.stepX;
                     const stepY = self.options.stepY;
