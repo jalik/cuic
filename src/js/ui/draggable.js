@@ -23,63 +23,38 @@
  *
  */
 
-(function ($) {
-    'use strict';
+Cuic.Draggable = class extends Cuic.Component {
 
-    var ns = Cuic.namespace('draggable');
+    constructor(options) {
+        // Set default options
+        options = $.extend({}, Cuic.Draggable.prototype.options, options);
 
-    /**
-     * Makes an object draggable
-     * @param options
-     * @constructor
-     */
-    Cuic.Draggable = function (options) {
-        var self = this;
-        var $area;
-        var $container;
-        var $element;
+        // Create element
+        super('div', {
+            className: options.className
+        }, options);
 
-        // Default options
-        options = $.extend(true, {}, Cuic.Draggable.prototype.options, options);
-
-        // Define attributes
-        self.className = options.className;
-        self.fps = parseInt(options.fps);
-        self.horizontal = options.horizontal === true;
-        self.rootOnly = options.rootOnly === true;
-        self.stepX = parseInt(options.stepX);
-        self.stepY = parseInt(options.stepY);
-        self.vertical = options.vertical === true;
-
-        /**
-         * Returns the element
-         * @return {*}
-         */
-        self.getElement = function () {
-            return $element;
-        };
+        const self = this;
 
         /**
          * Set the dragging area
-         * @param obj
+         * @param handle
          * @return {*}
          */
-        self.setArea = function (obj) {
-            $area = $(obj);
-
+        self.setHandle = (handle) => {
             // Add the draggable classes
-            $area.addClass(self.className);
+            Cuic.addClass(handle, self.options.className);
 
             // Change cursor icon over dragging area
-            $area.css('cursor', 'move');
+            Cuic.css(handle, {cursor: 'move'});
 
             // Start dragging
-            $area.off(ns('mousedown')).on(ns('mousedown'), function (ev) {
+            Cuic.on('mousedown', handle, (ev) => {
                 // Ignore dragging if the target is not the root
-                if (self.rootOnly && ev.target !== ev.currentTarget) return;
+                if (self.options.rootOnly && ev.target !== ev.currentTarget) return;
 
                 // Execute callback
-                if (self.onDragStart && self.onDragStart.call(self, ev) === false) {
+                if (self.onDragStart(ev) === false) {
                     return;
                 }
 
@@ -87,135 +62,139 @@
                 ev.preventDefault();
 
                 // Change element style
-                $element.addClass('dragging');
+                self.addClass('dragging');
 
-                var margin = Cuic.margin($element);
-                var height = $element.outerHeight();
-                var width = $element.outerWidth();
-                var isInBody = $container.get(0) == document.body;
-                var startOffset = $element.offset();
-                var startX = Cuic.mouseX;
-                var startY = Cuic.mouseY;
-                var scrollX = window.scrollX;
-                var scrollY = window.scrollY;
+                const parent = self.getParentElement();
+                let isInBody = parent === document.body;
 
-                var timer = setInterval(function () {
-                    var containerOffset = $container.offset() || {left: 0, top: 0};
-                    var containerHeight = $container.innerHeight();
-                    var containerWidth = $container.innerWidth();
-                    var minX = (isInBody ? scrollX : 0) + containerOffset.left + margin.left;
-                    var minY = (isInBody ? scrollY : 0) + containerOffset.top + margin.top;
-                    var maxX = minX - margin.left + containerWidth - margin.right;
-                    var maxY = minY - margin.top + containerHeight - margin.bottom;
-                    var leftSup = Cuic.mouseX - startX;
-                    var left = startOffset.left + (Math.round(leftSup / self.stepX) * self.stepX);
-                    var topSup = Cuic.mouseY - startY;
-                    var top = startOffset.top + (Math.round(topSup / self.stepY) * self.stepY);
+                let margin = Cuic.margin(self);
+                let height = Cuic.outerHeight(self);
+                let width = Cuic.outerWidth(self);
+                let startOffset = Cuic.position(self);
+                let startX = Cuic.mouseX;
+                let startY = Cuic.mouseY;
+                let scrollX = window.scrollX;
+                let scrollY = window.scrollY;
+                let timer = setInterval(() => {
+                    let prop = {};
+                    const parentPadding = Cuic.padding(parent);
+                    const parentOffset = Cuic.position(parent) || {left: 0, top: 0};
+                    const parentHeight = Cuic.innerHeight(parent);
+                    const parentWidth = Cuic.innerWidth(parent);
+
+                    const spaceBottom = Math.max(parentPadding.bottom);
+                    const spaceLeft = Math.max(parentPadding.left);
+                    const spaceRight = Math.max(parentPadding.right);
+                    const spaceTop = Math.max(parentPadding.top);
+
+                    // Calculate minimal values
+                    let minX = (isInBody ? scrollX : 0) + spaceLeft;
+                    let minY = (isInBody ? scrollY : 0) + spaceTop;
+                    minX = 0;
+                    minY = 0;
+
+                    // Calculate maximal values
+                    let maxX = parentWidth - parentPadding.horizontal;
+                    let maxY = parentHeight - parentPadding.vertical;
+
+                    const stepX = self.options.stepX;
+                    const stepY = self.options.stepY;
+                    const mouseLeft = Cuic.mouseX - startX;
+                    const mouseTop = Cuic.mouseY - startY;
+                    let left = startOffset.left + Math.round(mouseLeft / stepX) * stepX;
+                    let top = startOffset.top + Math.round(mouseTop / stepY) * stepY;
 
                     // Check horizontal location
                     if (left < minX) {
                         left = minX;
-                    } else if (left + width > maxX) {
+                    }
+                    else if (left + width > maxX) {
                         left = maxX - width;
                     }
 
                     // Check vertical location
                     if (top < minY) {
                         top = minY;
-                    } else if (top + height > maxY) {
+                    }
+                    else if (top + height > maxY) {
                         top = maxY - height;
                     }
 
                     // Execute callback
-                    if (self.onDrag && self.onDrag.call(self, left, top) === false) {
+                    if (self.onDrag(left, top) === false) {
                         return;
                     }
 
                     // Move horizontally
-                    if (self.horizontal) {
-                        $element.offset({left: left});
+                    if (self.options.horizontal) {
+                        prop.left = left + 'px';
+                        prop.right = '';
                     }
-
                     // Move vertically
-                    if (self.vertical) {
-                        $element.offset({top: top});
+                    if (self.options.vertical) {
+                        prop.top = top + 'px';
+                        prop.bottom = '';
                     }
-                }, Math.round(1000 / self.fps));
+                    // Move element
+                    self.css(prop);
+
+                }, Math.round(1000 / self.options.fps));
 
                 // Stop dragging
-                $(document).off(ns('mouseup')).one(ns('mouseup'), function (ev) {
+                Cuic.once('mouseup', document.body, (ev) => {
                     clearInterval(timer);
-                    $element.removeClass('dragging');
-
-                    if (self.onDragStop) {
-                        self.onDragStop.call(self, ev);
-                    }
+                    self.removeClass('dragging');
+                    self.onDragStop();
                 });
             });
             return self;
         };
 
-        /**
-         * Set the container
-         * @param element
-         * @return {*}
-         */
-        self.setContainer = function (element) {
-            $container = $(element);
-            return self;
-        };
-
-        // Find the target
-        if (options.target) $element = $(options.target);
-
         // Force the target to be the relative parent
-        if ($element.css('position') === 'static') {
-            $element.css('position', 'relative');
+        if (self.css('position') === 'static') {
+            self.css({position: 'relative'});
         }
 
         // Set the dragging area
-        self.setArea(options.area || $element);
+        self.setHandle(options.area || self.getElement());
 
-        // Set the top container of the element
-        self.setContainer(options.container || $element.offsetParent());
-
-        $(document).ready(function () {
-            $(document.head).append($('<style>', {
-                text: '.' + self.className + ' > * { cursor: auto }'
-            }));
-        });
-    };
+        // $(document).ready(function () {
+        //     $(document.head).append($('<style>', {
+        //         text: '.' + self.options.className + ' > * { cursor: auto }'
+        //     }));
+        // });
+    }
 
     /**
-     * Called when dragging element
-     * @type {function}
+     * Called when dragging
      */
-    Cuic.Draggable.prototype.onDrag = null;
+    onDrag() {
+    }
 
     /**
-     * Called when drag starts
-     * @type {function}
+     * Called when drag start
      */
-    Cuic.Draggable.prototype.onDragStart = null;
+    onDragStart() {
+    }
 
     /**
-     * Called when drag stops
-     * @type {function}
+     * Called when drag stop
      */
-    Cuic.Draggable.prototype.onDragStop = null;
+    onDragStop() {
+    }
 
-    /**
-     * Default options
-     * @type {*}
-     */
-    Cuic.Draggable.prototype.options = {
-        className: 'draggable',
-        fps: 60,
-        horizontal: true,
-        rootOnly: true,
-        stepX: 1,
-        stepY: 1,
-        vertical: true
-    };
+};
 
-})(jQuery);
+/**
+ * Draggable default options
+ */
+Cuic.Draggable.prototype.options = {
+    className: 'draggable',
+    fps: 60,
+    handle: null,
+    horizontal: true,
+    rootOnly: true,
+    stepX: 1,
+    stepY: 1,
+    vertical: true
+};

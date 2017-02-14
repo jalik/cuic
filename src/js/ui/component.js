@@ -57,6 +57,11 @@ Cuic.Component = class {
             if (attributes.hasOwnProperty(attr)) {
                 const value = attributes[attr];
 
+                // Do not override classes
+                if (attr === 'className') {
+                    continue;
+                }
+
                 if (value !== null && value !== undefined) {
                     if (self.element[attr] !== undefined) {
                         self.element[attr] = value;
@@ -71,8 +76,8 @@ Cuic.Component = class {
             }
         }
 
-        // Add generic class
-        self.addClass('component');
+        // Add component classes
+        self.addClass('component ' + options.className);
 
         // Set element styles
         self.css(options.css);

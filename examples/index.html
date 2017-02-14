@@ -191,7 +191,6 @@
                     var position = sandbox.find('[name=position]');
                     var autoResize = sandbox.find('[name=autoResize]');
                     var run = function () {
-
                         window.dialog = new Cuic.Dialog({
                             autoResize: autoResize.is(':checked'),
                             parent: container.is(':checked') ? $('#sb-dialog .blueprint') : document.body,

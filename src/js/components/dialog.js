@@ -44,8 +44,6 @@ Cuic.dialogs.onRemoved = function (value) {
 Cuic.Dialog = class extends Cuic.Component {
 
     constructor(options) {
-        const ns = Cuic.namespace('dialog');
-
         // Set default options
         options = $.extend({}, Cuic.Dialog.prototype.options, options);
 
@@ -55,6 +53,7 @@ Cuic.Dialog = class extends Cuic.Component {
             role: 'dialog'
         }, options);
 
+        const ns = Cuic.namespace('dialog');
         const self = this;
 
         let $buttons;//todo use a GroupComponent
@@ -360,8 +359,8 @@ Cuic.Dialog = class extends Cuic.Component {
         // Make the dialog draggable
         if (self.options.draggable) {
             self.draggable = new Cuic.Draggable({
-                area: $title,
-                container: self.getParentElement(),
+                handle: $title,
+                parent: self.getParentElement(),
                 rootOnly: false,
                 target: self.getElement()
             });
