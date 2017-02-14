@@ -54,14 +54,14 @@ Cuic.Benchmark = class {
          * Checks if benchmark is started
          * @returns {boolean}
          */
-        self.isStarted = function () {
+        self.isStarted = () => {
             return typeof startTime === 'number';
         };
 
         /**
          * Resets the benchmark
          */
-        self.reset = function () {
+        self.reset = () => {
             time = 0;
             startTime = null;
             stopTime = null;
@@ -71,7 +71,7 @@ Cuic.Benchmark = class {
          * Starts the benchmark
          * @returns {*}
          */
-        self.start = function () {
+        self.start = () => {
             startTime = Date.now();
             stopTime = null;
         };
@@ -80,7 +80,7 @@ Cuic.Benchmark = class {
          * Stops the benchmark
          * @returns {*}
          */
-        self.stop = function () {
+        self.stop = () => {
             startTime = null;
             stopTime = Date.now();
         };

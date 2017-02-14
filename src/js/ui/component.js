@@ -36,8 +36,8 @@ Cuic.Component = class {
         self.options = $.extend({}, Cuic.Component.prototype.options, options);
 
         // Use existing element
-        if (options.target instanceof HTMLElement) {
-            self.element = options.target;
+        if (options.target) {
+            self.element = Cuic.getElement(options.target);
         }
         // Create element
         else if (typeof node === 'string') {
@@ -47,13 +47,9 @@ Cuic.Component = class {
             throw new TypeError(`Cannot create component without node or target.`);
         }
 
-        // Convert parent from Cuic
-        if (options.parent instanceof Cuic.Component) {
-            options.parent = options.parent.getElement();
-        }
-        // Convert parent from jQuery
-        else if (options.parent instanceof jQuery) {
-            options.parent = options.parent.get(0);
+        // Get parent element
+        if (options.parent) {
+            options.parent = Cuic.getElement(options.parent);
         }
 
         // Set element attributes
@@ -140,6 +136,7 @@ Cuic.Component = class {
     /**
      * Closes the component
      * @param callback
+     * @return {Cuic.Component}
      */
     close(callback) {
         this.onClose();
@@ -152,11 +149,13 @@ Cuic.Component = class {
                 callback.call(this, ev);
             }
         });
+        return this;
     }
 
     /**
      * Set styles
      * @param styles
+     * @return {*}
      */
     css(styles) {
         return Cuic.css(this.getElement(), styles);
@@ -180,7 +179,7 @@ Cuic.Component = class {
 
     /**
      * Returns component CSS classes
-     * @return {Array|*}
+     * @return {Array}
      */
     getClasses() {
         return Cuic.getClasses(this.getElement());
@@ -205,10 +204,37 @@ Cuic.Component = class {
     /**
      * Checks if the component has the class
      * @param className
-     * @return {*}
+     * @return {boolean}
      */
     hasClass(className) {
         return Cuic.hasClass(this.getElement(), className);
+    }
+
+    /**
+     * Returns the component height without margins and borders
+     * @param element
+     * @return {number}
+     */
+    height(element) {
+        return Cuic.height(element);
+    }
+
+    /**
+     * Returns the component height including padding
+     * @param element
+     * @return {number}
+     */
+    innerHeight(element) {
+        return Cuic.innerHeight(element);
+    }
+
+    /**
+     * Returns the component width including padding
+     * @param element
+     * @return {number}
+     */
+    innerWidth(element) {
+        return Cuic.innerWidth(element);
     }
 
     /**
@@ -230,14 +256,13 @@ Cuic.Component = class {
 
     /**
      * Maximizes the component in its container
-     * @param position
      * @param callback
      */
-    maximize(position, callback) {
+    maximize(callback) {
         this.onMaximize();
         this.removeClass('minimized');
         this.addClass('maximized');
-        Cuic.maximize(this.getElement(), position);
+        Cuic.maximize(this.getElement());
         this.once('transitionend', (ev) => {
             this.onMaximized(ev);
 
@@ -249,14 +274,13 @@ Cuic.Component = class {
 
     /**
      * Minimizes the component in its container
-     * @param position
      * @param callback
      */
-    minimize(position, callback) {
+    minimize(callback) {
         this.onMinimize();
         this.removeClass('maximized');
         this.addClass('minimized');
-        Cuic.minimize(this.getElement(), position);
+        Cuic.minimize(this.getElement(), this.options.position);
         this.once('transitionend', (ev) => {
             this.onMinimized(ev);
 
@@ -356,6 +380,7 @@ Cuic.Component = class {
     /**
      * Opens the component
      * @param callback
+     * @return {Cuic.Component}
      */
     open(callback) {
         this.onOpen();
@@ -368,6 +393,27 @@ Cuic.Component = class {
                 callback.call(this, ev);
             }
         });
+        return this;
+    }
+
+    /**
+     * Returns the component height including padding, borders and eventually margin
+     * @param element
+     * @param includeMargin
+     * @return {number}
+     */
+    outerHeight(element, includeMargin) {
+        return Cuic.outerHeight(element, includeMargin);
+    }
+
+    /**
+     * Returns the component width including padding, borders and eventually margin
+     * @param element
+     * @param includeMargin
+     * @return {number}
+     */
+    outerWidth(element, includeMargin) {
+        return Cuic.outerWidth(element, includeMargin);
     }
 
     /**
@@ -417,11 +463,9 @@ Cuic.Component = class {
      * Sets the content
      * @param html
      * @deprecated
-     * @return {Cuic.Component}
      */
     setContent(html) {
         this.setHtml(html);
-        return this;
     };
 
     /**
@@ -435,12 +479,10 @@ Cuic.Component = class {
     /**
      * Sets the position of the dialog and optionally its container
      * @param position
-     * @return {Cuic.Component}
      */
     setPosition(position) {
-        Cuic.position(this.getElement(), position);
+        Cuic.place(this.getElement(), position);
         this.options.position = position;
-        return this;
     }
 
     /**
@@ -454,6 +496,7 @@ Cuic.Component = class {
     /**
      * Toggles the component
      * @param callback
+     * @return {Cuic.Component}
      */
     toggle(callback) {
         if (this.isOpened()) {
@@ -461,6 +504,16 @@ Cuic.Component = class {
         } else {
             this.open(callback);
         }
+        return this;
+    }
+
+    /**
+     * Returns the component width
+     * @param element
+     * @return {number}
+     */
+    width(element) {
+        return Cuic.width(element);
     }
 };
 

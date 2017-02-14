@@ -67,6 +67,8 @@
          * @return {*}
          */
         addEventListener(element, event, listener) {
+            element = this.getElement(element);
+
             if (typeof element.addEventListener === 'function') {
                 return element.addEventListener(event, listener);
             }
@@ -82,6 +84,8 @@
          * @return {Array|*}
          */
         addClass(element, className) {
+            element = this.getElement(element);
+
             let classes = this.getClasses(element);
             const target = (className || '').split(' ');
 
@@ -96,17 +100,16 @@
         },
 
         /**
-         * Position an object from the exterior
+         * Place an object toward a target
          * @param element
          * @param position
          * @param target
-         * @return {jQuery}
+         * @return {HTMLElement}
          */
         anchor(element, position, target) {
-            let $element = $(element);
-            let prop = this.calculateAnchor($element, position, target);
-            $element.css(prop);
-            return $element;
+            element = this.getElement(element);
+            this.css(element, this.calculateAnchor(element, position, target));
+            return element;
         },
 
         /**
@@ -123,13 +126,35 @@
         },
 
         /**
+         * Returns the element border
+         * @param element
+         * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
+         */
+        border(element) {
+            const bottom = parseInt(this.getComputedStyle(element, 'border-bottom-width'));
+            const left = parseInt(this.getComputedStyle(element, 'border-left-width'));
+            const right = parseInt(this.getComputedStyle(element, 'border-right-width'));
+            const top = parseInt(this.getComputedStyle(element, 'border-top-width'));
+            return {
+                bottom: bottom,
+                horizontal: left + right,
+                left: left,
+                right: right,
+                top: top,
+                vertical: bottom + top
+            };
+        },
+
+        /**
          * Position an object from the exterior
+         * todo use computed style
          * @param element
          * @param position
          * @param target
          * @return {*}
          */
         calculateAnchor(element, position, target) {
+            element = this.getElement(element);
             let isPixel = target instanceof Array && target.length === 2;
 
             if (!isPixel) {
@@ -215,32 +240,30 @@
         /**
          * Calculates maximized properties
          * @param element
-         * @param position
-         * @return {{bottom: string, min-height: number, left: string, right: string, top: string, min-width: number}}
+         * @return {{bottom: string, height: string, left: string, right: string, top: string, width: string}}
          */
-        calculateMaximize(element, position) {
-            position = position || '';
-            const $element = $(element);
-            const $parent = $element.offsetParent();
-            let ctnPadding = this.padding($parent);
-            let elmMargin = this.margin($element);
+        calculateMaximize(element) {
+            element = this.getElement(element);
+            const parent = element.parentNode;
+            const ctnPadding = this.padding(parent);
+            const elmMargin = this.margin(element);
             let prop = {
                 bottom: '',
-                height: ($parent.height() - elmMargin.vertical) + 'px',
+                height: (this.height(parent) - elmMargin.vertical) + 'px',
                 left: '',
                 right: '',
                 top: '',
-                width: ($parent.width() - elmMargin.horizontal) + 'px'
+                width: (this.width(parent) - elmMargin.horizontal) + 'px'
             };
 
             // Horizontal position
-            if (position.indexOf('right') !== -1) {
+            if (this.isPosition('right', element)) {
                 prop.right = ctnPadding.right + 'px';
             } else {
                 prop.left = ctnPadding.left + 'px';
             }
             // Vertical position
-            if (position.indexOf('bottom') !== -1) {
+            if (this.isPosition('bottom', element)) {
                 prop.bottom = ctnPadding.bottom + 'px';
             } else {
                 prop.top = ctnPadding.top + 'px';
@@ -255,19 +278,18 @@
          * @return {*}
          */
         calculateMinimize(element, position) {
+            element = this.getElement(element);
             position = position || '';
-            const $element = $(element);
-            const $parent = $element.offsetParent();
 
             // Create a clone with minimal size
-            let $clone = $(element.cloneNode(true));
-            $clone.css({height: 'auto', width: 'auto'});
+            const clone = element.cloneNode(true);
+            this.css(clone, {height: 'auto', width: 'auto'});
 
             // Calculate minimized size
-            let prop = this.calculatePosition($clone, position, $parent);
-            prop.height = $clone.outerHeight() + 'px';
-            prop.width = $clone.outerWidth() + 'px';
-            $clone.remove();
+            let prop = this.calculatePosition(clone, position, element.parentNode);
+            prop.height = this.outerHeight(clone) + 'px';
+            prop.width = this.outerWidth(clone) + 'px';
+            clone.remove();
 
             return prop;
         },
@@ -280,28 +302,36 @@
          * @return {*}
          */
         calculatePosition(element, position, parent) {
-            let $element = $(element);
-            let $container = $(parent || $element.offsetParent());
+            element = this.getElement(element);
             position = position || '';
 
-            if ($container.length === 1 && $container.get(0)) {
-                if ($container.get(0).nodeName === 'HTML') {
-                    $container = $(document.body);
+            if (parent) {
+                parent = this.getElement(parent);
+
+                // Use body as parent
+                if (parent.nodeName === 'HTML') {
+                    parent = document.body;
                 }
-                $container.append($element);
-            } else {
-                throw new TypeError('Cannot position element, invalid parent');
+                // Append element to parent if needed
+                if (parent !== element.parentNode) {
+                    parent.append(element);
+                }
+            }
+            else {
+                // Use parent node if no parent defined
+                parent = element.parentNode
             }
 
-            let containerHeight = $container.innerHeight();
-            let containerWidth = $container.innerWidth();
-            let containerPadding = Cuic.padding($container);
-            let targetHeight = $element.outerHeight(true);
-            let targetWidth = $element.outerWidth(true);
-            let relativeLeft = $container.get(0).scrollLeft;
-            let relativeTop = $container.get(0).scrollTop;
-            let relativeBottom = -relativeTop;
-            let relativeRight = -relativeLeft;
+            let elmHeight = this.outerHeight(element, true);
+            let elmWidth = this.outerWidth(element, true);
+            let elmMargin = this.margin(element);
+            let parentHeight = this.innerHeight(parent);
+            let parentWidth = this.innerWidth(parent);
+            let parentPadding = this.padding(parent);
+            let relativeLeft = parent.scrollLeft;
+            let relativeTop = parent.scrollTop;
+            let relativeBottom = -relativeTop;// todo maybe subtract element height ?
+            let relativeRight = -relativeLeft;// todo maybe subtract element width ?
             let prop = {
                 bottom: '',
                 left: '',
@@ -310,50 +340,52 @@
             };
 
             // If the target is fixed, we use the window as parent
-            if ($element.css('position') === 'fixed') {
-                // Use jQuery to get window's size because
-                // it returns the value without scrollbars
-                $container = $(window);
-                containerHeight = $container.innerHeight();
-                containerWidth = $container.innerWidth();
+            if (this.css(element, 'position') === 'fixed') {
+                parent = window;
+                parentHeight = this.innerHeight(parent);
+                parentWidth = this.innerWidth(parent);
                 relativeLeft = 0;
                 relativeTop = 0;
                 relativeBottom = 0;
                 relativeRight = 0;
             }
 
-            function getCenterX() {
-                return relativeLeft + ($container.width() / 2 - targetWidth / 2);
-            }
+            const getCenterX = () => {
+                return relativeLeft + (this.width(parent) / 2 - elmWidth / 2);
+            };
 
-            function getCenterY() {
-                return relativeTop + ($container.height() / 2 - targetHeight / 2);
-            }
+            const getCenterY = () => {
+                return relativeTop + (this.height(parent) / 2 - elmHeight / 2);
+            };
 
-            // Check that the element is not bigger than the parent
-            if (targetWidth > containerWidth) {
-                prop.width = containerWidth - (targetWidth - $element.width());
+            // Limit element size to parent size
+            if (elmWidth > parentWidth) {
+                prop.width = (parentWidth - (elmWidth - this.width(element))) + 'px';
             }
-            if (targetHeight > containerHeight) {
-                prop.height = containerHeight - (targetHeight - $element.height());
+            if (elmHeight > parentHeight) {
+                prop.height = (parentHeight - (elmHeight - this.height(element))) + 'px';
             }
 
             // Vertical position
             if (position.indexOf('bottom') !== -1) {
-                prop.bottom = containerPadding.bottom;
-            } else if (position.indexOf('top') !== -1) {
-                prop.top = containerPadding.top;
-            } else {
-                prop.top = getCenterY() + containerPadding.top;
+                prop.bottom = Math.max(parentPadding.bottom, elmMargin.bottom) + 'px';
+            }
+            else if (position.indexOf('top') !== -1) {
+                prop.top = Math.max(parentPadding.top, elmMargin.top) + 'px';
+            }
+            else {
+                prop.top = (getCenterY() + Math.max(parentPadding.top, elmMargin.top)) + 'px';
             }
 
             // Horizontal position
             if (position.indexOf('left') !== -1) {
-                prop.left = containerPadding.left;
-            } else if (position.indexOf('right') !== -1) {
-                prop.right = containerPadding.right;
-            } else {
-                prop.left = getCenterX() + containerPadding.left;
+                prop.left = Math.max(parentPadding.left, elmMargin.left) + 'px';
+            }
+            else if (position.indexOf('right') !== -1) {
+                prop.right = Math.max(parentPadding.right, elmMargin.right) + 'px';
+            }
+            else {
+                prop.left = (getCenterX() + Math.max(parentPadding.left, elmMargin.left)) + 'px';
             }
             return prop;
         },
@@ -374,7 +406,18 @@
             else if (args.length > 0) {
                 fn = args.shift();
             }
-            return Cuic.apply(fn, context, args);
+            return this.apply(fn, context, args);
+        },
+
+        /**
+         * Returns the closest parent element matching the selector
+         * @param element
+         * @param selector
+         * @return {*}
+         */
+        closest(element, selector) {
+            element = this.getElement(element);
+            return element.closest(selector);
         },
 
         /**
@@ -384,9 +427,7 @@
          * @param styles
          */
         css(element, styles) {
-            if (element instanceof jQuery) {
-                element = element.get(0);
-            }
+            element = this.getElement(element);
 
             // Writing styles
             if (styles) {
@@ -396,13 +437,28 @@
                     // Get current styles
                     for (let i = 0; i < element.style.length; i += 1) {
                         const property = element.style[i];
-                        let value = element.style[property];
-                        mergedStyles += `${property}: ${value};`;
+
+                        // Ignore properties that are overwritten
+                        if (!(property in styles)) {
+                            let value = element.style[property];
+                            if (typeof value === 'string' && value === '') {
+                                value = '""';
+                            }
+                            mergedStyles += `${property}: ${value};`;
+                        }
                     }
                     // Add new styles
                     for (let style in styles) {
                         if (styles.hasOwnProperty(style)) {
                             let value = styles[style];
+
+                            // Check if style is supported
+                            if (!(style in element.style)) {
+                                console.warn(`Style "${style}" is not supported by element.`, element);
+                            }
+                            if (typeof value === 'string' && value === '') {
+                                value = '""';
+                            }
                             mergedStyles += `${style}: ${value};`;
                         }
                     }
@@ -436,6 +492,8 @@
          * @param element
          */
         enterFullScreen(element) {
+            element = this.getElement(element);
+
             if (element.requestFullscreen) {
                 element.requestFullscreen();
             } else if (element.webkitRequestFullscreen) {
@@ -468,7 +526,37 @@
          * @return {Array}
          */
         getClasses(element) {
+            element = this.getElement(element);
             return element.className.split(' ');
+        },
+
+        /**
+         * Returns the computed style of the element
+         * @param element
+         * @param style
+         * @return {*}
+         */
+        getComputedStyle(element, style) {
+            element = this.getElement(element);
+            return window.getComputedStyle(element, null).getPropertyValue(style);
+        },
+
+        /**
+         * Returns the HTML element from various objects (Cuic, jQuery...)
+         * @param element
+         * @return {*}
+         */
+        getElement(element) {
+            if (element instanceof HTMLElement) {
+                return element;
+            }
+            if (element instanceof jQuery) {
+                return element.get(0);
+            }
+            if (element instanceof this.Component) {
+                return element.getElement();
+            }
+            throw new TypeError(`element is not an instance of HTMLElement`);
         },
 
         /**
@@ -498,18 +586,49 @@
          * @return {boolean}
          */
         hasClass(element, className) {
+            element = this.getElement(element);
             const classes = this.getClasses(element);
-            const target = (className || '').split(' ');
-            let result = false;
+            const classNames = (className || '').split(' ');
+            let result = classNames.length > 0;
 
-            for (let i = 0; i < target.length; i += 1) {
-                if (classes.indexOf(target[i]) !== -1) {
-                    result = true;
-                } else {
+            for (let i = 0; i < classNames.length; i += 1) {
+                if (classes.indexOf(classNames[i]) === -1) {
                     result = false;
+                    break;
                 }
             }
             return result;
+        },
+
+        /**
+         * Returns the element height
+         * @param element
+         * @return {number}
+         */
+        height(element) {
+            element = this.getElement(element);
+            const padding = this.padding(element);
+            return element.clientHeight - padding.vertical;
+        },
+
+        /**
+         * Returns the element width including padding
+         * @param element
+         * @return {number}
+         */
+        innerHeight(element) {
+            element = this.getElement(element);
+            return element.clientHeight;
+        },
+
+        /**
+         * Returns the element width including padding
+         * @param element
+         * @return {number}
+         */
+        innerWidth(element) {
+            element = this.getElement(element);
+            return element.clientWidth;
         },
 
         /**
@@ -566,12 +685,35 @@
         },
 
         /**
+         * Checks if the element is a parent node
+         * @param element
+         * @param parent
+         * @return {boolean}
+         */
+        isParent(element, parent) {
+            element = this.getElement(element);
+            parent = this.getElement(parent);
+            let elm = element;
+
+            do {
+                elm = elm.parentNode;
+
+                if (elm === parent) {
+                    return true;
+                }
+            } while (elm);
+
+            return false;
+        },
+
+        /**
          * Checks if the element is at the position
          * @param position
          * @param element
          * @return {boolean}
          */
         isPosition(position, element) {
+            element = this.getElement(element);
             const style = element.style;
 
             if (position.indexOf('bottom') !== -1) {
@@ -607,11 +749,10 @@
          * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
          */
         margin(element) {
-            let $element = $(element);
-            let bottom = parseInt($element.css('margin-bottom'));
-            let left = parseInt($element.css('margin-left'));
-            let right = parseInt($element.css('margin-right'));
-            let top = parseInt($element.css('margin-top'));
+            const bottom = parseInt(this.getComputedStyle(element, 'margin-bottom'));
+            const left = parseInt(this.getComputedStyle(element, 'margin-left'));
+            const right = parseInt(this.getComputedStyle(element, 'margin-right'));
+            const top = parseInt(this.getComputedStyle(element, 'margin-top'));
             return {
                 bottom: bottom,
                 horizontal: left + right,
@@ -625,13 +766,13 @@
         /**
          * Maximizes the element
          * @param element
-         * @param position
-         * @return {*|HTMLElement}
+         * @return {HTMLElement}
          */
-        maximize(element, position) {
+        maximize(element) {
+            element = this.getElement(element);
             this.removeClass(element, 'minimized');
             this.addClass(element, 'maximized');
-            this.css(element, this.calculateMaximize(element, position));
+            this.css(element, this.calculateMaximize(element));
             return element;
         },
 
@@ -639,9 +780,10 @@
          * Minimizes the element
          * @param element
          * @param position
-         * @return {*|HTMLElement}
+         * @return {HTMLElement}
          */
         minimize(element, position) {
+            element = this.getElement(element);
             this.removeClass(element, 'maximized');
             this.addClass(element, 'minimized');
             this.css(element, this.calculateMinimize(element, position));
@@ -656,7 +798,7 @@
         namespace(ns) {
             return function (event, id) {
                 id = Cuic.slug(id);
-                return event + '.cuic.' + ns + (id ? '.' + id : '');
+                return `${event}.cuic.${ns}` + (id ? `.${id}` : '');
             };
         },
 
@@ -668,6 +810,7 @@
          * @return {*}
          */
         off(event, element, callback) {
+            element = this.getElement(element);
             const browserEvent = this.whichEvent(event);
 
             // Event is a animation
@@ -703,6 +846,7 @@
          * @return {*}
          */
         on(event, element, callback) {
+            element = this.getElement(element);
             const browserEvent = this.whichEvent(event);
 
             // Event is a animation
@@ -738,6 +882,7 @@
          * @return {*}
          */
         once(event, element, callback) {
+            element = this.getElement(element);
             const browserEvent = this.whichEvent(event);
 
             // Event is a animation
@@ -770,16 +915,39 @@
         },
 
         /**
+         * Returns the element height including padding, border and margin
+         * @param element
+         * @param includeMargin
+         * @return {number}
+         */
+        outerHeight(element, includeMargin) {
+            element = this.getElement(element);
+            const margin = this.margin(element);
+            return element.offsetHeight + (includeMargin ? margin.vertical : 0);
+        },
+
+        /**
+         * Returns the element width including padding, border and margin
+         * @param element
+         * @param includeMargin
+         * @return {number}
+         */
+        outerWidth(element, includeMargin) {
+            element = this.getElement(element);
+            const margin = this.margin(element);
+            return element.offsetWidth + (includeMargin ? margin.horizontal : 0);
+        },
+
+        /**
          * Returns the element padding
          * @param element
          * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
          */
         padding(element) {
-            let $element = $(element);
-            let bottom = parseInt($element.css('padding-bottom'));
-            let left = parseInt($element.css('padding-left'));
-            let right = parseInt($element.css('padding-right'));
-            let top = parseInt($element.css('padding-top'));
+            const bottom = parseInt(this.getComputedStyle(element, 'padding-bottom'));
+            const left = parseInt(this.getComputedStyle(element, 'padding-left'));
+            const right = parseInt(this.getComputedStyle(element, 'padding-right'));
+            const top = parseInt(this.getComputedStyle(element, 'padding-top'));
             return {
                 bottom: bottom,
                 horizontal: left + right,
@@ -791,17 +959,34 @@
         },
 
         /**
-         * Positions the element
+         * Place the element inside a target
          * @param element
          * @param position
          * @param parent
-         * @return {*}
+         * @return {HTMLElement}
          */
-        position(element, position, parent) {
-            let $element = $(element);
-            let prop = this.calculatePosition(element, position, parent);
-            $element.css(prop);
-            return $element;
+        place(element, position, parent) {
+            element = this.getElement(element);
+            this.css(element, this.calculatePosition(element, position, parent));
+            return element;
+        },
+
+        /**
+         * Returns the element position
+         * @param element
+         * @return {{bottom: Number, left: Number, right: Number, top: Number}}
+         */
+        position(element) {
+            const bottom = parseInt(this.getComputedStyle(element, 'bottom'));
+            const left = parseInt(this.getComputedStyle(element, 'left'));
+            const right = parseInt(this.getComputedStyle(element, 'right'));
+            const top = parseInt(this.getComputedStyle(element, 'top'));
+            return {
+                bottom: bottom,
+                left: left,
+                right: right,
+                top: top
+            };
         },
 
         /**
@@ -821,11 +1006,12 @@
          * @return {*|Array}
          */
         removeClass(element, className) {
+            element = this.getElement(element);
             let classes = this.getClasses(element);
-            const target = (className || '').split(' ');
+            const classNames = (className || '').split(' ');
 
-            for (let i = 0; i < target.length; i += 1) {
-                let index = classes.indexOf(target[i]);
+            for (let i = 0; i < classNames.length; i += 1) {
+                let index = classes.indexOf(classNames[i]);
 
                 if (index !== -1) {
                     classes.splice(index, 1);
@@ -843,6 +1029,8 @@
          * @return {*}
          */
         removeEventListener(element, event, listener) {
+            element = this.getElement(element);
+
             if (typeof element.removeEventListener === 'function') {
                 return element.removeEventListener(event, listener);
             }
@@ -911,6 +1099,17 @@
             if (document[event] !== undefined || document[`on${event}`] !== undefined) {
                 return event;
             }
+        },
+
+        /**
+         * Returns the element width
+         * @param element
+         * @return {number}
+         */
+        width(element) {
+            element = this.getElement(element);
+            const padding = this.padding(element);
+            return element.clientWidth - padding.horizontal;
         }
     };
 

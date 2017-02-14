@@ -23,65 +23,56 @@
  *
  */
 
-/**
- * Creates a shortcut
- */
 Cuic.Shortcut = class {
 
     constructor(options) {
         const self = this;
-        const ns = Cuic.namespace('shortcut');
 
         // Set default options
         options = $.extend({}, Cuic.Shortcut.prototype.options, options);
-
-        // Define attributes
-        self.altKey = options.altKey;
-        self.callback = options.callback;
-        self.ctrlKey = options.ctrlKey;
-        self.key = options.key;
-        self.keyCode = options.keyCode;
-        self.shiftKey = options.shiftKey;
-        self.callback = options.callback;
+        self.options = options;
 
         // Get the target
-        const $target = $(options.target);
+        self.options.target = Cuic.getElement(options.target);
 
-        /**
-         * Activates the shortcut
-         */
-        self.activate = function () {
-            $target.off(ns(`keydown.${self.key}`)).on(ns(`keydown.${self.key}`), function (ev) {
-                if ((self.keyCode === ev.keyCode || self.key === ev.key)
-                    && self.altKey === ev.altKey
-                    && self.ctrlKey === ev.ctrlKey
-                    && self.shiftKey === ev.shiftKey) {
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                    self.callback.call($target, ev);
-                    return false;
-                }
-            });
-        };
-
-        /**
-         * Deactivates the shortcut
-         */
-        self.deactivate = function () {
-            $target.off(ns(`keydown.${self.key}`));
-        };
-
-        /**
-         * Returns the target
-         * @return {*|jQuery|HTMLElement}
-         */
-        self.getTarget = () => {
-            return $target;
-        };
-
-        if (options.active) {
+        // Init options
+        if (self.options.active) {
             self.activate();
         }
+    }
+
+    /**
+     * Activates the shortcut
+     */
+    activate() {
+        const options = this.options;
+        const target = this.getTarget();
+        Cuic.on(`keydown`, target, (ev) => {
+            if ((options.keyCode === ev.keyCode || options.key === ev.key || options.key === ev.code)
+                && options.altKey === ev.altKey
+                && options.ctrlKey === ev.ctrlKey
+                && options.shiftKey === ev.shiftKey) {
+                ev.preventDefault();
+                ev.stopPropagation();
+                options.callback.call(target, ev);
+                return false;
+            }
+        });
+    }
+
+    /**
+     * Deactivates the shortcut
+     */
+    deactivate() {
+        Cuic.off(`keydown`, this.getTarget(), this.options.callback);
+    }
+
+    /**
+     * Returns the target
+     * @return {HTMLElement}
+     */
+    getTarget() {
+        return Cuic.getElement(this.options.target);
     }
 };
 

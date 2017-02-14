@@ -72,7 +72,7 @@ Cuic.Dialog = class extends Cuic.Component {
          * @return {Cuic.Button}
          * @param button
          */
-        self.addButton = function (button) {
+        self.addButton = (button) => {
             if (!(button instanceof Cuic.Button)) {
                 const callback = button.callback;
 
@@ -83,7 +83,7 @@ Cuic.Dialog = class extends Cuic.Component {
 
                 // Set button callback
                 if (typeof callback === 'function') {
-                    button.onClick = function (ev) {
+                    button.onClick = (ev) => {
                         callback.call(self, ev);
                     };
                 } else if (callback === 'close') {
@@ -173,6 +173,8 @@ Cuic.Dialog = class extends Cuic.Component {
             let zIndex = options.zIndex + dialogZIndex;
             self.css({'z-index': zIndex});
 
+            self.resizeContent();
+
             // Open fader
             if (self.options.modal) {
                 self.css({'z-index': zIndex + 1});
@@ -215,58 +217,42 @@ Cuic.Dialog = class extends Cuic.Component {
          * @return {Cuic.Dialog}
          */
         self.resizeContent = () => {
-            // let display = fader.css('display');
-            // let maxHeight = window.innerHeight;
-            //
-            // console.warn('dialog.resizeContent disabled');
-            // return;
-            //
-            // // Temporary display the dialog
-            // // to get real height values
-            // fader.show();
-            // self.$element.show();
-            //
-            // // Set maximized
-            // if (self.options.maximized) {
-            //     self.css({
-            //         height: '100%',
-            //         width: '100%'
-            //     });
-            // }
-            //
-            // // Use parent for max height
-            // if (self.getParentElement() !== document.body) {
-            //     maxHeight = self.getParentElement().innerHeight();
-            // }
-            //
-            // // Set dialog max height
-            // maxHeight -= self.$element.outerHeight(true) - self.$element.height();
-            // self.$element.css('max-height', maxHeight);
-            //
-            // // Set content max height
-            // let contentMaxHeight = maxHeight;
-            // contentMaxHeight -= $content.outerHeight(true) - $content.height();
-            //
-            // if ($header) {
-            //     contentMaxHeight -= $header.outerHeight(true);
-            // }
-            //
-            // if ($footer) {
-            //     contentMaxHeight -= $footer.outerHeight(true);
-            // }
-            //
-            // $content.css({
-            //     maxHeight: contentMaxHeight,
-            //     overflow: 'auto'
-            // });
-            //
-            // self.position(position);
-            //
-            // // Restore the initial display state
-            // fader.css('display', display);
-            // self.$element.css('display', display);
-            //
-            // return self;
+            const elm = self.getElement();
+            const parent = self.getParentElement();
+            const display = elm.style.display;
+            let maxHeight = window.innerHeight;
+
+            // Use parent for max height
+            if (parent && parent !== document.body) {
+                maxHeight = Cuic.height(parent);
+            }
+
+            // Set panel max height
+            const border = Cuic.border(elm);
+            const margin = Cuic.margin(elm);
+            maxHeight -= margin.vertical;
+            maxHeight -= border.vertical;
+            self.css({'max-height': maxHeight + 'px'});
+
+            // Set content max height
+            let contentMaxHeight = maxHeight;
+
+            if ($header) {
+                contentMaxHeight -= Cuic.outerHeight($header, true);
+            }
+            if ($footer) {
+                contentMaxHeight -= Cuic.outerHeight($footer, true);
+            }
+
+            Cuic.css($content, {
+                'max-height': contentMaxHeight + 'px',
+                overflow: 'auto'
+            });
+
+            // Restore initial display state
+            self.css({display: display});
+
+            return self;
         };
 
         /**
@@ -274,7 +260,7 @@ Cuic.Dialog = class extends Cuic.Component {
          * @param html
          * @return {Cuic.Dialog}
          */
-        self.setTitle = function (html) {
+        self.setTitle = (html) => {
             $title.html(html);
             return self;
         };
@@ -295,7 +281,7 @@ Cuic.Dialog = class extends Cuic.Component {
 
         // If the dialog is not modal,
         // a click on the wrapper will close the dialog
-        fader.onClick = function (ev) {
+        fader.onClick = (ev) => {
             self.close();
         };
 

@@ -84,7 +84,6 @@ Cuic.GroupComponent = class extends Cuic.Component {
      * @return {Cuic.Component}
      */
     remove(component) {
-        throw new Error(`GroupComponent.remove() is not defined.`);
         this.components.remove(component);
         return component;
     }
