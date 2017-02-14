@@ -37,9 +37,9 @@ Cuic.Draggable = class extends Cuic.Component {
         const self = this;
 
         /**
-         * Set the dragging area
+         * Sets the dragging area
          * @param handle
-         * @return {*}
+         * @return {Cuic.Component}
          */
         self.setHandle = (handle) => {
             // Add the draggable classes
@@ -47,6 +47,7 @@ Cuic.Draggable = class extends Cuic.Component {
 
             // Change cursor icon over dragging area
             Cuic.css(handle, {cursor: 'move'});
+            Cuic.addClass(handle, self.options.handleClassName);
 
             // Start dragging
             Cuic.on('mousedown', handle, (ev) => {
@@ -186,6 +187,7 @@ Cuic.Draggable.prototype.options = {
     className: 'draggable',
     fps: 60,
     handle: null,
+    handleClassName: 'draggable-handle',
     horizontal: true,
     rootOnly: true,
     stepX: 1,
