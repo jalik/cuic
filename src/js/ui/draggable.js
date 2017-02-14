@@ -71,7 +71,7 @@ Cuic.Draggable = class extends Cuic.Component {
                 let margin = Cuic.margin(self);
                 let height = Cuic.outerHeight(self);
                 let width = Cuic.outerWidth(self);
-                let startOffset = Cuic.position(self);
+                let startOffset = Cuic.offset(self);
                 let startX = Cuic.mouseX;
                 let startY = Cuic.mouseY;
                 let scrollX = window.scrollX;
@@ -79,7 +79,7 @@ Cuic.Draggable = class extends Cuic.Component {
                 let timer = setInterval(() => {
                     let prop = {};
                     const parentPadding = Cuic.padding(parent);
-                    const parentOffset = Cuic.position(parent) || {left: 0, top: 0};
+                    const parentOffset = Cuic.offset(parent) || {left: 0, top: 0};
                     const parentHeight = Cuic.innerHeight(parent);
                     const parentWidth = Cuic.innerWidth(parent);
 

@@ -839,6 +839,24 @@
         },
 
         /**
+         * Returns the element position
+         * @param element
+         * @return {{bottom: Number, left: Number, right: Number, top: Number}}
+         */
+        offset(element) {
+            const bottom = parseInt(this.getComputedStyle(element, 'bottom'));
+            const left = parseInt(this.getComputedStyle(element, 'left'));
+            const right = parseInt(this.getComputedStyle(element, 'right'));
+            const top = parseInt(this.getComputedStyle(element, 'top'));
+            return {
+                bottom: bottom,
+                left: left,
+                right: right,
+                top: top
+            };
+        },
+
+        /**
          * Attaches an event listener
          * @param event
          * @param element
@@ -965,28 +983,10 @@
          * @param parent
          * @return {HTMLElement}
          */
-        place(element, position, parent) {
+        position(element, position, parent) {
             element = this.getElement(element);
             this.css(element, this.calculatePosition(element, position, parent));
             return element;
-        },
-
-        /**
-         * Returns the element position
-         * @param element
-         * @return {{bottom: Number, left: Number, right: Number, top: Number}}
-         */
-        position(element) {
-            const bottom = parseInt(this.getComputedStyle(element, 'bottom'));
-            const left = parseInt(this.getComputedStyle(element, 'left'));
-            const right = parseInt(this.getComputedStyle(element, 'right'));
-            const top = parseInt(this.getComputedStyle(element, 'top'));
-            return {
-                bottom: bottom,
-                left: left,
-                right: right,
-                top: top
-            };
         },
 
         /**

@@ -486,7 +486,7 @@ Cuic.Component = class {
      * @param position
      */
     setPosition(position) {
-        Cuic.place(this.getElement(), position);
+        Cuic.position(this.getElement(), position);
         this.options.position = position;
     }
 

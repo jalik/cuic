@@ -169,7 +169,7 @@ Cuic.Panel = class extends Cuic.Component {
         };
 
         //     // todo position panel when closed
-        // const pos = Cuic.position(self.getElement());
+        // const pos = Cuic.offset(self);
 
         // // Panel is hidden
         // if (pos.bottom < 0 || pos.left < 0 || pos.right < 0 || pos.top < 0) {
