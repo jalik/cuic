@@ -156,13 +156,7 @@ Cuic.Draggable = class extends Cuic.Component {
         }
 
         // Set the dragging area
-        self.setHandle(options.area || self.getElement());
-
-        // $(document).ready(function () {
-        //     $(document.head).append($('<style>', {
-        //         text: '.' + self.options.className + ' > * { cursor: auto }'
-        //     }));
-        // });
+        self.setHandle(options.handle || self.getElement());
     }
 
     /**
