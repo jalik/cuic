@@ -27,7 +27,7 @@ Cuic.Panel = class extends Cuic.Component {
 
     constructor(options) {
         // Set default options
-        options = $.extend({}, Cuic.Panel.prototype.options, options);
+        options = Cuic.extend({}, Cuic.Panel.prototype.options, options);
 
         // Create element
         super('div', {

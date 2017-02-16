@@ -45,7 +45,7 @@ Cuic.Dialog = class extends Cuic.Component {
 
     constructor(options) {
         // Set default options
-        options = $.extend({}, Cuic.Dialog.prototype.options, options);
+        options = Cuic.extend({}, Cuic.Dialog.prototype.options, options);
 
         // Create element
         super('div', {

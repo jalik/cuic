@@ -29,7 +29,7 @@ Cuic.Shortcut = class {
         const self = this;
 
         // Set default options
-        options = $.extend({}, Cuic.Shortcut.prototype.options, options);
+        options = Cuic.extend({}, Cuic.Shortcut.prototype.options, options);
         self.options = options;
 
         // Get the target

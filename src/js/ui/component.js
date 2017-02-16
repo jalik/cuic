@@ -33,7 +33,7 @@ Cuic.Component = class {
         const self = this;
 
         // Set default options
-        self.options = $.extend({}, Cuic.Component.prototype.options, options);
+        self.options = Cuic.extend({}, Cuic.Component.prototype.options, options);
 
         // Use existing element
         if (options.target) {

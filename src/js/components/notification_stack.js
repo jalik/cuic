@@ -32,7 +32,7 @@ Cuic.NotificationStack = class extends Cuic.GroupComponent {
 
     constructor(options) {
         // Set default options
-        options = $.extend({}, Cuic.NotificationStack.prototype.options, options);
+        options = Cuic.extend({}, Cuic.NotificationStack.prototype.options, options);
 
         // Create element
         super('div', {

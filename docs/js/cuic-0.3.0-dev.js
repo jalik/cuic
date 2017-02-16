@@ -568,6 +568,41 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
         /**
+         * Merge objects
+         * @return {*}
+         */
+        extend: function extend() {
+            var args = Array.prototype.slice.call(arguments);
+            var recursive = false;
+            var a = args.shift();
+
+            if (typeof a === 'boolean') {
+                recursive = a;
+                a = args.shift();
+            }
+
+            for (var i = 0; i < args.length; i += 1) {
+                var b = args[i];
+
+                if ((typeof b === 'undefined' ? 'undefined' : _typeof(b)) === 'object' && b !== null && b !== undefined && (typeof a === 'undefined' ? 'undefined' : _typeof(a)) === 'object' && a !== null && a !== undefined) {
+                    for (var key in b) {
+                        if (b.hasOwnProperty(key)) {
+                            if (recursive && _typeof(b[key]) === 'object' && b[key] !== null && b[key] !== undefined) {
+                                a[key] = this.extend(a[key], b[key]);
+                            } else {
+                                a[key] = b[key];
+                            }
+                        }
+                    }
+                } else {
+                    a = b;
+                }
+            }
+            return a;
+        },
+
+
+        /**
          * Returns CSS classes
          * @param element
          * @return {Array}
@@ -1447,7 +1482,7 @@ Cuic.Collection = function () {
         form = $(form);
 
         // Default options
-        options = $.extend(true, {
+        options = Cuic.extend(true, {
             errorClass: 'error',
             filter: null,
             onError: null
@@ -1504,7 +1539,7 @@ Cuic.Collection = function () {
         var fields = {};
         container = $(container);
 
-        options = $.extend(true, {
+        options = Cuic.extend(true, {
             dynamicTyping: true,
             filter: null,
             ignoreButtons: true,
@@ -1646,7 +1681,7 @@ Cuic.Collection = function () {
      * @returns {*}
      */
     Cuic.getFieldValue = function (field, options) {
-        options = $.extend({
+        options = Cuic.extend({
             dynamicTyping: true,
             smartTyping: true
         }, options);
@@ -3146,7 +3181,7 @@ Cuic.Draggable.prototype.options = {
         var ratio = 1;
 
         // Default options
-        options = $.extend(true, Cuic.Resizable.prototype.options, options);
+        options = Cuic.extend(true, Cuic.Resizable.prototype.options, options);
 
         // Define attributes
         self.className = options.className;
@@ -3439,7 +3474,7 @@ Cuic.Button = function (_Cuic$Component3) {
         _classCallCheck(this, _class7);
 
         // Set default options
-        options = $.extend({}, Cuic.Button.prototype.options, options);
+        options = Cuic.extend({}, Cuic.Button.prototype.options, options);
 
         // Create element
 
@@ -3528,7 +3563,7 @@ Cuic.Dialog = function (_Cuic$Component4) {
         _classCallCheck(this, _class8);
 
         // Set default options
-        options = $.extend({}, Cuic.Dialog.prototype.options, options);
+        options = Cuic.extend({}, Cuic.Dialog.prototype.options, options);
 
         // Create element
 
@@ -3930,7 +3965,7 @@ Cuic.Fader = function (_Cuic$Component5) {
         _classCallCheck(this, _class9);
 
         // Set default options
-        options = $.extend({}, Cuic.Fader.prototype.options, options);
+        options = Cuic.extend({}, Cuic.Fader.prototype.options, options);
 
         // Create element
         return _possibleConstructorReturn(this, (_class9.__proto__ || Object.getPrototypeOf(_class9)).call(this, 'div', { className: options.className }, options));
@@ -4693,7 +4728,7 @@ Cuic.Notification = function (_Cuic$Component6) {
         _classCallCheck(this, _class10);
 
         // Set default options
-        options = $.extend({}, Cuic.Notification.prototype.options, options);
+        options = Cuic.extend({}, Cuic.Notification.prototype.options, options);
 
         // Create element
 
@@ -5526,7 +5561,7 @@ Cuic.Panel.prototype.options = {
         var timer;
 
         // Default options
-        options = $.extend(true, {
+        options = Cuic.extend(true, {
             autoStart: true,
             delay: 3000,
             repeat: true,
@@ -6081,7 +6116,7 @@ Cuic.Panel.prototype.options = {
         var selector;
 
         // Set default options
-        options = $.extend(true, {}, Cuic.Tooltip.prototype.options, options);
+        options = Cuic.extend(true, {}, Cuic.Tooltip.prototype.options, options);
 
         // Define attributes
         self.attribute = options.attribute;
@@ -6385,7 +6420,7 @@ Cuic.Panel.prototype.options = {
      */
     Cuic.Tree = function (options) {
         // Set default options
-        options = $.extend(true, {
+        options = Cuic.extend(true, {
             collapsed: true,
             itemClass: 'tree-item',
             itemContentClass: 'tree-item-content',

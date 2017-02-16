@@ -30,7 +30,7 @@ Cuic.Fader = class extends Cuic.Component {
 
     constructor(options) {
         // Set default options
-        options = $.extend({}, Cuic.Fader.prototype.options, options);
+        options = Cuic.extend({}, Cuic.Fader.prototype.options, options);
 
         // Create element
         super('div', {className: options.className}, options);

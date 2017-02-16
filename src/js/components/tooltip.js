@@ -42,7 +42,7 @@
         var selector;
 
         // Set default options
-        options = $.extend(true, {}, Cuic.Tooltip.prototype.options, options);
+        options = Cuic.extend(true, {}, Cuic.Tooltip.prototype.options, options);
 
         // Define attributes
         self.attribute = options.attribute;

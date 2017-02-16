@@ -43,7 +43,7 @@
         var $target;
 
         // Default options
-        options = $.extend(true, {}, Cuic.Popup.prototype.options, options);
+        options = Cuic.extend(true, {}, Cuic.Popup.prototype.options, options);
 
         // Define attributes
         self.autoClose = options.autoClose === true;

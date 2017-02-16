@@ -37,7 +37,7 @@
         var grid = this;
 
         // Default options
-        options = $.extend(true, Cuic.Grid.prototype.options, options);
+        options = Cuic.extend(true, Cuic.Grid.prototype.options, options);
 
         // Set the options
         grid.animSpeed = parseInt(options.animSpeed);
@@ -626,7 +626,7 @@
         var self = this;
 
         // Default options
-        options = $.extend(true, {}, Cuic.Grid.Widget.prototype.options, options);
+        options = Cuic.extend(true, {}, Cuic.Grid.Widget.prototype.options, options);
 
         // Set the options
         self.col = parseInt(options.col);

@@ -34,7 +34,7 @@
         var timer;
 
         // Default options
-        options = $.extend(true, {
+        options = Cuic.extend(true, {
             autoStart: true,
             delay: 3000,
             repeat: true,

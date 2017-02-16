@@ -43,7 +43,7 @@
         var ratio = 1;
 
         // Default options
-        options = $.extend(true, Cuic.Resizable.prototype.options, options);
+        options = Cuic.extend(true, Cuic.Resizable.prototype.options, options);
 
         // Define attributes
         self.className = options.className;

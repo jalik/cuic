@@ -521,6 +521,41 @@
         },
 
         /**
+         * Merge objects
+         * @return {*}
+         */
+        extend() {
+            const args = Array.prototype.slice.call(arguments);
+            let recursive = false;
+            let a = args.shift();
+
+            if (typeof a === 'boolean') {
+                recursive = a;
+                a = args.shift();
+            }
+
+            for (let i = 0; i < args.length; i += 1) {
+                const b = args[i];
+
+                if (typeof b === 'object' && b !== null && b !== undefined
+                    && typeof a === 'object' && a !== null && a !== undefined) {
+                    for (let key in b) {
+                        if (b.hasOwnProperty(key)) {
+                            if (recursive && typeof b[key] === 'object' && b[key] !== null && b[key] !== undefined) {
+                                a[key] = this.extend(a[key], b[key]);
+                            } else {
+                                a[key] = b[key];
+                            }
+                        }
+                    }
+                } else {
+                    a = b;
+                }
+            }
+            return a
+        },
+
+        /**
          * Returns CSS classes
          * @param element
          * @return {Array}

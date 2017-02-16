@@ -36,7 +36,7 @@
      */
     Cuic.Tree = function (options) {
         // Set default options
-        options = $.extend(true, {
+        options = Cuic.extend(true, {
             collapsed: true,
             itemClass: 'tree-item',
             itemContentClass: 'tree-item-content',

@@ -36,7 +36,7 @@
      */
     Cuic.Table = function (options) {
         // Set default options
-        options = $.extend(true, {
+        options = Cuic.extend(true, {
             onSorted: null,
             selectedClass: 'selected',
             selectRowOnClick: false,

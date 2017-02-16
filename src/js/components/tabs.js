@@ -38,7 +38,7 @@
         var self = this;
 
         // Set default options
-        options = $.extend(true, {
+        options = Cuic.extend(true, {
             content: null,
             defaultTab: 0,
             target: null

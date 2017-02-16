@@ -39,7 +39,7 @@
         var ns = Cuic.namespace('hook-' + (counter += 1));
 
         // Default options
-        options = $.extend(true, {}, Cuic.Hook.prototype.options, options);
+        options = Cuic.extend(true, {}, Cuic.Hook.prototype.options, options);
 
         var win = $(window);
 

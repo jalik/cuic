@@ -36,7 +36,7 @@ Cuic.Notification = class extends Cuic.Component {
 
     constructor(options) {
         // Set default options
-        options = $.extend({}, Cuic.Notification.prototype.options, options);
+        options = Cuic.extend({}, Cuic.Notification.prototype.options, options);
 
         // Create element
         super('div', {

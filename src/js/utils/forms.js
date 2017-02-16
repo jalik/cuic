@@ -56,7 +56,7 @@
         form = $(form);
 
         // Default options
-        options = $.extend(true, {
+        options = Cuic.extend(true, {
             errorClass: 'error',
             filter: null,
             onError: null
@@ -113,7 +113,7 @@
         var fields = {};
         container = $(container);
 
-        options = $.extend(true, {
+        options = Cuic.extend(true, {
             dynamicTyping: true,
             filter: null,
             ignoreButtons: true,
@@ -255,7 +255,7 @@
      * @returns {*}
      */
     Cuic.getFieldValue = function (field, options) {
-        options = $.extend({
+        options = Cuic.extend({
             dynamicTyping: true,
             smartTyping: true
         }, options);

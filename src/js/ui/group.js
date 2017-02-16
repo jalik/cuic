@@ -27,10 +27,10 @@ Cuic.GroupComponent = class extends Cuic.Component {
 
     constructor(node, attributes, options) {
         // Set default options
-        options = $.extend({}, Cuic.GroupComponent.prototype.options, options);
+        options = Cuic.extend({}, Cuic.GroupComponent.prototype.options, options);
 
         // Create element
-        super(node, $.extend({
+        super(node, Cuic.extend({
             className: options.className,
             role: 'group'
         }, attributes), options);
