@@ -32,8 +32,8 @@ Cuic.Shortcut = class {
         options = Cuic.extend({}, Cuic.Shortcut.prototype.options, options);
         self.options = options;
 
-        // Get the target
-        self.options.target = Cuic.getElement(options.target);
+        // Get the element
+        self.options.element = Cuic.getElement(options.element);
 
         // Check options
         if (typeof self.options.callback !== 'function') {
@@ -52,15 +52,15 @@ Cuic.Shortcut = class {
     activate() {
         const self = this;
         const options = this.options;
-        const target = this.getTarget();
-        Cuic.on(`keydown`, target, (ev) => {
+        const element = this.getElement();
+        Cuic.on(`keydown`, element, (ev) => {
             if ((options.keyCode === ev.keyCode || options.key === ev.key || options.key === ev.code)
                 && options.altKey === ev.altKey
                 && options.ctrlKey === ev.ctrlKey
                 && options.shiftKey === ev.shiftKey) {
                 ev.preventDefault();
                 ev.stopPropagation();
-                options.callback.call(self, target, ev);
+                options.callback.call(self, element, ev);
                 return false;
             }
         });
@@ -70,15 +70,15 @@ Cuic.Shortcut = class {
      * Deactivates the shortcut
      */
     deactivate() {
-        Cuic.off(`keydown`, this.getTarget(), this.options.callback);
+        Cuic.off(`keydown`, this.getElement(), this.options.callback);
     }
 
     /**
-     * Returns the target
+     * Returns the element
      * @return {HTMLElement}
      */
-    getTarget() {
-        return Cuic.getElement(this.options.target);
+    getElement() {
+        return Cuic.getElement(this.options.element);
     }
 };
 
@@ -87,10 +87,10 @@ Cuic.Shortcut.prototype.options = {
     altKey: false,
     callback: null,
     ctrlKey: false,
+    element: document.body,
     key: null,
     keyCode: null,
-    shiftKey: false,
-    target: document.body
+    shiftKey: false
 };
 
 Cuic.keys = {

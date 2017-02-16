@@ -1873,8 +1873,8 @@ Cuic.Shortcut = function () {
         options = Cuic.extend({}, Cuic.Shortcut.prototype.options, options);
         self.options = options;
 
-        // Get the target
-        self.options.target = Cuic.getElement(options.target);
+        // Get the element
+        self.options.element = Cuic.getElement(options.element);
 
         // Check options
         if (typeof self.options.callback !== 'function') {
@@ -1897,12 +1897,12 @@ Cuic.Shortcut = function () {
         value: function activate() {
             var self = this;
             var options = this.options;
-            var target = this.getTarget();
-            Cuic.on('keydown', target, function (ev) {
+            var element = this.getElement();
+            Cuic.on('keydown', element, function (ev) {
                 if ((options.keyCode === ev.keyCode || options.key === ev.key || options.key === ev.code) && options.altKey === ev.altKey && options.ctrlKey === ev.ctrlKey && options.shiftKey === ev.shiftKey) {
                     ev.preventDefault();
                     ev.stopPropagation();
-                    options.callback.call(self, target, ev);
+                    options.callback.call(self, element, ev);
                     return false;
                 }
             });
@@ -1915,18 +1915,18 @@ Cuic.Shortcut = function () {
     }, {
         key: 'deactivate',
         value: function deactivate() {
-            Cuic.off('keydown', this.getTarget(), this.options.callback);
+            Cuic.off('keydown', this.getElement(), this.options.callback);
         }
 
         /**
-         * Returns the target
+         * Returns the element
          * @return {HTMLElement}
          */
 
     }, {
-        key: 'getTarget',
-        value: function getTarget() {
-            return Cuic.getElement(this.options.target);
+        key: 'getElement',
+        value: function getElement() {
+            return Cuic.getElement(this.options.element);
         }
     }]);
 
@@ -1938,10 +1938,10 @@ Cuic.Shortcut.prototype.options = {
     altKey: false,
     callback: null,
     ctrlKey: false,
+    element: document.body,
     key: null,
     keyCode: null,
-    shiftKey: false,
-    target: document.body
+    shiftKey: false
 };
 
 Cuic.keys = {
@@ -2000,8 +2000,8 @@ Cuic.Element = function () {
         self.options = Cuic.extend({}, Cuic.Element.prototype.options, options);
 
         // Use existing element
-        if (self.options.target) {
-            self.element = Cuic.getElement(self.options.target);
+        if (self.options.element) {
+            self.element = Cuic.getElement(self.options.element);
         }
         // Create element
         else if (typeof node === 'string') {
@@ -2015,7 +2015,7 @@ Cuic.Element = function () {
                 else if (node instanceof jQuery) {
                         self.element = node.get(0);
                     } else {
-                        throw new TypeError('Cannot create component without node or target.');
+                        throw new TypeError('Cannot create component without node or element.');
                     }
 
         // Get parent element
@@ -3944,7 +3944,7 @@ Cuic.Dialog = function (_Cuic$Component4) {
                 handle: title,
                 parent: self.getParentElement(),
                 rootOnly: false,
-                target: self.getElement()
+                element: self.getElement()
             });
         }
 
@@ -3955,7 +3955,7 @@ Cuic.Dialog = function (_Cuic$Component4) {
         self.shortcuts = {
             close: new Cuic.Shortcut({
                 keyCode: Cuic.keys.ESC,
-                target: self.getElement(),
+                element: self.getElement(),
                 callback: function callback() {
                     self.close();
                 }
@@ -3994,7 +3994,6 @@ Cuic.Dialog.prototype.options = {
     parent: document.body,
     position: 'center',
     modal: true,
-    target: null,
     title: null,
     zIndex: 5
 };
@@ -5243,7 +5242,7 @@ Cuic.Panel = function (_Cuic$Component7) {
             return self;
         };
 
-        if (options.target) {
+        if (options.element) {
             // Find panel parts
             // todo use Cuic to find elements
             header = $(self.getElement()).find('.panel-header');
@@ -5388,113 +5387,83 @@ Cuic.Panel.prototype.options = {
  *
  */
 
-(function ($) {
-    'use strict';
+Cuic.Popup = function (_Cuic$Component8) {
+    _inherits(_class14, _Cuic$Component8);
 
-    var ns = Cuic.namespace('popup');
+    function _class14(options) {
+        _classCallCheck(this, _class14);
 
-    /**
-     * Creates a popup
-     * @param options
-     * @constructor
-     */
-    Cuic.Popup = function (options) {
-        var self = this;
-        var $element;
-        var isClosing = false;
-        var isOpened = false;
-        var isOpening = false;
-        var position;
-        var $target;
+        // Set default options
+        options = Cuic.extend({}, Cuic.Popup.prototype.options, options);
 
-        // Default options
-        options = Cuic.extend(true, {}, Cuic.Popup.prototype.options, options);
+        // Create element
 
-        // Define attributes
-        self.autoClose = options.autoClose === true;
-        self.autoRemove = options.autoRemove === true;
-        self.closeable = options.closeable === true;
+        var _this15 = _possibleConstructorReturn(this, (_class14.__proto__ || Object.getPrototypeOf(_class14)).call(this, 'div', {
+            className: options.className,
+            html: options.html
+        }, options));
+
+        var self = _this15;
+
+        // Public attributes
         self.closeButton = options.closeButton;
 
-        // Define vars
-        position = options.position;
-        $target = $(options.target);
+        // // Set required styles
+        // $element.css({
+        //     display: 'none',
+        //     position: 'absolute',
+        //     zIndex: options.zIndex
+        // });
 
-        /**
-         * Closes the popup
-         * @param callback
-         * @return {Cuic.Popup}
-         */
-        self.close = function (callback) {
-            if (isOpening || isOpened && !isClosing) {
-                isClosing = true;
-                isOpening = false;
-                $element.stop(true, false).fadeOut(200, function () {
-                    if (typeof callback === 'function') {
-                        callback.call(self);
-                    }
-                    if (self.autoRemove) {
-                        $element.remove();
-                    }
-                    isClosing = false;
-                    isOpened = false;
-                });
+        self.on('click', function (ev) {
+            // Close button
+            if (Cuic.hasClass(ev.target, 'close-popup')) {
+                ev.preventDefault();
+                self.close();
             }
-            return self;
-        };
+            // Toggle button
+            if (Cuic.hasClass(ev.target, 'toggle-popup')) {
+                ev.preventDefault();
+                self.toggle();
+            }
+        });
 
-        /**
-         * Returns the element
-         * @return {*}
-         */
-        self.getElement = function () {
-            return $element;
-        };
+        // Close the popup when the user clicks outside of it
+        Cuic.on('click', document.body, function (ev) {
+            var elm = self.getElement();
 
-        /**
-         * Checks if the popup is opened
-         * @return {boolean}
-         */
-        self.isOpened = function () {
-            return isOpened;
-        };
-
-        /**
-         * Opens the popup
-         * @param callback
-         * @return {Cuic.Popup}
-         */
-        self.open = function (callback) {
-            if (isClosing || !isOpened && !isOpening) {
-                isClosing = false;
-                isOpening = true;
-
-                // Add the close button
-                if (self.closeable) {
-                    $element.find('.close-popup').remove();
-                    $('<span>', {
-                        class: 'close-popup',
-                        html: self.closeButton
-                    }).appendTo($element);
+            if (ev.target !== elm && Cuic.isParent(elm, ev.target)) {
+                if (self.options.autoClose) {
+                    self.close();
                 }
-
-                // If the content of the popup has changed,
-                // we need to check if there is a close button
-                $element.find('.close-popup').off('click').one(ns('click'), self.close);
-
-                // Position the element
-                self.setAnchor(position, $target);
-
-                $element.stop(true, false).fadeIn(200, function () {
-                    if (typeof callback === 'function') {
-                        callback.call(self);
-                    }
-                    isOpening = false;
-                    isOpened = true;
-                });
             }
-            return self;
-        };
+        });
+        return _this15;
+    }
+
+    /**
+     * Called when the popup is closed
+     */
+
+
+    _createClass(_class14, [{
+        key: 'onClosed',
+        value: function onClosed() {
+            if (this.options.autoRemove) {
+                this.remove();
+            }
+        }
+
+        /**
+         * Called when the popup is opening
+         */
+
+    }, {
+        key: 'onOpen',
+        value: function onOpen() {
+            // Position the popup toward target
+            this.setAnchor(this.options.position, this.options.target);
+        }
 
         /**
          * Sets the position relative to a target
@@ -5502,82 +5471,30 @@ Cuic.Panel.prototype.options = {
          * @param targ
          * @return {Cuic.Popup}
          */
-        self.setAnchor = function (pos, targ) {
-            position = pos;
-            $target = $(targ || $target);
-            Cuic.anchor($element, pos, $target);
+
+    }, {
+        key: 'setAnchor',
+        value: function setAnchor(pos, targ) {
+            Cuic.anchor(self, pos, $target);
             return self;
-        };
+        }
+    }]);
 
-        /**
-         * Sets the content
-         * @param html
-         * @return {Cuic.Popup}
-         */
-        self.setContent = function (html) {
-            $element.html(html);
-            return self;
-        };
+    return _class14;
+}(Cuic.Component);
 
-        /**
-         * Toggles the popup visibility
-         * @param callback
-         * @return {Cuic.Popup}
-         */
-        self.toggle = function (callback) {
-            if (isClosing || !isOpened && !isOpening) {
-                self.open(callback);
-            } else {
-                self.close(callback);
-            }
-            return self;
-        };
-
-        // Create the element
-        $element = $('<div>', {
-            class: options.className,
-            html: options.content
-        }).appendTo(document.body);
-
-        // Set custom styles
-        Cuic.css($element, options.css);
-
-        // Set required styles
-        $element.css({
-            display: 'none',
-            position: 'absolute',
-            zIndex: options.zIndex
-        });
-
-        // Close the popup when the user clicks outside of it
-        $(document).off(ns('mousedown')).on(ns('mousedown'), function (ev) {
-            var target = $(ev.target);
-
-            if (target !== $element && target.closest($element).length === 0) {
-                if (self.autoClose && isOpened) {
-                    self.close();
-                }
-            }
-        });
-    };
-
-    /**
-     * Default options
-     * @type {*}
-     */
-    Cuic.Popup.prototype.options = {
-        autoClose: true,
-        autoRemove: true,
-        className: 'popup',
-        closeable: false,
-        closeButton: '×',
-        content: null,
-        css: null,
-        position: 'right',
-        target: null,
-        zIndex: 9
-    };
-})(jQuery);
+Cuic.Popup.prototype.options = {
+    autoClose: true,
+    autoRemove: true,
+    className: 'popup',
+    closeable: false,
+    closeButton: '×',
+    content: null,
+    css: null,
+    position: 'right',
+    target: null,
+    zIndex: 9
+};
 
 /*
  * The MIT License (MIT)

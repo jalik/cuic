@@ -36,8 +36,8 @@ Cuic.Element = class {
         self.options = Cuic.extend({}, Cuic.Element.prototype.options, options);
 
         // Use existing element
-        if (self.options.target) {
-            self.element = Cuic.getElement(self.options.target);
+        if (self.options.element) {
+            self.element = Cuic.getElement(self.options.element);
         }
         // Create element
         else if (typeof node === 'string') {
@@ -52,7 +52,7 @@ Cuic.Element = class {
             self.element = node.get(0);
         }
         else {
-            throw new TypeError(`Cannot create component without node or target.`);
+            throw new TypeError(`Cannot create component without node or element.`);
         }
 
         // Get parent element

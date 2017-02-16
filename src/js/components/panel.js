@@ -250,7 +250,7 @@ Cuic.Panel = class extends Cuic.Component {
             return self;
         };
 
-        if (options.target) {
+        if (options.element) {
             // Find panel parts
             // todo use Cuic to find elements
             header = $(self.getElement()).find('.panel-header');

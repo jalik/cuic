@@ -351,10 +351,10 @@ Cuic.Dialog = class extends Cuic.Component {
         // Make the dialog draggable
         if (self.options.draggable) {
             self.draggable = new Cuic.Draggable({
+                element: self.getElement(),
                 handle: title,
                 parent: self.getParentElement(),
-                rootOnly: false,
-                target: self.getElement()
+                rootOnly: false
             });
         }
 
@@ -364,8 +364,8 @@ Cuic.Dialog = class extends Cuic.Component {
          */
         self.shortcuts = {
             close: new Cuic.Shortcut({
+                element: self,
                 keyCode: Cuic.keys.ESC,
-                target: self.getElement(),
                 callback() {
                     self.close();
                 }
@@ -398,7 +398,6 @@ Cuic.Dialog.prototype.options = {
     parent: document.body,
     position: 'center',
     modal: true,
-    target: null,
     title: null,
     zIndex: 5
 };
