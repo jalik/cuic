@@ -39,10 +39,27 @@ const watch = require('gulp-watch');
 const pkg = require('./package.json');
 const buildDir = 'build/' + pkg.version;
 const baseFile = pkg.name + '-' + pkg.version;
+const docsDir = 'docs';
 
 
 /**
- * Compile CSS/LESS files
+ * Copy compiled CSS to docs
+ */
+gulp.task('doc:css', function () {
+    return gulp.src(buildDir + '/css/*.css')
+        .pipe(gulp.dest(docsDir + '/css'));
+});
+
+/**
+ * Copy compiled JS to docs
+ */
+gulp.task('doc:js', function () {
+    return gulp.src(buildDir + '/js/*.js')
+        .pipe(gulp.dest(docsDir + '/js'));
+});
+
+/**
+ * Compile CSS files
  */
 gulp.task('build:css', function () {
     return gulp.src([
@@ -110,13 +127,16 @@ gulp.task('build', ['build:css', 'build:js']);
 // Compress files
 gulp.task('compress', ['compress:css', 'compress:js']);
 
+// Add compiled files to docs
+gulp.task('doc', ['doc:css', 'doc:js']);
+
 // Concat + compress files
-gulp.task('default', ['build', 'compress']);
+gulp.task('default', ['build', 'compress', 'doc']);
 
 // Automatic rebuild
 gulp.task('watch', function () {
     gulp.watch(['src/**/*.less'], ['build:css']);
     gulp.watch(['src/**/*.js'], ['build:js']);
-    gulp.watch(['build/**/*.css', '!build/**/*.min.css'], ['compress:css']);
-    gulp.watch(['build/**/*.js', '!build/**/*.min.js'], ['compress:js']);
+    gulp.watch(['build/**/*.css', '!build/**/*.min.css'], ['compress:css', 'doc:css']);
+    gulp.watch(['build/**/*.js', '!build/**/*.min.js'], ['compress:js', 'doc:js']);
 });
