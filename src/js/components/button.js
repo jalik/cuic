@@ -23,9 +23,6 @@
  *
  */
 
-/**
- * Basic button
- */
 Cuic.Button = class extends Cuic.Component {
 
     constructor(options) {
@@ -48,15 +45,14 @@ Cuic.Button = class extends Cuic.Component {
             self.shortcut = new Cuic.Shortcut({
                 keyCode: options.shortcut,
                 target: self.element,
-                callback: self.onClick
+                callback() {
+                    self.getElement().click();
+                }
             });
         }
     }
 };
 
-/**
- * Basic button default options
- */
 Cuic.Button.prototype.options = {
     className: 'btn btn-default',
     disabled: false,

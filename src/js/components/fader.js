@@ -23,9 +23,6 @@
  *
  */
 
-/**
- * Basic screen fader
- */
 Cuic.Fader = class extends Cuic.Component {
 
     constructor(options) {
@@ -34,12 +31,16 @@ Cuic.Fader = class extends Cuic.Component {
 
         // Create element
         super('div', {className: options.className}, options);
+
+        let fixed = this.getParentElement() === document.body;
+
+        // Set position
+        if (fixed) {
+            this.css({position: 'fixed'});
+        }
     }
 };
 
-/**
- * Basic button default options
- */
 Cuic.Button.prototype.options = {
     className: 'fader'
 };

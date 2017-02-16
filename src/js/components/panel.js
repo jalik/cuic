@@ -354,9 +354,6 @@ Cuic.Panel = class extends Cuic.Component {
     }
 };
 
-/**
- * Panel default options
- */
 Cuic.Panel.prototype.options = {
     autoClose: false,
     className: 'panel',

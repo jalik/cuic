@@ -124,10 +124,6 @@ Cuic.Notification = class extends Cuic.Component {
     }
 };
 
-/**
- * Default options
- * @type {*}
- */
 Cuic.Notification.prototype.options = {
     autoClose: true,
     autoRemove: true,

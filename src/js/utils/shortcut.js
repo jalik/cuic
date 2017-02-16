@@ -35,6 +35,11 @@ Cuic.Shortcut = class {
         // Get the target
         self.options.target = Cuic.getElement(options.target);
 
+        // Check options
+        if (typeof self.options.callback !== 'function') {
+            throw new TypeError(`Shortcut.options.callback is not a function.`);
+        }
+
         // Init options
         if (self.options.active) {
             self.activate();
@@ -45,6 +50,7 @@ Cuic.Shortcut = class {
      * Activates the shortcut
      */
     activate() {
+        const self = this;
         const options = this.options;
         const target = this.getTarget();
         Cuic.on(`keydown`, target, (ev) => {
@@ -54,7 +60,7 @@ Cuic.Shortcut = class {
                 && options.shiftKey === ev.shiftKey) {
                 ev.preventDefault();
                 ev.stopPropagation();
-                options.callback.call(target, ev);
+                options.callback.call(self, target, ev);
                 return false;
             }
         });
@@ -76,9 +82,6 @@ Cuic.Shortcut = class {
     }
 };
 
-/**
- * Shortcut default options
- */
 Cuic.Shortcut.prototype.options = {
     active: true,
     altKey: false,

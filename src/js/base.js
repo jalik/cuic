@@ -548,7 +548,7 @@
                             }
                         }
                     }
-                } else {
+                } else if (b !== null && b !== undefined) {
                     a = b;
                 }
             }
@@ -588,7 +588,7 @@
             if (element instanceof jQuery) {
                 return element.get(0);
             }
-            if (element instanceof this.Component) {
+            if (element instanceof this.Element) {
                 return element.getElement();
             }
             throw new TypeError(`element is not an instance of HTMLElement`);

@@ -89,6 +89,7 @@ gulp.task('build:js', function () {
     return gulp.src([
         "src/js/base.js",
         "src/js/utils/**/*.js",
+        "src/js/ui/**/element.js",
         "src/js/ui/**/component.js",
         "src/js/ui/**/group.js",
         "src/js/ui/**/*.js",

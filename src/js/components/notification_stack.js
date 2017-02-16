@@ -23,11 +23,6 @@
  *
  */
 
-/**
- * Creates a notification stack
- * @param options
- * @constructor
- */
 Cuic.NotificationStack = class extends Cuic.GroupComponent {
 
     constructor(options) {
@@ -68,10 +63,6 @@ Cuic.NotificationStack = class extends Cuic.GroupComponent {
     }
 };
 
-/**
- * Default options
- * @type {*}
- */
 Cuic.NotificationStack.prototype.options = {
     className: 'notification-stack',
     container: null,

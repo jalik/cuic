@@ -30,11 +30,11 @@ let dialogZIndex = 0;
  */
 Cuic.dialogs = new Cuic.Collection();
 
-Cuic.dialogs.onAdded = function (value) {
+Cuic.dialogs.onAdded = function () {
     dialogZIndex += 1;
 };
 
-Cuic.dialogs.onRemoved = function (value) {
+Cuic.dialogs.onRemoved = function () {
     dialogZIndex -= 1;
 };
 
@@ -56,12 +56,12 @@ Cuic.Dialog = class extends Cuic.Component {
         const ns = Cuic.namespace('dialog');
         const self = this;
 
-        let $buttons;//todo use a GroupComponent
-        let $closeButton;
-        let $content;
-        let $footer;
-        let $header;
-        let $title;
+        let buttons;//todo use a GroupComponent
+        let closeButton;
+        let content;
+        let footer;
+        let header;
+        let title;
 
         // Attributes
         self.buttons = new Cuic.Collection();
@@ -82,31 +82,31 @@ Cuic.Dialog = class extends Cuic.Component {
 
                 // Set button callback
                 if (typeof callback === 'function') {
-                    button.onClick = (ev) => {
+                    button.on('click', (ev) => {
                         callback.call(self, ev);
-                    };
+                    });
                 } else if (callback === 'close') {
-                    button.onClick = () => {
+                    button.on('click', () => {
                         self.close();
-                    };
+                    });
                 }
             }
 
             // Add button in footer
-            $buttons.append(button.getElement());
+            buttons.append(button.getElement());
             self.buttons.add(button);
 
             // Hide footer if empty
             if (self.buttons.length > 1) {
-                $footer.show();
+                footer.show();
             }
             // Maximize the only one button
             else if (self.buttons.length === 1) {
-                $footer.show();
+                footer.show();
             }
             // Hide footer if empty
             else {
-                $footer.hide();
+                footer.hide();
             }
             return button;
         };
@@ -114,34 +114,34 @@ Cuic.Dialog = class extends Cuic.Component {
         /**
          * Returns the content
          * @deprecated
-         * @return {jQuery}
+         * @return {Cuic.Element}
          */
         self.getBody = () => {
-            return $content;
+            return content;
         };
 
         /**
          * Returns the content
-         * @return {jQuery}
+         * @return {Cuic.Element}
          */
         self.getContent = () => {
-            return $content;
+            return content;
         };
 
         /**
          * Returns the footer
-         * @return {jQuery}
+         * @return {Cuic.Element}
          */
         self.getFooter = () => {
-            return $footer;
+            return footer;
         };
 
         /**
          * Returns the header
-         * @return {jQuery}
+         * @return {Cuic.Element}
          */
         self.getHeader = () => {
-            return $header;
+            return header;
         };
 
         /**
@@ -236,14 +236,14 @@ Cuic.Dialog = class extends Cuic.Component {
             // Set content max height
             let contentMaxHeight = maxHeight;
 
-            if ($header) {
-                contentMaxHeight -= Cuic.outerHeight($header, true);
+            if (header) {
+                contentMaxHeight -= Cuic.outerHeight(header, true);
             }
-            if ($footer) {
-                contentMaxHeight -= Cuic.outerHeight($footer, true);
+            if (footer) {
+                contentMaxHeight -= Cuic.outerHeight(footer, true);
             }
 
-            Cuic.css($content, {
+            Cuic.css(content, {
                 'max-height': contentMaxHeight + 'px',
                 overflow: 'auto'
             });
@@ -260,7 +260,7 @@ Cuic.Dialog = class extends Cuic.Component {
          * @return {Cuic.Dialog}
          */
         self.setTitle = (html) => {
-            $title.html(html);
+            title.html(html);
             return self;
         };
 
@@ -273,61 +273,56 @@ Cuic.Dialog = class extends Cuic.Component {
             className: 'fader dialog-fader'
         }).appendTo(options.parent);
 
-        // Set fader position
-        if (fixed) {
-            fader.css({position: 'fixed'});
-        }
-
         // If the dialog is not modal,
         // a click on the wrapper will close the dialog
-        fader.onClick = (ev) => {
+        fader.on('click', () => {
             self.close();
-        };
+        });
 
         // Add header
-        $header = $('<header>', {
-            'class': 'dialog-header',
+        header = new Cuic.Element('header', {
+            className: 'dialog-header',
             css: {display: options.title != null ? 'block' : 'none'}
-        }).appendTo(self.getElement());
+        }).appendTo(self);
 
         // Add title
-        $title = $('<h3>', {
-            html: options.title,
-            'class': 'dialog-title'
-        }).appendTo($header);
+        title = new Cuic.Element('h3', {
+            className: 'dialog-title',
+            html: options.title
+        }).appendTo(header);
 
         // Add close button
-        $closeButton = $('<span>', {
-            'class': 'dialog-close-btn glyphicon glyphicon-remove-sign'
-        }).prependTo($header);
+        closeButton = new Cuic.Element('span', {
+            className: 'dialog-close-btn glyphicon glyphicon-remove-sign'
+        }).prependTo(header);
 
         // Add content
-        $content = $('<section>', {
-            'html': options.content,
-            'class': 'dialog-content',
+        content = new Cuic.Element('section', {
+            className: 'dialog-content',
+            html: options.content,
             style: 'overflow: auto'
-        }).appendTo(self.getElement());
+        }).appendTo(self);
 
         // Add footer
-        $footer = $('<footer>', {
-            'class': 'dialog-footer',
+        footer = new Cuic.Element('footer', {
+            className: 'dialog-footer',
             css: {display: options.buttons != null ? 'block' : 'none'}
-        }).appendTo(self.getElement());
+        }).appendTo(self);
 
         // Add buttons group
-        $buttons = $('<div>', {
-            'class': 'btn-group',
+        buttons = new Cuic.Element('div', {
+            className: 'btn-group',
             role: 'group'
-        }).appendTo($footer);
+        }).appendTo(footer);
 
         // Set content height
         if (parseFloat(options.contentHeight) > 0) {
-            $content.css('height', options.contentHeight);
+            content.css('height', options.contentHeight);
         }
 
         // Set content width
         if (parseFloat(options.contentWidth) > 0) {
-            $content.css('width', options.contentWidth);
+            content.css('width', options.contentWidth);
         }
 
         // Add buttons
@@ -338,7 +333,7 @@ Cuic.Dialog = class extends Cuic.Component {
         }
 
         // Close dialog when close button is clicked
-        $closeButton.on(ns('click'), () => {
+        closeButton.on('click', () => {
             self.close();
         });
 
@@ -353,27 +348,32 @@ Cuic.Dialog = class extends Cuic.Component {
         //     }
         // });
 
-        // Add dialog to collection
-        Cuic.dialogs.add(self);
-
         // Make the dialog draggable
         if (self.options.draggable) {
             self.draggable = new Cuic.Draggable({
-                handle: $title,
+                handle: title,
                 parent: self.getParentElement(),
                 rootOnly: false,
                 target: self.getElement()
             });
         }
 
-        // Define the close shortcut
-        new Cuic.Shortcut({
-            keyCode: 27, //Esc
-            target: self.getElement(),
-            callback() {
-                self.close();
-            }
-        });
+        /**
+         * Dialog shortcuts
+         * @type {{close: *}}
+         */
+        self.shortcuts = {
+            close: new Cuic.Shortcut({
+                keyCode: Cuic.keys.ESC,
+                target: self.getElement(),
+                callback() {
+                    self.close();
+                }
+            })
+        };
+
+        // Add dialog to collection
+        Cuic.dialogs.add(self);
     }
 
     onRemove() {
