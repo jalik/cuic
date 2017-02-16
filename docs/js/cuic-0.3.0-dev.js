@@ -2006,9 +2006,17 @@ Cuic.Element = function () {
         // Create element
         else if (typeof node === 'string') {
                 self.element = document.createElement(node);
-            } else {
-                throw new TypeError('Cannot create component without node or target.');
             }
+            // Use HTML element
+            else if (node instanceof HTMLElement) {
+                    self.element = node;
+                }
+                // Use jQuery element
+                else if (node instanceof jQuery) {
+                        self.element = node.get(0);
+                    } else {
+                        throw new TypeError('Cannot create component without node or target.');
+                    }
 
         // Get parent element
         if (self.options.parent) {
@@ -5027,10 +5035,10 @@ Cuic.Panel = function (_Cuic$Component7) {
 
         var self = _this14;
 
-        var $content = void 0;
-        var $footer = void 0;
-        var $header = void 0;
-        var $title = void 0;
+        var content = void 0;
+        var footer = void 0;
+        var header = void 0;
+        var title = void 0;
 
         // Define attributes
         self.closeButton = options.closeButton;
@@ -5038,34 +5046,34 @@ Cuic.Panel = function (_Cuic$Component7) {
         /**
          * Returns the content
          * @deprecated
-         * @return {jQuery}
+         * @return {Cuic.Element}
          */
         self.getBody = function () {
-            return $content;
+            return content;
         };
 
         /**
          * Returns the content
-         * @return {jQuery}
+         * @return {Cuic.Element}
          */
         self.getContent = function () {
-            return $content;
+            return content;
         };
 
         /**
          * Returns the footer
-         * @return {jQuery}
+         * @return {Cuic.Element}
          */
         self.getFooter = function () {
-            return $footer;
+            return footer;
         };
 
         /**
          * Returns the header
-         * @return {jQuery}
+         * @return {Cuic.Element}
          */
         self.getHeader = function () {
-            return $header;
+            return header;
         };
 
         /**
@@ -5163,18 +5171,18 @@ Cuic.Panel = function (_Cuic$Component7) {
         //
         //     // Horizontal position
         //     if (position.indexOf('left') !== -1) {
-        //         prop.left = -$(elm).outerWidth(true) + 'px';
+        //         prop.left = -self.outerWidth(true) + 'px';
         //         prop.right = '';
         //     } else if (position.indexOf('right') !== -1) {
-        //         prop.right = -$(elm).outerWidth(true) + 'px';
+        //         prop.right = -self.outerWidth(true) + 'px';
         //         prop.left = '';
         //     }
         //     // Vertical position
         //     if (position.indexOf('bottom') !== -1) {
-        //         prop.bottom = -$(elm).outerHeight(true) + 'px';
+        //         prop.bottom = -self.outerHeight(true) + 'px';
         //         prop.top = '';
         //     } else if (position.indexOf('top') !== -1) {
-        //         prop.top = -$(elm).outerHeight(true) + 'px';
+        //         prop.top = -self.outerHeight(true) + 'px';
         //         prop.bottom = '';
         //     }
         //
@@ -5207,14 +5215,14 @@ Cuic.Panel = function (_Cuic$Component7) {
             // Set content max height
             var contentMaxHeight = maxHeight;
 
-            if ($header) {
-                contentMaxHeight -= Cuic.outerHeight($header, true);
+            if (header) {
+                contentMaxHeight -= Cuic.outerHeight(header, true);
             }
-            if ($footer) {
-                contentMaxHeight -= Cuic.outerHeight($footer, true);
+            if (footer) {
+                contentMaxHeight -= Cuic.outerHeight(footer, true);
             }
 
-            Cuic.css($content, {
+            Cuic.css(content, {
                 'max-height': contentMaxHeight + 'px',
                 overflow: 'auto'
             });
@@ -5231,48 +5239,49 @@ Cuic.Panel = function (_Cuic$Component7) {
          * @return {Cuic.Panel}
          */
         self.setTitle = function (html) {
-            $title.html(html);
+            title.html(html);
             return self;
         };
 
         if (options.target) {
             // Find panel parts
-            $header = $(self.getElement()).find('.panel-header');
-            $title = $(self.getElement()).find('.panel-title');
-            $content = $(self.getElement()).find('.panel-content');
-            $footer = $(self.getElement()).find('.panel-footer');
+            // todo use Cuic to find elements
+            header = $(self.getElement()).find('.panel-header');
+            title = $(self.getElement()).find('.panel-title');
+            content = $(self.getElement()).find('.panel-content');
+            footer = $(self.getElement()).find('.panel-footer');
         } else {
             // Add the header
-            $header = $('<header>', {
-                'class': 'panel-header'
-            }).appendTo(self.getElement());
+            header = new Cuic.Element('header', {
+                className: 'panel-header'
+            }).appendTo(self);
 
             // Add the title
-            $title = $('<h5>', {
-                'class': 'panel-title',
+            title = new Cuic.Element('h5', {
+                className: 'panel-title',
                 html: options.title
-            }).appendTo($header);
+            }).appendTo(header);
 
             // Add the body
-            $content = $('<section>', {
-                'class': 'panel-content',
+            content = new Cuic.Element('section', {
+                className: 'panel-content',
                 html: options.content
-            }).appendTo(self.getElement());
+            }).appendTo(self);
 
             // Add the footer
-            $footer = $('<footer>', {
-                'class': 'panel-footer',
+            footer = new Cuic.Element('footer', {
+                className: 'panel-footer',
                 html: options.footer
-            }).appendTo(self.getElement());
+            }).appendTo(self);
 
             // Hide the header if not used
             if (!options.title) {
-                $header.hide();
+                header.hide();
             }
 
             // Hide the footer if not used
             if (!options.footer) {
-                $footer.hide();
+                footer.hide();
             }
         }
 
@@ -5303,22 +5312,19 @@ Cuic.Panel = function (_Cuic$Component7) {
 
         // Add the close button
         if (self.options.closeable) {
-            $('<span>', {
-                class: 'close-panel',
+            new Cuic.Element('span', {
+                className: 'close-panel',
                 html: self.closeButton
-            }).prependTo($header);
+            }).prependTo(header);
         }
 
-        // Close button
-        Cuic.on('click', self.getElement(), function (ev) {
+        self.on('click', function (ev) {
+            // Close button
             if (Cuic.hasClass(ev.target, 'close-panel')) {
                 ev.preventDefault();
                 self.close();
             }
-        });
-
-        // Toggle button
-        Cuic.on('click', self.getElement(), function (ev) {
+            // Toggle button
             if (Cuic.hasClass(ev.target, 'toggle-panel')) {
                 ev.preventDefault();
                 self.toggle();

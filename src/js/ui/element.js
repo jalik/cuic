@@ -43,6 +43,14 @@ Cuic.Element = class {
         else if (typeof node === 'string') {
             self.element = document.createElement(node);
         }
+        // Use HTML element
+        else if (node instanceof HTMLElement) {
+            self.element = node;
+        }
+        // Use jQuery element
+        else if (node instanceof jQuery) {
+            self.element = node.get(0);
+        }
         else {
             throw new TypeError(`Cannot create component without node or target.`);
         }
