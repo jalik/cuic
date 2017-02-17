@@ -37,10 +37,7 @@ Cuic.Popup = class extends Cuic.Component {
 
         const self = this;
 
-        // Public attributes
-        self.closeButton = null;
-
-        // Add close button
+        // todo Add close button
         self.closeButton = new Cuic.Element('span', {
             className: 'btn-close glyphicon glyphicon-remove-sign',
             html: self.options.closeButton,
@@ -53,28 +50,16 @@ Cuic.Popup = class extends Cuic.Component {
             self.closeButton.hide();
         }
 
-        // // Set required styles
-        // $element.css({
-        //     display: 'none',
-        //     position: 'absolute',
-        //     zIndex: options.zIndex
-        // });
-
         self.on('click', (ev) => {
             // Close button
             if (Cuic.hasClass(ev.target, 'btn-close')) {
                 ev.preventDefault();
                 self.close();
             }
-            // Toggle button
-            if (Cuic.hasClass(ev.target, 'btn-toggle')) {
-                ev.preventDefault();
-                self.toggle();
-            }
         });
 
         // Close the popup when the user clicks outside of it
-        Cuic.on('click', document.body, (ev) => {
+        Cuic.on('click', document, (ev) => {
             const elm = self.getElement();
 
             if (ev.target !== elm && !Cuic.isParent(elm, ev.target)) {
@@ -98,21 +83,22 @@ Cuic.Popup = class extends Cuic.Component {
      * Called when the popup is opening
      */
     onOpen() {
-        // Position the popup toward target
-        this.anchor(this.options.position, this.options.target);
+        const targetParent = Cuic.getElement(this.options.target).parentNode;
+        this.appendTo(targetParent);
+        this.anchor(this.options.anchor, this.options.target);
     }
 };
 
 Cuic.Popup.prototype.options = {
+    anchor: 'top',
     autoClose: true,
-    autoRemove: true,
+    autoRemove: false,
     className: 'popup',
     closeable: true,
     closeButton: '',
     content: null,
     css: null,
     namespace: 'popup',
-    position: 'right',
     target: null,
     zIndex: 9
 };

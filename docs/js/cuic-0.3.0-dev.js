@@ -1,28 +1,3 @@
-/*
- * The MIT License (MIT)
- *
- * Copyright (c) 2017 Karl STEIN
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- */
-
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -268,28 +243,35 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
             // Limit element size to parent size
             if (elmWidth > parentWidth) {
-                prop.width = parentWidth - (elmWidth - this.width(element)) + 'px';
+                prop.width = parentWidth - (elmWidth - this.width(element));
             }
             if (elmHeight > parentHeight) {
-                prop.height = parentHeight - (elmHeight - this.height(element)) + 'px';
+                prop.height = parentHeight - (elmHeight - this.height(element));
             }
 
             // Vertical position
             if (position.indexOf('bottom') !== -1) {
-                prop.bottom = Math.max(parentPadding.bottom, elmMargin.bottom) + 'px';
+                prop.bottom = Math.max(parentPadding.bottom, elmMargin.bottom);
             } else if (position.indexOf('top') !== -1) {
-                prop.top = Math.max(parentPadding.top, elmMargin.top) + 'px';
+                prop.top = Math.max(parentPadding.top, elmMargin.top);
             } else {
-                prop.top = getCenterY() + Math.max(parentPadding.top, elmMargin.top) + 'px';
+                prop.top = getCenterY() + Math.max(parentPadding.top, elmMargin.top);
             }
 
             // Horizontal position
             if (position.indexOf('left') !== -1) {
-                prop.left = Math.max(parentPadding.left, elmMargin.left) + 'px';
+                prop.left = Math.max(parentPadding.left, elmMargin.left);
             } else if (position.indexOf('right') !== -1) {
-                prop.right = Math.max(parentPadding.right, elmMargin.right) + 'px';
+                prop.right = Math.max(parentPadding.right, elmMargin.right);
             } else {
-                prop.left = getCenterX() + Math.max(parentPadding.left, elmMargin.left) + 'px';
+                prop.left = getCenterX() + Math.max(parentPadding.left, elmMargin.left);
+            }
+
+            // Add pixel unit to numbers
+            for (var attr in prop) {
+                if (typeof prop[attr] === 'number') {
+                    prop[attr] = prop[attr] + 'px';
+                }
             }
             return prop;
         },
@@ -297,7 +279,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         /**
          * Position an object from the exterior
-         * todo use computed style
          * @param element
          * @param position
          * @param target
@@ -306,86 +287,75 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         calculateAnchor: function calculateAnchor(element, position, target) {
             position = position || '';
             element = this.element(element);
-            target = this.element(target);
 
             var isPixel = target instanceof Array && target.length === 2;
 
-            console.log(element);
+            if (!isPixel) {
+                target = this.element(target);
+            }
 
             var targetHeight = isPixel ? 1 : target.outerHeight();
-            var targetHeightHalf = targetHeight / 2;
             var targetWidth = isPixel ? 1 : target.outerWidth();
-            var targetWidthHalf = targetWidth / 2;
+            var targetCenterX = parseInt(targetWidth / 2);
+            var targetCenterY = parseInt(targetHeight / 2);
+            var targetOffset = isPixel ? { left: target[0], top: target[1] } : target.offset();
 
             var objWidth = element.outerWidth(true);
-            var objWidthHalf = objWidth / 2;
             var objHeight = element.outerHeight(true);
-            var objHeightHalf = objHeight / 2;
-
-            var offset = isPixel ? { left: target[0], top: target[1] } : target.offset();
-
-            var pos = position.split(' ');
+            var objCenterX = parseInt(objWidth / 2);
+            var objCenterY = parseInt(objHeight / 2);
 
             var prop = {
                 bottom: '',
-                right: ''
+                left: '',
+                right: '',
+                top: ''
             };
 
-            switch (pos[0]) {
-                case 'bottom':
-                    prop.left = offset.left + targetWidthHalf - objWidthHalf;
-                    prop.top = offset.top + targetHeight;
-                    break;
-
-                case 'left':
-                    prop.left = offset.left - objWidth;
-                    prop.top = offset.top + targetHeightHalf - objHeightHalf;
-                    break;
-
-                case 'right':
-                    prop.left = offset.left + targetWidth;
-                    prop.top = offset.top + targetHeightHalf - objHeightHalf;
-                    break;
-
-                case 'top':
-                    prop.left = offset.left + targetWidthHalf - objWidthHalf;
-                    prop.top = offset.top - objHeight;
-                    break;
+            // Vertical positioning
+            if (position.indexOf('bottom') !== -1) {
+                prop.top = targetOffset.top + targetHeight;
+            } else if (position.indexOf('top') !== -1) {
+                prop.top = targetOffset.top - objHeight;
+            } else {
+                prop.top = targetOffset.top + targetCenterY - objCenterY;
             }
 
-            switch (pos[1]) {
-                case 'bottom':
-                    prop.top = offset.top + targetHeight;
-                    break;
-
-                case 'middle':
-                    prop.top = offset.top + targetHeightHalf - objHeightHalf;
-                    break;
-
-                case 'top':
-                    prop.top = offset.top - objHeight;
-                    break;
+            // Horizontal positioning
+            if (position.indexOf('left') !== -1) {
+                prop.left = targetOffset.left - objWidth;
+            } else if (position.indexOf('right') !== -1) {
+                prop.left = targetOffset.left + targetWidth;
+            } else {
+                prop.left = targetOffset.left + targetCenterX - objCenterX;
             }
 
+            // Use window for positioning
             if (element.css('position') === 'fixed') {
                 prop.left -= window.scrollX;
                 prop.top -= window.scrollY;
             }
 
-            // Check that the element is not positioned outside the screen
-            if (prop.bottom != null && prop.bottom < 0) {
-                prop.bottom = 0;
+            // // todo Check that the element is not positioned outside of the screen
+            // if (prop.bottom != null && prop.bottom < 0) {
+            //     prop.bottom = 0;
+            // }
+            // if (prop.left != null && prop.left < 0) {
+            //     prop.left = 0;
+            // }
+            // if (prop.right != null && prop.right < 0) {
+            //     prop.right = 0;
+            // }
+            // if (prop.top != null && prop.top < 0) {
+            //     prop.top = 0;
+            // }
+
+            // Add pixel unit to numbers
+            for (var attr in prop) {
+                if (typeof prop[attr] === 'number') {
+                    prop[attr] = prop[attr] + 'px';
+                }
             }
-            if (prop.left != null && prop.left < 0) {
-                prop.left = 0;
-            }
-            if (prop.right != null && prop.right < 0) {
-                prop.right = 0;
-            }
-            if (prop.top != null && prop.top < 0) {
-                prop.top = 0;
-            }
-            console.log('anchor', prop);
             return prop;
         },
 
@@ -984,11 +954,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
          * @return {{left: Number, top: Number}}
          */
         offset: function offset(element) {
-            var left = parseInt(this.getComputedStyle(element, 'offsetLeft'));
-            var top = parseInt(this.getComputedStyle(element, 'offsetTop'));
+            element = this.getElement(element);
             return {
-                left: left,
-                top: top
+                left: element.offsetLeft,
+                top: element.offsetTop
             };
         },
 
@@ -2148,8 +2117,10 @@ Cuic.Element = function () {
     }, {
         key: 'anchor',
         value: function anchor(position, target) {
+            target = target || this.options.target;
             Cuic.anchor(this.getElement(), position, target);
-            this.options.position = position;
+            this.options.anchor = position;
+            this.options.target = target;
             return this;
         }
 
@@ -2329,6 +2300,34 @@ Cuic.Element = function () {
         key: 'innerWidth',
         value: function innerWidth() {
             return Cuic.innerWidth(this);
+        }
+
+        /**
+         * Inserts an element after
+         * @param element
+         * @return {Cuic.Element}
+         */
+
+    }, {
+        key: 'insertAfter',
+        value: function insertAfter(element) {
+            var parent = this.getParentElement();
+            parent.insertBefore(element, this.getElement().nextSibling);
+            return this;
+        }
+
+        /**
+         * Inserts an element before
+         * @param element
+         * @return {Cuic.Element}
+         */
+
+    }, {
+        key: 'insertBefore',
+        value: function insertBefore(element) {
+            var parent = this.getParentElement();
+            parent.insertBefore(element, this.getElement());
+            return this;
         }
 
         /**
@@ -3898,7 +3897,7 @@ Cuic.Dialog = function (_Cuic$Component4) {
         });
 
         // // Close the dialog when the user clicks outside of it
-        // Cuic.on('click', document.body, (ev) => {
+        // Cuic.on('click', document, (ev) => {
         //     const elm = self.getElement();
         //
         //     if (ev.target !== elm && !Cuic.isParent(elm, ev.target)) {
@@ -5632,10 +5631,7 @@ Cuic.Popup = function (_Cuic$Component8) {
 
         var self = _this16;
 
-        // Public attributes
-        self.closeButton = null;
-
-        // Add close button
+        // todo Add close button
         self.closeButton = new Cuic.Element('span', {
             className: 'btn-close glyphicon glyphicon-remove-sign',
             html: self.options.closeButton,
@@ -5648,28 +5644,16 @@ Cuic.Popup = function (_Cuic$Component8) {
             self.closeButton.hide();
         }
 
-        // // Set required styles
-        // $element.css({
-        //     display: 'none',
-        //     position: 'absolute',
-        //     zIndex: options.zIndex
-        // });
-
         self.on('click', function (ev) {
             // Close button
             if (Cuic.hasClass(ev.target, 'btn-close')) {
                 ev.preventDefault();
                 self.close();
             }
-            // Toggle button
-            if (Cuic.hasClass(ev.target, 'btn-toggle')) {
-                ev.preventDefault();
-                self.toggle();
-            }
         });
 
         // Close the popup when the user clicks outside of it
-        Cuic.on('click', document.body, function (ev) {
+        Cuic.on('click', document, function (ev) {
             var elm = self.getElement();
 
             if (ev.target !== elm && !Cuic.isParent(elm, ev.target)) {
@@ -5701,8 +5685,9 @@ Cuic.Popup = function (_Cuic$Component8) {
     }, {
         key: 'onOpen',
         value: function onOpen() {
-            // Position the popup toward target
-            this.anchor(this.options.position, this.options.target);
+            var targetParent = Cuic.getElement(this.options.target).parentNode;
+            this.appendTo(targetParent);
+            this.anchor(this.options.anchor, this.options.target);
         }
     }]);
 
@@ -5710,15 +5695,15 @@ Cuic.Popup = function (_Cuic$Component8) {
 }(Cuic.Component);
 
 Cuic.Popup.prototype.options = {
+    anchor: 'top',
     autoClose: true,
-    autoRemove: true,
+    autoRemove: false,
     className: 'popup',
     closeable: true,
     closeButton: '',
     content: null,
     css: null,
     namespace: 'popup',
-    position: 'right',
     target: null,
     zIndex: 9
 };

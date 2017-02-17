@@ -224,39 +224,45 @@
 
             // Limit element size to parent size
             if (elmWidth > parentWidth) {
-                prop.width = (parentWidth - (elmWidth - this.width(element))) + 'px';
+                prop.width = (parentWidth - (elmWidth - this.width(element)));
             }
             if (elmHeight > parentHeight) {
-                prop.height = (parentHeight - (elmHeight - this.height(element))) + 'px';
+                prop.height = (parentHeight - (elmHeight - this.height(element)));
             }
 
             // Vertical position
             if (position.indexOf('bottom') !== -1) {
-                prop.bottom = Math.max(parentPadding.bottom, elmMargin.bottom) + 'px';
+                prop.bottom = Math.max(parentPadding.bottom, elmMargin.bottom);
             }
             else if (position.indexOf('top') !== -1) {
-                prop.top = Math.max(parentPadding.top, elmMargin.top) + 'px';
+                prop.top = Math.max(parentPadding.top, elmMargin.top);
             }
             else {
-                prop.top = (getCenterY() + Math.max(parentPadding.top, elmMargin.top)) + 'px';
+                prop.top = (getCenterY() + Math.max(parentPadding.top, elmMargin.top));
             }
 
             // Horizontal position
             if (position.indexOf('left') !== -1) {
-                prop.left = Math.max(parentPadding.left, elmMargin.left) + 'px';
+                prop.left = Math.max(parentPadding.left, elmMargin.left);
             }
             else if (position.indexOf('right') !== -1) {
-                prop.right = Math.max(parentPadding.right, elmMargin.right) + 'px';
+                prop.right = Math.max(parentPadding.right, elmMargin.right);
             }
             else {
-                prop.left = (getCenterX() + Math.max(parentPadding.left, elmMargin.left)) + 'px';
+                prop.left = (getCenterX() + Math.max(parentPadding.left, elmMargin.left));
+            }
+
+            // Add pixel unit to numbers
+            for (let attr in prop) {
+                if (typeof prop[attr] === 'number') {
+                    prop[attr] = prop[attr] + 'px';
+                }
             }
             return prop;
         },
 
         /**
          * Position an object from the exterior
-         * todo use computed style
          * @param element
          * @param position
          * @param target
@@ -265,86 +271,79 @@
         calculateAnchor(element, position, target) {
             position = position || '';
             element = this.element(element);
-            target = this.element(target);
 
             let isPixel = target instanceof Array && target.length === 2;
 
-            console.log(element);
+            if (!isPixel) {
+                target = this.element(target);
+            }
 
             let targetHeight = isPixel ? 1 : target.outerHeight();
-            let targetHeightHalf = targetHeight / 2;
             let targetWidth = isPixel ? 1 : target.outerWidth();
-            let targetWidthHalf = targetWidth / 2;
+            let targetCenterX = parseInt(targetWidth / 2);
+            let targetCenterY = parseInt(targetHeight / 2);
+            let targetOffset = isPixel ? {left: target[0], top: target[1]} : target.offset();
 
             let objWidth = element.outerWidth(true);
-            let objWidthHalf = objWidth / 2;
             let objHeight = element.outerHeight(true);
-            let objHeightHalf = objHeight / 2;
-
-            let offset = isPixel ? {left: target[0], top: target[1]} : target.offset();
-
-            let pos = position.split(' ');
+            let objCenterX = parseInt(objWidth / 2);
+            let objCenterY = parseInt(objHeight / 2);
 
             let prop = {
                 bottom: '',
-                right: ''
+                left: '',
+                right: '',
+                top: ''
             };
 
-            switch (pos[0]) {
-                case 'bottom':
-                    prop.left = offset.left + targetWidthHalf - objWidthHalf;
-                    prop.top = offset.top + targetHeight;
-                    break;
-
-                case 'left':
-                    prop.left = offset.left - objWidth;
-                    prop.top = offset.top + targetHeightHalf - objHeightHalf;
-                    break;
-
-                case 'right':
-                    prop.left = offset.left + targetWidth;
-                    prop.top = offset.top + targetHeightHalf - objHeightHalf;
-                    break;
-
-                case 'top':
-                    prop.left = offset.left + targetWidthHalf - objWidthHalf;
-                    prop.top = offset.top - objHeight;
-                    break;
+            // Vertical positioning
+            if (position.indexOf('bottom') !== -1) {
+                prop.top = targetOffset.top + targetHeight;
+            }
+            else if (position.indexOf('top') !== -1) {
+                prop.top = targetOffset.top - objHeight;
+            }
+            else {
+                prop.top = targetOffset.top + targetCenterY - objCenterY;
             }
 
-            switch (pos[1]) {
-                case 'bottom':
-                    prop.top = offset.top + targetHeight;
-                    break;
-
-                case 'middle':
-                    prop.top = offset.top + targetHeightHalf - objHeightHalf;
-                    break;
-
-                case 'top':
-                    prop.top = offset.top - objHeight;
-                    break;
+            // Horizontal positioning
+            if (position.indexOf('left') !== -1) {
+                prop.left = targetOffset.left - objWidth;
+            }
+            else if (position.indexOf('right') !== -1) {
+                prop.left = targetOffset.left + targetWidth;
+            }
+            else {
+                prop.left = targetOffset.left + targetCenterX - objCenterX;
             }
 
+            // Use window for positioning
             if (element.css('position') === 'fixed') {
                 prop.left -= window.scrollX;
                 prop.top -= window.scrollY;
             }
 
-            // Check that the element is not positioned outside the screen
-            if (prop.bottom != null && prop.bottom < 0) {
-                prop.bottom = 0;
+            // // todo Check that the element is not positioned outside of the screen
+            // if (prop.bottom != null && prop.bottom < 0) {
+            //     prop.bottom = 0;
+            // }
+            // if (prop.left != null && prop.left < 0) {
+            //     prop.left = 0;
+            // }
+            // if (prop.right != null && prop.right < 0) {
+            //     prop.right = 0;
+            // }
+            // if (prop.top != null && prop.top < 0) {
+            //     prop.top = 0;
+            // }
+
+            // Add pixel unit to numbers
+            for (let attr in prop) {
+                if (typeof prop[attr] === 'number') {
+                    prop[attr] = prop[attr] + 'px';
+                }
             }
-            if (prop.left != null && prop.left < 0) {
-                prop.left = 0;
-            }
-            if (prop.right != null && prop.right < 0) {
-                prop.right = 0;
-            }
-            if (prop.top != null && prop.top < 0) {
-                prop.top = 0;
-            }
-            console.log('anchor', prop)
             return prop;
         },
 
@@ -918,11 +917,10 @@
          * @return {{left: Number, top: Number}}
          */
         offset(element) {
-            const left = parseInt(this.getComputedStyle(element, 'offsetLeft'));
-            const top = parseInt(this.getComputedStyle(element, 'offsetTop'));
+            element = this.getElement(element);
             return {
-                left: left,
-                top: top
+                left: element.offsetLeft,
+                top: element.offsetTop
             };
         },
 

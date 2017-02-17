@@ -843,6 +843,45 @@
             </script>
         </div>
 
+        <div id="ui-popup">
+            <h2><a href="#">Cuic.</a>Popup</h2>
+
+            <p class="alert alert-info">Popups are often used to display menus, for example, when a user clicks on a
+                button, a popup menu appears
+                next to
+                it.</p>
+
+            <div class="sandbox" id="sb-popup">
+                <div class="blueprint">
+                    <button class="btn btn-default" type="button">Toggle popup</button>
+                </div>
+            </div>
+            <script>
+                $(document).ready(function () {
+                    var popupSection = $("#ui-popup");
+                    var sandbox = popupSection.find('.sandbox');
+                    var blueprint = sandbox.find('.blueprint');
+                    var popupButton = blueprint.find("button");
+
+                    window.popup = new Cuic.Popup({
+                        autoClose: true,
+                        autoRemove: false,
+                        closeable: true,
+                        anchor: 'right',
+                        target: popupButton
+                    });
+
+                    popupButton.on("click", function (ev) {
+                        ev.stopPropagation();
+                        if (!popup.isOpened()) {
+                            popup.setContent("Clicked on " + new Date());
+                        }
+                        popup.toggle();
+                    });
+                });
+            </script>
+        </div>
+
         <div id="ui-switcher">
             <h2><a href="#">Cuic.</a>Switcher</h2>
 
@@ -916,41 +955,6 @@
                         delay: 1000,
                         repeat: sandbox.find('[name=repeat]').is(':checked'),
                         target: sandbox.find('.switcher')
-                    });
-                });
-            </script>
-        </div>
-
-        <div id="ui-popup">
-            <h2><a href="#">Cuic.</a>Popup</h2>
-
-            <p class="alert alert-info">Popups are often used to display menus, for example, when a user clicks on a
-                button, a popup menu appears
-                next to
-                it.</p>
-
-            <div class="sandbox" id="sb-popup">
-                <div class="blueprint">
-                    <button class="btn btn-default" type="button">Toggle popup</button>
-                </div>
-            </div>
-            <script>
-                $(document).ready(function () {
-                    var popupButton = $("#sb-popup .blueprint > button");
-
-                    window.popup = new Cuic.Popup({
-                        autoClose: false,
-                        autoRemove: false,
-                        closeable: true,
-                        target: popupButton
-                    });
-
-                    popupButton.on("click", function (ev) {
-                        ev.stopPropagation();
-                        if (!popup.isOpened()) {
-                            popup.setContent("Clicked on " + new Date());
-                        }
-                        popup.toggle();
                     });
                 });
             </script>

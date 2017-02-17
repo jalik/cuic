@@ -138,8 +138,10 @@ Cuic.Element = class {
      * @return {Cuic.Element}
      */
     anchor(position, target) {
+        target = target || this.options.target;
         Cuic.anchor(this.getElement(), position, target);
-        this.options.position = position;
+        this.options.anchor = position;
+        this.options.target = target;
         return this;
     }
 
@@ -274,6 +276,28 @@ Cuic.Element = class {
      */
     innerWidth() {
         return Cuic.innerWidth(this);
+    }
+
+    /**
+     * Inserts an element after
+     * @param element
+     * @return {Cuic.Element}
+     */
+    insertAfter(element) {
+        const parent = this.getParentElement();
+        parent.insertBefore(element, this.getElement().nextSibling);
+        return this;
+    }
+
+    /**
+     * Inserts an element before
+     * @param element
+     * @return {Cuic.Element}
+     */
+    insertBefore(element) {
+        const parent = this.getParentElement();
+        parent.insertBefore(element, this.getElement());
+        return this;
     }
 
     /**
