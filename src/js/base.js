@@ -60,24 +60,6 @@
         mouseY: 0,
 
         /**
-         * Adds an event listener
-         * @param element
-         * @param event
-         * @param listener
-         * @return {*}
-         */
-        addEventListener(element, event, listener) {
-            element = this.getElement(element);
-
-            if (typeof element.addEventListener === 'function') {
-                return element.addEventListener(event, listener);
-            }
-            else if (typeof element.attachEvent === 'function') {
-                return element.attachEvent(event, listener);
-            }
-        },
-
-        /**
          * Adds CSS class to the element
          * @param element
          * @param className
@@ -97,6 +79,37 @@
             }
             element.className = classes.join(' ');
             return classes;
+        },
+
+        /**
+         * Adds an event listener
+         * @param element
+         * @param event
+         * @param listener
+         * @return {*}
+         */
+        addEventListener(element, event, listener) {
+            element = this.getElement(element);
+
+            if (typeof element.addEventListener === 'function') {
+                return element.addEventListener(event, listener);
+            }
+            else if (typeof element.attachEvent === 'function') {
+                return element.attachEvent(event, listener);
+            }
+        },
+
+        /**
+         * Place the element inside a target
+         * @param element
+         * @param position
+         * @param parent
+         * @return {HTMLElement}
+         */
+        align(element, position, parent) {
+            element = this.getElement(element);
+            this.css(element, this.calculateAlign(element, position, parent));
+            return element;
         },
 
         /**
@@ -143,6 +156,102 @@
                 top: top,
                 vertical: bottom + top
             };
+        },
+
+        /**
+         * Position an object inside another
+         * @param element
+         * @param position
+         * @param parent
+         * @return {*}
+         */
+        calculateAlign(element, position, parent) {
+            element = this.getElement(element);
+            position = position || '';
+
+            if (parent) {
+                parent = this.getElement(parent);
+
+                // Use body as parent
+                if (parent.nodeName === 'HTML') {
+                    parent = document.body;
+                }
+                // Append element to parent if needed
+                if (parent !== element.parentNode) {
+                    parent.append(element);
+                }
+            }
+            else {
+                // Use parent node if no parent defined
+                parent = element.parentNode
+            }
+
+            let elmHeight = this.outerHeight(element, true);
+            let elmWidth = this.outerWidth(element, true);
+            let elmMargin = this.margin(element);
+            let parentHeight = this.innerHeight(parent);
+            let parentWidth = this.innerWidth(parent);
+            let parentPadding = this.padding(parent);
+            let relativeLeft = parent.scrollLeft;
+            let relativeTop = parent.scrollTop;
+            let relativeBottom = -relativeTop;// todo maybe subtract element height ?
+            let relativeRight = -relativeLeft;// todo maybe subtract element width ?
+            let prop = {
+                bottom: '',
+                left: '',
+                right: '',
+                top: ''
+            };
+
+            // If the target is fixed, we use the window as parent
+            if (this.css(element, 'position') === 'fixed') {
+                parent = window;
+                parentHeight = this.innerHeight(parent);
+                parentWidth = this.innerWidth(parent);
+                relativeLeft = 0;
+                relativeTop = 0;
+                relativeBottom = 0;
+                relativeRight = 0;
+            }
+
+            const getCenterX = () => {
+                return relativeLeft + (this.width(parent) / 2 - elmWidth / 2);
+            };
+
+            const getCenterY = () => {
+                return relativeTop + (this.height(parent) / 2 - elmHeight / 2);
+            };
+
+            // Limit element size to parent size
+            if (elmWidth > parentWidth) {
+                prop.width = (parentWidth - (elmWidth - this.width(element))) + 'px';
+            }
+            if (elmHeight > parentHeight) {
+                prop.height = (parentHeight - (elmHeight - this.height(element))) + 'px';
+            }
+
+            // Vertical position
+            if (position.indexOf('bottom') !== -1) {
+                prop.bottom = Math.max(parentPadding.bottom, elmMargin.bottom) + 'px';
+            }
+            else if (position.indexOf('top') !== -1) {
+                prop.top = Math.max(parentPadding.top, elmMargin.top) + 'px';
+            }
+            else {
+                prop.top = (getCenterY() + Math.max(parentPadding.top, elmMargin.top)) + 'px';
+            }
+
+            // Horizontal position
+            if (position.indexOf('left') !== -1) {
+                prop.left = Math.max(parentPadding.left, elmMargin.left) + 'px';
+            }
+            else if (position.indexOf('right') !== -1) {
+                prop.right = Math.max(parentPadding.right, elmMargin.right) + 'px';
+            }
+            else {
+                prop.left = (getCenterX() + Math.max(parentPadding.left, elmMargin.left)) + 'px';
+            }
+            return prop;
         },
 
         /**
@@ -288,107 +397,11 @@
             this.css(clone, {height: 'auto', width: 'auto'});
 
             // Calculate minimized size
-            let prop = this.calculatePosition(clone, position, element.parentNode);
+            let prop = this.calculateAlign(clone, position, element.parentNode);
             prop.height = this.outerHeight(clone) + 'px';
             prop.width = this.outerWidth(clone) + 'px';
             clone.remove();
 
-            return prop;
-        },
-
-        /**
-         * Position an object inside another
-         * @param element
-         * @param position
-         * @param parent
-         * @return {*}
-         */
-        calculatePosition(element, position, parent) {
-            element = this.getElement(element);
-            position = position || '';
-
-            if (parent) {
-                parent = this.getElement(parent);
-
-                // Use body as parent
-                if (parent.nodeName === 'HTML') {
-                    parent = document.body;
-                }
-                // Append element to parent if needed
-                if (parent !== element.parentNode) {
-                    parent.append(element);
-                }
-            }
-            else {
-                // Use parent node if no parent defined
-                parent = element.parentNode
-            }
-
-            let elmHeight = this.outerHeight(element, true);
-            let elmWidth = this.outerWidth(element, true);
-            let elmMargin = this.margin(element);
-            let parentHeight = this.innerHeight(parent);
-            let parentWidth = this.innerWidth(parent);
-            let parentPadding = this.padding(parent);
-            let relativeLeft = parent.scrollLeft;
-            let relativeTop = parent.scrollTop;
-            let relativeBottom = -relativeTop;// todo maybe subtract element height ?
-            let relativeRight = -relativeLeft;// todo maybe subtract element width ?
-            let prop = {
-                bottom: '',
-                left: '',
-                right: '',
-                top: ''
-            };
-
-            // If the target is fixed, we use the window as parent
-            if (this.css(element, 'position') === 'fixed') {
-                parent = window;
-                parentHeight = this.innerHeight(parent);
-                parentWidth = this.innerWidth(parent);
-                relativeLeft = 0;
-                relativeTop = 0;
-                relativeBottom = 0;
-                relativeRight = 0;
-            }
-
-            const getCenterX = () => {
-                return relativeLeft + (this.width(parent) / 2 - elmWidth / 2);
-            };
-
-            const getCenterY = () => {
-                return relativeTop + (this.height(parent) / 2 - elmHeight / 2);
-            };
-
-            // Limit element size to parent size
-            if (elmWidth > parentWidth) {
-                prop.width = (parentWidth - (elmWidth - this.width(element))) + 'px';
-            }
-            if (elmHeight > parentHeight) {
-                prop.height = (parentHeight - (elmHeight - this.height(element))) + 'px';
-            }
-
-            // Vertical position
-            if (position.indexOf('bottom') !== -1) {
-                prop.bottom = Math.max(parentPadding.bottom, elmMargin.bottom) + 'px';
-            }
-            else if (position.indexOf('top') !== -1) {
-                prop.top = Math.max(parentPadding.top, elmMargin.top) + 'px';
-            }
-            else {
-                prop.top = (getCenterY() + Math.max(parentPadding.top, elmMargin.top)) + 'px';
-            }
-
-            // Horizontal position
-            if (position.indexOf('left') !== -1) {
-                prop.left = Math.max(parentPadding.left, elmMargin.left) + 'px';
-            }
-            else if (position.indexOf('right') !== -1) {
-                prop.right = Math.max(parentPadding.right, elmMargin.right) + 'px';
-            }
-            else {
-                prop.left = (getCenterX() + Math.max(parentPadding.left, elmMargin.left)) + 'px';
-            }
             return prop;
         },
 
@@ -609,11 +622,11 @@
             if (element instanceof HTMLDocument) {
                 return element;
             }
-            if (element instanceof jQuery) {
-                return element.get(0);
-            }
             if (element instanceof this.Element) {
                 return element.getElement();
+            }
+            if (element instanceof jQuery) {
+                return element.get(0);
             }
             throw new TypeError(`element is not supported (HTMLElement, Cuic.Element or jQuery)`);
         },
@@ -900,19 +913,15 @@
         },
 
         /**
-         * Returns the element position
+         * Returns the element offset
          * @param element
-         * @return {{bottom: Number, left: Number, right: Number, top: Number}}
+         * @return {{left: Number, top: Number}}
          */
         offset(element) {
-            const bottom = parseInt(this.getComputedStyle(element, 'bottom'));
-            const left = parseInt(this.getComputedStyle(element, 'left'));
-            const right = parseInt(this.getComputedStyle(element, 'right'));
-            const top = parseInt(this.getComputedStyle(element, 'top'));
+            const left = parseInt(this.getComputedStyle(element, 'offsetLeft'));
+            const top = parseInt(this.getComputedStyle(element, 'offsetTop'));
             return {
-                bottom: bottom,
                 left: left,
-                right: right,
                 top: top
             };
         },
@@ -1038,16 +1047,21 @@
         },
 
         /**
-         * Place the element inside a target
+         * Returns the element position
          * @param element
-         * @param position
-         * @param parent
-         * @return {HTMLElement}
+         * @return {{bottom: Number, left: Number, right: Number, top: Number}}
          */
-        position(element, position, parent) {
-            element = this.getElement(element);
-            this.css(element, this.calculatePosition(element, position, parent));
-            return element;
+        position(element) {
+            const bottom = parseInt(this.getComputedStyle(element, 'bottom'));
+            const left = parseInt(this.getComputedStyle(element, 'left'));
+            const right = parseInt(this.getComputedStyle(element, 'right'));
+            const top = parseInt(this.getComputedStyle(element, 'top'));
+            return {
+                bottom: bottom,
+                left: left,
+                right: right,
+                top: top
+            };
         },
 
         /**

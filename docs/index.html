@@ -50,6 +50,7 @@
     <aside id="sidebar">
         <h4>Composants</h4>
         <ul class="menu">
+            <li><a href="#ui-utils">Utils</a></li>
             <li><a href="#ui-dialog">Dialog</a></li>
             <li><a href="#ui-form">Form</a></li>
             <li><a href="#ui-grid">Grid</a></li>
@@ -81,15 +82,15 @@
             tabs...). It was designed to be simple and easy to use, with convention over configuration pattern.
         </p>
 
-        <div id="ui-dimensions">
-            <h2><a href="#">Dimension methods</a></h2>
+        <div id="ui-utils">
+            <h2><a href="#">Utils</a></h2>
 
             <div class="sandbox" id="sb-dimensions">
                 <form class="parameters" style="margin-bottom: 10px">
                     <div class="btn-toolbar" role="toolbar">
                         <div class="btn-group" role="group">
                             <button class="btn btn-default" name="method" value="height" type="button">
-                                <span>Height()</span>
+                                <span>height()</span>
                             </button>
                             <button class="btn btn-default" name="method" value="innerHeight" type="button">
                                 <span>innerHeight()</span>
@@ -100,7 +101,7 @@
                         </div>
                         <div class="btn-group" role="group">
                             <button class="btn btn-default" name="method" value="width" type="button">
-                                <span>Width()</span>
+                                <span>width()</span>
                             </button>
                             <button class="btn btn-default" name="method" value="innerWidth" type="button">
                                 <span>innerWidth()</span>
@@ -110,21 +111,36 @@
                             </button>
                         </div>
                     </div>
+                    <div class="btn-toolbar" role="toolbar">
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-default" name="method" value="offset" type="button">
+                                <span>offset()</span>
+                            </button>
+                            <button class="btn btn-default" name="method" value="position" type="button">
+                                <span>position()</span>
+                            </button>
+                        </div>
+                    </div>
                 </form>
-                <div class="blueprint">
+                <div class="blueprint" style="min-height: 300px;">
                     <div class="target"
                          style="background: white; opacity: 0.7; height: 100px; width:100px; padding: 10px; margin:10px; border:solid 1px black"></div>
                 </div>
             </div>
             <script>
-                var sectionDim = $('#ui-dimensions');
-                var sandbox = sectionDim.find('.sandbox');
-                var blueprint = sectionDim.find('.blueprint');
+                var sectionUtils = $('#ui-utils');
+                var sandbox = sectionUtils.find('.sandbox');
+                var blueprint = sectionUtils.find('.blueprint');
                 var target = blueprint.find('.target');
-                var form = sectionDim.find('form');
+                var form = sectionUtils.find('form');
                 form.find('[name="method"]').on('click', function (ev) {
                     var button = ev.currentTarget;
-                    console.log(button.value, Cuic[button.value](target));
+                    var value = null;
+
+                    if (typeof Cuic[button.value] === 'function') {
+                        value = Cuic[button.value](target);
+                    }
+                    console.log(button.value, value);
                 });
             </script>
         </div>
@@ -629,13 +645,16 @@
                             position: position.val()
                         });
                         notification.open();
+
+                        position.off('change').on("change", function () {
+                            if (!notification.isRemoved()) {
+                                notification.align(position.val(), container.is(':checked') ? '#sb-notification .blueprint' : document.body);
+                            }
+                        });
                     };
                     sandbox.find('.btn-run').on('click', function (ev) {
                         ev.stopPropagation();
                         run();
-                    });
-                    position.on("change", function () {
-                        notification.setPosition(position.val(), container.is(':checked') ? '#sb-notification .blueprint' : document.body);
                     });
                 });
             </script>
@@ -682,7 +701,7 @@
                         position: position.val()
                     });
                     position.on("change", function () {
-                        notificationStack.setPosition(position.val());
+                        notificationStack.align(position.val());
                     });
                     sandbox.find('[name="add-notif"]').on('click', function (ev) {
                         notificationStack.add(new Cuic.Notification({
@@ -818,7 +837,7 @@
                         }
                     });
                     position.on("change", function () {
-                        panel.setPosition(position.val());
+                        panel.align(position.val());
                     });
                 });
             </script>
@@ -1140,8 +1159,8 @@
                     };
 
                     position.on("change", function () {
-                        window.tooltip.setPosition(position.val());
-                        window.tooltipBlue.setPosition(position.val());
+                        window.tooltip.align(position.val());
+                        window.tooltipBlue.align(position.val());
                     });
 
                     followPointer.on("change", function () {

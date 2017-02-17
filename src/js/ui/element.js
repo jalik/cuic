@@ -55,7 +55,7 @@ Cuic.Element = class {
             self.element = node.get(0);
         }
         else {
-            throw new TypeError(`Cannot create component without node or element.`);
+            throw new TypeError(`Cannot create element.`);
         }
 
         // Get parent element
@@ -98,13 +98,13 @@ Cuic.Element = class {
 
         // Element is not in the DOM
         if (!self.element.parentNode) {
-            // Put component in parent node
+            // Put element in parent node
             if (self.options.parent instanceof HTMLElement) {
                 self.appendTo(self.options.parent);
 
-                // Place the component
+                // Position the element
                 if (self.options.position) {
-                    self.setPosition(self.options.position);
+                    self.align(self.options.position);
                 }
             }
         }
@@ -121,7 +121,30 @@ Cuic.Element = class {
     }
 
     /**
-     * Appends the element to the component
+     * Sets the position of the element inside its parent
+     * @param position
+     * @return {Cuic.Element}
+     */
+    align(position) {
+        Cuic.align(this.getElement(), position);
+        this.options.position = position;
+        return this;
+    }
+
+    /**
+     * Sets the position of the element toward another element
+     * @param position
+     * @param target
+     * @return {Cuic.Element}
+     */
+    anchor(position, target) {
+        Cuic.anchor(this.getElement(), position, target);
+        this.options.position = position;
+        return this;
+    }
+
+    /**
+     * Appends the element
      * @param element
      * @return {Cuic.Element}
      */
@@ -131,7 +154,7 @@ Cuic.Element = class {
     }
 
     /**
-     * Appends the component to the element
+     * Appends to the element
      * @param element
      * @return {Cuic.Element}
      */
@@ -150,7 +173,7 @@ Cuic.Element = class {
     }
 
     /**
-     * Disables the component
+     * Disables the element
      * @return {Cuic.Element}
      */
     disable() {
@@ -160,7 +183,7 @@ Cuic.Element = class {
     }
 
     /**
-     * Enables the component
+     * Enables the element
      * @return {Cuic.Element}
      */
     enable() {
@@ -188,7 +211,7 @@ Cuic.Element = class {
     }
 
     /**
-     * Returns component CSS classes
+     * Returns element CSS classes
      * @return {Array}
      */
     getClasses() {
@@ -196,7 +219,7 @@ Cuic.Element = class {
     }
 
     /**
-     * Returns the component element
+     * Returns the HTML element
      * @return {HTMLElement}
      */
     getElement() {
@@ -212,7 +235,7 @@ Cuic.Element = class {
     }
 
     /**
-     * Checks if the component has the class
+     * Checks if the element has the class
      * @param className
      * @return {boolean}
      */
@@ -221,7 +244,7 @@ Cuic.Element = class {
     }
 
     /**
-     * Returns the component height without margins and borders
+     * Returns the element height without margins and borders
      * @return {number}
      */
     height() {
@@ -238,7 +261,7 @@ Cuic.Element = class {
     }
 
     /**
-     * Returns the component height including padding
+     * Returns the element height including padding
      * @return {number}
      */
     innerHeight() {
@@ -246,7 +269,7 @@ Cuic.Element = class {
     }
 
     /**
-     * Returns the component width including padding
+     * Returns the element width including padding
      * @return {number}
      */
     innerWidth() {
@@ -254,12 +277,21 @@ Cuic.Element = class {
     }
 
     /**
-     * Checks if the component is enabled
+     * Checks if the element is enabled
      * @return {boolean}
      */
     isEnabled() {
         return this.getElement().disabled !== true
             || !this.hasClass('disabled');
+    }
+
+    /**
+     * Checks if the element is removed from the DOM
+     * @return {boolean}
+     */
+    isRemoved() {
+        const parent = this.getElement().parentNode;
+        return parent === null || parent === undefined;
     }
 
     /**
@@ -271,6 +303,14 @@ Cuic.Element = class {
     off(event, callback) {
         Cuic.off(event, this.getElement(), callback);
         return this;
+    }
+
+    /**
+     * Returns the element offset
+     * @return {*|{left: Number, top: Number}}
+     */
+    offset() {
+        return Cuic.offset(this.getElement());
     }
 
     /**
@@ -296,13 +336,13 @@ Cuic.Element = class {
     }
 
     /**
-     * Called when the component is removed from the DOM
+     * Called when the element is removed from the DOM
      */
     onRemove() {
     }
 
     /**
-     * Returns the component height including padding, borders and eventually margin
+     * Returns the element height including padding, borders and eventually margin
      * @param includeMargin
      * @return {number}
      */
@@ -311,7 +351,7 @@ Cuic.Element = class {
     }
 
     /**
-     * Returns the component width including padding, borders and eventually margin
+     * Returns the element width including padding, borders and eventually margin
      * @param includeMargin
      * @return {number}
      */
@@ -320,7 +360,15 @@ Cuic.Element = class {
     }
 
     /**
-     * Prepends the element to the component
+     * Returns the element position
+     * @return {*|{bottom: Number, left: Number, right: Number, top: Number}}
+     */
+    position() {
+        return Cuic.position(this.getElement());
+    }
+
+    /**
+     * Prepends the element
      * @param element
      * @return {Cuic.Element}
      */
@@ -330,7 +378,7 @@ Cuic.Element = class {
     }
 
     /**
-     * Prepends the component to the element
+     * Prepends to the element
      * @param element
      * @return {Cuic.Element}
      */
@@ -350,7 +398,7 @@ Cuic.Element = class {
     }
 
     /**
-     * Removes the class from the component
+     * Removes classes from the element
      * @param className
      * @return {Cuic.Element}
      */
@@ -381,17 +429,6 @@ Cuic.Element = class {
     }
 
     /**
-     * Sets the position of the dialog and optionally its container
-     * @param position
-     * @return {Cuic.Element}
-     */
-    setPosition(position) {
-        Cuic.position(this.getElement(), position);
-        this.options.position = position;
-        return this;
-    }
-
-    /**
      * Sets content text
      * @param text
      * @return {Cuic.Element}
@@ -411,7 +448,7 @@ Cuic.Element = class {
     }
 
     /**
-     * Returns the component width
+     * Returns the element width
      * @return {number}
      */
     width() {

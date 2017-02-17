@@ -99,19 +99,7 @@ Cuic.Popup = class extends Cuic.Component {
      */
     onOpen() {
         // Position the popup toward target
-        this.setAnchor(this.options.position, this.options.target);
-    }
-
-    /**
-     * Sets the position relative to a target
-     * @param position
-     * @param anchor
-     * @return {Cuic.Popup}
-     */
-    setAnchor(position, anchor) {
-        Cuic.anchor(this, position, anchor);
-        this.options.position = position;
-        return this;
+        this.anchor(this.options.position, this.options.target);
     }
 };
 

@@ -298,7 +298,7 @@ Cuic.Dialog = class extends Cuic.Component {
         if (this.options.maximized) {
             this.maximize();
         } else {
-            this.setPosition(this.options.position);
+            this.align(this.options.position);
         }
         // Focus the last button
         if (this.buttons.length > 0) {

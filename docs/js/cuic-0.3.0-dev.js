@@ -98,24 +98,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         mouseY: 0,
 
         /**
-         * Adds an event listener
-         * @param element
-         * @param event
-         * @param listener
-         * @return {*}
-         */
-        addEventListener: function addEventListener(element, event, listener) {
-            element = this.getElement(element);
-
-            if (typeof element.addEventListener === 'function') {
-                return element.addEventListener(event, listener);
-            } else if (typeof element.attachEvent === 'function') {
-                return element.attachEvent(event, listener);
-            }
-        },
-
-
-        /**
          * Adds CSS class to the element
          * @param element
          * @param className
@@ -135,6 +117,38 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             }
             element.className = classes.join(' ');
             return classes;
+        },
+
+
+        /**
+         * Adds an event listener
+         * @param element
+         * @param event
+         * @param listener
+         * @return {*}
+         */
+        addEventListener: function addEventListener(element, event, listener) {
+            element = this.getElement(element);
+
+            if (typeof element.addEventListener === 'function') {
+                return element.addEventListener(event, listener);
+            } else if (typeof element.attachEvent === 'function') {
+                return element.attachEvent(event, listener);
+            }
+        },
+
+
+        /**
+         * Place the element inside a target
+         * @param element
+         * @param position
+         * @param parent
+         * @return {HTMLElement}
+         */
+        align: function align(element, position, parent) {
+            element = this.getElement(element);
+            this.css(element, this.calculateAlign(element, position, parent));
+            return element;
         },
 
 
@@ -184,6 +198,100 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 top: top,
                 vertical: bottom + top
             };
+        },
+
+
+        /**
+         * Position an object inside another
+         * @param element
+         * @param position
+         * @param parent
+         * @return {*}
+         */
+        calculateAlign: function calculateAlign(element, position, parent) {
+            var _this = this;
+
+            element = this.getElement(element);
+            position = position || '';
+
+            if (parent) {
+                parent = this.getElement(parent);
+
+                // Use body as parent
+                if (parent.nodeName === 'HTML') {
+                    parent = document.body;
+                }
+                // Append element to parent if needed
+                if (parent !== element.parentNode) {
+                    parent.append(element);
+                }
+            } else {
+                // Use parent node if no parent defined
+                parent = element.parentNode;
+            }
+
+            var elmHeight = this.outerHeight(element, true);
+            var elmWidth = this.outerWidth(element, true);
+            var elmMargin = this.margin(element);
+            var parentHeight = this.innerHeight(parent);
+            var parentWidth = this.innerWidth(parent);
+            var parentPadding = this.padding(parent);
+            var relativeLeft = parent.scrollLeft;
+            var relativeTop = parent.scrollTop;
+            var relativeBottom = -relativeTop; // todo maybe subtract element height ?
+            var relativeRight = -relativeLeft; // todo maybe subtract element width ?
+            var prop = {
+                bottom: '',
+                left: '',
+                right: '',
+                top: ''
+            };
+
+            // If the target is fixed, we use the window as parent
+            if (this.css(element, 'position') === 'fixed') {
+                parent = window;
+                parentHeight = this.innerHeight(parent);
+                parentWidth = this.innerWidth(parent);
+                relativeLeft = 0;
+                relativeTop = 0;
+                relativeBottom = 0;
+                relativeRight = 0;
+            }
+
+            var getCenterX = function getCenterX() {
+                return relativeLeft + (_this.width(parent) / 2 - elmWidth / 2);
+            };
+
+            var getCenterY = function getCenterY() {
+                return relativeTop + (_this.height(parent) / 2 - elmHeight / 2);
+            };
+
+            // Limit element size to parent size
+            if (elmWidth > parentWidth) {
+                prop.width = parentWidth - (elmWidth - this.width(element)) + 'px';
+            }
+            if (elmHeight > parentHeight) {
+                prop.height = parentHeight - (elmHeight - this.height(element)) + 'px';
+            }
+
+            // Vertical position
+            if (position.indexOf('bottom') !== -1) {
+                prop.bottom = Math.max(parentPadding.bottom, elmMargin.bottom) + 'px';
+            } else if (position.indexOf('top') !== -1) {
+                prop.top = Math.max(parentPadding.top, elmMargin.top) + 'px';
+            } else {
+                prop.top = getCenterY() + Math.max(parentPadding.top, elmMargin.top) + 'px';
+            }
+
+            // Horizontal position
+            if (position.indexOf('left') !== -1) {
+                prop.left = Math.max(parentPadding.left, elmMargin.left) + 'px';
+            } else if (position.indexOf('right') !== -1) {
+                prop.right = Math.max(parentPadding.right, elmMargin.right) + 'px';
+            } else {
+                prop.left = getCenterX() + Math.max(parentPadding.left, elmMargin.left) + 'px';
+            }
+            return prop;
         },
 
 
@@ -332,105 +440,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             this.css(clone, { height: 'auto', width: 'auto' });
 
             // Calculate minimized size
-            var prop = this.calculatePosition(clone, position, element.parentNode);
+            var prop = this.calculateAlign(clone, position, element.parentNode);
             prop.height = this.outerHeight(clone) + 'px';
             prop.width = this.outerWidth(clone) + 'px';
             clone.remove();
 
-            return prop;
-        },
-
-
-        /**
-         * Position an object inside another
-         * @param element
-         * @param position
-         * @param parent
-         * @return {*}
-         */
-        calculatePosition: function calculatePosition(element, position, parent) {
-            var _this = this;
-
-            element = this.getElement(element);
-            position = position || '';
-
-            if (parent) {
-                parent = this.getElement(parent);
-
-                // Use body as parent
-                if (parent.nodeName === 'HTML') {
-                    parent = document.body;
-                }
-                // Append element to parent if needed
-                if (parent !== element.parentNode) {
-                    parent.append(element);
-                }
-            } else {
-                // Use parent node if no parent defined
-                parent = element.parentNode;
-            }
-
-            var elmHeight = this.outerHeight(element, true);
-            var elmWidth = this.outerWidth(element, true);
-            var elmMargin = this.margin(element);
-            var parentHeight = this.innerHeight(parent);
-            var parentWidth = this.innerWidth(parent);
-            var parentPadding = this.padding(parent);
-            var relativeLeft = parent.scrollLeft;
-            var relativeTop = parent.scrollTop;
-            var relativeBottom = -relativeTop; // todo maybe subtract element height ?
-            var relativeRight = -relativeLeft; // todo maybe subtract element width ?
-            var prop = {
-                bottom: '',
-                left: '',
-                right: '',
-                top: ''
-            };
-
-            // If the target is fixed, we use the window as parent
-            if (this.css(element, 'position') === 'fixed') {
-                parent = window;
-                parentHeight = this.innerHeight(parent);
-                parentWidth = this.innerWidth(parent);
-                relativeLeft = 0;
-                relativeTop = 0;
-                relativeBottom = 0;
-                relativeRight = 0;
-            }
-
-            var getCenterX = function getCenterX() {
-                return relativeLeft + (_this.width(parent) / 2 - elmWidth / 2);
-            };
-
-            var getCenterY = function getCenterY() {
-                return relativeTop + (_this.height(parent) / 2 - elmHeight / 2);
-            };
-
-            // Limit element size to parent size
-            if (elmWidth > parentWidth) {
-                prop.width = parentWidth - (elmWidth - this.width(element)) + 'px';
-            }
-            if (elmHeight > parentHeight) {
-                prop.height = parentHeight - (elmHeight - this.height(element)) + 'px';
-            }
-
-            // Vertical position
-            if (position.indexOf('bottom') !== -1) {
-                prop.bottom = Math.max(parentPadding.bottom, elmMargin.bottom) + 'px';
-            } else if (position.indexOf('top') !== -1) {
-                prop.top = Math.max(parentPadding.top, elmMargin.top) + 'px';
-            } else {
-                prop.top = getCenterY() + Math.max(parentPadding.top, elmMargin.top) + 'px';
-            }
-
-            // Horizontal position
-            if (position.indexOf('left') !== -1) {
-                prop.left = Math.max(parentPadding.left, elmMargin.left) + 'px';
-            } else if (position.indexOf('right') !== -1) {
-                prop.right = Math.max(parentPadding.right, elmMargin.right) + 'px';
-            } else {
-                prop.left = getCenterX() + Math.max(parentPadding.left, elmMargin.left) + 'px';
-            }
             return prop;
         },
 
@@ -659,11 +673,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             if (element instanceof HTMLDocument) {
                 return element;
             }
-            if (element instanceof jQuery) {
-                return element.get(0);
-            }
             if (element instanceof this.Element) {
                 return element.getElement();
+            }
+            if (element instanceof jQuery) {
+                return element.get(0);
             }
             throw new TypeError('element is not supported (HTMLElement, Cuic.Element or jQuery)');
         },
@@ -965,19 +979,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
         /**
-         * Returns the element position
+         * Returns the element offset
          * @param element
-         * @return {{bottom: Number, left: Number, right: Number, top: Number}}
+         * @return {{left: Number, top: Number}}
          */
         offset: function offset(element) {
-            var bottom = parseInt(this.getComputedStyle(element, 'bottom'));
-            var left = parseInt(this.getComputedStyle(element, 'left'));
-            var right = parseInt(this.getComputedStyle(element, 'right'));
-            var top = parseInt(this.getComputedStyle(element, 'top'));
+            var left = parseInt(this.getComputedStyle(element, 'offsetLeft'));
+            var top = parseInt(this.getComputedStyle(element, 'offsetTop'));
             return {
-                bottom: bottom,
                 left: left,
-                right: right,
                 top: top
             };
         },
@@ -1109,16 +1119,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
         /**
-         * Place the element inside a target
+         * Returns the element position
          * @param element
-         * @param position
-         * @param parent
-         * @return {HTMLElement}
+         * @return {{bottom: Number, left: Number, right: Number, top: Number}}
          */
-        position: function position(element, _position, parent) {
-            element = this.getElement(element);
-            this.css(element, this.calculatePosition(element, _position, parent));
-            return element;
+        position: function position(element) {
+            var bottom = parseInt(this.getComputedStyle(element, 'bottom'));
+            var left = parseInt(this.getComputedStyle(element, 'left'));
+            var right = parseInt(this.getComputedStyle(element, 'right'));
+            var top = parseInt(this.getComputedStyle(element, 'top'));
+            return {
+                bottom: bottom,
+                left: left,
+                right: right,
+                top: top
+            };
         },
 
 
@@ -2043,7 +2058,7 @@ Cuic.Element = function () {
                     else if (node instanceof jQuery) {
                             self.element = node.get(0);
                         } else {
-                            throw new TypeError('Cannot create component without node or element.');
+                            throw new TypeError('Cannot create element.');
                         }
 
         // Get parent element
@@ -2083,13 +2098,13 @@ Cuic.Element = function () {
 
         // Element is not in the DOM
         if (!self.element.parentNode) {
-            // Put component in parent node
+            // Put element in parent node
             if (self.options.parent instanceof HTMLElement) {
                 self.appendTo(self.options.parent);
 
-                // Place the component
+                // Position the element
                 if (self.options.position) {
-                    self.setPosition(self.options.position);
+                    self.align(self.options.position);
                 }
             }
         }
@@ -2110,7 +2125,36 @@ Cuic.Element = function () {
         }
 
         /**
-         * Appends the element to the component
+         * Sets the position of the element inside its parent
+         * @param position
+         * @return {Cuic.Element}
+         */
+
+    }, {
+        key: 'align',
+        value: function align(position) {
+            Cuic.align(this.getElement(), position);
+            this.options.position = position;
+            return this;
+        }
+
+        /**
+         * Sets the position of the element toward another element
+         * @param position
+         * @param target
+         * @return {Cuic.Element}
+         */
+
+    }, {
+        key: 'anchor',
+        value: function anchor(position, target) {
+            Cuic.anchor(this.getElement(), position, target);
+            this.options.position = position;
+            return this;
+        }
+
+        /**
+         * Appends the element
          * @param element
          * @return {Cuic.Element}
          */
@@ -2123,7 +2167,7 @@ Cuic.Element = function () {
         }
 
         /**
-         * Appends the component to the element
+         * Appends to the element
          * @param element
          * @return {Cuic.Element}
          */
@@ -2148,7 +2192,7 @@ Cuic.Element = function () {
         }
 
         /**
-         * Disables the component
+         * Disables the element
          * @return {Cuic.Element}
          */
 
@@ -2161,7 +2205,7 @@ Cuic.Element = function () {
         }
 
         /**
-         * Enables the component
+         * Enables the element
          * @return {Cuic.Element}
          */
 
@@ -2198,7 +2242,7 @@ Cuic.Element = function () {
         }
 
         /**
-         * Returns component CSS classes
+         * Returns element CSS classes
          * @return {Array}
          */
 
@@ -2209,7 +2253,7 @@ Cuic.Element = function () {
         }
 
         /**
-         * Returns the component element
+         * Returns the HTML element
          * @return {HTMLElement}
          */
 
@@ -2231,7 +2275,7 @@ Cuic.Element = function () {
         }
 
         /**
-         * Checks if the component has the class
+         * Checks if the element has the class
          * @param className
          * @return {boolean}
          */
@@ -2243,7 +2287,7 @@ Cuic.Element = function () {
         }
 
         /**
-         * Returns the component height without margins and borders
+         * Returns the element height without margins and borders
          * @return {number}
          */
 
@@ -2266,7 +2310,7 @@ Cuic.Element = function () {
         }
 
         /**
-         * Returns the component height including padding
+         * Returns the element height including padding
          * @return {number}
          */
 
@@ -2277,7 +2321,7 @@ Cuic.Element = function () {
         }
 
         /**
-         * Returns the component width including padding
+         * Returns the element width including padding
          * @return {number}
          */
 
@@ -2288,7 +2332,7 @@ Cuic.Element = function () {
         }
 
         /**
-         * Checks if the component is enabled
+         * Checks if the element is enabled
          * @return {boolean}
          */
 
@@ -2296,6 +2340,18 @@ Cuic.Element = function () {
         key: 'isEnabled',
         value: function isEnabled() {
             return this.getElement().disabled !== true || !this.hasClass('disabled');
+        }
+
+        /**
+         * Checks if the element is removed from the DOM
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isRemoved',
+        value: function isRemoved() {
+            var parent = this.getElement().parentNode;
+            return parent === null || parent === undefined;
         }
 
         /**
@@ -2310,6 +2366,17 @@ Cuic.Element = function () {
         value: function off(event, callback) {
             Cuic.off(event, this.getElement(), callback);
             return this;
+        }
+
+        /**
+         * Returns the element offset
+         * @return {*|{left: Number, top: Number}}
+         */
+
+    }, {
+        key: 'offset',
+        value: function offset() {
+            return Cuic.offset(this.getElement());
         }
 
         /**
@@ -2341,7 +2408,7 @@ Cuic.Element = function () {
         }
 
         /**
-         * Called when the component is removed from the DOM
+         * Called when the element is removed from the DOM
          */
 
     }, {
@@ -2349,7 +2416,7 @@ Cuic.Element = function () {
         value: function onRemove() {}
 
         /**
-         * Returns the component height including padding, borders and eventually margin
+         * Returns the element height including padding, borders and eventually margin
          * @param includeMargin
          * @return {number}
          */
@@ -2361,7 +2428,7 @@ Cuic.Element = function () {
         }
 
         /**
-         * Returns the component width including padding, borders and eventually margin
+         * Returns the element width including padding, borders and eventually margin
          * @param includeMargin
          * @return {number}
          */
@@ -2373,7 +2440,18 @@ Cuic.Element = function () {
         }
 
         /**
-         * Prepends the element to the component
+         * Returns the element position
+         * @return {*|{bottom: Number, left: Number, right: Number, top: Number}}
+         */
+
+    }, {
+        key: 'position',
+        value: function position() {
+            return Cuic.position(this.getElement());
+        }
+
+        /**
+         * Prepends the element
          * @param element
          * @return {Cuic.Element}
          */
@@ -2386,7 +2464,7 @@ Cuic.Element = function () {
         }
 
         /**
-         * Prepends the component to the element
+         * Prepends to the element
          * @param element
          * @return {Cuic.Element}
          */
@@ -2412,7 +2490,7 @@ Cuic.Element = function () {
         }
 
         /**
-         * Removes the class from the component
+         * Removes classes from the element
          * @param className
          * @return {Cuic.Element}
          */
@@ -2452,20 +2530,6 @@ Cuic.Element = function () {
         }
 
         /**
-         * Sets the position of the dialog and optionally its container
-         * @param position
-         * @return {Cuic.Element}
-         */
-
-    }, {
-        key: 'setPosition',
-        value: function setPosition(position) {
-            Cuic.position(this.getElement(), position);
-            this.options.position = position;
-            return this;
-        }
-
-        /**
          * Sets content text
          * @param text
          * @return {Cuic.Element}
@@ -2491,7 +2555,7 @@ Cuic.Element = function () {
         }
 
         /**
-         * Returns the component width
+         * Returns the element width
          * @return {number}
          */
 
@@ -2945,33 +3009,25 @@ Cuic.Draggable = function (_Cuic$Component2) {
                 self.addClass('dragging');
 
                 var parent = self.getParentElement();
-                var isInBody = parent === document.body;
 
                 var margin = Cuic.margin(self);
                 var height = Cuic.outerHeight(self);
                 var width = Cuic.outerWidth(self);
-                var startOffset = Cuic.offset(self);
+                var startOffset = Cuic.position(self);
                 var startX = Cuic.mouseX;
                 var startY = Cuic.mouseY;
-                var scrollX = window.scrollX;
-                var scrollY = window.scrollY;
                 var timer = setInterval(function () {
                     var prop = {};
                     var parentPadding = Cuic.padding(parent);
-                    var parentOffset = Cuic.offset(parent) || { left: 0, top: 0 };
                     var parentHeight = Cuic.innerHeight(parent);
                     var parentWidth = Cuic.innerWidth(parent);
 
-                    var spaceBottom = Math.max(parentPadding.bottom);
                     var spaceLeft = Math.max(parentPadding.left);
-                    var spaceRight = Math.max(parentPadding.right);
                     var spaceTop = Math.max(parentPadding.top);
 
                     // Calculate minimal values
-                    var minX = (isInBody ? scrollX : 0) + spaceLeft;
-                    var minY = (isInBody ? scrollY : 0) + spaceTop;
-                    minX = spaceLeft;
-                    minY = spaceTop;
+                    var minX = spaceLeft;
+                    var minY = spaceTop;
 
                     // Calculate maximal values
                     var maxX = parentWidth - parentPadding.horizontal - margin.right;
@@ -3973,7 +4029,7 @@ Cuic.Dialog = function (_Cuic$Component4) {
             if (this.options.maximized) {
                 this.maximize();
             } else {
-                this.setPosition(this.options.position);
+                this.align(this.options.position);
             }
             // Focus the last button
             if (this.buttons.length > 0) {
@@ -5016,7 +5072,7 @@ Cuic.Notification = function (_Cuic$Component6) {
             if (this.options.position) {
                 var isFixed = this.getParentElement() === document.body;
                 this.css({ position: isFixed ? 'fixed' : 'absolute' });
-                this.setPosition(this.options.position);
+                this.align(this.options.position);
             }
         }
 
@@ -5099,7 +5155,7 @@ Cuic.NotificationStack = function (_Cuic$GroupComponent) {
         if (self.options.position) {
             var isFixed = self.getParentElement() === document.body;
             self.css({ position: isFixed ? 'fixed' : 'absolute' });
-            self.setPosition(self.options.position);
+            self.align(self.options.position);
         }
         return _this14;
     }
@@ -5229,7 +5285,7 @@ Cuic.Panel = function (_Cuic$Component7) {
         var fixed = self.getParentElement() === document.body;
         self.css({ position: fixed ? 'fixed' : 'absolute' });
 
-        self.setPosition(self.options.position);
+        self.align(self.options.position);
         self.resizeContent();
 
         // To hide the panel in the container,
@@ -5380,7 +5436,7 @@ Cuic.Panel = function (_Cuic$Component7) {
             Cuic.css(clone, { height: 'auto', width: 'auto' });
 
             // Calculate minimized size
-            var prop = Cuic.calculatePosition(clone, this.options.position, parent);
+            var prop = Cuic.calculateAlign(clone, this.options.position, parent);
             prop.height = Cuic.height(clone);
             prop.width = Cuic.width(clone);
             clone.remove();
@@ -5420,7 +5476,7 @@ Cuic.Panel = function (_Cuic$Component7) {
             // Resize content
             this.resizeContent();
             // Recalculate position
-            this.setPosition(this.options.position);
+            this.align(this.options.position);
         }
 
         //     // todo position panel when closed
@@ -5429,7 +5485,7 @@ Cuic.Panel = function (_Cuic$Component7) {
         // // Panel is hidden
         // if (pos.bottom < 0 || pos.left < 0 || pos.right < 0 || pos.top < 0) {
         //     const elm = self.getElement();
-        //     let prop = Cuic.calculatePosition(elm, position);
+        //     let prop = Cuic.calculateAlign(elm, position);
         //
         //     // Horizontal position
         //     if (position.indexOf('left') !== -1) {
@@ -5646,22 +5702,7 @@ Cuic.Popup = function (_Cuic$Component8) {
         key: 'onOpen',
         value: function onOpen() {
             // Position the popup toward target
-            this.setAnchor(this.options.position, this.options.target);
-        }
-
-        /**
-         * Sets the position relative to a target
-         * @param position
-         * @param anchor
-         * @return {Cuic.Popup}
-         */
-
-    }, {
-        key: 'setAnchor',
-        value: function setAnchor(position, anchor) {
-            Cuic.anchor(this, position, anchor);
-            this.options.position = position;
-            return this;
+            this.anchor(this.options.position, this.options.target);
         }
     }]);
 
@@ -6381,7 +6422,7 @@ Cuic.Popup.prototype.options = {
          * @param pos
          * @return {Cuic.Tooltip}
          */
-        self.setPosition = function (pos) {
+        self.align = function (pos) {
             position = pos;
             return self;
         };

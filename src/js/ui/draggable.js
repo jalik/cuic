@@ -66,33 +66,25 @@ Cuic.Draggable = class extends Cuic.Component {
                 self.addClass('dragging');
 
                 const parent = self.getParentElement();
-                let isInBody = parent === document.body;
 
                 let margin = Cuic.margin(self);
                 let height = Cuic.outerHeight(self);
                 let width = Cuic.outerWidth(self);
-                let startOffset = Cuic.offset(self);
+                let startOffset = Cuic.position(self);
                 let startX = Cuic.mouseX;
                 let startY = Cuic.mouseY;
-                let scrollX = window.scrollX;
-                let scrollY = window.scrollY;
                 let timer = setInterval(() => {
                     let prop = {};
                     const parentPadding = Cuic.padding(parent);
-                    const parentOffset = Cuic.offset(parent) || {left: 0, top: 0};
                     const parentHeight = Cuic.innerHeight(parent);
                     const parentWidth = Cuic.innerWidth(parent);
 
-                    const spaceBottom = Math.max(parentPadding.bottom);
                     const spaceLeft = Math.max(parentPadding.left);
-                    const spaceRight = Math.max(parentPadding.right);
                     const spaceTop = Math.max(parentPadding.top);
 
                     // Calculate minimal values
-                    let minX = (isInBody ? scrollX : 0) + spaceLeft;
-                    let minY = (isInBody ? scrollY : 0) + spaceTop;
-                    minX = spaceLeft;
-                    minY = spaceTop;
+                    let minX = spaceLeft;
+                    let minY = spaceTop;
 
                     // Calculate maximal values
                     let maxX = parentWidth - parentPadding.horizontal - margin.right;

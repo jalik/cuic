@@ -115,7 +115,7 @@ Cuic.Notification = class extends Cuic.Component {
         if (this.options.position) {
             let isFixed = this.getParentElement() === document.body;
             this.css({position: isFixed ? 'fixed' : 'absolute'});
-            this.setPosition(this.options.position);
+            this.align(this.options.position);
         }
     }
 

@@ -150,7 +150,7 @@
          * @param pos
          * @return {Cuic.Tooltip}
          */
-        self.setPosition = function (pos) {
+        self.align = function (pos) {
             position = pos;
             return self;
         };

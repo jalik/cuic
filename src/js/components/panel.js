@@ -89,7 +89,7 @@ Cuic.Panel = class extends Cuic.Component {
         let fixed = self.getParentElement() === document.body;
         self.css({position: fixed ? 'fixed' : 'absolute'});
 
-        self.setPosition(self.options.position);
+        self.align(self.options.position);
         self.resizeContent();
 
         // To hide the panel in the container,
@@ -224,7 +224,7 @@ Cuic.Panel = class extends Cuic.Component {
         Cuic.css(clone, {height: 'auto', width: 'auto'});
 
         // Calculate minimized size
-        let prop = Cuic.calculatePosition(clone, this.options.position, parent);
+        let prop = Cuic.calculateAlign(clone, this.options.position, parent);
         prop.height = Cuic.height(clone);
         prop.width = Cuic.width(clone);
         clone.remove();
@@ -263,7 +263,7 @@ Cuic.Panel = class extends Cuic.Component {
         // Resize content
         this.resizeContent();
         // Recalculate position
-        this.setPosition(this.options.position);
+        this.align(this.options.position);
     }
 
     //     // todo position panel when closed
@@ -272,7 +272,7 @@ Cuic.Panel = class extends Cuic.Component {
     // // Panel is hidden
     // if (pos.bottom < 0 || pos.left < 0 || pos.right < 0 || pos.top < 0) {
     //     const elm = self.getElement();
-    //     let prop = Cuic.calculatePosition(elm, position);
+    //     let prop = Cuic.calculateAlign(elm, position);
     //
     //     // Horizontal position
     //     if (position.indexOf('left') !== -1) {
