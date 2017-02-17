@@ -30,14 +30,17 @@ Cuic.Popup = class extends Cuic.Component {
         options = Cuic.extend({}, Cuic.Popup.prototype.options, options);
 
         // Create element
-        super('div', {
-            className: options.className,
-            html: options.html
-        }, options);
+        super('div', {className: options.className}, options);
 
         const self = this;
 
-        // todo Add close button
+        // Add content
+        self.content = new Cuic.Element('div', {
+            className: 'popup-content',
+            html: options.content
+        }).appendTo(self);
+
+        // Add close button
         self.closeButton = new Cuic.Element('span', {
             className: 'btn-close glyphicon glyphicon-remove-sign',
             html: self.options.closeButton,
@@ -68,6 +71,28 @@ Cuic.Popup = class extends Cuic.Component {
                 }
             }
         });
+
+        /**
+         * Popup shortcuts
+         * @type {{close: *}}
+         */
+        self.shortcuts = {
+            close: new Cuic.Shortcut({
+                element: self,
+                keyCode: Cuic.keys.ESC,
+                callback() {
+                    self.close();
+                }
+            })
+        };
+    }
+
+    /**
+     * Returns the content
+     * @return {Cuic.Element}
+     */
+    getContent() {
+        return this.content;
     }
 
     /**
@@ -86,6 +111,16 @@ Cuic.Popup = class extends Cuic.Component {
         const targetParent = Cuic.getElement(this.options.target).parentNode;
         this.appendTo(targetParent);
         this.anchor(this.options.anchor, this.options.target);
+    }
+
+    /**
+     * Sets the popup content
+     * @param html
+     * @return {Cuic.Popup}
+     */
+    setContent(html) {
+        this.content.setHtml(html);
+        return this;
     }
 };
 

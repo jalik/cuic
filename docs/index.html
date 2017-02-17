@@ -867,15 +867,14 @@
                         autoClose: true,
                         autoRemove: false,
                         closeable: true,
+                        content: "This is a popup",
                         anchor: 'right',
                         target: popupButton
                     });
 
                     popupButton.on("click", function (ev) {
                         ev.stopPropagation();
-                        if (!popup.isOpened()) {
-                            popup.setContent("Clicked on " + new Date());
-                        }
+                        popup.setContent("Clicked on " + new Date());
                         popup.toggle();
                     });
                 });

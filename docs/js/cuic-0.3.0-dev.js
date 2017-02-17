@@ -1,3 +1,28 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2017 Karl STEIN
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -3835,8 +3860,7 @@ Cuic.Dialog = function (_Cuic$Component4) {
         // Add content
         self.content = new Cuic.Element('section', {
             className: 'dialog-content',
-            html: options.content,
-            style: 'overflow: auto'
+            html: options.content
         }).appendTo(self);
 
         // Add footer
@@ -5624,14 +5648,17 @@ Cuic.Popup = function (_Cuic$Component8) {
 
         // Create element
 
-        var _this16 = _possibleConstructorReturn(this, (_class14.__proto__ || Object.getPrototypeOf(_class14)).call(this, 'div', {
-            className: options.className,
-            html: options.html
-        }, options));
+        var _this16 = _possibleConstructorReturn(this, (_class14.__proto__ || Object.getPrototypeOf(_class14)).call(this, 'div', { className: options.className }, options));
 
         var self = _this16;
 
-        // todo Add close button
+        // Add content
+        self.content = new Cuic.Element('div', {
+            className: 'popup-content',
+            html: options.content
+        }).appendTo(self);
+
+        // Add close button
         self.closeButton = new Cuic.Element('span', {
             className: 'btn-close glyphicon glyphicon-remove-sign',
             html: self.options.closeButton,
@@ -5662,15 +5689,40 @@ Cuic.Popup = function (_Cuic$Component8) {
                 }
             }
         });
+
+        /**
+         * Popup shortcuts
+         * @type {{close: *}}
+         */
+        self.shortcuts = {
+            close: new Cuic.Shortcut({
+                element: self,
+                keyCode: Cuic.keys.ESC,
+                callback: function callback() {
+                    self.close();
+                }
+            })
+        };
         return _this16;
     }
 
     /**
-     * Called when the popup is closed
+     * Returns the content
+     * @return {Cuic.Element}
      */
 
 
     _createClass(_class14, [{
+        key: 'getContent',
+        value: function getContent() {
+            return this.content;
+        }
+
+        /**
+         * Called when the popup is closed
+         */
+
+    }, {
         key: 'onClosed',
         value: function onClosed() {
             if (this.options.autoRemove) {
@@ -5688,6 +5740,19 @@ Cuic.Popup = function (_Cuic$Component8) {
             var targetParent = Cuic.getElement(this.options.target).parentNode;
             this.appendTo(targetParent);
             this.anchor(this.options.anchor, this.options.target);
+        }
+
+        /**
+         * Sets the popup content
+         * @param html
+         * @return {Cuic.Popup}
+         */
+
+    }, {
+        key: 'setContent',
+        value: function setContent(html) {
+            this.content.setHtml(html);
+            return this;
         }
     }]);
 

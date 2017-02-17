@@ -127,8 +127,7 @@ Cuic.Dialog = class extends Cuic.Component {
         // Add content
         self.content = new Cuic.Element('section', {
             className: 'dialog-content',
-            html: options.content,
-            style: 'overflow: auto'
+            html: options.content
         }).appendTo(self);
 
         // Add footer
@@ -226,7 +225,6 @@ Cuic.Dialog = class extends Cuic.Component {
         // Add dialog to collection
         Cuic.dialogs.add(self);
     }
-
 
     /**
      * Returns the content
