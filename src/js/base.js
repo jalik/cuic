@@ -427,6 +427,7 @@
          * Styles can be a string or an object.
          * @param element
          * @param styles
+         * @return {*}
          */
         css(element, styles) {
             element = this.getElement(element);

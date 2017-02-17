@@ -471,6 +471,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
          * Styles can be a string or an object.
          * @param element
          * @param styles
+         * @return {*}
          */
         css: function css(element, styles) {
             element = this.getElement(element);
@@ -2097,45 +2098,40 @@ Cuic.Element = function () {
     /**
      * Adds the class
      * @param className
-     * @return {Array}
+     * @return {Cuic.Element}
      */
 
 
     _createClass(_class4, [{
         key: 'addClass',
         value: function addClass(className) {
-            return Cuic.addClass(this.getElement(), className);
+            Cuic.addClass(this.getElement(), className);
+            return this;
         }
 
         /**
          * Appends the element to the component
          * @param element
-         * @return {Cuic.Component}
+         * @return {Cuic.Element}
          */
 
     }, {
         key: 'append',
         value: function append(element) {
-            if (element instanceof Cuic.Component) {
-                element = element.getElement();
-            }
-            this.getElement().append(element);
+            this.getElement().append(Cuic.getElement(element));
             return this;
         }
 
         /**
          * Appends the component to the element
          * @param element
-         * @return {Cuic.Component}
+         * @return {Cuic.Element}
          */
 
     }, {
         key: 'appendTo',
         value: function appendTo(element) {
-            if (element instanceof Cuic.Component) {
-                element = element.getElement();
-            }
-            element.append(this.getElement());
+            Cuic.getElement(element).append(this.getElement());
             return this;
         }
 
@@ -2153,6 +2149,7 @@ Cuic.Element = function () {
 
         /**
          * Disables the component
+         * @return {Cuic.Element}
          */
 
     }, {
@@ -2160,10 +2157,12 @@ Cuic.Element = function () {
         value: function disable() {
             this.getElement().disabled = true;
             this.addClass('disabled');
+            return this;
         }
 
         /**
          * Enables the component
+         * @return {Cuic.Element}
          */
 
     }, {
@@ -2171,6 +2170,7 @@ Cuic.Element = function () {
         value: function enable() {
             this.getElement().disabled = false;
             this.removeClass('disabled');
+            return this;
         }
 
         /**
@@ -2255,12 +2255,14 @@ Cuic.Element = function () {
 
         /**
          * Hides the element
+         * @return {Cuic.Element}
          */
 
     }, {
         key: 'hide',
         value: function hide() {
             this.css({ display: 'none' });
+            return this;
         }
 
         /**
@@ -2300,36 +2302,42 @@ Cuic.Element = function () {
          * Remove the callback attached to the event
          * @param event
          * @param callback
+         * @return {Cuic.Element}
          */
 
     }, {
         key: 'off',
         value: function off(event, callback) {
             Cuic.off(event, this.getElement(), callback);
+            return this;
         }
 
         /**
          * Executes the callback each time the event is triggered
          * @param event
          * @param callback
+         * @return {Cuic.Element}
          */
 
     }, {
         key: 'on',
         value: function on(event, callback) {
             Cuic.on(event, this.getElement(), callback);
+            return this;
         }
 
         /**
          * Executes the callback once when the event is triggered
          * @param event
          * @param callback
+         * @return {Cuic.Element}
          */
 
     }, {
         key: 'once',
         value: function once(event, callback) {
             Cuic.once(event, this.getElement(), callback);
+            return this;
         }
 
         /**
@@ -2367,37 +2375,32 @@ Cuic.Element = function () {
         /**
          * Prepends the element to the component
          * @param element
-         * @return {Cuic.Component}
+         * @return {Cuic.Element}
          */
 
     }, {
         key: 'prepend',
         value: function prepend(element) {
-            if (element instanceof Cuic.Component) {
-                element = element.getElement();
-            }
-            this.getElement().prepend(element);
+            this.getElement().prepend(Cuic.getElement(element));
             return this;
         }
 
         /**
          * Prepends the component to the element
          * @param element
-         * @return {Cuic.Component}
+         * @return {Cuic.Element}
          */
 
     }, {
         key: 'prependTo',
         value: function prependTo(element) {
-            if (element instanceof Cuic.Component) {
-                element = element.getElement();
-            }
-            element.prepend(this.getElement());
+            Cuic.getElement(element).prepend(this.getElement());
             return this;
         }
 
         /**
          * Removes the element from the DOM
+         * @return {Cuic.Element}
          */
 
     }, {
@@ -2405,30 +2408,34 @@ Cuic.Element = function () {
         value: function remove() {
             this.onRemove();
             this.getElement().remove();
+            return this;
         }
 
         /**
          * Removes the class from the component
          * @param className
-         * @return {*}
+         * @return {Cuic.Element}
          */
 
     }, {
         key: 'removeClass',
         value: function removeClass(className) {
-            return Cuic.removeClass(this.getElement(), className);
+            Cuic.removeClass(this.getElement(), className);
+            return this;
         }
 
         /**
          * Sets the content
          * @param html
          * @deprecated
+         * @return {Cuic.Element}
          */
 
     }, {
         key: 'setContent',
         value: function setContent(html) {
             this.setHtml(html);
+            return this;
         }
     }, {
         key: 'setHtml',
@@ -2437,14 +2444,17 @@ Cuic.Element = function () {
         /**
          * Sets content HTML
          * @param html
+         * @return {Cuic.Element}
          */
         value: function setHtml(html) {
             this.getElement().innerHTML = html;
+            return this;
         }
 
         /**
          * Sets the position of the dialog and optionally its container
          * @param position
+         * @return {Cuic.Element}
          */
 
     }, {
@@ -2452,32 +2462,36 @@ Cuic.Element = function () {
         value: function setPosition(position) {
             Cuic.position(this.getElement(), position);
             this.options.position = position;
+            return this;
         }
 
         /**
          * Sets content text
          * @param text
+         * @return {Cuic.Element}
          */
 
     }, {
         key: 'setText',
         value: function setText(text) {
             this.getElement().innerText = text;
+            return this;
         }
 
         /**
          * Shows the element
+         * @return {Cuic.Element}
          */
 
     }, {
         key: 'show',
         value: function show() {
             this.css({ display: '' });
+            return this;
         }
 
         /**
          * Returns the component width
-         * @param element
          * @return {number}
          */
 
