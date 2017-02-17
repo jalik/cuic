@@ -38,9 +38,29 @@ Cuic.Fader = class extends Cuic.Component {
         if (fixed) {
             this.css({position: 'fixed'});
         }
+
+        // Auto close when fader is clicked
+        this.on('click', () => {
+            if (this.options.autoClose) {
+                this.close();
+            }
+        });
+    }
+
+    /**
+     * Called when the fader is closed
+     */
+    onClosed() {
+        if (this.options.autoRemove) {
+            this.remove();
+        }
     }
 };
 
 Cuic.Button.prototype.options = {
-    className: 'fader'
+    autoClose: false,
+    autoRemove: false,
+    className: 'fader',
+    namespace: 'fader',
+    zIndex: 1
 };

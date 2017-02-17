@@ -46,54 +46,25 @@ Cuic.Notification = class extends Cuic.Component {
 
         const self = this;
 
-        let closeTimer;
+        // Public attributes
+        self.closeTimer = null;
 
-        /**
-         * Auto closes the notification
-         */
-        self.autoClose = () => {
-            clearTimeout(closeTimer);
-            closeTimer = setTimeout(() => {
-                if (self.options.autoClose) {
-                    self.close();
-                }
-            }, self.options.duration);
-        };
+        // Add close button
+        self.closeButton = new Cuic.Element('span', {
+            className: 'btn-close glyphicon glyphicon-remove-sign',
+            html: self.options.closeButton,
+            role: 'button'
+        }).appendTo(self);
 
-        /**
-         * Called when the notification is closed
-         */
-        self.onClosed = () => {
-            if (self.options.autoRemove) {
-                self.remove();
-            }
-        };
-
-        /**
-         * Called when the notification is opening
-         */
-        self.onOpen = () => {
-            // Place the component if a position is set
-            if (self.options.position) {
-                let isFixed = self.getParentElement() === document.body;
-                self.css({position: isFixed ? 'fixed' : 'absolute'});
-                self.setPosition(self.options.position);
-            }
-        };
-
-        /**
-         * Called when the notification is opened
-         */
-        self.onOpened = () => {
-            self.autoClose();
-        };
-
-        // Set element styles
-        self.css({zIndex: options.zIndex});
+        if (self.options.closeable) {
+            self.closeButton.show();
+        } else {
+            self.closeButton.hide();
+        }
 
         // Avoid closing notification when mouse is over
         self.on('mouseenter', (ev) => {
-            clearTimeout(closeTimer);
+            clearTimeout(self.closeTimer);
         });
 
         // Close notification when mouse is out
@@ -103,20 +74,56 @@ Cuic.Notification = class extends Cuic.Component {
             }
         });
 
-        // Add the close button
-        // if (self.options.closeable) {
-        //     element.find('.close-notification').remove();
-        //     $('<span>', {
-        //         class: 'close-notification',
-        //         html: self.closeButton
-        //     }).appendTo(element);
-        // }
-        // If the content of the notification has changed,
-        // we need to check if there is a close button
-        // $element.find('.close-notification').off(ns('click')).one(ns('click'), self.close);
+        self.on('click', (ev) => {
+            // Close button
+            if (Cuic.hasClass(ev.target, 'btn-close')) {
+                ev.preventDefault();
+                self.close();
+            }
+        });
 
         // Add dialog to collection
         Cuic.notifications.add(self);
+    }
+
+    /**
+     * Auto closes the notification
+     */
+    autoClose() {
+        clearTimeout(this.closeTimer);
+        this.closeTimer = setTimeout(() => {
+            if (this.options.autoClose) {
+                this.close();
+            }
+        }, this.options.duration);
+    }
+
+    /**
+     * Called when the notification is closed
+     */
+    onClosed() {
+        if (this.options.autoRemove) {
+            this.remove();
+        }
+    }
+
+    /**
+     * Called when the notification is opening
+     */
+    onOpen() {
+        // Place the component if a position is set
+        if (this.options.position) {
+            let isFixed = this.getParentElement() === document.body;
+            this.css({position: isFixed ? 'fixed' : 'absolute'});
+            this.setPosition(this.options.position);
+        }
+    }
+
+    /**
+     * Called when the notification is opened
+     */
+    onOpened() {
+        this.autoClose();
     }
 
     onRemove() {
@@ -129,9 +136,8 @@ Cuic.Notification.prototype.options = {
     autoRemove: true,
     className: 'notification',
     closeable: true,
-    closeButton: '×',
+    closeButton: '',
     content: null,
-    css: null,
     duration: 2000,
     parent: document.body,
     position: 'center',

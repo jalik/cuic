@@ -26,7 +26,7 @@
 .panel {
   background: #fff;
   border: solid 1px #ccc;
-  box-shadow: @shadow-x @shadow-y @shadow-size @shadow-color;
+  box-shadow: none;
   margin: @margin;
   //transition: bottom, left, right, top, height, max-height, max-width, width, opacity;
   transition-property: all;
@@ -35,36 +35,42 @@
 }
 
 .panel.closed {
-  box-shadow: none;
 }
 
 .panel.opened {
+  box-shadow: @shadow-x @shadow-y @shadow-size @shadow-color;
 }
 
 .panel-content {
-  padding: 10px;
+  padding: @content-padding;
   overflow: auto;
 }
 
 .panel-footer {
   color: #888;
   font-size: 0.8em;
-  padding: 10px;
+  padding: @content-padding;
 }
 
 .panel-header,
 .panel-heading {
   border-bottom: solid 3px #57a0be;
-  padding: 10px;
+  padding: @content-padding;
 }
 
-.panel-header .close-panel {
-  color: #888;
+.panel-header .btn-close {
+  color: rgba(0, 0, 0, 0.5);
   cursor: pointer;
-  float: right;
   font-size: 1em;
-  font-weight: bolder;
-  margin-left: 10px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: @content-padding;
+}
+
+.panel-header .btn-close:focus,
+.panel-header .btn-close:hover {
+  color: rgba(0, 0, 0, 0.7);
 }
 
 .panel-title {

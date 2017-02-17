@@ -65,8 +65,7 @@ Cuic.NotificationStack = class extends Cuic.GroupComponent {
 
 Cuic.NotificationStack.prototype.options = {
     className: 'notification-stack',
-    container: null,
-    css: null,
+    namespace: 'notification-stack',
     position: 'right top',
     zIndex: 10
 };

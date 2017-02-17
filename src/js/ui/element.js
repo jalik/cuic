@@ -26,7 +26,6 @@
 Cuic.Element = class {
 
     constructor(node, attributes, options) {
-        const ns = Cuic.namespace('ui');
         const self = this;
 
         // Set default attributes
@@ -46,6 +45,10 @@ Cuic.Element = class {
         // Use HTML element
         else if (node instanceof HTMLElement) {
             self.element = node;
+        }
+        // Use Cuic element
+        else if (node instanceof Cuic.Element) {
+            self.element = node.getElement();
         }
         // Use jQuery element
         else if (node instanceof jQuery) {
@@ -81,13 +84,16 @@ Cuic.Element = class {
                     else if (attr === 'text') {
                         self.element.innerText = value;
                     }
+                    else if (attr === 'zIndex') {
+                        self.css({'z-index': parseInt(value)});
+                    }
                 }
             }
         }
 
         // Set element styles
         if (attributes.css) {
-            self.css(self.options.css);
+            self.css(attributes.css);
         }
 
         // Element is not in the DOM
@@ -165,6 +171,24 @@ Cuic.Element = class {
     }
 
     /**
+     * Returns the first element that matches the selector
+     * @param selector
+     * @return {*}
+     */
+    find(selector) {
+        return this.getElement().querySelector(selector);
+    }
+
+    /**
+     * Returns all elements that match the selector
+     * @param selector
+     * @return {*}
+     */
+    findAll(selector) {
+        return this.getElement().querySelectorAll(selector);
+    }
+
+    /**
      * Returns component CSS classes
      * @return {Array}
      */
@@ -199,11 +223,10 @@ Cuic.Element = class {
 
     /**
      * Returns the component height without margins and borders
-     * @param element
      * @return {number}
      */
-    height(element) {
-        return Cuic.height(element);
+    height() {
+        return Cuic.height(this);
     }
 
     /**
@@ -215,20 +238,18 @@ Cuic.Element = class {
 
     /**
      * Returns the component height including padding
-     * @param element
      * @return {number}
      */
-    innerHeight(element) {
-        return Cuic.innerHeight(element);
+    innerHeight() {
+        return Cuic.innerHeight(this);
     }
 
     /**
      * Returns the component width including padding
-     * @param element
      * @return {number}
      */
-    innerWidth(element) {
-        return Cuic.innerWidth(element);
+    innerWidth() {
+        return Cuic.innerWidth(this);
     }
 
     /**
@@ -275,22 +296,20 @@ Cuic.Element = class {
 
     /**
      * Returns the component height including padding, borders and eventually margin
-     * @param element
      * @param includeMargin
      * @return {number}
      */
-    outerHeight(element, includeMargin) {
-        return Cuic.outerHeight(element, includeMargin);
+    outerHeight(includeMargin) {
+        return Cuic.outerHeight(this, includeMargin);
     }
 
     /**
      * Returns the component width including padding, borders and eventually margin
-     * @param element
      * @param includeMargin
      * @return {number}
      */
-    outerWidth(element, includeMargin) {
-        return Cuic.outerWidth(element, includeMargin);
+    outerWidth(includeMargin) {
+        return Cuic.outerWidth(this, includeMargin);
     }
 
     /**
@@ -382,14 +401,15 @@ Cuic.Element = class {
      * @param element
      * @return {number}
      */
-    width(element) {
-        return Cuic.width(element);
+    width() {
+        return Cuic.width(this);
     }
 };
 
 Cuic.Element.prototype.options = {
     className: null,
     css: null,
+    namespace: 'cuic',
     parent: null,
     position: null
 };

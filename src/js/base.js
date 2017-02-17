@@ -154,12 +154,13 @@
          * @return {*}
          */
         calculateAnchor(element, position, target) {
-            element = this.getElement(element);
+            position = position || '';
+            element = this.element(element);
+            target = this.element(target);
+
             let isPixel = target instanceof Array && target.length === 2;
 
-            if (!isPixel) {
-                target = $(target);
-            }
+            console.log(element);
 
             let targetHeight = isPixel ? 1 : target.outerHeight();
             let targetHeightHalf = targetHeight / 2;
@@ -234,6 +235,7 @@
             if (prop.top != null && prop.top < 0) {
                 prop.top = 0;
             }
+            console.log('anchor', prop)
             return prop;
         },
 
@@ -488,6 +490,24 @@
         },
 
         /**
+         * Returns a Cuic element if possible
+         * @param elm
+         * @return {*|Cuic.Element}
+         */
+        element(elm) {
+            if (elm instanceof this.Element) {
+                return elm;
+            }
+            if (elm instanceof HTMLElement) {
+                return new this.Element(elm);
+            }
+            if (elm instanceof jQuery) {
+                return new this.Element(elm.get(0));
+            }
+            return elm;
+        },
+
+        /**
          * Enters full screen
          * @param element
          */
@@ -579,10 +599,13 @@
         /**
          * Returns the HTML element from various objects (Cuic, jQuery...)
          * @param element
-         * @return {*}
+         * @return {*|HTMLElement|HTMLDocument}
          */
         getElement(element) {
             if (element instanceof HTMLElement) {
+                return element;
+            }
+            if (element instanceof HTMLDocument) {
                 return element;
             }
             if (element instanceof jQuery) {
@@ -591,7 +614,7 @@
             if (element instanceof this.Element) {
                 return element.getElement();
             }
-            throw new TypeError(`element is not an instance of HTMLElement`);
+            throw new TypeError(`element is not supported (HTMLElement, Cuic.Element or jQuery)`);
         },
 
         /**
@@ -653,6 +676,7 @@
          */
         innerHeight(element) {
             element = this.getElement(element);
+            // todo subtract vertical scrollbar width
             return element.clientHeight;
         },
 
@@ -663,6 +687,7 @@
          */
         innerWidth(element) {
             element = this.getElement(element);
+            // todo subtract horizontal scrollbar width
             return element.clientWidth;
         },
 
@@ -721,13 +746,13 @@
 
         /**
          * Checks if the element is a parent node
-         * @param element
          * @param parent
+         * @param element
          * @return {boolean}
          */
-        isParent(element, parent) {
-            element = this.getElement(element);
+        isParent(parent, element) {
             parent = this.getElement(parent);
+            element = this.getElement(element);
             let elm = element;
 
             do {
@@ -1153,10 +1178,8 @@
     }
 
     $(document).ready(function () {
-        let ns = Cuic.namespace('base');
-
         // Save mouse position on move
-        $(document).off(ns('mousemove')).on(ns('mousemove'), function (ev) {
+        Cuic.on('mousemove', document, (ev) => {
             Cuic.mouseX = ev.clientX;
             Cuic.mouseY = ev.clientY;
         });

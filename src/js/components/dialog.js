@@ -53,17 +53,11 @@ Cuic.Dialog = class extends Cuic.Component {
             role: 'dialog'
         }, options);
 
-        const ns = Cuic.namespace('dialog');
         const self = this;
 
         let buttons;//todo use a GroupComponent
-        let closeButton;
-        let content;
-        let footer;
-        let header;
-        let title;
 
-        // Attributes
+        // Public attributes
         self.buttons = new Cuic.Collection();
 
         /**
@@ -96,172 +90,15 @@ Cuic.Dialog = class extends Cuic.Component {
             buttons.append(button.getElement());
             self.buttons.add(button);
 
-            // Hide footer if empty
-            if (self.buttons.length > 1) {
-                footer.show();
-            }
-            // Maximize the only one button
-            else if (self.buttons.length === 1) {
-                footer.show();
+            // Show footer if not empty
+            if (self.buttons.length > 0) {
+                this.footer.show();
             }
             // Hide footer if empty
             else {
-                footer.hide();
+                this.footer.hide();
             }
             return button;
-        };
-
-        /**
-         * Returns the content
-         * @deprecated
-         * @return {Cuic.Element}
-         */
-        self.getBody = () => {
-            return content;
-        };
-
-        /**
-         * Returns the content
-         * @return {Cuic.Element}
-         */
-        self.getContent = () => {
-            return content;
-        };
-
-        /**
-         * Returns the footer
-         * @return {Cuic.Element}
-         */
-        self.getFooter = () => {
-            return footer;
-        };
-
-        /**
-         * Returns the header
-         * @return {Cuic.Element}
-         */
-        self.getHeader = () => {
-            return header;
-        };
-
-        /**
-         * Called when the dialog is closing
-         */
-        self.onClose = () => {
-            fader.close(() => {
-                if (self.options.autoRemove) {
-                    fader.remove();
-                }
-            });
-        };
-
-        /**
-         * Called when the dialog is closed
-         */
-        self.onClosed = () => {
-            if (self.options.autoRemove) {
-                self.remove();
-            }
-        };
-
-        /**
-         * Called when the dialog is opening
-         */
-        self.onOpen = () => {
-            // Calculate z-index
-            let zIndex = options.zIndex + dialogZIndex;
-            self.css({'z-index': zIndex});
-
-            self.resizeContent();
-
-            // Open fader
-            if (self.options.modal) {
-                self.css({'z-index': zIndex + 1});
-                fader.css({'z-index': zIndex});
-                fader.open();
-            }
-            // Maximize or position the dialog
-            if (self.options.maximized) {
-                self.maximize();
-            } else {
-                self.setPosition(self.options.position);
-            }
-            // Focus the last button
-            if (self.buttons.length > 0) {
-                const button = self.buttons.get(self.buttons.length - 1);
-                button.getElement().focus();
-            }
-        };
-
-        /**
-         * Called when the dialog is opened
-         */
-        self.onOpened = () => {
-            // // Find images
-            // let images = self.$element.find('img');
-            //
-            // if (images.length > 0) {
-            //     // Position the dialog when images are loaded
-            //     images.off(ns('load')).on(ns('load'), () => {
-            //         self.resizeContent();
-            //     });
-            // } else {
-            //     // Position the dialog in the wrapper
-            //     self.resizeContent();
-            // }
-        };
-
-        /**
-         * Resizes the content
-         * @return {Cuic.Dialog}
-         */
-        self.resizeContent = () => {
-            const elm = self.getElement();
-            const parent = self.getParentElement();
-            const display = elm.style.display;
-            let maxHeight = window.innerHeight;
-
-            // Use parent for max height
-            if (parent && parent !== document.body) {
-                maxHeight = Cuic.height(parent);
-            }
-
-            // Set panel max height
-            const border = Cuic.border(elm);
-            const margin = Cuic.margin(elm);
-            maxHeight -= margin.vertical;
-            maxHeight -= border.vertical;
-            self.css({'max-height': maxHeight + 'px'});
-
-            // Set content max height
-            let contentMaxHeight = maxHeight;
-
-            if (header) {
-                contentMaxHeight -= Cuic.outerHeight(header, true);
-            }
-            if (footer) {
-                contentMaxHeight -= Cuic.outerHeight(footer, true);
-            }
-
-            Cuic.css(content, {
-                'max-height': contentMaxHeight + 'px',
-                overflow: 'auto'
-            });
-
-            // Restore initial display state
-            self.css({display: display});
-
-            return self;
-        };
-
-        /**
-         * Sets the title
-         * @param html
-         * @return {Cuic.Dialog}
-         */
-        self.setTitle = (html) => {
-            title.html(html);
-            return self;
         };
 
         // Set dialog position
@@ -269,42 +106,33 @@ Cuic.Dialog = class extends Cuic.Component {
         self.css({position: fixed ? 'fixed' : 'absolute'});
 
         // Create the fader
-        const fader = new Cuic.Fader({
-            className: 'fader dialog-fader'
+        self.fader = new Cuic.Fader({
+            className: 'fader dialog-fader',
+            autoClose: false,
+            autoRemove: false
         }).appendTo(options.parent);
 
-        // If the dialog is not modal,
-        // a click on the wrapper will close the dialog
-        fader.on('click', () => {
-            self.close();
-        });
-
         // Add header
-        header = new Cuic.Element('header', {
+        self.header = new Cuic.Element('header', {
             className: 'dialog-header',
             css: {display: options.title != null ? 'block' : 'none'}
         }).appendTo(self);
 
         // Add title
-        title = new Cuic.Element('h3', {
+        self.title = new Cuic.Element('h3', {
             className: 'dialog-title',
             html: options.title
-        }).appendTo(header);
-
-        // Add close button
-        closeButton = new Cuic.Element('span', {
-            className: 'dialog-close-btn glyphicon glyphicon-remove-sign'
-        }).prependTo(header);
+        }).appendTo(self.header);
 
         // Add content
-        content = new Cuic.Element('section', {
+        self.content = new Cuic.Element('section', {
             className: 'dialog-content',
             html: options.content,
             style: 'overflow: auto'
         }).appendTo(self);
 
         // Add footer
-        footer = new Cuic.Element('footer', {
+        self.footer = new Cuic.Element('footer', {
             className: 'dialog-footer',
             css: {display: options.buttons != null ? 'block' : 'none'}
         }).appendTo(self);
@@ -313,7 +141,27 @@ Cuic.Dialog = class extends Cuic.Component {
         buttons = new Cuic.Element('div', {
             className: 'btn-group',
             role: 'group'
-        }).appendTo(footer);
+        }).appendTo(self.footer);
+
+        // Add close button
+        self.closeButton = new Cuic.Element('span', {
+            className: 'btn-close glyphicon glyphicon-remove-sign',
+            html: self.options.closeButton,
+            role: 'button'
+        }).appendTo(self.header);
+
+        if (self.options.closeable) {
+            self.closeButton.show();
+        } else {
+            self.closeButton.hide();
+        }
+
+        // Add buttons
+        if (options.buttons instanceof Array) {
+            for (let i = 0; i < options.buttons.length; i += 1) {
+                self.addButton(options.buttons[i]);
+            }
+        }
 
         // Set content height
         if (parseFloat(options.contentHeight) > 0) {
@@ -325,26 +173,29 @@ Cuic.Dialog = class extends Cuic.Component {
             content.css('width', options.contentWidth);
         }
 
-        // Add buttons
-        if (options.buttons instanceof Array) {
-            for (let i = 0; i < options.buttons.length; i += 1) {
-                self.addButton(options.buttons[i]);
+        // Close dialog when fader is clicked
+        self.fader.on('click', () => {
+            if (self.options.autoClose) {
+                self.close();
             }
-        }
-
-        // Close dialog when close button is clicked
-        closeButton.on('click', () => {
-            self.close();
         });
 
-        // let timer;
-        // $(window).off(ns('resize')).on(ns('resize'), () => {
-        //     clearTimeout(timer);
+        self.on('click', (ev) => {
+            // Close button
+            if (Cuic.hasClass(ev.target, 'btn-close')) {
+                ev.preventDefault();
+                self.close();
+            }
+        });
+
+        // // Close the dialog when the user clicks outside of it
+        // Cuic.on('click', document.body, (ev) => {
+        //     const elm = self.getElement();
         //
-        //     if (self.options.autoResize) {
-        //         timer = setTimeout(() => {
-        //             self.resizeContent();
-        //         }, 50);
+        //     if (ev.target !== elm && !Cuic.isParent(elm, ev.target)) {
+        //         if (self.options.autoClose) {
+        //             self.close();
+        //         }
         //     }
         // });
 
@@ -352,7 +203,7 @@ Cuic.Dialog = class extends Cuic.Component {
         if (self.options.draggable) {
             self.draggable = new Cuic.Draggable({
                 element: self.getElement(),
-                handle: title,
+                handle: self.title,
                 parent: self.getParentElement(),
                 rootOnly: false
             });
@@ -376,28 +227,182 @@ Cuic.Dialog = class extends Cuic.Component {
         Cuic.dialogs.add(self);
     }
 
+
+    /**
+     * Returns the content
+     * @deprecated
+     * @return {Cuic.Element}
+     */
+    getBody() {
+        return this.content;
+    }
+
+    /**
+     * Returns the content
+     * @return {Cuic.Element}
+     */
+    getContent() {
+        return this.content;
+    }
+
+    /**
+     * Returns the footer
+     * @return {Cuic.Element}
+     */
+    getFooter() {
+        return this.footer;
+    }
+
+    /**
+     * Returns the header
+     * @return {Cuic.Element}
+     */
+    getHeader() {
+        return this.header;
+    }
+
+    /**
+     * Called when dialog is closing
+     */
+    onClose() {
+        this.fader.options.autoRemove = this.options.autoRemove;
+        this.fader.close();
+    }
+
+    /**
+     * Called when dialog is closed
+     */
+    onClosed() {
+        if (this.options.autoRemove) {
+            this.remove();
+        }
+    }
+
+    /**
+     * Called when dialog is opening
+     */
+    onOpen() {
+        // Calculate z-index
+        let zIndex = this.options.zIndex + dialogZIndex;
+        this.css({'z-index': zIndex});
+
+        this.resizeContent();
+
+        // Open fader
+        if (this.options.modal) {
+            this.css({'z-index': zIndex + 1});
+            this.fader.css({'z-index': zIndex});
+            this.fader.open();
+        }
+        // Maximize or position the dialog
+        if (this.options.maximized) {
+            this.maximize();
+        } else {
+            this.setPosition(this.options.position);
+        }
+        // Focus the last button
+        if (this.buttons.length > 0) {
+            const button = this.buttons.get(this.buttons.length - 1);
+            button.getElement().focus();
+        }
+    }
+
+    /**
+     * Called when dialog is opened
+     */
+    onOpened() {
+        // // todo Find images
+        // let images = this.find('img');
+        //
+        // if (images.length > 0) {
+        //     // Position the dialog when images are loaded
+        //     images.off(ns('load')).on(ns('load'), () => {
+        //         this.resizeContent();
+        //     });
+        // } else {
+        //     // Position the dialog in the wrapper
+        //     this.resizeContent();
+        // }
+    }
+
+    /**
+     * Called when dialog is removed
+     */
     onRemove() {
         Cuic.dialogs.remove(this);
     }
+
+    /**
+     * Resizes the content
+     * @return {Cuic.Dialog}
+     */
+    resizeContent() {
+        const parent = this.getParentElement();
+        const display = this.css('display');
+        let maxHeight = window.innerHeight;
+
+        // Use parent for max height
+        if (parent && parent !== document.body) {
+            maxHeight = Cuic.height(parent);
+        }
+
+        // Set panel max height
+        const border = Cuic.border(this);
+        const margin = Cuic.margin(this);
+        maxHeight -= margin.vertical;
+        maxHeight -= border.vertical;
+        this.css({'max-height': maxHeight + 'px'});
+
+        // Calculate content max height
+        let contentMaxHeight = maxHeight;
+
+        if (this.header instanceof Cuic.Element) {
+            contentMaxHeight -= this.header.outerHeight(true);
+        }
+        if (this.footer instanceof Cuic.Element) {
+            contentMaxHeight -= this.footer.outerHeight(true);
+        }
+
+        // Set content max height
+        this.content.css({
+            'max-height': contentMaxHeight + 'px',
+            overflow: 'auto'
+        });
+
+        // Restore initial display state
+        this.css({display: display});
+
+        return this;
+    }
+
+    /**
+     * Sets the title
+     * @param html
+     * @return {Cuic.Dialog}
+     */
+    setTitle(html) {
+        this.title.html(html);
+        return this;
+    }
 };
 
-/**
- * Default options
- * @type {*}
- */
 Cuic.Dialog.prototype.options = {
+    autoClose: false,
     autoRemove: true,
     autoResize: true,
     buttons: [],
     className: 'dialog',
+    closeable: true,
+    closeButton: null,
     content: null,
     contentHeight: null,
     contentWidth: null,
     draggable: true,
     maximized: false,
+    modal: true,
+    namespace: 'dialog',
     parent: document.body,
     position: 'center',
-    modal: true,
     title: null,
     zIndex: 5
 };

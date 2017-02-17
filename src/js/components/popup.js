@@ -23,194 +23,108 @@
  *
  */
 
-(function ($) {
-    'use strict';
+Cuic.Popup = class extends Cuic.Component {
 
-    var ns = Cuic.namespace('popup');
+    constructor(options) {
+        // Set default options
+        options = Cuic.extend({}, Cuic.Popup.prototype.options, options);
 
-    /**
-     * Creates a popup
-     * @param options
-     * @constructor
-     */
-    Cuic.Popup = function (options) {
-        var self = this;
-        var $element;
-        var isClosing = false;
-        var isOpened = false;
-        var isOpening = false;
-        var position;
-        var $target;
+        // Create element
+        super('div', {
+            className: options.className,
+            html: options.html
+        }, options);
 
-        // Default options
-        options = Cuic.extend(true, {}, Cuic.Popup.prototype.options, options);
+        const self = this;
 
-        // Define attributes
-        self.autoClose = options.autoClose === true;
-        self.autoRemove = options.autoRemove === true;
-        self.closeable = options.closeable === true;
-        self.closeButton = options.closeButton;
+        // Public attributes
+        self.closeButton = null;
 
-        // Define vars
-        position = options.position;
-        $target = $(options.target);
+        // Add close button
+        self.closeButton = new Cuic.Element('span', {
+            className: 'btn-close glyphicon glyphicon-remove-sign',
+            html: self.options.closeButton,
+            role: 'button'
+        }).appendTo(self);
 
-        /**
-         * Closes the popup
-         * @param callback
-         * @return {Cuic.Popup}
-         */
-        self.close = function (callback) {
-            if (isOpening || (isOpened && !isClosing)) {
-                isClosing = true;
-                isOpening = false;
-                $element.stop(true, false).fadeOut(200, function () {
-                    if (typeof callback === 'function') {
-                        callback.call(self);
-                    }
-                    if (self.autoRemove) {
-                        $element.remove();
-                    }
-                    isClosing = false;
-                    isOpened = false;
-                });
+        if (self.options.closeable) {
+            self.closeButton.show();
+        } else {
+            self.closeButton.hide();
+        }
+
+        // // Set required styles
+        // $element.css({
+        //     display: 'none',
+        //     position: 'absolute',
+        //     zIndex: options.zIndex
+        // });
+
+        self.on('click', (ev) => {
+            // Close button
+            if (Cuic.hasClass(ev.target, 'btn-close')) {
+                ev.preventDefault();
+                self.close();
             }
-            return self;
-        };
-
-        /**
-         * Returns the element
-         * @return {*}
-         */
-        self.getElement = function () {
-            return $element;
-        };
-
-        /**
-         * Checks if the popup is opened
-         * @return {boolean}
-         */
-        self.isOpened = function () {
-            return isOpened;
-        };
-
-        /**
-         * Opens the popup
-         * @param callback
-         * @return {Cuic.Popup}
-         */
-        self.open = function (callback) {
-            if (isClosing || (!isOpened && !isOpening)) {
-                isClosing = false;
-                isOpening = true;
-
-                // Add the close button
-                if (self.closeable) {
-                    $element.find('.close-popup').remove();
-                    $('<span>', {
-                        class: 'close-popup',
-                        html: self.closeButton
-                    }).appendTo($element);
-                }
-
-                // If the content of the popup has changed,
-                // we need to check if there is a close button
-                $element.find('.close-popup').off('click').one(ns('click'), self.close);
-
-                // Position the element
-                self.setAnchor(position, $target);
-
-                $element.stop(true, false).fadeIn(200, function () {
-                    if (typeof callback === 'function') {
-                        callback.call(self);
-                    }
-                    isOpening = false;
-                    isOpened = true;
-                });
+            // Toggle button
+            if (Cuic.hasClass(ev.target, 'btn-toggle')) {
+                ev.preventDefault();
+                self.toggle();
             }
-            return self;
-        };
-
-        /**
-         * Sets the position relative to a target
-         * @param pos
-         * @param targ
-         * @return {Cuic.Popup}
-         */
-        self.setAnchor = function (pos, targ) {
-            position = pos;
-            $target = $(targ || $target);
-            Cuic.anchor($element, pos, $target);
-            return self;
-        };
-
-        /**
-         * Sets the content
-         * @param html
-         * @return {Cuic.Popup}
-         */
-        self.setContent = function (html) {
-            $element.html(html);
-            return self;
-        };
-
-        /**
-         * Toggles the popup visibility
-         * @param callback
-         * @return {Cuic.Popup}
-         */
-        self.toggle = function (callback) {
-            if (isClosing || (!isOpened && !isOpening)) {
-                self.open(callback);
-            } else {
-                self.close(callback);
-            }
-            return self;
-        };
-
-        // Create the element
-        $element = $('<div>', {
-            class: options.className,
-            html: options.content
-        }).appendTo(document.body);
-
-        // Set custom styles
-        Cuic.css($element, options.css);
-
-        // Set required styles
-        $element.css({
-            display: 'none',
-            position: 'absolute',
-            zIndex: options.zIndex
         });
 
         // Close the popup when the user clicks outside of it
-        $(document).off(ns('mousedown')).on(ns('mousedown'), function (ev) {
-            var target = $(ev.target);
+        Cuic.on('click', document.body, (ev) => {
+            const elm = self.getElement();
 
-            if (target !== $element && target.closest($element).length === 0) {
-                if (self.autoClose && isOpened) {
+            if (ev.target !== elm && !Cuic.isParent(elm, ev.target)) {
+                if (self.options.autoClose) {
                     self.close();
                 }
             }
         });
-    };
+    }
 
     /**
-     * Default options
-     * @type {*}
+     * Called when the popup is closed
      */
-    Cuic.Popup.prototype.options = {
-        autoClose: true,
-        autoRemove: true,
-        className: 'popup',
-        closeable: false,
-        closeButton: '×',
-        content: null,
-        css: null,
-        position: 'right',
-        target: null,
-        zIndex: 9
-    };
+    onClosed() {
+        if (this.options.autoRemove) {
+            this.remove();
+        }
+    }
 
-})(jQuery);
+    /**
+     * Called when the popup is opening
+     */
+    onOpen() {
+        // Position the popup toward target
+        this.setAnchor(this.options.position, this.options.target);
+    }
+
+    /**
+     * Sets the position relative to a target
+     * @param position
+     * @param anchor
+     * @return {Cuic.Popup}
+     */
+    setAnchor(position, anchor) {
+        Cuic.anchor(this, position, anchor);
+        this.options.position = position;
+        return this;
+    }
+};
+
+Cuic.Popup.prototype.options = {
+    autoClose: true,
+    autoRemove: true,
+    className: 'popup',
+    closeable: true,
+    closeButton: '',
+    content: null,
+    css: null,
+    namespace: 'popup',
+    position: 'right',
+    target: null,
+    zIndex: 9
+};
