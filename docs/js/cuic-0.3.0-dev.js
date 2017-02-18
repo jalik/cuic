@@ -477,6 +477,34 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
         /**
+         * Adds pixel unit to numeric values if needed
+         * @param styles
+         * @return {*}
+         */
+        autoPixel: function autoPixel(styles) {
+            var properties = [
+            // positioning
+            'bottom', 'left', 'padding', 'right', 'top',
+            // dimension
+            'height', 'width',
+            // margin
+            'margin', 'margin-bottom', 'margin-left', 'margin-right', 'margin-top',
+            // padding
+            'padding', 'padding-bottom', 'padding-left', 'padding-right', 'padding-top'];
+
+            // Add pixel unit to numbers
+            for (var style in styles) {
+                if (styles.hasOwnProperty(style)) {
+                    if (typeof styles[style] === 'number' && properties.indexOf(style) !== -1) {
+                        styles[style] = styles[style] + 'px';
+                    }
+                }
+            }
+            return styles;
+        },
+
+
+        /**
          * Applies the styles to the target.
          * Styles can be a string or an object.
          * @param element
@@ -490,6 +518,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             if (styles) {
                 if ((typeof styles === 'undefined' ? 'undefined' : _typeof(styles)) === 'object') {
                     var mergedStyles = '';
+
+                    // Add pixel unit where needed
+                    this.autoPixel(styles);
 
                     // Get current styles
                     for (var i = 0; i < element.style.length; i += 1) {
@@ -2094,6 +2125,11 @@ Cuic.Element = function () {
             self.css(attributes.css);
         }
 
+        // Add debug class
+        if (self.options.debug) {
+            self.addClass('debug');
+        }
+
         // Element is not in the DOM
         if (!self.element.parentNode) {
             // Put element in parent node
@@ -2508,6 +2544,18 @@ Cuic.Element = function () {
         }
 
         /**
+         * Returns the parent element
+         * @return {*|Cuic.Element}
+         */
+
+    }, {
+        key: 'parent',
+        value: function parent() {
+            var parent = this.getElement().parentNode;
+            return parent ? Cuic.element(parent) : parent;
+        }
+
+        /**
          * Returns the element position
          * @return {*|{bottom: Number, left: Number, right: Number, top: Number}}
          */
@@ -2687,9 +2735,7 @@ Cuic.Component = function (_Cuic$Element) {
         var self = _this2;
 
         // Add component classes
-        if (options.className) {
-            self.addClass('component');
-        }
+        self.addClass('component');
         return _this2;
     }
 
@@ -2929,12 +2975,17 @@ Cuic.GroupComponent = function (_Cuic$Component) {
 
         // Create element
 
-        // Prepare components collection
         var _this7 = _possibleConstructorReturn(this, (_class6.__proto__ || Object.getPrototypeOf(_class6)).call(this, node, Cuic.extend({
             className: options.className,
             role: 'group'
         }, attributes), options));
 
+        var self = _this7;
+
+        // Add component classes
+        self.addClass('component-group');
+
+        // Prepare components collection
         _this7.components = new Cuic.Collection();
 
         _this7.components.onAdded = function (component) {
@@ -3047,13 +3098,16 @@ Cuic.Draggable = function (_Cuic$Component2) {
 
         var self = _this8;
 
+        // Add component classes
+        self.addClass('draggable');
+
         // Force the target to be the relative parent
         if (self.css('position') === 'static') {
             self.css({ position: 'relative' });
         }
 
         // Set the dragging area
-        self.setHandle(options.handle || self.getElement());
+        _this8.setDragHandle(options.handle || self.getElement());
         return _this8;
     }
 
@@ -3089,8 +3143,8 @@ Cuic.Draggable = function (_Cuic$Component2) {
          */
 
     }, {
-        key: 'setHandle',
-        value: function setHandle(handle) {
+        key: 'setDragHandle',
+        value: function setDragHandle(handle) {
             var self = this;
 
             // Add the draggable classes
@@ -3249,6 +3303,9 @@ Cuic.Hook = function (_Cuic$Component3) {
         var _this9 = _possibleConstructorReturn(this, (_class8.__proto__ || Object.getPrototypeOf(_class8)).call(this, 'div', { className: options.className }, options));
 
         var self = _this9;
+
+        // Add component classes
+        self.addClass('hook');
 
         // This is a fix to avoid offsetTop > 0
         self.css({
@@ -3438,78 +3495,64 @@ Cuic.Hook.prototype.options = {
  *
  */
 
-(function ($) {
-    'use strict';
+Cuic.Resizable = function (_Cuic$Component4) {
+    _inherits(_class9, _Cuic$Component4);
 
-    var ns = Cuic.namespace('resizable');
+    function _class9(options) {
+        _classCallCheck(this, _class9);
 
-    /**
-     * Makes an object resizable
-     * @param options
-     * @constructor
-     */
-    Cuic.Resizable = function (options) {
-        var self = this;
-        var $container;
-        var $element;
-        var handlers = [];
-        var horizontalHandlers = [];
-        var verticalHandlers = [];
-        var ratio = 1;
+        // Set default options
+        options = Cuic.extend({}, Cuic.Resizable.prototype.options, options);
 
-        // Default options
-        options = Cuic.extend(true, Cuic.Resizable.prototype.options, options);
+        // Create element
 
-        // Define attributes
-        self.className = options.className;
-        self.fps = parseInt(options.fps);
-        self.horizontal = options.horizontal === true;
-        self.keepRatio = options.keepRatio === true;
-        self.maxHeight = parseInt(options.maxHeight);
-        self.maxWidth = parseInt(options.maxWidth);
-        self.minHeight = parseInt(options.minHeight);
-        self.minWidth = parseInt(options.minWidth);
-        self.stepX = parseInt(options.stepX);
-        self.stepY = parseInt(options.stepY);
-        self.vertical = options.vertical === true;
+        var _this10 = _possibleConstructorReturn(this, (_class9.__proto__ || Object.getPrototypeOf(_class9)).call(this, 'div', { className: options.className }, options));
 
-        /**
-         * Returns the element
-         * @return {*}
-         */
-        self.getElement = function () {
-            return $element;
-        };
+        var self = _this10;
 
-        /**
-         * Set the container
-         * @param obj
-         * @return {*}
-         */
-        self.setContainer = function (obj) {
-            $container = $(obj);
-            return self;
-        };
-
-        // Find the target
-        if (options.target) $element = $(options.target);
-
-        // Add the resizable classes
-        $element.addClass(self.className);
+        // Add component classes
+        self.addClass('resizable');
 
         // Force the target to be the relative parent
-        if ($element.css('position') === 'static') {
-            $element.css('position', 'relative');
+        if (self.css('position') === 'static') {
+            self.css('position', 'relative');
         }
 
-        // Set the top container of the element
-        self.setContainer(options.container || $element.offsetParent());
+        // Add Bottom handle
+        self.bottomHandle = new Cuic.Element('div', {
+            className: 'resize-handle resize-handle-s',
+            css: { height: options.handlerSize + 'px' }
+        }).appendTo(self);
+
+        // Add Right handler
+        self.rightHandle = new Cuic.Element('div', {
+            className: 'resize-handle resize-handle-e',
+            css: { width: options.handlerSize + 'px' }
+        }).appendTo(self);
+
+        // Add Bottom-Right handler
+        self.bottomRightHandle = new Cuic.Element('div', {
+            className: 'resize-handle resize-handle-se',
+            css: {
+                height: options.handlerSize + 'px',
+                width: options.handlerSize + 'px'
+            }
+        }).appendTo(self);
+
+        // Group handles
+        self.handles = [self.rightHandle, self.bottomHandle, self.bottomRightHandle];
+
+        // Group horizontal handles
+        self.horizontalHandles = [self.rightHandle, self.bottomRightHandle];
+
+        // Group vertical handles
+        self.verticalHandles = [self.bottomHandle, self.bottomRightHandle];
 
         /**
          * This method is called the element is resizing
          * @param ev
          */
-        var resize = function resize(ev) {
+        var startResize = function startResize(ev) {
             // Execute callback
             if (self.onResizeStart && self.onResizeStart.call(self, ev) === false) {
                 return;
@@ -3519,54 +3562,26 @@ Cuic.Hook.prototype.options = {
             ev.preventDefault();
 
             // Change element style
-            $element.addClass('resizing');
+            self.addClass('resizing');
 
-            var containerLeft = $container.offset().left;
-            var containerTop = $container.offset().top;
-            var height = $element.height();
-            var width = $element.width();
-            var padding = Cuic.padding($element);
+            var parent = self.parent();
+            var parentOffset = parent.offset();
+            var elmHeight = self.outerHeight();
+            var elmWidth = self.outerWidth();
+            var elmPadding = Cuic.padding(self);
 
-            // Calculate the ratio
-            ratio = height / width;
+            // Calculate initial ratio
+            var ratio = elmHeight / elmWidth;
+
+            // Stop resizing
+            Cuic.once('mouseup', document, function (ev) {
+                clearInterval(timer);
+                self.removeClass('resizing');
+                self.onResizeStop.call(self, ev);
+            });
 
             var timer = setInterval(function () {
-                var containerHeight = $container.innerHeight();
-                var containerWidth = $container.innerWidth();
-                var elementLeft = $element.offset().left;
-                var elementTop = $element.offset().top;
-                var maxHeight = containerHeight - (elementTop - containerTop + padding.left + padding.right);
-                var maxWidth = containerWidth - (elementLeft - containerLeft + padding.bottom + padding.top);
-                var diffX = Cuic.mouseX - ev.clientX;
-                var diffY = Cuic.mouseY - ev.clientY;
-                var newHeight = null;
-                var newWidth = null;
-
-                // Check horizontal size
-                if (horizontalHandlers.indexOf(ev.target) !== -1) {
-                    newWidth = width + diffX;
-
-                    if (newWidth > maxWidth) {
-                        newWidth = maxWidth;
-                    }
-                }
-
-                // Check vertical size
-                if (verticalHandlers.indexOf(ev.target) !== -1) {
-                    newHeight = height + diffY;
-
-                    if (newHeight > maxHeight) {
-                        newHeight = maxHeight;
-                    }
-                }
-
-                if (self.keepRatio) {
-                    if (newHeight !== null) {
-                        newWidth = newHeight / ratio;
-                    } else if (newWidth !== null) {
-                        newHeight = newWidth * ratio;
-                    }
-                }
+                var prop = {};
 
                 // Execute callback
                 if (self.onResize && self.onResize.call(self) === false) {
@@ -3574,147 +3589,103 @@ Cuic.Hook.prototype.options = {
                 }
 
                 // Resize horizontally
-                if (self.horizontal && newWidth !== null && self.checkWidth(newWidth)) {
-                    $element.width(self.stepX ? Math.round(newWidth / self.stepX) * self.stepX : newWidth);
+                if (self.options.horizontal) {
+                    for (var i = 0; i < self.horizontalHandles.length; i += 1) {
+                        if (self.horizontalHandles[i].getElement() === ev.target) {
+                            var diffX = Cuic.mouseX - ev.clientX;
+                            var offset = self.offset();
+                            var parentWidth = parent.innerWidth();
+                            var maxWidth = parentWidth - (offset.left - parentOffset.left + elmPadding.horizontal);
+                            var width = elmWidth + diffX;
+
+                            // Limit to max width
+                            if (width > maxWidth) {
+                                width = maxWidth;
+                            }
+                            // Width is between min and max
+                            if ((!Number(_this10.options.maxWidth) || width <= _this10.options.maxWidth) && (!Number(_this10.options.minWidth) || width >= _this10.options.minWidth)) {
+                                width = Math.round(width / self.options.stepX) * self.options.stepX;
+                                prop.width = width;
+                            }
+                            break;
+                        }
+                    }
                 }
 
                 // Resize vertically
-                if (self.vertical && newHeight !== null && self.checkHeight(newHeight)) {
-                    $element.height(self.stepY ? Math.round(newHeight / self.stepY) * self.stepY : newHeight);
-                }
-            }, Math.round(1000 / self.fps));
+                if (self.options.vertical) {
+                    for (var _i = 0; _i < self.verticalHandles.length; _i += 1) {
+                        if (self.verticalHandles[_i].getElement() === ev.target) {
+                            var diffY = Cuic.mouseY - ev.clientY;
+                            var _offset = self.offset();
+                            var parentHeight = parent.innerHeight();
+                            var maxHeight = parentHeight - (_offset.top - parentOffset.top + elmPadding.vertical);
+                            var height = elmHeight + diffY;
 
-            // Stop resizing
-            $(document).off(ns('mouseup')).one(ns('mouseup'), function (ev) {
-                clearInterval(timer);
-                $element.removeClass('resizing');
-
-                if (self.onResizeStop) {
-                    self.onResizeStop.call(self, ev);
+                            // Limit to max height
+                            if (height > maxHeight) {
+                                height = maxHeight;
+                            }
+                            // Height is between min and max
+                            if ((!Number(_this10.options.maxHeight) || height <= _this10.options.maxHeight) && (!Number(_this10.options.minHeight) || height >= _this10.options.minHeight)) {
+                                height = Math.round(height / self.options.stepY) * self.options.stepY;
+                                prop.height = height;
+                            }
+                            break;
+                        }
+                    }
                 }
-            });
+
+                // Keep ratio
+                if (self.options.keepRatio) {
+                    if (prop.height) {
+                        prop.width = prop.height / ratio;
+                    } else if (prop.width) {
+                        prop.height = prop.width * ratio;
+                    }
+                }
+
+                // Apply new size
+                self.css(prop);
+            }, Math.round(1000 / self.options.fps));
         };
 
-        // Right handler
-        var rightHandler = $('<div>', {
-            css: {
-                cursor: 'e-resize',
-                display: 'none',
-                height: '100%',
-                position: 'absolute',
-                right: 0,
-                top: 0,
-                width: options.handlerSize,
-                zIndex: 1
-            }
-        }).off(ns('mousedown')).on(ns('mousedown'), resize).appendTo($element);
+        // Resize element on resize with handles
+        self.bottomHandle.on('mousedown', startResize);
+        self.rightHandle.on('mousedown', startResize);
+        self.bottomRightHandle.on('mousedown', startResize);
+        return _this10;
+    }
 
-        // Bottom handler
-        var bottomHandler = $('<div>', {
-            css: {
-                bottom: 0,
-                cursor: 's-resize',
-                display: 'none',
-                height: options.handlerSize,
-                position: 'absolute',
-                left: 0,
-                width: '100%',
-                zIndex: 1
-            }
-        }).off(ns('mousedown')).on(ns('mousedown'), resize).appendTo($element);
+    _createClass(_class9, [{
+        key: 'onResize',
+        value: function onResize() {}
+    }, {
+        key: 'onResizeStart',
+        value: function onResizeStart() {}
+    }, {
+        key: 'onResizeStop',
+        value: function onResizeStop() {}
+    }]);
 
-        // Bottom-Right handler
-        var bottomRightHandler = $('<div>', {
-            css: {
-                bottom: 0,
-                cursor: 'se-resize',
-                display: 'none',
-                height: options.handlerSize,
-                position: 'absolute',
-                right: 0,
-                width: options.handlerSize,
-                zIndex: 2
-            }
-        }).off('mousedown').on(ns('mousedown'), resize).appendTo($element);
+    return _class9;
+}(Cuic.Component);
 
-        handlers = [rightHandler, bottomHandler, bottomRightHandler];
-        horizontalHandlers = [rightHandler.get(0), bottomRightHandler.get(0)];
-        verticalHandlers = [bottomHandler.get(0), bottomRightHandler.get(0)];
-
-        // Display all handlers when mouse enters the target
-        $element.off('mouseenter').on(ns('mouseenter'), function () {
-            if (!$element.hasClass('resizing')) {
-                for (var i = 0; i < handlers.length; i += 1) {
-                    handlers[i].stop(true, false).fadeIn(0);
-                }
-            }
-        });
-
-        // Hide all handlers when mouse leaves the target
-        $element.off('mouseleave').on(ns('mouseleave'), function () {
-            if (!$element.hasClass('resizing')) {
-                for (var i = 0; i < handlers.length; i += 1) {
-                    handlers[i].stop(true, false).fadeOut(0);
-                }
-            }
-        });
-    };
-
-    /**
-     * Checks if the height is between min and max values
-     * @param height
-     * @return {boolean}
-     */
-    Cuic.Resizable.prototype.checkHeight = function (height) {
-        return (!Number(this.maxHeight) || height <= this.maxHeight) && (!Number(this.minHeight) || height >= this.minHeight);
-    };
-
-    /**
-     * Checks if the width is between min and max values
-     * @param width
-     * @return {boolean}
-     */
-    Cuic.Resizable.prototype.checkWidth = function (width) {
-        return (!Number(this.maxWidth) || width <= this.maxWidth) && (!Number(this.minWidth) || width >= this.minWidth);
-    };
-
-    /**
-     * Called when element is resizing
-     * @type {function}
-     */
-    Cuic.Resizable.prototype.onResize = null;
-
-    /**
-     * Called when resize starts
-     * @type {function}
-     */
-    Cuic.Resizable.prototype.onResizeStart = null;
-
-    /**
-     * Called when resize stops
-     * @type {function}
-     */
-    Cuic.Resizable.prototype.onResizeStop = null;
-
-    /**
-     * Default options
-     * @type {*}
-     */
-    Cuic.Resizable.prototype.options = {
-        className: 'resizable',
-        fps: 30,
-        handlerSize: 10,
-        horizontal: true,
-        keepRatio: false,
-        maxHeight: null,
-        maxWidth: null,
-        minHeight: 1,
-        minWidth: 1,
-        stepX: 1,
-        stepY: 1,
-        vertical: true
-    };
-})(jQuery);
+Cuic.Resizable.prototype.options = {
+    className: 'resizable',
+    fps: 30,
+    handlerSize: 10,
+    horizontal: true,
+    keepRatio: false,
+    maxHeight: null,
+    maxWidth: null,
+    minHeight: 1,
+    minWidth: 1,
+    namespace: 'resizable',
+    stepX: 1,
+    stepY: 1,
+    vertical: true
+};
 
 /*
  * The MIT License (MIT)
@@ -3741,18 +3712,18 @@ Cuic.Hook.prototype.options = {
  *
  */
 
-Cuic.Button = function (_Cuic$Component4) {
-    _inherits(_class9, _Cuic$Component4);
+Cuic.Button = function (_Cuic$Component5) {
+    _inherits(_class10, _Cuic$Component5);
 
-    function _class9(options) {
-        _classCallCheck(this, _class9);
+    function _class10(options) {
+        _classCallCheck(this, _class10);
 
         // Set default options
         options = Cuic.extend({}, Cuic.Button.prototype.options, options);
 
         // Create element
 
-        var _this10 = _possibleConstructorReturn(this, (_class9.__proto__ || Object.getPrototypeOf(_class9)).call(this, 'button', {
+        var _this11 = _possibleConstructorReturn(this, (_class10.__proto__ || Object.getPrototypeOf(_class10)).call(this, 'button', {
             className: options.className,
             disabled: false,
             html: options.label,
@@ -3760,7 +3731,10 @@ Cuic.Button = function (_Cuic$Component4) {
             type: options.type
         }, options));
 
-        var self = _this10;
+        var self = _this11;
+
+        // Add component classes
+        self.addClass('btn');
 
         // Create shortcut
         if (typeof options.shortcut === 'number') {
@@ -3772,10 +3746,10 @@ Cuic.Button = function (_Cuic$Component4) {
                 }
             });
         }
-        return _this10;
+        return _this11;
     }
 
-    return _class9;
+    return _class10;
 }(Cuic.Component);
 
 Cuic.Button.prototype.options = {
@@ -3829,23 +3803,26 @@ Cuic.dialogs.onRemoved = function () {
 /**
  * Basic dialog
  */
-Cuic.Dialog = function (_Cuic$Component5) {
-    _inherits(_class10, _Cuic$Component5);
+Cuic.Dialog = function (_Cuic$Component6) {
+    _inherits(_class11, _Cuic$Component6);
 
-    function _class10(options) {
-        _classCallCheck(this, _class10);
+    function _class11(options) {
+        _classCallCheck(this, _class11);
 
         // Set default options
         options = Cuic.extend({}, Cuic.Dialog.prototype.options, options);
 
         // Create element
 
-        var _this11 = _possibleConstructorReturn(this, (_class10.__proto__ || Object.getPrototypeOf(_class10)).call(this, 'div', {
+        var _this12 = _possibleConstructorReturn(this, (_class11.__proto__ || Object.getPrototypeOf(_class11)).call(this, 'div', {
             className: options.className,
             role: 'dialog'
         }, options));
 
-        var self = _this11;
+        var self = _this12;
+
+        // Add component classes
+        self.addClass('dialog');
 
         var buttons = void 0; //todo use a GroupComponent
 
@@ -3886,11 +3863,11 @@ Cuic.Dialog = function (_Cuic$Component5) {
 
             // Show footer if not empty
             if (self.buttons.length > 0) {
-                _this11.footer.show();
+                _this12.footer.show();
             }
             // Hide footer if empty
             else {
-                    _this11.footer.hide();
+                    _this12.footer.hide();
                 }
             return button;
         };
@@ -4018,7 +3995,7 @@ Cuic.Dialog = function (_Cuic$Component5) {
 
         // Add dialog to collection
         Cuic.dialogs.add(self);
-        return _this11;
+        return _this12;
     }
 
     /**
@@ -4028,7 +4005,7 @@ Cuic.Dialog = function (_Cuic$Component5) {
      */
 
 
-    _createClass(_class10, [{
+    _createClass(_class11, [{
         key: 'getBody',
         value: function getBody() {
             return this.content;
@@ -4213,7 +4190,7 @@ Cuic.Dialog = function (_Cuic$Component5) {
         }
     }]);
 
-    return _class10;
+    return _class11;
 }(Cuic.Component);
 
 Cuic.Dialog.prototype.options = {
@@ -4262,33 +4239,38 @@ Cuic.Dialog.prototype.options = {
  *
  */
 
-Cuic.Fader = function (_Cuic$Component6) {
-    _inherits(_class11, _Cuic$Component6);
+Cuic.Fader = function (_Cuic$Component7) {
+    _inherits(_class12, _Cuic$Component7);
 
-    function _class11(options) {
-        _classCallCheck(this, _class11);
+    function _class12(options) {
+        _classCallCheck(this, _class12);
 
         // Set default options
         options = Cuic.extend({}, Cuic.Fader.prototype.options, options);
 
         // Create element
 
-        var _this12 = _possibleConstructorReturn(this, (_class11.__proto__ || Object.getPrototypeOf(_class11)).call(this, 'div', { className: options.className }, options));
+        var _this13 = _possibleConstructorReturn(this, (_class12.__proto__ || Object.getPrototypeOf(_class12)).call(this, 'div', { className: options.className }, options));
 
-        var fixed = _this12.getParentElement() === document.body;
+        var self = _this13;
+
+        // Add component classes
+        self.addClass('fader');
+
+        var fixed = _this13.getParentElement() === document.body;
 
         // Set position
         if (fixed) {
-            _this12.css({ position: 'fixed' });
+            _this13.css({ position: 'fixed' });
         }
 
         // Auto close when fader is clicked
-        _this12.on('click', function () {
-            if (_this12.options.autoClose) {
-                _this12.close();
+        _this13.on('click', function () {
+            if (_this13.options.autoClose) {
+                _this13.close();
             }
         });
-        return _this12;
+        return _this13;
     }
 
     /**
@@ -4296,7 +4278,7 @@ Cuic.Fader = function (_Cuic$Component6) {
      */
 
 
-    _createClass(_class11, [{
+    _createClass(_class12, [{
         key: 'onClosed',
         value: function onClosed() {
             if (this.options.autoRemove) {
@@ -4305,7 +4287,7 @@ Cuic.Fader = function (_Cuic$Component6) {
         }
     }]);
 
-    return _class11;
+    return _class12;
 }(Cuic.Component);
 
 Cuic.Button.prototype.options = {
@@ -5056,23 +5038,26 @@ Cuic.notifications = new Cuic.Collection();
 /**
  * Notification component
  */
-Cuic.Notification = function (_Cuic$Component7) {
-    _inherits(_class12, _Cuic$Component7);
+Cuic.Notification = function (_Cuic$Component8) {
+    _inherits(_class13, _Cuic$Component8);
 
-    function _class12(options) {
-        _classCallCheck(this, _class12);
+    function _class13(options) {
+        _classCallCheck(this, _class13);
 
         // Set default options
         options = Cuic.extend({}, Cuic.Notification.prototype.options, options);
 
         // Create element
 
-        var _this13 = _possibleConstructorReturn(this, (_class12.__proto__ || Object.getPrototypeOf(_class12)).call(this, 'div', {
+        var _this14 = _possibleConstructorReturn(this, (_class13.__proto__ || Object.getPrototypeOf(_class13)).call(this, 'div', {
             className: options.className,
             html: options.content
         }, options));
 
-        var self = _this13;
+        var self = _this14;
+
+        // Add component classes
+        self.addClass('notification');
 
         // Public attributes
         self.closeTimer = null;
@@ -5112,7 +5097,7 @@ Cuic.Notification = function (_Cuic$Component7) {
 
         // Add dialog to collection
         Cuic.notifications.add(self);
-        return _this13;
+        return _this14;
     }
 
     /**
@@ -5120,15 +5105,15 @@ Cuic.Notification = function (_Cuic$Component7) {
      */
 
 
-    _createClass(_class12, [{
+    _createClass(_class13, [{
         key: 'autoClose',
         value: function autoClose() {
-            var _this14 = this;
+            var _this15 = this;
 
             clearTimeout(this.closeTimer);
             this.closeTimer = setTimeout(function () {
-                if (_this14.options.autoClose) {
-                    _this14.close();
+                if (_this15.options.autoClose) {
+                    _this15.close();
                 }
             }, this.options.duration);
         }
@@ -5176,7 +5161,7 @@ Cuic.Notification = function (_Cuic$Component7) {
         }
     }]);
 
-    return _class12;
+    return _class13;
 }(Cuic.Component);
 
 Cuic.Notification.prototype.options = {
@@ -5218,22 +5203,25 @@ Cuic.Notification.prototype.options = {
  */
 
 Cuic.NotificationStack = function (_Cuic$GroupComponent) {
-    _inherits(_class13, _Cuic$GroupComponent);
+    _inherits(_class14, _Cuic$GroupComponent);
 
-    function _class13(options) {
-        _classCallCheck(this, _class13);
+    function _class14(options) {
+        _classCallCheck(this, _class14);
 
         // Set default options
         options = Cuic.extend({}, Cuic.NotificationStack.prototype.options, options);
 
         // Create element
 
-        var _this15 = _possibleConstructorReturn(this, (_class13.__proto__ || Object.getPrototypeOf(_class13)).call(this, 'div', {
+        var _this16 = _possibleConstructorReturn(this, (_class14.__proto__ || Object.getPrototypeOf(_class14)).call(this, 'div', {
             className: options.className,
             html: options.content
         }, options));
 
-        var self = _this15;
+        var self = _this16;
+
+        // Add component classes
+        self.addClass('notification-stack');
 
         // Set position
         if (self.options.position) {
@@ -5241,10 +5229,10 @@ Cuic.NotificationStack = function (_Cuic$GroupComponent) {
             self.css({ position: isFixed ? 'fixed' : 'absolute' });
             self.align(self.options.position);
         }
-        return _this15;
+        return _this16;
     }
 
-    _createClass(_class13, [{
+    _createClass(_class14, [{
         key: 'onComponentAdded',
         value: function onComponentAdded(component) {
             // Display the notification when it's added to the stack
@@ -5265,7 +5253,7 @@ Cuic.NotificationStack = function (_Cuic$GroupComponent) {
         }
     }]);
 
-    return _class13;
+    return _class14;
 }(Cuic.GroupComponent);
 
 Cuic.NotificationStack.prototype.options = {
@@ -5300,22 +5288,25 @@ Cuic.NotificationStack.prototype.options = {
  *
  */
 
-Cuic.Panel = function (_Cuic$Component8) {
-    _inherits(_class14, _Cuic$Component8);
+Cuic.Panel = function (_Cuic$Component9) {
+    _inherits(_class15, _Cuic$Component9);
 
-    function _class14(options) {
-        _classCallCheck(this, _class14);
+    function _class15(options) {
+        _classCallCheck(this, _class15);
 
         // Set default options
         options = Cuic.extend({}, Cuic.Panel.prototype.options, options);
 
         // Create element
 
-        var _this16 = _possibleConstructorReturn(this, (_class14.__proto__ || Object.getPrototypeOf(_class14)).call(this, 'div', {
+        var _this17 = _possibleConstructorReturn(this, (_class15.__proto__ || Object.getPrototypeOf(_class15)).call(this, 'div', {
             className: options.className
         }, options));
 
-        var self = _this16;
+        var self = _this17;
+
+        // Add component classes
+        self.addClass('panel');
 
         if (options.element) {
             self.header = self.find('.panel-header');
@@ -5421,7 +5412,7 @@ Cuic.Panel = function (_Cuic$Component8) {
                 }
             }
         });
-        return _this16;
+        return _this17;
     }
 
     /**
@@ -5431,7 +5422,7 @@ Cuic.Panel = function (_Cuic$Component8) {
      */
 
 
-    _createClass(_class14, [{
+    _createClass(_class15, [{
         key: 'getBody',
         value: function getBody() {
             return this.content;
@@ -5653,7 +5644,7 @@ Cuic.Panel = function (_Cuic$Component8) {
         }
     }]);
 
-    return _class14;
+    return _class15;
 }(Cuic.Component);
 
 Cuic.Panel.prototype.options = {
@@ -5698,20 +5689,23 @@ Cuic.Panel.prototype.options = {
  *
  */
 
-Cuic.Popup = function (_Cuic$Component9) {
-    _inherits(_class15, _Cuic$Component9);
+Cuic.Popup = function (_Cuic$Component10) {
+    _inherits(_class16, _Cuic$Component10);
 
-    function _class15(options) {
-        _classCallCheck(this, _class15);
+    function _class16(options) {
+        _classCallCheck(this, _class16);
 
         // Set default options
         options = Cuic.extend({}, Cuic.Popup.prototype.options, options);
 
         // Create element
 
-        var _this17 = _possibleConstructorReturn(this, (_class15.__proto__ || Object.getPrototypeOf(_class15)).call(this, 'div', { className: options.className }, options));
+        var _this18 = _possibleConstructorReturn(this, (_class16.__proto__ || Object.getPrototypeOf(_class16)).call(this, 'div', { className: options.className }, options));
 
-        var self = _this17;
+        var self = _this18;
+
+        // Add component classes
+        self.addClass('popup');
 
         // Add content
         self.content = new Cuic.Element('div', {
@@ -5764,7 +5758,7 @@ Cuic.Popup = function (_Cuic$Component9) {
                 }
             })
         };
-        return _this17;
+        return _this18;
     }
 
     /**
@@ -5773,7 +5767,7 @@ Cuic.Popup = function (_Cuic$Component9) {
      */
 
 
-    _createClass(_class15, [{
+    _createClass(_class16, [{
         key: 'getContent',
         value: function getContent() {
             return this.content;
@@ -5817,7 +5811,7 @@ Cuic.Popup = function (_Cuic$Component9) {
         }
     }]);
 
-    return _class15;
+    return _class16;
 }(Cuic.Component);
 
 Cuic.Popup.prototype.options = {
@@ -5859,23 +5853,26 @@ Cuic.Popup.prototype.options = {
  *
  */
 
-Cuic.Switcher = function (_Cuic$Component10) {
-    _inherits(_class16, _Cuic$Component10);
+Cuic.Switcher = function (_Cuic$Component11) {
+    _inherits(_class17, _Cuic$Component11);
 
-    function _class16(options) {
-        _classCallCheck(this, _class16);
+    function _class17(options) {
+        _classCallCheck(this, _class17);
 
         // Set default options
         options = Cuic.extend({}, Cuic.Switcher.prototype.options, options);
 
         // Create element
 
-        var _this18 = _possibleConstructorReturn(this, (_class16.__proto__ || Object.getPrototypeOf(_class16)).call(this, 'div', {
+        var _this19 = _possibleConstructorReturn(this, (_class17.__proto__ || Object.getPrototypeOf(_class17)).call(this, 'div', {
             className: options.className,
             html: options.content
         }, options));
 
-        var self = _this18;
+        var self = _this19;
+
+        // Add component classes
+        self.addClass('switcher');
 
         // Public attributes
         self.activeElement = null;
@@ -5889,7 +5886,7 @@ Cuic.Switcher = function (_Cuic$Component10) {
         if (self.options.autoStart) {
             self.start();
         }
-        return _this18;
+        return _this19;
     }
 
     /**
@@ -5897,7 +5894,7 @@ Cuic.Switcher = function (_Cuic$Component10) {
      */
 
 
-    _createClass(_class16, [{
+    _createClass(_class17, [{
         key: 'first',
         value: function first() {
             this.goTo(0);
@@ -6032,11 +6029,11 @@ Cuic.Switcher = function (_Cuic$Component10) {
     }, {
         key: 'start',
         value: function start() {
-            var _this19 = this;
+            var _this20 = this;
 
             if (!this.isStarted()) {
                 this.timer = setInterval(function () {
-                    _this19.next();
+                    _this20.next();
                 }, this.options.delay);
             }
         }
@@ -6055,7 +6052,7 @@ Cuic.Switcher = function (_Cuic$Component10) {
         }
     }]);
 
-    return _class16;
+    return _class17;
 }(Cuic.Component);
 
 Cuic.Switcher.prototype.options = {
@@ -6450,20 +6447,23 @@ Cuic.Switcher.prototype.options = {
 
 Cuic.tooltips = new Cuic.Collection();
 
-Cuic.Tooltip = function (_Cuic$Component11) {
-    _inherits(_class17, _Cuic$Component11);
+Cuic.Tooltip = function (_Cuic$Component12) {
+    _inherits(_class18, _Cuic$Component12);
 
-    function _class17(options) {
-        _classCallCheck(this, _class17);
+    function _class18(options) {
+        _classCallCheck(this, _class18);
 
         // Set default options
         options = Cuic.extend({}, Cuic.Tooltip.prototype.options, options);
 
         // Create element
 
-        var _this20 = _possibleConstructorReturn(this, (_class17.__proto__ || Object.getPrototypeOf(_class17)).call(this, 'div', { className: options.className }, options));
+        var _this21 = _possibleConstructorReturn(this, (_class18.__proto__ || Object.getPrototypeOf(_class18)).call(this, 'div', { className: options.className }, options));
 
-        var self = _this20;
+        var self = _this21;
+
+        // Add component classes
+        self.addClass('tooltip');
 
         // Define attributes
         self.attribute = options.attribute;
@@ -6538,7 +6538,7 @@ Cuic.Tooltip = function (_Cuic$Component11) {
 
         // Add the tooltip to the list
         Cuic.tooltips.add(self);
-        return _this20;
+        return _this21;
     }
 
     /**
@@ -6546,7 +6546,7 @@ Cuic.Tooltip = function (_Cuic$Component11) {
      */
 
 
-    _createClass(_class17, [{
+    _createClass(_class18, [{
         key: 'onClosed',
         value: function onClosed() {
             if (this.options.autoRemove) {
@@ -6617,7 +6617,7 @@ Cuic.Tooltip = function (_Cuic$Component11) {
         }
     }]);
 
-    return _class17;
+    return _class18;
 }(Cuic.Component);
 
 Cuic.Tooltip.prototype.options = {

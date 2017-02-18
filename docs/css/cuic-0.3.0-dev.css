@@ -96,7 +96,7 @@
 .draggable > * {
   cursor: auto;
 }
-.draggable-handle {
+.draggable .draggable-handle {
   cursor: move;
 }
 .fader {
@@ -291,6 +291,71 @@
 .popup .btn-close:focus,
 .popup .btn-close:hover {
   color: rgba(255, 255, 255, 0.7);
+}
+.resizable {
+  position: relative;
+}
+.resizable .resize-handle {
+  cursor: nwse-resize;
+  display: none;
+  min-height: 5px;
+  min-width: 5px;
+  position: absolute;
+  z-index: 1;
+}
+.resizable.debug .resize-handle {
+  background: rgba(255, 0, 0, 0.3);
+}
+.resizable:hover .resize-handle {
+  display: block;
+}
+.resizable .resize-handle-e {
+  cursor: e-resize;
+  height: 100%;
+  right: 0;
+  top: 0;
+}
+.resizable .resize-handle-n {
+  cursor: n-resize;
+  left: 0;
+  top: 0;
+  width: 100%;
+}
+.resizable .resize-handle-ne {
+  cursor: ne-resize;
+  right: 0;
+  top: 0;
+  z-index: 2;
+}
+.resizable .resize-handle-nw {
+  cursor: nw-resize;
+  left: 0;
+  top: 0;
+  z-index: 2;
+}
+.resizable .resize-handle-s {
+  cursor: s-resize;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+.resizable .resize-handle-se {
+  cursor: se-resize;
+  bottom: 0;
+  right: 0;
+  z-index: 2;
+}
+.resizable .resize-handle-sw {
+  cursor: sw-resize;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+}
+.resizable .resize-handle-w {
+  cursor: w-resize;
+  height: 100%;
+  left: 0;
+  top: 0;
 }
 .switcher {
   overflow: hidden;

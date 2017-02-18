@@ -40,6 +40,9 @@ Cuic.Button = class extends Cuic.Component {
 
         const self = this;
 
+        // Add component classes
+        self.addClass('btn');
+
         // Create shortcut
         if (typeof options.shortcut === 'number') {
             self.shortcut = new Cuic.Shortcut({

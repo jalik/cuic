@@ -36,6 +36,9 @@ Cuic.Panel = class extends Cuic.Component {
 
         const self = this;
 
+        // Add component classes
+        self.addClass('panel');
+
         if (options.element) {
             self.header = self.find('.panel-header');
             self.title = self.find('.panel-title');

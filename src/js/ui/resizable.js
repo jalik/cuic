@@ -23,78 +23,70 @@
  *
  */
 
-(function ($) {
-    'use strict';
+Cuic.Resizable = class extends Cuic.Component {
 
-    var ns = Cuic.namespace('resizable');
+    constructor(options) {
+        // Set default options
+        options = Cuic.extend({}, Cuic.Resizable.prototype.options, options);
 
-    /**
-     * Makes an object resizable
-     * @param options
-     * @constructor
-     */
-    Cuic.Resizable = function (options) {
-        var self = this;
-        var $container;
-        var $element;
-        var handlers = [];
-        var horizontalHandlers = [];
-        var verticalHandlers = [];
-        var ratio = 1;
+        // Create element
+        super('div', {className: options.className}, options);
 
-        // Default options
-        options = Cuic.extend(true, Cuic.Resizable.prototype.options, options);
+        const self = this;
 
-        // Define attributes
-        self.className = options.className;
-        self.fps = parseInt(options.fps);
-        self.horizontal = options.horizontal === true;
-        self.keepRatio = options.keepRatio === true;
-        self.maxHeight = parseInt(options.maxHeight);
-        self.maxWidth = parseInt(options.maxWidth);
-        self.minHeight = parseInt(options.minHeight);
-        self.minWidth = parseInt(options.minWidth);
-        self.stepX = parseInt(options.stepX);
-        self.stepY = parseInt(options.stepY);
-        self.vertical = options.vertical === true;
-
-        /**
-         * Returns the element
-         * @return {*}
-         */
-        self.getElement = function () {
-            return $element;
-        };
-
-        /**
-         * Set the container
-         * @param obj
-         * @return {*}
-         */
-        self.setContainer = function (obj) {
-            $container = $(obj);
-            return self;
-        };
-
-        // Find the target
-        if (options.target) $element = $(options.target);
-
-        // Add the resizable classes
-        $element.addClass(self.className);
+        // Add component classes
+        self.addClass('resizable');
 
         // Force the target to be the relative parent
-        if ($element.css('position') === 'static') {
-            $element.css('position', 'relative');
+        if (self.css('position') === 'static') {
+            self.css('position', 'relative');
         }
 
-        // Set the top container of the element
-        self.setContainer(options.container || $element.offsetParent());
+        // Add Bottom handle
+        self.bottomHandle = new Cuic.Element('div', {
+            className: 'resize-handle resize-handle-s',
+            css: {height: options.handlerSize + 'px'}
+        }).appendTo(self);
+
+        // Add Right handler
+        self.rightHandle = new Cuic.Element('div', {
+            className: 'resize-handle resize-handle-e',
+            css: {width: options.handlerSize + 'px'}
+        }).appendTo(self);
+
+        // Add Bottom-Right handler
+        self.bottomRightHandle = new Cuic.Element('div', {
+            className: 'resize-handle resize-handle-se',
+            css: {
+                height: options.handlerSize + 'px',
+                width: options.handlerSize + 'px'
+            }
+        }).appendTo(self);
+
+        // Group handles
+        self.handles = [
+            self.rightHandle,
+            self.bottomHandle,
+            self.bottomRightHandle
+        ];
+
+        // Group horizontal handles
+        self.horizontalHandles = [
+            self.rightHandle,
+            self.bottomRightHandle
+        ];
+
+        // Group vertical handles
+        self.verticalHandles = [
+            self.bottomHandle,
+            self.bottomRightHandle
+        ];
 
         /**
          * This method is called the element is resizing
          * @param ev
          */
-        var resize = function (ev) {
+        const startResize = (ev) => {
             // Execute callback
             if (self.onResizeStart && self.onResizeStart.call(self, ev) === false) {
                 return;
@@ -104,55 +96,26 @@
             ev.preventDefault();
 
             // Change element style
-            $element.addClass('resizing');
+            self.addClass('resizing');
 
-            var containerLeft = $container.offset().left;
-            var containerTop = $container.offset().top;
-            var height = $element.height();
-            var width = $element.width();
-            var padding = Cuic.padding($element);
+            const parent = self.parent();
+            const parentOffset = parent.offset();
+            let elmHeight = self.outerHeight();
+            let elmWidth = self.outerWidth();
+            let elmPadding = Cuic.padding(self);
 
-            // Calculate the ratio
-            ratio = height / width;
+            // Calculate initial ratio
+            let ratio = elmHeight / elmWidth;
 
-            var timer = setInterval(function () {
-                var containerHeight = $container.innerHeight();
-                var containerWidth = $container.innerWidth();
-                var elementLeft = $element.offset().left;
-                var elementTop = $element.offset().top;
-                var maxHeight = containerHeight - (elementTop - containerTop + padding.left + padding.right);
-                var maxWidth = containerWidth - (elementLeft - containerLeft + padding.bottom + padding.top);
-                var diffX = Cuic.mouseX - ev.clientX;
-                var diffY = Cuic.mouseY - ev.clientY;
-                var newHeight = null;
-                var newWidth = null;
+            // Stop resizing
+            Cuic.once('mouseup', document, (ev) => {
+                clearInterval(timer);
+                self.removeClass('resizing');
+                self.onResizeStop.call(self, ev);
+            });
 
-                // Check horizontal size
-                if (horizontalHandlers.indexOf(ev.target) !== -1) {
-                    newWidth = width + diffX;
-
-                    if (newWidth > maxWidth) {
-                        newWidth = maxWidth;
-                    }
-                }
-
-                // Check vertical size
-                if (verticalHandlers.indexOf(ev.target) !== -1) {
-                    newHeight = height + diffY;
-
-                    if (newHeight > maxHeight) {
-                        newHeight = maxHeight;
-                    }
-                }
-
-                if (self.keepRatio) {
-                    if (newHeight !== null) {
-                        newWidth = newHeight / ratio;
-                    }
-                    else if (newWidth !== null) {
-                        newHeight = newWidth * ratio;
-                    }
-                }
+            let timer = setInterval(() => {
+                let prop = {};
 
                 // Execute callback
                 if (self.onResize && self.onResize.call(self) === false) {
@@ -160,158 +123,99 @@
                 }
 
                 // Resize horizontally
-                if (self.horizontal && newWidth !== null && self.checkWidth(newWidth)) {
-                    $element.width(self.stepX ? Math.round(newWidth / self.stepX) * self.stepX : newWidth);
+                if (self.options.horizontal) {
+                    for (let i = 0; i < self.horizontalHandles.length; i += 1) {
+                        if (self.horizontalHandles[i].getElement() === ev.target) {
+                            const diffX = Cuic.mouseX - ev.clientX;
+                            const offset = self.offset();
+                            const parentWidth = parent.innerWidth();
+                            const maxWidth = parentWidth - (offset.left - parentOffset.left + elmPadding.horizontal);
+                            let width = elmWidth + diffX;
+
+                            // Limit to max width
+                            if (width > maxWidth) {
+                                width = maxWidth;
+                            }
+                            // Width is between min and max
+                            if ((!Number(this.options.maxWidth) || width <= this.options.maxWidth)
+                                && (!Number(this.options.minWidth) || width >= this.options.minWidth)) {
+                                width = Math.round(width / self.options.stepX) * self.options.stepX;
+                                prop.width = width;
+                            }
+                            break;
+                        }
+                    }
                 }
 
                 // Resize vertically
-                if (self.vertical && newHeight !== null && self.checkHeight(newHeight)) {
-                    $element.height(self.stepY ? Math.round(newHeight / self.stepY) * self.stepY : newHeight);
+                if (self.options.vertical) {
+                    for (let i = 0; i < self.verticalHandles.length; i += 1) {
+                        if (self.verticalHandles[i].getElement() === ev.target) {
+                            const diffY = Cuic.mouseY - ev.clientY;
+                            const offset = self.offset();
+                            const parentHeight = parent.innerHeight();
+                            const maxHeight = parentHeight - (offset.top - parentOffset.top + elmPadding.vertical);
+                            let height = elmHeight + diffY;
+
+                            // Limit to max height
+                            if (height > maxHeight) {
+                                height = maxHeight;
+                            }
+                            // Height is between min and max
+                            if ((!Number(this.options.maxHeight) || height <= this.options.maxHeight)
+                                && (!Number(this.options.minHeight) || height >= this.options.minHeight)) {
+                                height = Math.round(height / self.options.stepY) * self.options.stepY;
+                                prop.height = height;
+                            }
+                            break;
+                        }
+                    }
                 }
 
-            }, Math.round(1000 / self.fps));
-
-            // Stop resizing
-            $(document).off(ns('mouseup')).one(ns('mouseup'), function (ev) {
-                clearInterval(timer);
-                $element.removeClass('resizing');
-
-                if (self.onResizeStop) {
-                    self.onResizeStop.call(self, ev);
+                // Keep ratio
+                if (self.options.keepRatio) {
+                    if (prop.height) {
+                        prop.width = prop.height / ratio;
+                    }
+                    else if (prop.width) {
+                        prop.height = prop.width * ratio;
+                    }
                 }
-            });
+
+                // Apply new size
+                self.css(prop);
+
+            }, Math.round(1000 / self.options.fps));
         };
 
-        // Right handler
-        var rightHandler = $('<div>', {
-            css: {
-                cursor: 'e-resize',
-                display: 'none',
-                height: '100%',
-                position: 'absolute',
-                right: 0,
-                top: 0,
-                width: options.handlerSize,
-                zIndex: 1
-            }
-        }).off(ns('mousedown')).on(ns('mousedown'), resize).appendTo($element);
+        // Resize element on resize with handles
+        self.bottomHandle.on('mousedown', startResize);
+        self.rightHandle.on('mousedown', startResize);
+        self.bottomRightHandle.on('mousedown', startResize);
+    }
 
-        // Bottom handler
-        var bottomHandler = $('<div>', {
-            css: {
-                bottom: 0,
-                cursor: 's-resize',
-                display: 'none',
-                height: options.handlerSize,
-                position: 'absolute',
-                left: 0,
-                width: '100%',
-                zIndex: 1
-            }
-        }).off(ns('mousedown')).on(ns('mousedown'), resize).appendTo($element);
+    onResize() {
+    }
 
-        // Bottom-Right handler
-        var bottomRightHandler = $('<div>', {
-            css: {
-                bottom: 0,
-                cursor: 'se-resize',
-                display: 'none',
-                height: options.handlerSize,
-                position: 'absolute',
-                right: 0,
-                width: options.handlerSize,
-                zIndex: 2
-            }
-        }).off('mousedown').on(ns('mousedown'), resize).appendTo($element);
+    onResizeStart() {
+    }
 
-        handlers = [
-            rightHandler,
-            bottomHandler,
-            bottomRightHandler
-        ];
-        horizontalHandlers = [
-            rightHandler.get(0),
-            bottomRightHandler.get(0)
-        ];
-        verticalHandlers = [
-            bottomHandler.get(0),
-            bottomRightHandler.get(0)
-        ];
+    onResizeStop() {
+    }
+};
 
-        // Display all handlers when mouse enters the target
-        $element.off('mouseenter').on(ns('mouseenter'), function () {
-            if (!$element.hasClass('resizing')) {
-                for (var i = 0; i < handlers.length; i += 1) {
-                    handlers[i].stop(true, false).fadeIn(0);
-                }
-            }
-        });
-
-        // Hide all handlers when mouse leaves the target
-        $element.off('mouseleave').on(ns('mouseleave'), function () {
-            if (!$element.hasClass('resizing')) {
-                for (var i = 0; i < handlers.length; i += 1) {
-                    handlers[i].stop(true, false).fadeOut(0);
-                }
-            }
-        });
-    };
-
-    /**
-     * Checks if the height is between min and max values
-     * @param height
-     * @return {boolean}
-     */
-    Cuic.Resizable.prototype.checkHeight = function (height) {
-        return (!Number(this.maxHeight) || height <= this.maxHeight)
-            && (!Number(this.minHeight) || height >= this.minHeight)
-    };
-
-    /**
-     * Checks if the width is between min and max values
-     * @param width
-     * @return {boolean}
-     */
-    Cuic.Resizable.prototype.checkWidth = function (width) {
-        return (!Number(this.maxWidth) || width <= this.maxWidth)
-            && (!Number(this.minWidth) || width >= this.minWidth);
-    };
-
-    /**
-     * Called when element is resizing
-     * @type {function}
-     */
-    Cuic.Resizable.prototype.onResize = null;
-
-    /**
-     * Called when resize starts
-     * @type {function}
-     */
-    Cuic.Resizable.prototype.onResizeStart = null;
-
-    /**
-     * Called when resize stops
-     * @type {function}
-     */
-    Cuic.Resizable.prototype.onResizeStop = null;
-
-    /**
-     * Default options
-     * @type {*}
-     */
-    Cuic.Resizable.prototype.options = {
-        className: 'resizable',
-        fps: 30,
-        handlerSize: 10,
-        horizontal: true,
-        keepRatio: false,
-        maxHeight: null,
-        maxWidth: null,
-        minHeight: 1,
-        minWidth: 1,
-        stepX: 1,
-        stepY: 1,
-        vertical: true
-    };
-
-})(jQuery);
+Cuic.Resizable.prototype.options = {
+    className: 'resizable',
+    fps: 30,
+    handlerSize: 10,
+    horizontal: true,
+    keepRatio: false,
+    maxHeight: null,
+    maxWidth: null,
+    minHeight: 1,
+    minWidth: 1,
+    namespace: 'resizable',
+    stepX: 1,
+    stepY: 1,
+    vertical: true
+};

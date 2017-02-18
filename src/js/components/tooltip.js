@@ -37,6 +37,9 @@ Cuic.Tooltip = class extends Cuic.Component {
 
         const self = this;
 
+        // Add component classes
+        self.addClass('tooltip');
+
         // Define attributes
         self.attribute = options.attribute;
         self.followPointer = options.followPointer === true;

@@ -37,9 +37,7 @@ Cuic.Component = class extends Cuic.Element {
         const self = this;
 
         // Add component classes
-        if (options.className) {
-            self.addClass('component');
-        }
+        self.addClass('component');
     }
 
     /**

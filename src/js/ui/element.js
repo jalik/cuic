@@ -96,6 +96,11 @@ Cuic.Element = class {
             self.css(attributes.css);
         }
 
+        // Add debug class
+        if (self.options.debug) {
+            self.addClass('debug');
+        }
+
         // Element is not in the DOM
         if (!self.element.parentNode) {
             // Put element in parent node
@@ -415,6 +420,15 @@ Cuic.Element = class {
      */
     outerWidth(includeMargin) {
         return Cuic.outerWidth(this, includeMargin);
+    }
+
+    /**
+     * Returns the parent element
+     * @return {*|Cuic.Element}
+     */
+    parent() {
+        let parent = this.getElement().parentNode;
+        return parent ? Cuic.element(parent) : parent;
     }
 
     /**

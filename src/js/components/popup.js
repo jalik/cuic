@@ -34,6 +34,9 @@ Cuic.Popup = class extends Cuic.Component {
 
         const self = this;
 
+        // Add component classes
+        self.addClass('popup');
+
         // Add content
         self.content = new Cuic.Element('div', {
             className: 'popup-content',

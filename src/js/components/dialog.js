@@ -55,6 +55,9 @@ Cuic.Dialog = class extends Cuic.Component {
 
         const self = this;
 
+        // Add component classes
+        self.addClass('dialog');
+
         let buttons;//todo use a GroupComponent
 
         // Public attributes

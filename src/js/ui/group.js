@@ -35,6 +35,11 @@ Cuic.GroupComponent = class extends Cuic.Component {
             role: 'group'
         }, attributes), options);
 
+        const self = this;
+
+        // Add component classes
+        self.addClass('component-group');
+
         // Prepare components collection
         this.components = new Cuic.Collection();
 

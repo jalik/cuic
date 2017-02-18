@@ -37,6 +37,9 @@ Cuic.Switcher = class extends Cuic.Component {
 
         const self = this;
 
+        // Add component classes
+        self.addClass('switcher');
+
         // Public attributes
         self.activeElement = null;
         self.index = 0;

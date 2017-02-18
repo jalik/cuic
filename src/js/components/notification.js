@@ -46,6 +46,9 @@ Cuic.Notification = class extends Cuic.Component {
 
         const self = this;
 
+        // Add component classes
+        self.addClass('notification');
+
         // Public attributes
         self.closeTimer = null;
 

@@ -436,6 +436,47 @@
         },
 
         /**
+         * Adds pixel unit to numeric values if needed
+         * @param styles
+         * @return {*}
+         */
+        autoPixel(styles) {
+            const properties = [
+                // positioning
+                'bottom',
+                'left',
+                'padding',
+                'right',
+                'top',
+                // dimension
+                'height',
+                'width',
+                // margin
+                'margin',
+                'margin-bottom',
+                'margin-left',
+                'margin-right',
+                'margin-top',
+                // padding
+                'padding',
+                'padding-bottom',
+                'padding-left',
+                'padding-right',
+                'padding-top'
+            ];
+
+            // Add pixel unit to numbers
+            for (let style in styles) {
+                if (styles.hasOwnProperty(style)) {
+                    if (typeof styles[style] === 'number' && properties.indexOf(style) !== -1) {
+                        styles[style] = styles[style] + 'px';
+                    }
+                }
+            }
+            return styles;
+        },
+
+        /**
          * Applies the styles to the target.
          * Styles can be a string or an object.
          * @param element
@@ -449,6 +490,9 @@
             if (styles) {
                 if (typeof styles === 'object') {
                     let mergedStyles = '';
+
+                    // Add pixel unit where needed
+                    this.autoPixel(styles);
 
                     // Get current styles
                     for (let i = 0; i < element.style.length; i += 1) {

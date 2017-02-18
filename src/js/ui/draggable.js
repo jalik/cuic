@@ -34,13 +34,16 @@ Cuic.Draggable = class extends Cuic.Component {
 
         const self = this;
 
+        // Add component classes
+        self.addClass('draggable');
+
         // Force the target to be the relative parent
         if (self.css('position') === 'static') {
             self.css({position: 'relative'});
         }
 
         // Set the dragging area
-        self.setHandle(options.handle || self.getElement());
+        this.setDragHandle(options.handle || self.getElement());
     }
 
     /**
@@ -66,7 +69,7 @@ Cuic.Draggable = class extends Cuic.Component {
      * @param handle
      * @return {Cuic.Component}
      */
-    setHandle(handle) {
+    setDragHandle(handle) {
         const self = this;
 
         // Add the draggable classes

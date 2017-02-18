@@ -32,6 +32,11 @@ Cuic.Fader = class extends Cuic.Component {
         // Create element
         super('div', {className: options.className}, options);
 
+        const self = this;
+
+        // Add component classes
+        self.addClass('fader');
+
         let fixed = this.getParentElement() === document.body;
 
         // Set position

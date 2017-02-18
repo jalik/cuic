@@ -37,6 +37,9 @@ Cuic.NotificationStack = class extends Cuic.GroupComponent {
 
         const self = this;
 
+        // Add component classes
+        self.addClass('notification-stack');
+
         // Set position
         if (self.options.position) {
             let isFixed = self.getParentElement() === document.body;

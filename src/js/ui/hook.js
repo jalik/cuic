@@ -34,6 +34,9 @@ Cuic.Hook = class extends Cuic.Component {
 
         const self = this;
 
+        // Add component classes
+        self.addClass('hook');
+
         // This is a fix to avoid offsetTop > 0
         self.css({
             position: 'relative',
