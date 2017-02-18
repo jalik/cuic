@@ -889,71 +889,70 @@
                 navigate forward and backward.</p>
 
             <div class="sandbox" id="sb-switcher">
-                <div>
-                    <label class="inline">
-                        <span class="help-block">repeat</span>
-                        <input type="checkbox" name="repeat" checked>
-                    </label>
-                    <button class="btn btn-default fn-start" type="button">start()</button>
-                    <button class="btn btn-default fn-stop" type="button">stop()</button>
-                    <button class="btn btn-default fn-first" type="button">first()</button>
-                    <button class="btn btn-default fn-next" type="button">next()</button>
-                    <button class="btn btn-default fn-previous" type="button">previous()</button>
-                    <button class="btn btn-default fn-last" type="button">last()</button>
+                <div class="btn-group" role="group">
+                    <button class="btn btn-default" type="button" name="method" value="start">
+                        <span class="glyphicon glyphicon-play"></span>
+                        <span>start()</span>
+                    </button>
+                    <button class="btn btn-default" type="button" name="method" value="stop">
+                        <span class="glyphicon glyphicon-stop"></span>
+                        <span>stop()</span>
+                    </button>
+                    <button class="btn btn-default" type="button" name="method" value="first">
+                        <span class="glyphicon glyphicon-step-backward"></span>
+                        <span>first()</span>
+                    </button>
+                    <button class="btn btn-default" type="button" name="method" value="previous">
+                        <span class="glyphicon glyphicon-backward"></span>
+                        <span>previous()</span>
+                    </button>
+                    <button class="btn btn-default" type="button" name="method" value="next">
+                        <span class="glyphicon glyphicon-forward"></span>
+                        <span>next()</span>
+                    </button>
+                    <button class="btn btn-default" type="button" name="method" value="last">
+                        <span class="glyphicon glyphicon-step-forward"></span>
+                        <span>last()</span>
+                    </button>
                 </div>
-                <div class="blueprint switcher">
-                    <p>1. This is the first element</p>
-
-                    <p>2. This is the second element</p>
-
-                    <p>3. This is the third element</p>
-
-                    <p>4. This is the fourth element</p>
-
-                    <p>5. This is the fifth element</p>
-
-                    <p>6. This is the sixth element</p>
+                <label class="inline">
+                    <span class="help-block">repeat</span>
+                    <input type="checkbox" name="repeat" checked>
+                </label>
+                <div class="blueprint">
+                    <div class="switcher">
+                        <p>1. This is the first element</p>
+                        <p>2. This is the second element</p>
+                        <p>3. This is the third element</p>
+                        <p>4. This is the fourth element</p>
+                        <p>5. This is the fifth element</p>
+                        <p>6. This is the sixth element</p>
+                    </div>
                 </div>
             </div>
 
             <script>
                 $(document).ready(function () {
-                    var sandbox = $("#sb-switcher");
-
-                    sandbox.find('[name=repeat]').on('change', function (ev) {
-                        ev.preventDefault();
-                        switcher.repeat = ev.target.checked;
-                    });
-                    sandbox.find('.fn-start').on('click', function (ev) {
-                        ev.preventDefault();
-                        switcher.start();
-                    });
-                    sandbox.find('.fn-stop').on('click', function (ev) {
-                        ev.preventDefault();
-                        switcher.stop();
-                    });
-                    sandbox.find('.fn-first').on('click', function (ev) {
-                        ev.preventDefault();
-                        switcher.first();
-                    });
-                    sandbox.find('.fn-previous').on('click', function (ev) {
-                        ev.preventDefault();
-                        switcher.previous();
-                    });
-                    sandbox.find('.fn-next').on('click', function (ev) {
-                        ev.preventDefault();
-                        switcher.next();
-                    });
-                    sandbox.find('.fn-last').on('click', function (ev) {
-                        ev.preventDefault();
-                        switcher.last();
-                    });
+                    var section = $('#ui-switcher');
+                    var sandbox = section.find(".sandbox");
 
                     window.switcher = new Cuic.Switcher({
                         autoStart: true,
                         delay: 1000,
-                        repeat: sandbox.find('[name=repeat]').is(':checked'),
-                        target: sandbox.find('.switcher')
+                        element: sandbox.find('.switcher'),
+                        repeat: sandbox.find('[name=repeat]').is(':checked')
+                    });
+
+                    // Options
+                    sandbox.find('[name=repeat]').on('change', function (ev) {
+                        ev.preventDefault();
+                        switcher.repeat = ev.target.checked;
+                    });
+
+                    // Methods
+                    sandbox.find('[name="method"]').on('click', function (ev) {
+                        ev.preventDefault();
+                        switcher[ev.target.value]();
                     });
                 });
             </script>

@@ -2176,6 +2176,25 @@ Cuic.Element = function () {
         }
 
         /**
+         * Returns element child nodes
+         * @return {Array}
+         */
+
+    }, {
+        key: 'children',
+        value: function children() {
+            var children = [];
+            var nodes = this.getElement().children || this.getElement().childNodes;
+
+            for (var i = 0; i < nodes.length; i += 1) {
+                if (nodes[i] instanceof HTMLElement) {
+                    children.push(nodes[i]);
+                }
+            }
+            return children;
+        }
+
+        /**
          * Set styles
          * @param styles
          * @return {*}
@@ -5798,170 +5817,212 @@ Cuic.Popup.prototype.options = {
  *
  */
 
-(function ($) {
-    'use strict';
+Cuic.Switcher = function (_Cuic$Component9) {
+    _inherits(_class15, _Cuic$Component9);
 
-    Cuic.Switcher = function (options) {
-        var self = this;
-        var activeElement;
-        var index = 0;
-        var started = false;
-        var timer;
+    function _class15(options) {
+        _classCallCheck(this, _class15);
 
-        // Default options
-        options = Cuic.extend(true, {
-            autoStart: true,
-            delay: 3000,
-            repeat: true,
-            target: null
-        }, options);
+        // Set default options
+        options = Cuic.extend({}, Cuic.Switcher.prototype.options, options);
 
-        // Define attributes
-        self.autoStart = options.autoStart === true;
-        self.delay = parseInt(options.delay);
-        self.repeat = options.repeat === true;
+        // Create element
 
-        // Get target
-        var element = $(options.target);
+        var _this17 = _possibleConstructorReturn(this, (_class15.__proto__ || Object.getPrototypeOf(_class15)).call(this, 'div', {
+            className: options.className,
+            html: options.content
+        }, options));
 
-        if (element.length < 1) {
-            throw new Error("Invalid target");
+        var self = _this17;
+
+        // Public attributes
+        self.activeElement = null;
+        self.index = 0;
+        self.timer = null;
+
+        // Display first element
+        self.goTo(0);
+
+        // Auto start timer
+        if (self.options.autoStart) {
+            self.start();
+        }
+        return _this17;
+    }
+
+    /**
+     * Displays the first element
+     */
+
+
+    _createClass(_class15, [{
+        key: 'first',
+        value: function first() {
+            this.goTo(0);
         }
 
         /**
-         * Displays the first element
-         */
-        self.first = function () {
-            self.goTo(0);
-        };
-
-        /**
          * Returns the active element
-         * @return {*}
+         * @return {HTMLElement}
          */
-        self.getActiveElement = function () {
-            return activeElement;
-        };
 
-        /**
-         * Returns the switcher's element
-         * @return {*|HTMLElement}
-         */
-        self.getElement = function () {
-            return element;
-        };
+    }, {
+        key: 'getActiveElement',
+        value: function getActiveElement() {
+            return this.activeElement;
+        }
 
         /**
          * Returns the element at the specified index
-         * @return {*}
+         * @param index
+         * @return {HTMLElement}
          */
-        self.getElementAt = function (index) {
-            return element.children().eq(index);
-        };
+
+    }, {
+        key: 'getElementAt',
+        value: function getElementAt(index) {
+            return this.children()[index];
+        }
 
         /**
          * Returns the index of the visible element
-         * @return {*}
+         * @return {number}
          */
-        self.getIndex = function () {
-            return element.children().index(activeElement) || 0;
-        };
+
+    }, {
+        key: 'getIndex',
+        value: function getIndex() {
+            return this.children().indexOf(this.activeElement);
+        }
 
         /**
          * Displays the element at the specified index
-         * @param pos
+         * @param position
          */
-        self.goTo = function (pos) {
-            var started = self.isStarted();
-            var children = element.children();
-            var childrenSize = children.length;
-            pos = parseInt(pos);
 
-            if (pos >= childrenSize) {
-                index = self.repeat ? 0 : childrenSize - 1;
-            } else if (pos < 0) {
-                index = self.repeat ? childrenSize - 1 : 0;
+    }, {
+        key: 'goTo',
+        value: function goTo(position) {
+            var children = this.children();
+            var repeat = this.options.repeat;
+
+            // Go to first element if end of list
+            if (position >= children.length) {
+                this.index = repeat ? 0 : children.length - 1;
+            } else if (position < 0) {
+                this.index = repeat ? children.length - 1 : 0;
             } else {
-                index = pos;
+                this.index = position;
             }
 
-            if (index !== self.getIndex()) {
-                self.stop();
+            if (this.index !== this.getIndex()) {
+                var started = this.isStarted();
+                this.stop();
 
                 // Get the visible element
-                activeElement = children.eq(index);
+                this.activeElement = children[this.index];
 
                 // Hide visible elements
-                children.hide();
+                for (var i = 0; i < children.length; i += 1) {
+                    var child = Cuic.element(children[i]);
+
+                    if (this.index === i) {
+                        child.addClass('visible');
+                        child.removeClass('hidden');
+                    } else {
+                        child.addClass('hidden');
+                        child.removeClass('visible');
+                    }
+                }
 
                 // Show the active element
-                activeElement.fadeIn(500, function () {
-                    if (started) {
-                        self.start();
-                    }
-                });
+                if (started) {
+                    this.start();
+                }
             }
-        };
+        }
 
         /**
          * Checks if the switcher is started
          * @return {boolean}
          */
-        self.isStarted = function () {
-            return started;
-        };
+
+    }, {
+        key: 'isStarted',
+        value: function isStarted() {
+            return this.timer !== null && this.timer !== undefined;
+        }
 
         /**
          * Displays the last element
          */
-        self.last = function () {
-            self.goTo(element.children().length - 1);
-        };
+
+    }, {
+        key: 'last',
+        value: function last() {
+            this.goTo(this.children().length - 1);
+        }
 
         /**
          * Displays the next element
          */
-        self.next = function () {
-            self.goTo(index + 1);
-        };
+
+    }, {
+        key: 'next',
+        value: function next() {
+            this.goTo(this.index + 1);
+        }
 
         /**
          * Displays the previous element
          */
-        self.previous = function () {
-            self.goTo(index - 1);
-        };
+
+    }, {
+        key: 'previous',
+        value: function previous() {
+            this.goTo(this.index - 1);
+        }
 
         /**
          * Starts the started
          */
-        self.start = function () {
-            if (!started) {
-                timer = setInterval(self.next, self.delay);
-                started = true;
+
+    }, {
+        key: 'start',
+        value: function start() {
+            var _this18 = this;
+
+            if (!this.isStarted()) {
+                this.timer = setInterval(function () {
+                    _this18.next();
+                }, this.options.delay);
             }
-        };
+        }
 
         /**
-         * Stop the started
+         * Stops the started
          */
-        self.stop = function () {
-            if (started) {
-                clearInterval(timer);
-                started = false;
+
+    }, {
+        key: 'stop',
+        value: function stop() {
+            if (this.isStarted()) {
+                clearInterval(this.timer);
+                this.timer = null;
             }
-        };
-
-        // Hide elements
-        activeElement = self.getElementAt(0);
-        element.children().not(activeElement).hide();
-
-        // Auto start timer
-        if (self.autoStart) {
-            self.start();
         }
-    };
-})(jQuery);
+    }]);
+
+    return _class15;
+}(Cuic.Component);
+
+Cuic.Switcher.prototype.options = {
+    autoStart: true,
+    delay: 3000,
+    namespace: 'switcher',
+    repeat: true,
+    target: null
+};
 
 /*
  * The MIT License (MIT)

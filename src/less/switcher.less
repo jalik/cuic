@@ -23,13 +23,19 @@
  *
  */
 
-.draggable {
+.switcher {
+  overflow: hidden;
+  padding: @padding;
 }
 
-.draggable > * {
-  cursor: auto;
+.switcher .hidden {
+  opacity: 0;
+  transition-property: all;
+  transition-duration: @anim-close-duration;
 }
 
-.draggable-handle {
-  cursor: move;
+.switcher .active,
+.switcher .visible {
+  opacity: 1;
+  transition-duration: @anim-open-duration;
 }

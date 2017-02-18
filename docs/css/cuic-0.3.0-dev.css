@@ -280,6 +280,23 @@
 .popup .btn-close:hover {
   color: rgba(255, 255, 255, 0.7);
 }
+.switcher {
+  overflow: hidden;
+  padding: 10px;
+}
+.switcher .hidden {
+  opacity: 0;
+  -webkit-transition-property: all;
+  transition-property: all;
+  -webkit-transition-duration: 0.25s;
+          transition-duration: 0.25s;
+}
+.switcher .active,
+.switcher .visible {
+  opacity: 1;
+  -webkit-transition-duration: 0.5s;
+          transition-duration: 0.5s;
+}
 td.sorted {
   background: rgba(230, 230, 230, 0.5);
 }

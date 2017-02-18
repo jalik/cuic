@@ -166,6 +166,22 @@ Cuic.Element = class {
     }
 
     /**
+     * Returns element child nodes
+     * @return {Array}
+     */
+    children() {
+        let children = [];
+        let nodes = this.getElement().children || this.getElement().childNodes;
+
+        for (let i = 0; i < nodes.length; i += 1) {
+            if (nodes[i] instanceof HTMLElement) {
+                children.push(nodes[i]);
+            }
+        }
+        return children;
+    }
+
+    /**
      * Set styles
      * @param styles
      * @return {*}
