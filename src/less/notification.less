@@ -35,16 +35,17 @@
   opacity: 0;
   overflow: auto;
   padding: @padding;
-  transition: all @anim-close-duration;
+  transition-property: background, opacity, height, width;
+  transition-duration: @anim-close-duration;
 }
 
 .notification.opened:hover {
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.8);
 }
 
 .notification.opened {
   opacity: 1;
-  transition: all @anim-open-duration;
+  transition-duration: @anim-open-duration;
 }
 
 .notification > * {

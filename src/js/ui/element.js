@@ -166,6 +166,22 @@ Cuic.Element = class {
     }
 
     /**
+     * Sets or returns the element attribute
+     * @param name
+     * @param value
+     * @return {*}
+     */
+    attr(name, value) {
+        if (value !== undefined) {
+            if (name in this.getElement()) {
+                this.getElement()[name] = value;
+            }
+        } else {
+            return this.getElement()[name];
+        }
+    }
+
+    /**
      * Returns element child nodes
      * @return {Array}
      */
@@ -300,7 +316,8 @@ Cuic.Element = class {
      * @return {Cuic.Element}
      */
     insertAfter(element) {
-        const parent = this.getParentElement();
+        element = Cuic.getElement(element);
+        const parent = element.parentNode;
         parent.insertBefore(element, this.getElement().nextSibling);
         return this;
     }
@@ -311,7 +328,8 @@ Cuic.Element = class {
      * @return {Cuic.Element}
      */
     insertBefore(element) {
-        const parent = this.getParentElement();
+        element = Cuic.getElement(element);
+        const parent = element.parentNode;
         parent.insertBefore(element, this.getElement());
         return this;
     }

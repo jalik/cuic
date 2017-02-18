@@ -136,7 +136,7 @@ Cuic.Panel = class extends Cuic.Component {
             const elm = self.getElement();
 
             if (ev.target !== elm && !Cuic.isParent(elm, ev.target)) {
-                if (self.options.autoClose) {
+                if (self.options.autoClose && self.isOpened()) {
                     // self.close(); // todo find how to avoid closing when opening from exterior (eg: button)
                 }
             }

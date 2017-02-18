@@ -272,22 +272,23 @@
             position = position || '';
             element = this.element(element);
 
-            let isPixel = target instanceof Array && target.length === 2;
+            let targetHeight = 1;
+            let targetWidth = 1;
+            let targetOffset = {left: target[0], top: target[1]};
 
-            if (!isPixel) {
+            if (!(target instanceof Array && target.length === 2)) {
                 target = this.element(target);
+                targetHeight = target.outerHeight();
+                targetWidth = target.outerWidth();
+                targetOffset = target.offset();
             }
-
-            let targetHeight = isPixel ? 1 : target.outerHeight();
-            let targetWidth = isPixel ? 1 : target.outerWidth();
-            let targetCenterX = parseInt(targetWidth / 2);
-            let targetCenterY = parseInt(targetHeight / 2);
-            let targetOffset = isPixel ? {left: target[0], top: target[1]} : target.offset();
 
             let objWidth = element.outerWidth(true);
             let objHeight = element.outerHeight(true);
             let objCenterX = parseInt(objWidth / 2);
             let objCenterY = parseInt(objHeight / 2);
+            let targetCenterX = parseInt(targetWidth / 2);
+            let targetCenterY = parseInt(targetHeight / 2);
 
             let prop = {
                 bottom: '',
@@ -504,20 +505,23 @@
 
         /**
          * Returns a Cuic element if possible
-         * @param elm
+         * @param element
          * @return {*|Cuic.Element}
          */
-        element(elm) {
-            if (elm instanceof this.Element) {
-                return elm;
+        element(element) {
+            if (element instanceof this.Element) {
+                return element;
             }
-            if (elm instanceof HTMLElement) {
-                return new this.Element(elm);
+            if (element instanceof HTMLElement) {
+                return new this.Element(element);
             }
-            if (elm instanceof jQuery) {
-                return new this.Element(elm.get(0));
+            if (element instanceof jQuery) {
+                return new this.Element(element.get(0));
             }
-            return elm;
+            if (typeof element === 'string') {
+                return document.querySelector(element);
+            }
+            return element;
         },
 
         /**

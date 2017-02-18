@@ -36,12 +36,13 @@
   overflow: auto;
   padding: @padding;
   position: absolute;
-  transition: all @anim-close-duration;
+  transition-property: background, opacity, height, width, bottom, left, right, top, transform;
+  transition-duration: @anim-close-duration;
 }
 
 .popup.opened {
   opacity: 1;
-  transition: all @anim-open-duration;
+  transition-duration: @anim-open-duration;
 }
 
 .popup .btn-close {

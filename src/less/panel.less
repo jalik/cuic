@@ -28,9 +28,8 @@
   border: solid 1px #ccc;
   box-shadow: none;
   margin: @margin;
-  //transition: bottom, left, right, top, height, max-height, max-width, width, opacity;
-  transition-property: all;
-  transition-duration: 0.2s;
+  transition-property: background, opacity, height, width, bottom, left, right, top;
+  transition-duration: @anim-close-duration;
   z-index: 5;
 }
 
@@ -39,6 +38,7 @@
 
 .panel.opened {
   box-shadow: @shadow-x @shadow-y @shadow-size @shadow-color;
+  transition-duration: @anim-open-duration;
 }
 
 .panel-content {

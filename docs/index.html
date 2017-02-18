@@ -852,6 +852,21 @@
                 it.</p>
 
             <div class="sandbox" id="sb-popup">
+                <form class="params">
+                    <label class="inline">
+                        <span class="help-block">anchor</span>
+                        <select class="form-control" name="anchor">
+                            <option>left top</option>
+                            <option>top</option>
+                            <option>right top</option>
+                            <option>right</option>
+                            <option>right bottom</option>
+                            <option>bottom</option>
+                            <option>left bottom</option>
+                            <option>left</option>
+                        </select>
+                    </label>
+                </form>
                 <div class="blueprint">
                     <button class="btn btn-default" type="button">Toggle popup</button>
                 </div>
@@ -861,15 +876,20 @@
                     var popupSection = $("#ui-popup");
                     var sandbox = popupSection.find('.sandbox');
                     var blueprint = sandbox.find('.blueprint');
+                    var anchor = sandbox.find("[name=anchor]");
                     var popupButton = blueprint.find("button");
 
                     window.popup = new Cuic.Popup({
+                        anchor: anchor.val(),
                         autoClose: true,
                         autoRemove: false,
                         closeable: true,
                         content: "This is a popup",
-                        anchor: 'right',
                         target: popupButton
+                    });
+
+                    anchor.on("change", function () {
+                        window.popup.anchor(anchor.val());
                     });
 
                     popupButton.on("click", function (ev) {
@@ -1095,9 +1115,8 @@
 
             <div class="sandbox" id="sb-tooltip">
                 <label class="inline">
-                    <span class="help-block">position</span>
-                    <select class="form-control" name="position">
-                        <option selected>center</option>
+                    <span class="help-block">anchor</span>
+                    <select class="form-control" name="anchor">
                         <option>left top</option>
                         <option>top</option>
                         <option>right top</option>
@@ -1138,13 +1157,13 @@
             <script>
                 $(document).ready(function () {
                     var sandbox = $('#sb-tooltip');
-                    var position = sandbox.find("[name=position]");
+                    var anchor = sandbox.find("[name=anchor]");
                     var followPointer = sandbox.find("[name=followPointer]");
                     var run = function () {
                         var css = sandbox.find('[name=css]').val();
 
                         window.tooltip = new Cuic.Tooltip({
-                            position: position.val(),
+                            anchor: anchor.val(),
                             attribute: "title",
                             css: css,
                             followPointer: followPointer.is(":checked"),
@@ -1152,7 +1171,7 @@
                         });
 
                         window.tooltipBlue = new Cuic.Tooltip({
-                            position: position.val(),
+                            anchor: anchor.val(),
                             attribute: "title",
                             css: css + ";background:rgba(93,190,221,0.9)",
                             followPointer: followPointer.is(":checked"),
@@ -1160,9 +1179,9 @@
                         });
                     };
 
-                    position.on("change", function () {
-                        window.tooltip.align(position.val());
-                        window.tooltipBlue.align(position.val());
+                    anchor.on("change", function () {
+                        window.tooltip.anchor(anchor.val());
+                        window.tooltipBlue.anchor(anchor.val());
                     });
 
                     followPointer.on("change", function () {
