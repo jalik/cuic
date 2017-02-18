@@ -232,7 +232,7 @@ Cuic.Element = class {
      * @return {*}
      */
     find(selector) {
-        return this.getElement().querySelector(selector);
+        return Cuic.element(this.getElement().querySelector(selector));
     }
 
     /**
@@ -317,7 +317,7 @@ Cuic.Element = class {
      */
     insertAfter(element) {
         element = Cuic.getElement(element);
-        const parent = element.parentNode;
+        const parent = this.getElement().parentNode;
         parent.insertBefore(element, this.getElement().nextSibling);
         return this;
     }
@@ -329,7 +329,7 @@ Cuic.Element = class {
      */
     insertBefore(element) {
         element = Cuic.getElement(element);
-        const parent = element.parentNode;
+        const parent = this.getElement().parentNode;
         parent.insertBefore(element, this.getElement());
         return this;
     }

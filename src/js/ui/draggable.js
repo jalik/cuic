@@ -30,118 +30,9 @@ Cuic.Draggable = class extends Cuic.Component {
         options = Cuic.extend({}, Cuic.Draggable.prototype.options, options);
 
         // Create element
-        super('div', {
-            className: options.className
-        }, options);
+        super('div', {className: options.className}, options);
 
         const self = this;
-
-        /**
-         * Sets the dragging area
-         * @param handle
-         * @return {Cuic.Component}
-         */
-        self.setHandle = (handle) => {
-            // Add the draggable classes
-            Cuic.addClass(handle, self.options.className);
-
-            // Change cursor icon over dragging area
-            Cuic.css(handle, {cursor: 'move'});
-            Cuic.addClass(handle, self.options.handleClassName);
-
-            // Start dragging
-            Cuic.on('mousedown', handle, (ev) => {
-                // Ignore dragging if the target is not the root
-                if (self.options.rootOnly && ev.target !== ev.currentTarget) return;
-
-                // Execute callback
-                if (self.onDragStart(ev) === false) {
-                    return;
-                }
-
-                // Prevent text selection
-                ev.preventDefault();
-
-                // Change element style
-                self.addClass('dragging');
-
-                const parent = self.getParentElement();
-
-                let margin = Cuic.margin(self);
-                let height = Cuic.outerHeight(self);
-                let width = Cuic.outerWidth(self);
-                let startOffset = Cuic.position(self);
-                let startX = Cuic.mouseX;
-                let startY = Cuic.mouseY;
-                let timer = setInterval(() => {
-                    let prop = {};
-                    const parentPadding = Cuic.padding(parent);
-                    const parentHeight = Cuic.innerHeight(parent);
-                    const parentWidth = Cuic.innerWidth(parent);
-
-                    const spaceLeft = Math.max(parentPadding.left);
-                    const spaceTop = Math.max(parentPadding.top);
-
-                    // Calculate minimal values
-                    let minX = spaceLeft;
-                    let minY = spaceTop;
-
-                    // Calculate maximal values
-                    let maxX = parentWidth - parentPadding.horizontal - margin.right;
-                    let maxY = parentHeight - parentPadding.vertical - margin.bottom;
-
-                    const stepX = self.options.stepX;
-                    const stepY = self.options.stepY;
-                    const mouseLeft = Cuic.mouseX - startX;
-                    const mouseTop = Cuic.mouseY - startY;
-                    let left = startOffset.left + Math.round(mouseLeft / stepX) * stepX;
-                    let top = startOffset.top + Math.round(mouseTop / stepY) * stepY;
-
-                    // Check horizontal location
-                    if (left < minX) {
-                        left = minX;
-                    }
-                    else if (left + width > maxX) {
-                        left = maxX - width;
-                    }
-
-                    // Check vertical location
-                    if (top < minY) {
-                        top = minY;
-                    }
-                    else if (top + height > maxY) {
-                        top = maxY - height;
-                    }
-
-                    // Execute callback
-                    if (self.onDrag(left, top) === false) {
-                        return;
-                    }
-
-                    // Move horizontally
-                    if (self.options.horizontal) {
-                        prop.left = left + 'px';
-                        prop.right = '';
-                    }
-                    // Move vertically
-                    if (self.options.vertical) {
-                        prop.top = top + 'px';
-                        prop.bottom = '';
-                    }
-                    // Move element
-                    self.css(prop);
-
-                }, Math.round(1000 / self.options.fps));
-
-                // Stop dragging
-                Cuic.once('mouseup', document.body, (ev) => {
-                    clearInterval(timer);
-                    self.removeClass('dragging');
-                    self.onDragStop();
-                });
-            });
-            return self;
-        };
 
         // Force the target to be the relative parent
         if (self.css('position') === 'static') {
@@ -170,6 +61,114 @@ Cuic.Draggable = class extends Cuic.Component {
     onDragStop() {
     }
 
+    /**
+     * Sets the dragging area
+     * @param handle
+     * @return {Cuic.Component}
+     */
+    setHandle(handle) {
+        const self = this;
+
+        // Add the draggable classes
+        Cuic.addClass(handle, self.options.className);
+
+        // Change cursor icon over dragging area
+        Cuic.css(handle, {cursor: 'move'});
+        Cuic.addClass(handle, self.options.handleClassName);
+
+        // Start dragging
+        Cuic.on('mousedown', handle, (ev) => {
+            // Ignore dragging if the target is not the root
+            if (self.options.rootOnly && ev.target !== ev.currentTarget) return;
+
+            // Execute callback
+            if (self.onDragStart(ev) === false) {
+                return;
+            }
+
+            // Prevent text selection
+            ev.preventDefault();
+
+            // Change element style
+            self.addClass('dragging');
+
+            const parent = self.getParentElement();
+
+            let margin = Cuic.margin(self);
+            let height = Cuic.outerHeight(self);
+            let width = Cuic.outerWidth(self);
+            let startOffset = Cuic.position(self);
+            let startX = Cuic.mouseX;
+            let startY = Cuic.mouseY;
+            let timer = setInterval(() => {
+                let prop = {};
+                const parentPadding = Cuic.padding(parent);
+                const parentHeight = Cuic.innerHeight(parent);
+                const parentWidth = Cuic.innerWidth(parent);
+
+                const spaceLeft = Math.max(parentPadding.left);
+                const spaceTop = Math.max(parentPadding.top);
+
+                // Calculate minimal values
+                let minX = spaceLeft;
+                let minY = spaceTop;
+
+                // Calculate maximal values
+                let maxX = parentWidth - parentPadding.horizontal - margin.right;
+                let maxY = parentHeight - parentPadding.vertical - margin.bottom;
+
+                const stepX = self.options.stepX;
+                const stepY = self.options.stepY;
+                const mouseLeft = Cuic.mouseX - startX;
+                const mouseTop = Cuic.mouseY - startY;
+                let left = startOffset.left + Math.round(mouseLeft / stepX) * stepX;
+                let top = startOffset.top + Math.round(mouseTop / stepY) * stepY;
+
+                // Check horizontal location
+                if (left < minX) {
+                    left = minX;
+                }
+                else if (left + width > maxX) {
+                    left = maxX - width;
+                }
+
+                // Check vertical location
+                if (top < minY) {
+                    top = minY;
+                }
+                else if (top + height > maxY) {
+                    top = maxY - height;
+                }
+
+                // Execute callback
+                if (self.onDrag(left, top) === false) {
+                    return;
+                }
+
+                // Move horizontally
+                if (self.options.horizontal) {
+                    prop.left = left + 'px';
+                    prop.right = '';
+                }
+                // Move vertically
+                if (self.options.vertical) {
+                    prop.top = top + 'px';
+                    prop.bottom = '';
+                }
+                // Move element
+                self.css(prop);
+
+            }, Math.round(1000 / self.options.fps));
+
+            // Stop dragging
+            Cuic.once('mouseup', document.body, (ev) => {
+                clearInterval(timer);
+                self.removeClass('dragging');
+                self.onDragStop();
+            });
+        });
+        return self;
+    }
 };
 
 /**

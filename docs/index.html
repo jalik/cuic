@@ -67,9 +67,9 @@
         </ul>
         <script>
             $(document).ready(function () {
-                window.sidebar = new Cuic.Hook({
-                    target: "#sidebar"
-                });
+//                window.sidebar = new Cuic.Hook({
+//                    element: "#sidebar"
+//                });
             });
         </script>
     </aside>
@@ -575,7 +575,7 @@
                     var sandbox = $('#sb-hook');
                     var run = function () {
                         window.hook = new Cuic.Hook({
-                            target: $('.navbar', sandbox)
+                            element: $('.navbar', sandbox)
                         });
                     };
                     sandbox.find('.btn-run').on('click', function (ev) {

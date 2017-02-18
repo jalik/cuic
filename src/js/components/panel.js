@@ -37,11 +37,11 @@ Cuic.Panel = class extends Cuic.Component {
         const self = this;
 
         if (options.element) {
-            self.header = Cuic.element(self.find('.panel-header'));
-            self.title = Cuic.element(self.find('.panel-title'));
-            self.content = Cuic.element(self.find('.panel-content'));
-            self.footer = Cuic.element(self.find('.panel-footer'));
-            self.closeButton = Cuic.element(self.find('.panel-header .btn-close'));
+            self.header = self.find('.panel-header');
+            self.title = self.find('.panel-title');
+            self.content = self.find('.panel-content');
+            self.footer = self.find('.panel-footer');
+            self.closeButton = self.find('.panel-header .btn-close');
         }
         else {
             // Add the header

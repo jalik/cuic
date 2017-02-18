@@ -23,34 +23,19 @@
  *
  */
 
-(function ($) {
-    'use strict';
+Cuic.Hook = class extends Cuic.Component {
 
-    var counter = -1;
+    constructor(options) {
+        // Set default options
+        options = Cuic.extend({}, Cuic.Hook.prototype.options, options);
 
-    /**
-     * Hook an element to the viewport,
-     * so it is scrolled with the viewport
-     * @param options
-     * @return {*}
-     */
-    Cuic.Hook = function (options) {
-        var self = this;
-        var ns = Cuic.namespace('hook-' + (counter += 1));
+        // Create element
+        super('div', {className: options.className}, options);
 
-        // Default options
-        options = Cuic.extend(true, {}, Cuic.Hook.prototype.options, options);
-
-        var win = $(window);
-
-        // Get the target
-        var $target = $(options.target);
-        if ($target.length === 0) {
-            throw new Error('No target found for : ' + options.target);
-        }
+        const self = this;
 
         // This is a fix to avoid offsetTop > 0
-        $target.css({
+        self.css({
             position: 'relative',
             top: '',
             width: ''
@@ -58,86 +43,24 @@
 
         // Create the spacer item that will replace
         // the bar when it is scrolled
-        var $spacer = $('<div>', {
-            css: {display: 'none'}
-        }).insertAfter($target);
+        self.space = new Cuic.Element('div', {
+            className: 'hook-space'
+        });
 
-        // Get the target's offset
-        var offset = $target.offset();
+        // Get the element's offset
+        let offset = self.offset();
 
-        /**
-         * Hook the element
-         */
-        self.hook = function () {
-            if ($target.css('position') !== 'fixed') {
-                offset = $target.offset();
+        const onScroll = () => {
+            let fitsInScreen = self.outerHeight(true) <= window.screen.availHeight;
 
-                if (options.fixed) {
-                    options.offsetTop = offset.top;
-                }
-                $spacer.css({
-                    display: $target.css('display'),
-                    float: $target.css('float'),
-                    // height: target.height(),
-                    marginBottom: $target.css('margin-bottom'),
-                    marginLeft: $target.css('margin-left'),
-                    marginRight: $target.css('margin-right'),
-                    marginTop: $target.css('margin-top'),
-                    // width: target.width()
-                });
-                $target.css({
-                    position: 'fixed',
-                    left: offset.left,
-                    top: options.offsetTop,
-                    width: $spacer.width(),
-                    zIndex: options.zIndex
-                }).addClass(options.hookedClass);
-
-                // Execute the hooked listener
-                if (typeof options.onHook === 'function') {
-                    options.onHook.call($target);
-                }
-            } else if ($spacer) {
-                offset = $spacer.offset();
-                $target.css({
-                    left: offset.left,
-                    width: $spacer.width()
-                });
-            }
-        };
-
-        /**
-         * Unhook the element
-         */
-        self.unhook = function () {
-            if ($target.css('position') !== 'relative') {
-                $spacer.hide();
-                $target.css({
-                    position: 'relative',
-                    bottom: '',
-                    left: '',
-                    right: '',
-                    top: '',
-                    width: ''
-                }).removeClass(options.hookedClass);
-
-                // Execute the unhooked listener
-                if (typeof options.onUnhook === 'function') {
-                    options.onUnhook.call($target);
-                }
-            }
-        };
-
-        var onScroll = function () {
-            var targetFitsInScreen = $target.outerHeight(true) <= window.screen.availHeight;
-
-            if (targetFitsInScreen) {
-                if (options.fixed) {
+            if (fitsInScreen) {
+                if (self.options.fixed) {
                     self.hook();
-                } else {
-                    var marginTop = parseFloat($target.css('margin-top'));
+                }
+                else {
+                    let margin = Cuic.margin(self);
 
-                    if (win.scrollTop() > offset.top - marginTop) {
+                    if (window.scrollY > offset.top - margin.top) {
                         self.hook();
                     } else {
                         self.unhook();
@@ -152,41 +75,111 @@
         // the bar must be shown
         onScroll();
 
-        // Scroll the bar when the window is scrolled
-        win.off(ns('scroll')).on(ns('scroll'), function () {
+        window.onscroll = () => {
             onScroll();
-        });
-
-        win.off(ns('resize')).on(ns('resize'), function () {
+        };
+        window.onresize = () => {
             onScroll();
-        });
-    };
+        };
+    }
 
     /**
-     * Called when element is hooked
-     * @type {function}
+     * Hooks the element
      */
-    Cuic.Hook.prototype.onHook = null;
+    hook() {
+        const self = this;
+        console.log('hook')
+
+        if (self.css('position') !== 'fixed') {
+            const offset = self.offset();
+            const margin = Cuic.margin(self);
+
+            if (self.options.fixed) {
+                self.options.offsetTop = offset.top;
+            }
+
+            // Replace element with invisible space
+            self.space.css({
+                display: self.css('display'),
+                float: self.css('float'),
+                height: self.outerHeight() + 'px',
+                width: self.outerWidth() + 'px',
+                'margin-bottom': margin.bottom + 'px',
+                'margin-left': margin.left + 'px',
+                'margin-right': margin.right + 'px',
+                'margin-top': margin.top + 'px'
+            });
+            self.insertBefore(self.space);
+            self.space.show();
+
+            // Make element scroll
+            self.css({
+                position: 'fixed',
+                left: offset.left + 'px',
+                top: self.options.offsetTop + 'px',
+                height: self.space.height() + 'px',
+                width: self.space.width() + 'px',
+                zIndex: self.options.zIndex
+            });
+            self.addClass('hooked');
+
+            // Execute the hooked listener
+            self.onHook(self);
+        }
+        // else if (self.space) {
+        //     const offset = self.space.offset();
+        //     self.css({
+        //         left: offset.left,
+        //         width: self.space.width()
+        //     });
+        // }
+    }
 
     /**
-     * Called when element is unhooked
-     * @type {function}
+     * Checks if the element is hooked
+     * @return {*|boolean}
      */
-    Cuic.Hook.prototype.onUnhook = null;
+    isHooked() {
+        return this.hasClass('hooked');
+    }
+
+    onHook() {
+    }
+
+    onUnhook() {
+    }
 
     /**
-     * Default options
-     * @type {*}
+     * Unhooks the element
      */
-    Cuic.Hook.prototype.options = {
-        fixed: false,
-        hookedClass: 'hooked',
-        offsetBottom: 0,
-        offsetLeft: 0,
-        offsetRight: 0,
-        offsetTop: 0,
-        target: null,
-        zIndex: 4
-    };
+    unhook() {
+        const self = this;
+        console.log('unhook')
 
-})(jQuery);
+        if (self.css('position') !== 'relative') {
+            self.space.hide();
+            self.css({
+                position: 'relative',
+                bottom: '',
+                left: '',
+                right: '',
+                top: '',
+                width: ''
+            });
+            self.removeClass('hooked');
+
+            // Execute the unhooked listener
+            self.onUnhook(self);
+        }
+    }
+};
+
+Cuic.Hook.prototype.options = {
+    fixed: true,
+    hookedClass: 'hooked',
+    // offsetBottom: 0,
+    // offsetLeft: 0,
+    // offsetRight: 0,
+    // offsetTop: 0,
+    zIndex: 4
+};

@@ -519,7 +519,7 @@
                 return new this.Element(element.get(0));
             }
             if (typeof element === 'string') {
-                return document.querySelector(element);
+                return new this.Element(document.querySelector(element));
             }
             return element;
         },
