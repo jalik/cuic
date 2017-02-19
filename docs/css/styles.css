@@ -260,9 +260,9 @@ tr {
 /* SANDBOX */
 
 .sandbox {
-    background-color: #fafafa;
+    background: #fafafa;
     border: solid 1px #ddd;
-    border-radius: 5px;
+    border-radius: 3px;
     box-sizing: border-box;
     padding: 20px;
     position: relative;

@@ -201,9 +201,9 @@ Cuic.Dialog = class extends Cuic.Component {
         //     }
         // });
 
-        // Make the dialog draggable
-        if (self.options.draggable) {
-            self.draggable = new Cuic.Draggable({
+        // Make the dialog movable
+        if (self.options.movable) {
+            self.movable = new Cuic.Movable({
                 element: self.getElement(),
                 handle: self.title,
                 parent: self.getParentElement(),
@@ -398,7 +398,7 @@ Cuic.Dialog.prototype.options = {
     content: null,
     contentHeight: null,
     contentWidth: null,
-    draggable: true,
+    movable: true,
     maximized: false,
     modal: true,
     namespace: 'dialog',

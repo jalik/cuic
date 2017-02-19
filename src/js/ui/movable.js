@@ -23,11 +23,11 @@
  *
  */
 
-Cuic.Draggable = class extends Cuic.Component {
+Cuic.Movable = class extends Cuic.Component {
 
     constructor(options) {
         // Set default options
-        options = Cuic.extend({}, Cuic.Draggable.prototype.options, options);
+        options = Cuic.extend({}, Cuic.Movable.prototype.options, options);
 
         // Create element
         super('div', {className: options.className}, options);
@@ -35,7 +35,7 @@ Cuic.Draggable = class extends Cuic.Component {
         const self = this;
 
         // Add component classes
-        self.addClass('draggable');
+        self.addClass('movable');
 
         // Force the target to be the relative parent
         if (self.css('position') === 'static') {
@@ -49,19 +49,19 @@ Cuic.Draggable = class extends Cuic.Component {
     /**
      * Called when dragging
      */
-    onDrag() {
+    onMove() {
     }
 
     /**
      * Called when drag start
      */
-    onDragStart() {
+    onMoveStart() {
     }
 
     /**
      * Called when drag stop
      */
-    onDragStop() {
+    onMoveStop() {
     }
 
     /**
@@ -72,12 +72,8 @@ Cuic.Draggable = class extends Cuic.Component {
     setDragHandle(handle) {
         const self = this;
 
-        // Add the draggable classes
-        Cuic.addClass(handle, self.options.className);
-
-        // Change cursor icon over dragging area
-        Cuic.css(handle, {cursor: 'move'});
-        Cuic.addClass(handle, self.options.handleClassName);
+        // Add the movable classes
+        Cuic.addClass(handle, 'movable-handle');
 
         // Start dragging
         Cuic.on('mousedown', handle, (ev) => {
@@ -85,7 +81,7 @@ Cuic.Draggable = class extends Cuic.Component {
             if (self.options.rootOnly && ev.target !== ev.currentTarget) return;
 
             // Execute callback
-            if (self.onDragStart(ev) === false) {
+            if (self.onMoveStart(ev) === false) {
                 return;
             }
 
@@ -103,14 +99,14 @@ Cuic.Draggable = class extends Cuic.Component {
             let startOffset = Cuic.position(self);
             let startX = Cuic.mouseX;
             let startY = Cuic.mouseY;
+
             let timer = setInterval(() => {
-                let prop = {};
                 const parentPadding = Cuic.padding(parent);
                 const parentHeight = Cuic.innerHeight(parent);
                 const parentWidth = Cuic.innerWidth(parent);
-
                 const spaceLeft = Math.max(parentPadding.left);
                 const spaceTop = Math.max(parentPadding.top);
+                let prop = {};
 
                 // Calculate minimal values
                 let minX = spaceLeft;
@@ -122,10 +118,10 @@ Cuic.Draggable = class extends Cuic.Component {
 
                 const stepX = self.options.stepX;
                 const stepY = self.options.stepY;
-                const mouseLeft = Cuic.mouseX - startX;
-                const mouseTop = Cuic.mouseY - startY;
-                let left = startOffset.left + Math.round(mouseLeft / stepX) * stepX;
-                let top = startOffset.top + Math.round(mouseTop / stepY) * stepY;
+                const diffX = Cuic.mouseX - startX;
+                const diffY = Cuic.mouseY - startY;
+                let left = startOffset.left + Math.round(diffX / stepX) * stepX;
+                let top = startOffset.top + Math.round(diffY / stepY) * stepY;
 
                 // Check horizontal location
                 if (left < minX) {
@@ -144,18 +140,18 @@ Cuic.Draggable = class extends Cuic.Component {
                 }
 
                 // Execute callback
-                if (self.onDrag(left, top) === false) {
+                if (self.onMove({x: left, y: top}) === false) {
                     return;
                 }
 
                 // Move horizontally
                 if (self.options.horizontal) {
-                    prop.left = left + 'px';
+                    prop.left = left;
                     prop.right = '';
                 }
                 // Move vertically
                 if (self.options.vertical) {
-                    prop.top = top + 'px';
+                    prop.top = top;
                     prop.bottom = '';
                 }
                 // Move element
@@ -167,21 +163,18 @@ Cuic.Draggable = class extends Cuic.Component {
             Cuic.once('mouseup', document.body, (ev) => {
                 clearInterval(timer);
                 self.removeClass('dragging');
-                self.onDragStop();
+                self.onMoveStop(ev);
             });
         });
         return self;
     }
 };
 
-/**
- * Draggable default options
- */
-Cuic.Draggable.prototype.options = {
-    className: 'draggable',
+Cuic.Movable.prototype.options = {
+    className: 'movable',
     fps: 60,
     handle: null,
-    handleClassName: 'draggable-handle',
+    handleClassName: 'movable-handle',
     horizontal: true,
     rootOnly: true,
     stepX: 1,

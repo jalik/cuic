@@ -23,13 +23,14 @@
  *
  */
 
-.draggable {
+.movable {
+  position: relative;
 }
 
-.draggable > * {
-  cursor: auto;
+.movable.dragging {
+  position: relative;
 }
 
-.draggable .draggable-handle {
+.movable-handle {
   cursor: move;
 }

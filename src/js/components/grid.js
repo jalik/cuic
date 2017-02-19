@@ -231,15 +231,15 @@
             }
         };
 
-        // Make the widget draggable
-        var draggable = new Cuic.Draggable({
+        // Make the widget movable
+        var movable = new Cuic.Movable({
             target: widget.element,
             rootOnly: true,
             container: grid.element
         });
 
         // Set behavior when dragging widget
-        draggable.onDrag = function () {
+        movable.onMove = function () {
             var left = parseFloat(element.css('left'));
             var top = parseFloat(element.css('top'));
             var col = grid.getPositionX(left);
@@ -257,8 +257,8 @@
         };
 
         // Set behavior when dragging starts
-        draggable.onDragStart = function (ev) {
-            if (grid.editable && widget.draggable && !widget.isResizing()) {
+        movable.onMoveStart = function (ev) {
+            if (grid.editable && widget.movable && !widget.isResizing()) {
                 height = element.outerHeight();
                 width = element.outerWidth();
 
@@ -283,7 +283,7 @@
         };
 
         // Set behavior when dragging stops
-        draggable.onDragStop = function () {
+        movable.onMoveStop = function () {
             // Remove the preview
             preview.detach();
 
@@ -630,7 +630,7 @@
 
         // Set the options
         self.col = parseInt(options.col);
-        self.draggable = options.draggable === true;
+        self.movable = options.movable === true;
         self.resizable = options.resizable === true;
         self.row = parseInt(options.row);
         self.maxSizeX = parseInt(options.maxSizeX);
@@ -646,7 +646,7 @@
 
             if (self.element.length > 0) {
                 self.col = parseInt(self.element.attr('data-col')) || options.col;
-                self.draggable = !!self.element.attr('data-draggable') ? /^true$/gi.test(self.element.attr('data-draggable')) : options.draggable;
+                self.movable = !!self.element.attr('data-movable') ? /^true$/gi.test(self.element.attr('data-movable')) : options.movable;
                 self.maxSizeX = parseInt(self.element.attr('data-max-size-x')) || options.maxSizeX;
                 self.maxSizeY = parseInt(self.element.attr('data-max-size-y')) || options.maxSizeY;
                 self.minSizeX = parseInt(self.element.attr('data-min-size-x')) || options.minSizeX;
@@ -692,7 +692,7 @@
     Cuic.Grid.Widget.prototype.options = {
         col: 1,
         content: null,
-        draggable: true,
+        movable: true,
         maxSizeX: null,
         maxSizeY: null,
         minSizeX: 1,

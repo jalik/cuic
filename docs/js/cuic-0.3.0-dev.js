@@ -2384,6 +2384,23 @@ Cuic.Element = function () {
         }
 
         /**
+         * Sets HTML content
+         * @param html
+         * @return {Cuic.Element|string}
+         */
+
+    }, {
+        key: 'html',
+        value: function html(_html) {
+            if (_html) {
+                this.getElement().innerHTML = _html;
+                return this;
+            } else {
+                return this.getElement().innerHTML;
+            }
+        }
+
+        /**
          * Returns the element height including padding
          * @return {number}
          */
@@ -2668,6 +2685,23 @@ Cuic.Element = function () {
         value: function show() {
             this.css({ display: '' });
             return this;
+        }
+
+        /**
+         * Returns or sets element value
+         * @param value
+         * @return {Cuic.Element|*}
+         */
+
+    }, {
+        key: 'val',
+        value: function val(value) {
+            if (value && 'value' in this.getElement()) {
+                this.getElement().value = value;
+                return this;
+            } else {
+                return this.getElement().value;
+            }
         }
 
         /**
@@ -3083,226 +3117,20 @@ Cuic.GroupComponent.prototype.options = {
  *
  */
 
-Cuic.Draggable = function (_Cuic$Component2) {
+Cuic.Hook = function (_Cuic$Component2) {
     _inherits(_class7, _Cuic$Component2);
 
     function _class7(options) {
         _classCallCheck(this, _class7);
 
         // Set default options
-        options = Cuic.extend({}, Cuic.Draggable.prototype.options, options);
+        options = Cuic.extend({}, Cuic.Hook.prototype.options, options);
 
         // Create element
 
         var _this8 = _possibleConstructorReturn(this, (_class7.__proto__ || Object.getPrototypeOf(_class7)).call(this, 'div', { className: options.className }, options));
 
         var self = _this8;
-
-        // Add component classes
-        self.addClass('draggable');
-
-        // Force the target to be the relative parent
-        if (self.css('position') === 'static') {
-            self.css({ position: 'relative' });
-        }
-
-        // Set the dragging area
-        _this8.setDragHandle(options.handle || self.getElement());
-        return _this8;
-    }
-
-    /**
-     * Called when dragging
-     */
-
-
-    _createClass(_class7, [{
-        key: 'onDrag',
-        value: function onDrag() {}
-
-        /**
-         * Called when drag start
-         */
-
-    }, {
-        key: 'onDragStart',
-        value: function onDragStart() {}
-
-        /**
-         * Called when drag stop
-         */
-
-    }, {
-        key: 'onDragStop',
-        value: function onDragStop() {}
-
-        /**
-         * Sets the dragging area
-         * @param handle
-         * @return {Cuic.Component}
-         */
-
-    }, {
-        key: 'setDragHandle',
-        value: function setDragHandle(handle) {
-            var self = this;
-
-            // Add the draggable classes
-            Cuic.addClass(handle, self.options.className);
-
-            // Change cursor icon over dragging area
-            Cuic.css(handle, { cursor: 'move' });
-            Cuic.addClass(handle, self.options.handleClassName);
-
-            // Start dragging
-            Cuic.on('mousedown', handle, function (ev) {
-                // Ignore dragging if the target is not the root
-                if (self.options.rootOnly && ev.target !== ev.currentTarget) return;
-
-                // Execute callback
-                if (self.onDragStart(ev) === false) {
-                    return;
-                }
-
-                // Prevent text selection
-                ev.preventDefault();
-
-                // Change element style
-                self.addClass('dragging');
-
-                var parent = self.getParentElement();
-
-                var margin = Cuic.margin(self);
-                var height = Cuic.outerHeight(self);
-                var width = Cuic.outerWidth(self);
-                var startOffset = Cuic.position(self);
-                var startX = Cuic.mouseX;
-                var startY = Cuic.mouseY;
-                var timer = setInterval(function () {
-                    var prop = {};
-                    var parentPadding = Cuic.padding(parent);
-                    var parentHeight = Cuic.innerHeight(parent);
-                    var parentWidth = Cuic.innerWidth(parent);
-
-                    var spaceLeft = Math.max(parentPadding.left);
-                    var spaceTop = Math.max(parentPadding.top);
-
-                    // Calculate minimal values
-                    var minX = spaceLeft;
-                    var minY = spaceTop;
-
-                    // Calculate maximal values
-                    var maxX = parentWidth - parentPadding.horizontal - margin.right;
-                    var maxY = parentHeight - parentPadding.vertical - margin.bottom;
-
-                    var stepX = self.options.stepX;
-                    var stepY = self.options.stepY;
-                    var mouseLeft = Cuic.mouseX - startX;
-                    var mouseTop = Cuic.mouseY - startY;
-                    var left = startOffset.left + Math.round(mouseLeft / stepX) * stepX;
-                    var top = startOffset.top + Math.round(mouseTop / stepY) * stepY;
-
-                    // Check horizontal location
-                    if (left < minX) {
-                        left = minX;
-                    } else if (left + width > maxX) {
-                        left = maxX - width;
-                    }
-
-                    // Check vertical location
-                    if (top < minY) {
-                        top = minY;
-                    } else if (top + height > maxY) {
-                        top = maxY - height;
-                    }
-
-                    // Execute callback
-                    if (self.onDrag(left, top) === false) {
-                        return;
-                    }
-
-                    // Move horizontally
-                    if (self.options.horizontal) {
-                        prop.left = left + 'px';
-                        prop.right = '';
-                    }
-                    // Move vertically
-                    if (self.options.vertical) {
-                        prop.top = top + 'px';
-                        prop.bottom = '';
-                    }
-                    // Move element
-                    self.css(prop);
-                }, Math.round(1000 / self.options.fps));
-
-                // Stop dragging
-                Cuic.once('mouseup', document.body, function (ev) {
-                    clearInterval(timer);
-                    self.removeClass('dragging');
-                    self.onDragStop();
-                });
-            });
-            return self;
-        }
-    }]);
-
-    return _class7;
-}(Cuic.Component);
-
-/**
- * Draggable default options
- */
-Cuic.Draggable.prototype.options = {
-    className: 'draggable',
-    fps: 60,
-    handle: null,
-    handleClassName: 'draggable-handle',
-    horizontal: true,
-    rootOnly: true,
-    stepX: 1,
-    stepY: 1,
-    vertical: true
-};
-
-/*
- * The MIT License (MIT)
- *
- * Copyright (c) 2017 Karl STEIN
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- */
-
-Cuic.Hook = function (_Cuic$Component3) {
-    _inherits(_class8, _Cuic$Component3);
-
-    function _class8(options) {
-        _classCallCheck(this, _class8);
-
-        // Set default options
-        options = Cuic.extend({}, Cuic.Hook.prototype.options, options);
-
-        // Create element
-
-        var _this9 = _possibleConstructorReturn(this, (_class8.__proto__ || Object.getPrototypeOf(_class8)).call(this, 'div', { className: options.className }, options));
-
-        var self = _this9;
 
         // Add component classes
         self.addClass('hook');
@@ -3353,7 +3181,7 @@ Cuic.Hook = function (_Cuic$Component3) {
         window.onresize = function () {
             onScroll();
         };
-        return _this9;
+        return _this8;
     }
 
     /**
@@ -3361,7 +3189,7 @@ Cuic.Hook = function (_Cuic$Component3) {
      */
 
 
-    _createClass(_class8, [{
+    _createClass(_class7, [{
         key: 'hook',
         value: function hook() {
             var self = this;
@@ -3457,7 +3285,7 @@ Cuic.Hook = function (_Cuic$Component3) {
         }
     }]);
 
-    return _class8;
+    return _class7;
 }(Cuic.Component);
 
 Cuic.Hook.prototype.options = {
@@ -3468,6 +3296,205 @@ Cuic.Hook.prototype.options = {
     // offsetRight: 0,
     // offsetTop: 0,
     zIndex: 4
+};
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2017 Karl STEIN
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
+Cuic.Movable = function (_Cuic$Component3) {
+    _inherits(_class8, _Cuic$Component3);
+
+    function _class8(options) {
+        _classCallCheck(this, _class8);
+
+        // Set default options
+        options = Cuic.extend({}, Cuic.Movable.prototype.options, options);
+
+        // Create element
+
+        var _this9 = _possibleConstructorReturn(this, (_class8.__proto__ || Object.getPrototypeOf(_class8)).call(this, 'div', { className: options.className }, options));
+
+        var self = _this9;
+
+        // Add component classes
+        self.addClass('movable');
+
+        // Force the target to be the relative parent
+        if (self.css('position') === 'static') {
+            self.css({ position: 'relative' });
+        }
+
+        // Set the dragging area
+        _this9.setDragHandle(options.handle || self.getElement());
+        return _this9;
+    }
+
+    /**
+     * Called when dragging
+     */
+
+
+    _createClass(_class8, [{
+        key: 'onMove',
+        value: function onMove() {}
+
+        /**
+         * Called when drag start
+         */
+
+    }, {
+        key: 'onMoveStart',
+        value: function onMoveStart() {}
+
+        /**
+         * Called when drag stop
+         */
+
+    }, {
+        key: 'onMoveStop',
+        value: function onMoveStop() {}
+
+        /**
+         * Sets the dragging area
+         * @param handle
+         * @return {Cuic.Component}
+         */
+
+    }, {
+        key: 'setDragHandle',
+        value: function setDragHandle(handle) {
+            var self = this;
+
+            // Add the movable classes
+            Cuic.addClass(handle, 'movable-handle');
+
+            // Start dragging
+            Cuic.on('mousedown', handle, function (ev) {
+                // Ignore dragging if the target is not the root
+                if (self.options.rootOnly && ev.target !== ev.currentTarget) return;
+
+                // Execute callback
+                if (self.onMoveStart(ev) === false) {
+                    return;
+                }
+
+                // Prevent text selection
+                ev.preventDefault();
+
+                // Change element style
+                self.addClass('dragging');
+
+                var parent = self.getParentElement();
+
+                var margin = Cuic.margin(self);
+                var height = Cuic.outerHeight(self);
+                var width = Cuic.outerWidth(self);
+                var startOffset = Cuic.position(self);
+                var startX = Cuic.mouseX;
+                var startY = Cuic.mouseY;
+
+                var timer = setInterval(function () {
+                    var parentPadding = Cuic.padding(parent);
+                    var parentHeight = Cuic.innerHeight(parent);
+                    var parentWidth = Cuic.innerWidth(parent);
+                    var spaceLeft = Math.max(parentPadding.left);
+                    var spaceTop = Math.max(parentPadding.top);
+                    var prop = {};
+
+                    // Calculate minimal values
+                    var minX = spaceLeft;
+                    var minY = spaceTop;
+
+                    // Calculate maximal values
+                    var maxX = parentWidth - parentPadding.horizontal - margin.right;
+                    var maxY = parentHeight - parentPadding.vertical - margin.bottom;
+
+                    var stepX = self.options.stepX;
+                    var stepY = self.options.stepY;
+                    var diffX = Cuic.mouseX - startX;
+                    var diffY = Cuic.mouseY - startY;
+                    var left = startOffset.left + Math.round(diffX / stepX) * stepX;
+                    var top = startOffset.top + Math.round(diffY / stepY) * stepY;
+
+                    // Check horizontal location
+                    if (left < minX) {
+                        left = minX;
+                    } else if (left + width > maxX) {
+                        left = maxX - width;
+                    }
+
+                    // Check vertical location
+                    if (top < minY) {
+                        top = minY;
+                    } else if (top + height > maxY) {
+                        top = maxY - height;
+                    }
+
+                    // Execute callback
+                    if (self.onMove({ x: left, y: top }) === false) {
+                        return;
+                    }
+
+                    // Move horizontally
+                    if (self.options.horizontal) {
+                        prop.left = left;
+                        prop.right = '';
+                    }
+                    // Move vertically
+                    if (self.options.vertical) {
+                        prop.top = top;
+                        prop.bottom = '';
+                    }
+                    // Move element
+                    self.css(prop);
+                }, Math.round(1000 / self.options.fps));
+
+                // Stop dragging
+                Cuic.once('mouseup', document.body, function (ev) {
+                    clearInterval(timer);
+                    self.removeClass('dragging');
+                    self.onMoveStop(ev);
+                });
+            });
+            return self;
+        }
+    }]);
+
+    return _class8;
+}(Cuic.Component);
+
+Cuic.Movable.prototype.options = {
+    className: 'movable',
+    fps: 60,
+    handle: null,
+    handleClassName: 'movable-handle',
+    horizontal: true,
+    rootOnly: true,
+    stepX: 1,
+    stepY: 1,
+    vertical: true
 };
 
 /*
@@ -3969,9 +3996,9 @@ Cuic.Dialog = function (_Cuic$Component6) {
         //     }
         // });
 
-        // Make the dialog draggable
-        if (self.options.draggable) {
-            self.draggable = new Cuic.Draggable({
+        // Make the dialog movable
+        if (self.options.movable) {
+            self.movable = new Cuic.Movable({
                 element: self.getElement(),
                 handle: self.title,
                 parent: self.getParentElement(),
@@ -4204,7 +4231,7 @@ Cuic.Dialog.prototype.options = {
     content: null,
     contentHeight: null,
     contentWidth: null,
-    draggable: true,
+    movable: true,
     maximized: false,
     modal: true,
     namespace: 'dialog',
@@ -4529,15 +4556,15 @@ Cuic.Button.prototype.options = {
             }
         };
 
-        // Make the widget draggable
-        var draggable = new Cuic.Draggable({
+        // Make the widget movable
+        var movable = new Cuic.Movable({
             target: widget.element,
             rootOnly: true,
             container: grid.element
         });
 
         // Set behavior when dragging widget
-        draggable.onDrag = function () {
+        movable.onMove = function () {
             var left = parseFloat(element.css('left'));
             var top = parseFloat(element.css('top'));
             var col = grid.getPositionX(left);
@@ -4554,8 +4581,8 @@ Cuic.Button.prototype.options = {
         };
 
         // Set behavior when dragging starts
-        draggable.onDragStart = function (ev) {
-            if (grid.editable && widget.draggable && !widget.isResizing()) {
+        movable.onMoveStart = function (ev) {
+            if (grid.editable && widget.movable && !widget.isResizing()) {
                 height = element.outerHeight();
                 width = element.outerWidth();
 
@@ -4580,7 +4607,7 @@ Cuic.Button.prototype.options = {
         };
 
         // Set behavior when dragging stops
-        draggable.onDragStop = function () {
+        movable.onMoveStop = function () {
             // Remove the preview
             preview.detach();
 
@@ -4930,7 +4957,7 @@ Cuic.Button.prototype.options = {
 
         // Set the options
         self.col = parseInt(options.col);
-        self.draggable = options.draggable === true;
+        self.movable = options.movable === true;
         self.resizable = options.resizable === true;
         self.row = parseInt(options.row);
         self.maxSizeX = parseInt(options.maxSizeX);
@@ -4946,7 +4973,7 @@ Cuic.Button.prototype.options = {
 
             if (self.element.length > 0) {
                 self.col = parseInt(self.element.attr('data-col')) || options.col;
-                self.draggable = !!self.element.attr('data-draggable') ? /^true$/gi.test(self.element.attr('data-draggable')) : options.draggable;
+                self.movable = !!self.element.attr('data-movable') ? /^true$/gi.test(self.element.attr('data-movable')) : options.movable;
                 self.maxSizeX = parseInt(self.element.attr('data-max-size-x')) || options.maxSizeX;
                 self.maxSizeY = parseInt(self.element.attr('data-max-size-y')) || options.maxSizeY;
                 self.minSizeX = parseInt(self.element.attr('data-min-size-x')) || options.minSizeX;
@@ -4992,7 +5019,7 @@ Cuic.Button.prototype.options = {
     Cuic.Grid.Widget.prototype.options = {
         col: 1,
         content: null,
-        draggable: true,
+        movable: true,
         maxSizeX: null,
         maxSizeY: null,
         minSizeX: 1,

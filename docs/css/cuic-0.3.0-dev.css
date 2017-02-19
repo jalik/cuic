@@ -93,12 +93,6 @@
   margin: 0;
   padding: 0;
 }
-.draggable > * {
-  cursor: auto;
-}
-.draggable .draggable-handle {
-  cursor: move;
-}
 .fader {
   background: rgba(240, 240, 240, 0.5);
   display: block;
@@ -159,6 +153,15 @@
   border-color: #65d0f3;
   color: #eee;
   opacity: 0.7;
+}
+.movable {
+  position: relative;
+}
+.movable.dragging {
+  position: relative;
+}
+.movable-handle {
+  cursor: move;
 }
 .notification {
   background: rgba(0, 0, 0, 0.7);

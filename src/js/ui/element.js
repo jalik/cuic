@@ -300,6 +300,20 @@ Cuic.Element = class {
     }
 
     /**
+     * Sets HTML content
+     * @param html
+     * @return {Cuic.Element|string}
+     */
+    html(html) {
+        if (html) {
+            this.getElement().innerHTML = html;
+            return this;
+        } else {
+            return this.getElement().innerHTML;
+        }
+    }
+
+    /**
      * Returns the element height including padding
      * @return {number}
      */
@@ -517,6 +531,20 @@ Cuic.Element = class {
     show() {
         this.css({display: ''});
         return this;
+    }
+
+    /**
+     * Returns or sets element value
+     * @param value
+     * @return {Cuic.Element|*}
+     */
+    val(value) {
+        if (value && 'value' in this.getElement()) {
+            this.getElement().value = value;
+            return this;
+        } else {
+            return this.getElement().value;
+        }
     }
 
     /**
