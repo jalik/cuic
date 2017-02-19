@@ -486,7 +486,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             // positioning
             'bottom', 'left', 'padding', 'right', 'top',
             // dimension
-            'height', 'width',
+            'max-height', 'max-width', 'height', 'width',
             // margin
             'margin', 'margin-bottom', 'margin-left', 'margin-right', 'margin-top',
             // padding

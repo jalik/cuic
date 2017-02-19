@@ -306,6 +306,7 @@
 .resizable.debug .resize-handle {
   background: rgba(255, 0, 0, 0.3);
 }
+.resizable.resizing .resize-handle,
 .resizable:hover .resize-handle {
   display: block;
 }

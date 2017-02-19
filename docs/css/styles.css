@@ -129,17 +129,16 @@ tr {
     transition: all 200ms;
 }
 
+/* PAGE */
+
 #page {
-    margin: 0 auto;
-    padding: 2em;
-    width: 1000px;
 }
 
+/* SIDEBAR */
+
 #sidebar {
-    box-sizing: border-box;
-    float: left;
-    padding: 1em 1em 0 0;
-    min-width: 200px;
+    overflow: auto;
+    padding: 10px;
 }
 
 #sidebar h4 {
@@ -151,6 +150,10 @@ tr {
     padding: 0;
 }
 
+#sidebar .menu-title {
+    margin: 10px 0;
+}
+
 #sidebar .menu li {
     list-style: none;
     margin: 0;
@@ -160,8 +163,8 @@ tr {
 #sidebar .menu li > a {
     border-radius: 3px;
     display: block;
-    padding: 0.3em 0.5em;
-    transition: all 200ms;
+    padding: 5px;
+    transition: all 0.2s;
 }
 
 #sidebar .menu li > a:hover {
@@ -175,8 +178,12 @@ tr {
     color: #fff;
 }
 
+/* CONTENT */
+
 #content {
-    margin-left: 200px;
+    overflow: auto;
+    padding-bottom: 20px;
+    padding-top: 20px;
 }
 
 #content h1 {
@@ -263,4 +270,15 @@ tr {
 
 .help-block {
     font-size: 0.9em;
+}
+
+/* TEXT BOX */
+
+.testbox {
+    background: rgba(255, 255, 255, 0.7);
+    height: 100px;
+    width: 100px;
+    padding: 10px;
+    margin: 10px;
+    border: solid 2px deepskyblue;
 }

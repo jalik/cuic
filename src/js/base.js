@@ -449,6 +449,8 @@
                 'right',
                 'top',
                 // dimension
+                'max-height',
+                'max-width',
                 'height',
                 'width',
                 // margin
