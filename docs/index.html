@@ -82,6 +82,7 @@
                     <li><a href="#ui-hook">Hook</a></li>
                     <li><a href="#ui-movable">Movable</a></li>
                     <li><a href="#ui-resizable">Resizable</a></li>
+                    <li><a href="#ui-selectable">Selectable</a></li>
                 </ul>
                 <h4 class="menu-title">Utils</h4>
                 <ul class="menu">
@@ -735,7 +736,7 @@
                     </script>
                 </div>
 
-                <!-- RESIZABLE-->
+                <!-- RESIZABLE -->
 
                 <div id="ui-resizable">
                     <h2><a href="#ui-resizable">Cuic.Resizable</a></h2>
@@ -810,6 +811,38 @@
                                 hratio.val(Math.round(resizable.width() / resizable.height() * 100) / 100);
                                 vratio.val(Math.round(resizable.height() / resizable.width() * 100) / 100);
                             };
+                        });
+                    </script>
+                </div>
+
+                <!-- SELECTABLE -->
+
+                <div id="ui-selectable">
+                    <h2><a href="#ui-selectable">Cuic.Selectable</a></h2>
+
+                    <div class="sandbox">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="blueprint" style="height: 300px">
+                                    <div class="testbox testbox-a">A</div>
+                                    <div class="testbox testbox-b">B</div>
+                                    <div class="testbox testbox-c">C</div>
+                                    <div class="testbox testbox-d">D</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        $(document).ready(function () {
+                            var section = Cuic.element('#ui-selectable');
+                            var sandbox = section.find('.sandbox');
+                            var blueprint = sandbox.find('.blueprint');
+
+                            Cuic.find('.testbox', blueprint).each(function (box) {
+                                window.selectable = new Cuic.Selectable({
+                                    element: box
+                                });
+                            });
                         });
                     </script>
                 </div>

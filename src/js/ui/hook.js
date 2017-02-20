@@ -23,7 +23,7 @@
  *
  */
 
-Cuic.Hook = class extends Cuic.Component {
+Cuic.Hook = class extends Cuic.Element {
 
     constructor(options) {
         // Set default options

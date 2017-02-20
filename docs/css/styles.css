@@ -277,9 +277,24 @@ tr {
 .testbox {
     background: rgba(255, 255, 255, 0.7);
     border: solid 2px deepskyblue;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0.5);
+    display: inline-block;
     height: 100px;
     width: 100px;
     padding: 10px;
     margin: 10px;
     text-align: center;
+    transition-duration: 0.2s;
+    transition-property: border, background, box-shadow, color;
+}
+
+.testbox.moving,
+.testbox.resizing {
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+}
+
+.testbox.selected {
+    background-color: rgba(255, 99, 71, 0.3);
+    border-color: tomato;
 }

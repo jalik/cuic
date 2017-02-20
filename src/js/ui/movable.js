@@ -23,7 +23,7 @@
  *
  */
 
-Cuic.Movable = class extends Cuic.Component {
+Cuic.Movable = class extends Cuic.Element {
 
     constructor(options) {
         // Set default options
@@ -43,25 +43,7 @@ Cuic.Movable = class extends Cuic.Component {
         }
 
         // Set the moving area
-        this.setDragHandle(options.handle || self.getElement());
-    }
-
-    /**
-     * Called when moving
-     */
-    onMove() {
-    }
-
-    /**
-     * Called when move start
-     */
-    onMoveStart() {
-    }
-
-    /**
-     * Called when move stop
-     */
-    onMoveStop() {
+        this.addMoveHandle(options.handle || self.getElement());
     }
 
     /**
@@ -69,7 +51,7 @@ Cuic.Movable = class extends Cuic.Component {
      * @param handle
      * @return {Cuic.Component}
      */
-    setDragHandle(handle) {
+    addMoveHandle(handle) {
         const self = this;
 
         // Add the handle class
@@ -165,6 +147,24 @@ Cuic.Movable = class extends Cuic.Component {
             });
         });
         return self;
+    }
+
+    /**
+     * Called when moving
+     */
+    onMove() {
+    }
+
+    /**
+     * Called when move start
+     */
+    onMoveStart() {
+    }
+
+    /**
+     * Called when move stop
+     */
+    onMoveStop() {
     }
 };
 

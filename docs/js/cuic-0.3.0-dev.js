@@ -655,6 +655,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
         /**
+         * Returns all elements matching the selector
+         * @param selector
+         * @param context
+         * @return {Cuic.Set}
+         */
+        find: function find(selector, context) {
+            context = this.getElement(context || document);
+            var elements = context.querySelectorAll(selector);
+            return new this.Set(elements, context, selector);
+        },
+
+
+        /**
          * Returns CSS classes
          * @param element
          * @return {Array}
@@ -2802,9 +2815,6 @@ Cuic.Element.prototype.options = {
  *
  */
 
-/**
- * Generic component
- */
 Cuic.Component = function (_Cuic$Element) {
     _inherits(_class5, _Cuic$Element);
 
@@ -3019,8 +3029,7 @@ Cuic.Component = function (_Cuic$Element) {
 Cuic.Component.prototype.options = {
     className: null,
     css: null,
-    parent: null,
-    position: null
+    parent: null
 };
 
 /*
@@ -3048,8 +3057,8 @@ Cuic.Component.prototype.options = {
  *
  */
 
-Cuic.GroupComponent = function (_Cuic$Component) {
-    _inherits(_class6, _Cuic$Component);
+Cuic.GroupComponent = function (_Cuic$Element2) {
+    _inherits(_class6, _Cuic$Element2);
 
     function _class6(node, attributes, options) {
         _classCallCheck(this, _class6);
@@ -3136,7 +3145,7 @@ Cuic.GroupComponent = function (_Cuic$Component) {
     }]);
 
     return _class6;
-}(Cuic.Component);
+}(Cuic.Element);
 
 Cuic.GroupComponent.prototype.options = {
     className: 'group'
@@ -3167,8 +3176,8 @@ Cuic.GroupComponent.prototype.options = {
  *
  */
 
-Cuic.Hook = function (_Cuic$Component2) {
-    _inherits(_class7, _Cuic$Component2);
+Cuic.Hook = function (_Cuic$Element3) {
+    _inherits(_class7, _Cuic$Element3);
 
     function _class7(options) {
         _classCallCheck(this, _class7);
@@ -3336,7 +3345,7 @@ Cuic.Hook = function (_Cuic$Component2) {
     }]);
 
     return _class7;
-}(Cuic.Component);
+}(Cuic.Element);
 
 Cuic.Hook.prototype.options = {
     fixed: true,
@@ -3373,8 +3382,8 @@ Cuic.Hook.prototype.options = {
  *
  */
 
-Cuic.Movable = function (_Cuic$Component3) {
-    _inherits(_class8, _Cuic$Component3);
+Cuic.Movable = function (_Cuic$Element4) {
+    _inherits(_class8, _Cuic$Element4);
 
     function _class8(options) {
         _classCallCheck(this, _class8);
@@ -3397,44 +3406,20 @@ Cuic.Movable = function (_Cuic$Component3) {
         }
 
         // Set the moving area
-        _this9.setDragHandle(options.handle || self.getElement());
+        _this9.addMoveHandle(options.handle || self.getElement());
         return _this9;
     }
 
     /**
-     * Called when moving
+     * Sets the moving area
+     * @param handle
+     * @return {Cuic.Component}
      */
 
 
     _createClass(_class8, [{
-        key: 'onMove',
-        value: function onMove() {}
-
-        /**
-         * Called when move start
-         */
-
-    }, {
-        key: 'onMoveStart',
-        value: function onMoveStart() {}
-
-        /**
-         * Called when move stop
-         */
-
-    }, {
-        key: 'onMoveStop',
-        value: function onMoveStop() {}
-
-        /**
-         * Sets the moving area
-         * @param handle
-         * @return {Cuic.Component}
-         */
-
-    }, {
-        key: 'setDragHandle',
-        value: function setDragHandle(handle) {
+        key: 'addMoveHandle',
+        value: function addMoveHandle(handle) {
             var self = this;
 
             // Add the handle class
@@ -3529,10 +3514,34 @@ Cuic.Movable = function (_Cuic$Component3) {
             });
             return self;
         }
+
+        /**
+         * Called when moving
+         */
+
+    }, {
+        key: 'onMove',
+        value: function onMove() {}
+
+        /**
+         * Called when move start
+         */
+
+    }, {
+        key: 'onMoveStart',
+        value: function onMoveStart() {}
+
+        /**
+         * Called when move stop
+         */
+
+    }, {
+        key: 'onMoveStop',
+        value: function onMoveStop() {}
     }]);
 
     return _class8;
-}(Cuic.Component);
+}(Cuic.Element);
 
 Cuic.Movable.prototype.options = {
     className: 'movable',
@@ -3569,8 +3578,8 @@ Cuic.Movable.prototype.options = {
  *
  */
 
-Cuic.Resizable = function (_Cuic$Component4) {
-    _inherits(_class9, _Cuic$Component4);
+Cuic.Resizable = function (_Cuic$Element5) {
+    _inherits(_class9, _Cuic$Element5);
 
     function _class9(options) {
         _classCallCheck(this, _class9);
@@ -3754,7 +3763,7 @@ Cuic.Resizable = function (_Cuic$Component4) {
     }]);
 
     return _class9;
-}(Cuic.Component);
+}(Cuic.Element);
 
 Cuic.Resizable.prototype.options = {
     className: 'resizable',
@@ -3794,18 +3803,169 @@ Cuic.Resizable.prototype.options = {
  *
  */
 
-Cuic.Button = function (_Cuic$Component5) {
-    _inherits(_class10, _Cuic$Component5);
+Cuic.Selectable = function (_Cuic$Element6) {
+    _inherits(_class10, _Cuic$Element6);
 
     function _class10(options) {
         _classCallCheck(this, _class10);
+
+        // Set default options
+        options = Cuic.extend({}, Cuic.Selectable.prototype.options, options);
+
+        // Create element
+
+        // Add component class
+        var _this11 = _possibleConstructorReturn(this, (_class10.__proto__ || Object.getPrototypeOf(_class10)).call(this, 'div', { className: options.className }, options));
+
+        _this11.addClass('selectable');
+
+        // Add or remove selected class
+        _this11.on('click', function () {
+            if (_this11.hasClass('selected')) {
+                _this11.deselect();
+            } else {
+                _this11.select();
+            }
+        });
+        return _this11;
+    }
+
+    /**
+     * Deselect element
+     */
+
+
+    _createClass(_class10, [{
+        key: 'deselect',
+        value: function deselect() {
+            this.removeClass('selected');
+        }
+
+        /**
+         * Select element
+         */
+
+    }, {
+        key: 'select',
+        value: function select() {
+            this.addClass('selected');
+        }
+    }]);
+
+    return _class10;
+}(Cuic.Element);
+
+Cuic.Selectable.prototype.options = {
+    className: 'selectable',
+    namespace: 'selectable'
+};
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2017 Karl STEIN
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
+Cuic.Set = function () {
+    function _class11(elements, context, selector) {
+        _classCallCheck(this, _class11);
+
+        this.length = 0;
+        this.context = context;
+        this.selector = selector;
+
+        for (var i = 0; i < elements.length; i += 1) {
+            if (elements.hasOwnProperty(i)) {
+                var elm = elements[i];
+
+                // Convert element
+                if (elm instanceof HTMLElement) {
+                    elm = Cuic.element(elm);
+                }
+
+                // Add element to set
+                this[this.length] = elm;
+
+                // Increment set length
+                this.length += 1;
+            }
+        }
+    }
+
+    /**
+     * Executes a callback on each elements
+     * @param callback
+     */
+
+
+    _createClass(_class11, [{
+        key: 'each',
+        value: function each(callback) {
+            for (var i = 0; i < this.length; i += 1) {
+                callback.call(this, this[i]);
+            }
+        }
+    }]);
+
+    return _class11;
+}();
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2017 Karl STEIN
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
+Cuic.Button = function (_Cuic$Component) {
+    _inherits(_class12, _Cuic$Component);
+
+    function _class12(options) {
+        _classCallCheck(this, _class12);
 
         // Set default options
         options = Cuic.extend({}, Cuic.Button.prototype.options, options);
 
         // Create element
 
-        var _this11 = _possibleConstructorReturn(this, (_class10.__proto__ || Object.getPrototypeOf(_class10)).call(this, 'button', {
+        var _this12 = _possibleConstructorReturn(this, (_class12.__proto__ || Object.getPrototypeOf(_class12)).call(this, 'button', {
             className: options.className,
             disabled: false,
             html: options.label,
@@ -3813,7 +3973,7 @@ Cuic.Button = function (_Cuic$Component5) {
             type: options.type
         }, options));
 
-        var self = _this11;
+        var self = _this12;
 
         // Add component classes
         self.addClass('btn');
@@ -3828,10 +3988,10 @@ Cuic.Button = function (_Cuic$Component5) {
                 }
             });
         }
-        return _this11;
+        return _this12;
     }
 
-    return _class10;
+    return _class12;
 }(Cuic.Component);
 
 Cuic.Button.prototype.options = {
@@ -3885,23 +4045,23 @@ Cuic.dialogs.onRemoved = function () {
 /**
  * Basic dialog
  */
-Cuic.Dialog = function (_Cuic$Component6) {
-    _inherits(_class11, _Cuic$Component6);
+Cuic.Dialog = function (_Cuic$Component2) {
+    _inherits(_class13, _Cuic$Component2);
 
-    function _class11(options) {
-        _classCallCheck(this, _class11);
+    function _class13(options) {
+        _classCallCheck(this, _class13);
 
         // Set default options
         options = Cuic.extend({}, Cuic.Dialog.prototype.options, options);
 
         // Create element
 
-        var _this12 = _possibleConstructorReturn(this, (_class11.__proto__ || Object.getPrototypeOf(_class11)).call(this, 'div', {
+        var _this13 = _possibleConstructorReturn(this, (_class13.__proto__ || Object.getPrototypeOf(_class13)).call(this, 'div', {
             className: options.className,
             role: 'dialog'
         }, options));
 
-        var self = _this12;
+        var self = _this13;
 
         // Add component classes
         self.addClass('dialog');
@@ -3945,11 +4105,11 @@ Cuic.Dialog = function (_Cuic$Component6) {
 
             // Show footer if not empty
             if (self.buttons.length > 0) {
-                _this12.footer.show();
+                _this13.footer.show();
             }
             // Hide footer if empty
             else {
-                    _this12.footer.hide();
+                    _this13.footer.hide();
                 }
             return button;
         };
@@ -4077,7 +4237,7 @@ Cuic.Dialog = function (_Cuic$Component6) {
 
         // Add dialog to collection
         Cuic.dialogs.add(self);
-        return _this12;
+        return _this13;
     }
 
     /**
@@ -4087,7 +4247,7 @@ Cuic.Dialog = function (_Cuic$Component6) {
      */
 
 
-    _createClass(_class11, [{
+    _createClass(_class13, [{
         key: 'getBody',
         value: function getBody() {
             return this.content;
@@ -4272,7 +4432,7 @@ Cuic.Dialog = function (_Cuic$Component6) {
         }
     }]);
 
-    return _class11;
+    return _class13;
 }(Cuic.Component);
 
 Cuic.Dialog.prototype.options = {
@@ -4321,38 +4481,38 @@ Cuic.Dialog.prototype.options = {
  *
  */
 
-Cuic.Fader = function (_Cuic$Component7) {
-    _inherits(_class12, _Cuic$Component7);
+Cuic.Fader = function (_Cuic$Component3) {
+    _inherits(_class14, _Cuic$Component3);
 
-    function _class12(options) {
-        _classCallCheck(this, _class12);
+    function _class14(options) {
+        _classCallCheck(this, _class14);
 
         // Set default options
         options = Cuic.extend({}, Cuic.Fader.prototype.options, options);
 
         // Create element
 
-        var _this13 = _possibleConstructorReturn(this, (_class12.__proto__ || Object.getPrototypeOf(_class12)).call(this, 'div', { className: options.className }, options));
+        var _this14 = _possibleConstructorReturn(this, (_class14.__proto__ || Object.getPrototypeOf(_class14)).call(this, 'div', { className: options.className }, options));
 
-        var self = _this13;
+        var self = _this14;
 
         // Add component classes
         self.addClass('fader');
 
-        var fixed = _this13.getParentElement() === document.body;
+        var fixed = _this14.getParentElement() === document.body;
 
         // Set position
         if (fixed) {
-            _this13.css({ position: 'fixed' });
+            _this14.css({ position: 'fixed' });
         }
 
         // Auto close when fader is clicked
-        _this13.on('click', function () {
-            if (_this13.options.autoClose) {
-                _this13.close();
+        _this14.on('click', function () {
+            if (_this14.options.autoClose) {
+                _this14.close();
             }
         });
-        return _this13;
+        return _this14;
     }
 
     /**
@@ -4360,7 +4520,7 @@ Cuic.Fader = function (_Cuic$Component7) {
      */
 
 
-    _createClass(_class12, [{
+    _createClass(_class14, [{
         key: 'onClosed',
         value: function onClosed() {
             if (this.options.autoRemove) {
@@ -4369,7 +4529,7 @@ Cuic.Fader = function (_Cuic$Component7) {
         }
     }]);
 
-    return _class12;
+    return _class14;
 }(Cuic.Component);
 
 Cuic.Button.prototype.options = {
@@ -5120,23 +5280,23 @@ Cuic.notifications = new Cuic.Collection();
 /**
  * Notification component
  */
-Cuic.Notification = function (_Cuic$Component8) {
-    _inherits(_class13, _Cuic$Component8);
+Cuic.Notification = function (_Cuic$Component4) {
+    _inherits(_class15, _Cuic$Component4);
 
-    function _class13(options) {
-        _classCallCheck(this, _class13);
+    function _class15(options) {
+        _classCallCheck(this, _class15);
 
         // Set default options
         options = Cuic.extend({}, Cuic.Notification.prototype.options, options);
 
         // Create element
 
-        var _this14 = _possibleConstructorReturn(this, (_class13.__proto__ || Object.getPrototypeOf(_class13)).call(this, 'div', {
+        var _this15 = _possibleConstructorReturn(this, (_class15.__proto__ || Object.getPrototypeOf(_class15)).call(this, 'div', {
             className: options.className,
             html: options.content
         }, options));
 
-        var self = _this14;
+        var self = _this15;
 
         // Add component classes
         self.addClass('notification');
@@ -5179,7 +5339,7 @@ Cuic.Notification = function (_Cuic$Component8) {
 
         // Add dialog to collection
         Cuic.notifications.add(self);
-        return _this14;
+        return _this15;
     }
 
     /**
@@ -5187,15 +5347,15 @@ Cuic.Notification = function (_Cuic$Component8) {
      */
 
 
-    _createClass(_class13, [{
+    _createClass(_class15, [{
         key: 'autoClose',
         value: function autoClose() {
-            var _this15 = this;
+            var _this16 = this;
 
             clearTimeout(this.closeTimer);
             this.closeTimer = setTimeout(function () {
-                if (_this15.options.autoClose) {
-                    _this15.close();
+                if (_this16.options.autoClose) {
+                    _this16.close();
                 }
             }, this.options.duration);
         }
@@ -5243,7 +5403,7 @@ Cuic.Notification = function (_Cuic$Component8) {
         }
     }]);
 
-    return _class13;
+    return _class15;
 }(Cuic.Component);
 
 Cuic.Notification.prototype.options = {
@@ -5285,19 +5445,19 @@ Cuic.Notification.prototype.options = {
  */
 
 Cuic.NotificationStack = function (_Cuic$GroupComponent) {
-    _inherits(_class14, _Cuic$GroupComponent);
+    _inherits(_class16, _Cuic$GroupComponent);
 
-    function _class14(options) {
-        _classCallCheck(this, _class14);
+    function _class16(options) {
+        _classCallCheck(this, _class16);
 
         // Set default options
         options = Cuic.extend({}, Cuic.NotificationStack.prototype.options, options);
 
         // Create element
 
-        var _this16 = _possibleConstructorReturn(this, (_class14.__proto__ || Object.getPrototypeOf(_class14)).call(this, 'div', { className: options.className }, options));
+        var _this17 = _possibleConstructorReturn(this, (_class16.__proto__ || Object.getPrototypeOf(_class16)).call(this, 'div', { className: options.className }, options));
 
-        var self = _this16;
+        var self = _this17;
 
         // Add component classes
         self.addClass('notification-stack');
@@ -5308,10 +5468,10 @@ Cuic.NotificationStack = function (_Cuic$GroupComponent) {
             self.css({ position: isFixed ? 'fixed' : 'absolute' });
             self.align(self.options.position);
         }
-        return _this16;
+        return _this17;
     }
 
-    _createClass(_class14, [{
+    _createClass(_class16, [{
         key: 'onComponentAdded',
         value: function onComponentAdded(component) {
             // Display the notification when it's added to the stack
@@ -5332,7 +5492,7 @@ Cuic.NotificationStack = function (_Cuic$GroupComponent) {
         }
     }]);
 
-    return _class14;
+    return _class16;
 }(Cuic.GroupComponent);
 
 Cuic.NotificationStack.prototype.options = {
@@ -5367,20 +5527,20 @@ Cuic.NotificationStack.prototype.options = {
  *
  */
 
-Cuic.Panel = function (_Cuic$Component9) {
-    _inherits(_class15, _Cuic$Component9);
+Cuic.Panel = function (_Cuic$Component5) {
+    _inherits(_class17, _Cuic$Component5);
 
-    function _class15(options) {
-        _classCallCheck(this, _class15);
+    function _class17(options) {
+        _classCallCheck(this, _class17);
 
         // Set default options
         options = Cuic.extend({}, Cuic.Panel.prototype.options, options);
 
         // Create element
 
-        var _this17 = _possibleConstructorReturn(this, (_class15.__proto__ || Object.getPrototypeOf(_class15)).call(this, 'div', { className: options.className }, options));
+        var _this18 = _possibleConstructorReturn(this, (_class17.__proto__ || Object.getPrototypeOf(_class17)).call(this, 'div', { className: options.className }, options));
 
-        var self = _this17;
+        var self = _this18;
 
         // Add component classes
         self.addClass('panel');
@@ -5489,7 +5649,7 @@ Cuic.Panel = function (_Cuic$Component9) {
                 }
             }
         });
-        return _this17;
+        return _this18;
     }
 
     /**
@@ -5499,7 +5659,7 @@ Cuic.Panel = function (_Cuic$Component9) {
      */
 
 
-    _createClass(_class15, [{
+    _createClass(_class17, [{
         key: 'getBody',
         value: function getBody() {
             return this.content;
@@ -5721,7 +5881,7 @@ Cuic.Panel = function (_Cuic$Component9) {
         }
     }]);
 
-    return _class15;
+    return _class17;
 }(Cuic.Component);
 
 Cuic.Panel.prototype.options = {
@@ -5765,20 +5925,20 @@ Cuic.Panel.prototype.options = {
  *
  */
 
-Cuic.Popup = function (_Cuic$Component10) {
-    _inherits(_class16, _Cuic$Component10);
+Cuic.Popup = function (_Cuic$Component6) {
+    _inherits(_class18, _Cuic$Component6);
 
-    function _class16(options) {
-        _classCallCheck(this, _class16);
+    function _class18(options) {
+        _classCallCheck(this, _class18);
 
         // Set default options
         options = Cuic.extend({}, Cuic.Popup.prototype.options, options);
 
         // Create element
 
-        var _this18 = _possibleConstructorReturn(this, (_class16.__proto__ || Object.getPrototypeOf(_class16)).call(this, 'div', { className: options.className }, options));
+        var _this19 = _possibleConstructorReturn(this, (_class18.__proto__ || Object.getPrototypeOf(_class18)).call(this, 'div', { className: options.className }, options));
 
-        var self = _this18;
+        var self = _this19;
 
         // Add component classes
         self.addClass('popup');
@@ -5834,7 +5994,7 @@ Cuic.Popup = function (_Cuic$Component10) {
                 }
             })
         };
-        return _this18;
+        return _this19;
     }
 
     /**
@@ -5843,7 +6003,7 @@ Cuic.Popup = function (_Cuic$Component10) {
      */
 
 
-    _createClass(_class16, [{
+    _createClass(_class18, [{
         key: 'getContent',
         value: function getContent() {
             return this.content;
@@ -5887,7 +6047,7 @@ Cuic.Popup = function (_Cuic$Component10) {
         }
     }]);
 
-    return _class16;
+    return _class18;
 }(Cuic.Component);
 
 Cuic.Popup.prototype.options = {
@@ -5928,23 +6088,23 @@ Cuic.Popup.prototype.options = {
  *
  */
 
-Cuic.Switcher = function (_Cuic$Component11) {
-    _inherits(_class17, _Cuic$Component11);
+Cuic.Switcher = function (_Cuic$Component7) {
+    _inherits(_class19, _Cuic$Component7);
 
-    function _class17(options) {
-        _classCallCheck(this, _class17);
+    function _class19(options) {
+        _classCallCheck(this, _class19);
 
         // Set default options
         options = Cuic.extend({}, Cuic.Switcher.prototype.options, options);
 
         // Create element
 
-        var _this19 = _possibleConstructorReturn(this, (_class17.__proto__ || Object.getPrototypeOf(_class17)).call(this, 'div', {
+        var _this20 = _possibleConstructorReturn(this, (_class19.__proto__ || Object.getPrototypeOf(_class19)).call(this, 'div', {
             className: options.className,
             html: options.content
         }, options));
 
-        var self = _this19;
+        var self = _this20;
 
         // Add component classes
         self.addClass('switcher');
@@ -5961,7 +6121,7 @@ Cuic.Switcher = function (_Cuic$Component11) {
         if (self.options.autoStart) {
             self.start();
         }
-        return _this19;
+        return _this20;
     }
 
     /**
@@ -5969,7 +6129,7 @@ Cuic.Switcher = function (_Cuic$Component11) {
      */
 
 
-    _createClass(_class17, [{
+    _createClass(_class19, [{
         key: 'first',
         value: function first() {
             this.goTo(0);
@@ -6104,11 +6264,11 @@ Cuic.Switcher = function (_Cuic$Component11) {
     }, {
         key: 'start',
         value: function start() {
-            var _this20 = this;
+            var _this21 = this;
 
             if (!this.isStarted()) {
                 this.timer = setInterval(function () {
-                    _this20.next();
+                    _this21.next();
                 }, this.options.delay);
             }
         }
@@ -6127,7 +6287,7 @@ Cuic.Switcher = function (_Cuic$Component11) {
         }
     }]);
 
-    return _class17;
+    return _class19;
 }(Cuic.Component);
 
 Cuic.Switcher.prototype.options = {
@@ -6521,20 +6681,20 @@ Cuic.Switcher.prototype.options = {
 
 Cuic.tooltips = new Cuic.Collection();
 
-Cuic.Tooltip = function (_Cuic$Component12) {
-    _inherits(_class18, _Cuic$Component12);
+Cuic.Tooltip = function (_Cuic$Component8) {
+    _inherits(_class20, _Cuic$Component8);
 
-    function _class18(options) {
-        _classCallCheck(this, _class18);
+    function _class20(options) {
+        _classCallCheck(this, _class20);
 
         // Set default options
         options = Cuic.extend({}, Cuic.Tooltip.prototype.options, options);
 
         // Create element
 
-        var _this21 = _possibleConstructorReturn(this, (_class18.__proto__ || Object.getPrototypeOf(_class18)).call(this, 'div', { className: options.className }, options));
+        var _this22 = _possibleConstructorReturn(this, (_class20.__proto__ || Object.getPrototypeOf(_class20)).call(this, 'div', { className: options.className }, options));
 
-        var self = _this21;
+        var self = _this22;
 
         // Add component classes
         self.addClass('tooltip');
@@ -6612,7 +6772,7 @@ Cuic.Tooltip = function (_Cuic$Component12) {
 
         // Add the tooltip to the list
         Cuic.tooltips.add(self);
-        return _this21;
+        return _this22;
     }
 
     /**
@@ -6620,7 +6780,7 @@ Cuic.Tooltip = function (_Cuic$Component12) {
      */
 
 
-    _createClass(_class18, [{
+    _createClass(_class20, [{
         key: 'onClosed',
         value: function onClosed() {
             if (this.options.autoRemove) {
@@ -6691,7 +6851,7 @@ Cuic.Tooltip = function (_Cuic$Component12) {
         }
     }]);
 
-    return _class18;
+    return _class20;
 }(Cuic.Component);
 
 Cuic.Tooltip.prototype.options = {

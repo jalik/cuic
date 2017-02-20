@@ -23,9 +23,6 @@
  *
  */
 
-/**
- * Generic component
- */
 Cuic.Component = class extends Cuic.Element {
 
     constructor(node, attributes, options) {
@@ -190,6 +187,5 @@ Cuic.Component = class extends Cuic.Element {
 Cuic.Component.prototype.options = {
     className: null,
     css: null,
-    parent: null,
-    position: null
+    parent: null
 };

@@ -23,7 +23,7 @@
  *
  */
 
-Cuic.GroupComponent = class extends Cuic.Component {
+Cuic.GroupComponent = class extends Cuic.Element {
 
     constructor(node, attributes, options) {
         // Set default options

@@ -23,7 +23,7 @@
  *
  */
 
-Cuic.Resizable = class extends Cuic.Component {
+Cuic.Resizable = class extends Cuic.Element {
 
     constructor(options) {
         // Set default options

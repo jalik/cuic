@@ -625,6 +625,18 @@
         },
 
         /**
+         * Returns all elements matching the selector
+         * @param selector
+         * @param context
+         * @return {Cuic.Set}
+         */
+        find(selector, context) {
+            context = this.getElement(context || document);
+            const elements = context.querySelectorAll(selector);
+            return new this.Set(elements, context, selector);
+        },
+
+        /**
          * Returns CSS classes
          * @param element
          * @return {Array}
