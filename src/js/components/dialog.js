@@ -348,8 +348,8 @@ Cuic.Dialog = class extends Cuic.Component {
         }
 
         // Set panel max height
-        const border = Cuic.border(this);
-        const margin = Cuic.margin(this);
+        const border = this.border();
+        const margin = this.margin();
         maxHeight -= margin.vertical;
         maxHeight -= border.vertical;
         this.css({'max-height': maxHeight + 'px'});

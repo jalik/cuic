@@ -181,7 +181,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
         /**
-         * Returns the element border
+         * Returns element border widths
          * @param element
          * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
          */
@@ -2235,6 +2235,17 @@ Cuic.Element = function () {
         }
 
         /**
+         * Returns element border widths
+         * @return {*|{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
+         */
+
+    }, {
+        key: 'border',
+        value: function border() {
+            return Cuic.border(this);
+        }
+
+        /**
          * Returns element child nodes
          * @return {Array}
          */
@@ -2476,6 +2487,17 @@ Cuic.Element = function () {
         }
 
         /**
+         * Returns element margin
+         * @return {*|{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
+         */
+
+    }, {
+        key: 'margin',
+        value: function margin() {
+            return Cuic.margin(this);
+        }
+
+        /**
          * Remove the callback attached to the event
          * @param event
          * @param callback
@@ -2558,6 +2580,17 @@ Cuic.Element = function () {
         key: 'outerWidth',
         value: function outerWidth(includeMargin) {
             return Cuic.outerWidth(this, includeMargin);
+        }
+
+        /**
+         * Returns element padding
+         * @return {*|{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
+         */
+
+    }, {
+        key: 'padding',
+        value: function padding() {
+            return Cuic.padding(this);
         }
 
         /**
@@ -2696,7 +2729,7 @@ Cuic.Element = function () {
     }, {
         key: 'val',
         value: function val(value) {
-            if (value && 'value' in this.getElement()) {
+            if (value !== undefined) {
                 this.getElement().value = value;
                 return this;
             } else {
@@ -3158,7 +3191,7 @@ Cuic.Hook = function (_Cuic$Component2) {
                 if (self.options.fixed) {
                     self.hook();
                 } else {
-                    var margin = Cuic.margin(self);
+                    var margin = self.margin();
 
                     if (window.scrollY > offset.top - margin.top) {
                         self.hook();
@@ -3197,7 +3230,7 @@ Cuic.Hook = function (_Cuic$Component2) {
 
             if (self.css('position') !== 'fixed') {
                 var offset = self.offset();
-                var margin = Cuic.margin(self);
+                var margin = self.margin();
 
                 if (self.options.fixed) {
                     self.options.offsetTop = offset.top;
@@ -3338,7 +3371,7 @@ Cuic.Movable = function (_Cuic$Component3) {
 
         var self = _this9;
 
-        // Add component classes
+        // Add component class
         self.addClass('movable');
 
         // Force the target to be the relative parent
@@ -3396,47 +3429,45 @@ Cuic.Movable = function (_Cuic$Component3) {
                 if (self.options.rootOnly && ev.target !== ev.currentTarget) return;
 
                 // Execute callback
-                if (self.onMoveStart(ev) === false) {
-                    return;
-                }
+                if (self.onMoveStart(ev) === false) return;
 
                 // Prevent text selection
                 ev.preventDefault();
 
-                // Change element style
-                self.addClass('dragging');
+                // Add moving class
+                self.addClass('moving');
 
-                var parent = self.getParentElement();
+                var parent = self.parent();
+                var startOffset = self.position();
+                var startX = ev.clientX;
+                var startY = ev.clientY;
 
-                var margin = Cuic.margin(self);
-                var height = Cuic.outerHeight(self);
-                var width = Cuic.outerWidth(self);
-                var startOffset = Cuic.position(self);
-                var startX = Cuic.mouseX;
-                var startY = Cuic.mouseY;
-
-                var timer = setInterval(function () {
-                    var parentPadding = Cuic.padding(parent);
-                    var parentHeight = Cuic.innerHeight(parent);
-                    var parentWidth = Cuic.innerWidth(parent);
-                    var spaceLeft = Math.max(parentPadding.left);
-                    var spaceTop = Math.max(parentPadding.top);
+                var onMouseMove = function onMouseMove(ev) {
+                    var margin = self.margin();
+                    var height = self.outerHeight();
+                    var width = self.outerWidth();
+                    var parentPadding = parent.padding();
+                    var parentHeight = parent.innerHeight();
+                    var parentWidth = parent.innerWidth();
                     var prop = {};
 
                     // Calculate minimal values
-                    var minX = spaceLeft;
-                    var minY = spaceTop;
+                    var minX = 0;
+                    var minY = 0;
 
                     // Calculate maximal values
-                    var maxX = parentWidth - parentPadding.horizontal - margin.right;
-                    var maxY = parentHeight - parentPadding.vertical - margin.bottom;
+                    var maxX = parentWidth - parentPadding.horizontal;
+                    var maxY = parentHeight - parentPadding.vertical;
 
-                    var stepX = self.options.stepX;
-                    var stepY = self.options.stepY;
-                    var diffX = Cuic.mouseX - startX;
-                    var diffY = Cuic.mouseY - startY;
-                    var left = startOffset.left + Math.round(diffX / stepX) * stepX;
-                    var top = startOffset.top + Math.round(diffY / stepY) * stepY;
+                    if (self.css('position') === 'relative') {
+                        maxX -= margin.horizontal;
+                        maxY -= margin.vertical;
+                    }
+
+                    var diffX = ev.clientX - startX;
+                    var diffY = ev.clientY - startY;
+                    var left = startOffset.left + diffX;
+                    var top = startOffset.top + diffY;
 
                     // Check horizontal location
                     if (left < minX) {
@@ -3453,7 +3484,7 @@ Cuic.Movable = function (_Cuic$Component3) {
                     }
 
                     // Execute callback
-                    if (self.onMove({ x: left, y: top }) === false) {
+                    if (self.onMove(ev, { x: left, y: top }) === false) {
                         return;
                     }
 
@@ -3469,12 +3500,15 @@ Cuic.Movable = function (_Cuic$Component3) {
                     }
                     // Move element
                     self.css(prop);
-                }, Math.round(1000 / self.options.fps));
+                };
 
-                // Stop dragging
-                Cuic.once('mouseup', document.body, function (ev) {
-                    clearInterval(timer);
-                    self.removeClass('dragging');
+                // Moving
+                Cuic.on('mousemove', document, onMouseMove);
+
+                // Stop moving
+                Cuic.once('mouseup', document, function (ev) {
+                    Cuic.off('mousemove', document, onMouseMove);
+                    self.removeClass('moving');
                     self.onMoveStop(ev);
                 });
             });
@@ -3595,7 +3629,7 @@ Cuic.Resizable = function (_Cuic$Component4) {
             var parentOffset = parent.offset();
             var elmHeight = self.outerHeight();
             var elmWidth = self.outerWidth();
-            var elmPadding = Cuic.padding(self);
+            var elmPadding = self.padding();
 
             // Calculate initial ratio
             var ratio = elmHeight / elmWidth;
@@ -4175,8 +4209,8 @@ Cuic.Dialog = function (_Cuic$Component6) {
             }
 
             // Set panel max height
-            var border = Cuic.border(this);
-            var margin = Cuic.margin(this);
+            var border = this.border();
+            var margin = this.margin();
             maxHeight -= margin.vertical;
             maxHeight -= border.vertical;
             this.css({ 'max-height': maxHeight + 'px' });
@@ -5628,8 +5662,8 @@ Cuic.Panel = function (_Cuic$Component9) {
             }
 
             // Set panel max height
-            var border = Cuic.border(this);
-            var margin = Cuic.margin(this);
+            var border = this.border();
+            var margin = this.margin();
             maxHeight -= margin.vertical;
             maxHeight -= border.vertical;
             this.css({ 'max-height': maxHeight + 'px' });

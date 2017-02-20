@@ -157,9 +157,6 @@
 .movable {
   position: relative;
 }
-.movable.dragging {
-  position: relative;
-}
 .movable-handle {
   cursor: move;
 }

@@ -187,6 +187,14 @@ Cuic.Element = class {
     }
 
     /**
+     * Returns element border widths
+     * @return {*|{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
+     */
+    border() {
+        return Cuic.border(this);
+    }
+
+    /**
      * Returns element child nodes
      * @return {Array}
      */
@@ -372,6 +380,14 @@ Cuic.Element = class {
     }
 
     /**
+     * Returns element margin
+     * @return {*|{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
+     */
+    margin() {
+        return Cuic.margin(this);
+    }
+
+    /**
      * Remove the callback attached to the event
      * @param event
      * @param callback
@@ -434,6 +450,14 @@ Cuic.Element = class {
      */
     outerWidth(includeMargin) {
         return Cuic.outerWidth(this, includeMargin);
+    }
+
+    /**
+     * Returns element padding
+     * @return {*|{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
+     */
+    padding() {
+        return Cuic.padding(this);
     }
 
     /**
@@ -539,7 +563,7 @@ Cuic.Element = class {
      * @return {Cuic.Element|*}
      */
     val(value) {
-        if (value && 'value' in this.getElement()) {
+        if (value !== undefined) {
             this.getElement().value = value;
             return this;
         } else {

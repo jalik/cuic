@@ -658,7 +658,10 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="blueprint" style="height: 300px">
-                                    <div class="testbox"></div>
+                                    <div class="testbox testbox-a" style="position: relative;">Relative</div>
+                                    <div class="testbox testbox-b" style="position: absolute; bottom: 0; right: 0;">
+                                        Absolute
+                                    </div>
                                 </div>
                             </div>
                             <form class="col-sm-6">
@@ -678,10 +681,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>state</label>
-                                    <div class="input-group">
-                                        <input class="form-control" name="state" readonly>
-                                        <span class="input-group-addon">px</span>
-                                    </div>
+                                    <input class="form-control" name="state" readonly>
                                 </div>
                             </form>
                         </div>
@@ -691,30 +691,49 @@
                             var section = Cuic.element('#ui-movable');
                             var form = section.find('form');
                             var sandbox = section.find('.sandbox');
-                            var testBox = sandbox.find('.testbox');
+                            var testBoxA = sandbox.find('.testbox-a');
+                            var testBoxB = sandbox.find('.testbox-b');
                             var x = form.find('[name="x"]');
                             var y = form.find('[name="y"]');
                             var state = form.find('[name="state"]');
 
                             window.movable = new Cuic.Movable({
-                                element: testBox,
-//                            horizontal: true,
-//                            vertical: true,
+                                element: testBoxA,
+                                horizontal: true,
+                                vertical: true
                             });
-                            movable.onMove = function (ev) {
-//                            Cuic.debug('moving', ev.x, ev.y);
-                                state.val('onMove');
-                                x.val(ev.x);
-                                y.val(ev.y);
-                            };
-                            movable.onMoveStart = function (ev) {
-                                Cuic.debug('move start', ev);
-                                state.val('onMoveStart');
-                            };
-                            movable.onMoveStop = function (ev) {
-                                Cuic.debug('move stop', ev);
-                                state.val('onMoveStop');
-                            };
+
+                            window.movableB = new Cuic.Movable({
+                                element: testBoxB,
+                                horizontal: true,
+                                vertical: true
+                            });
+
+                            var movables = [movable, movableB];
+
+                            for (var i = 0; i < movables.length; i += 1) {
+                                movables[i].onMove = function (ev) {
+                                    state.val('onMove');
+                                    const position = this.position();
+                                    x.val(position.left);
+                                    y.val(position.top);
+//                                Cuic.debug('moving', position);
+                                };
+                                movables[i].onMoveStart = function (ev) {
+                                    state.val('onMoveStart');
+                                    const position = this.position();
+                                    x.val(position.left);
+                                    y.val(position.top);
+//                                Cuic.debug('move start', ev);
+                                };
+                                movables[i].onMoveStop = function (ev) {
+                                    state.val('onMoveStop');
+                                    const position = this.position();
+                                    x.val(position.left);
+                                    y.val(position.top);
+//                                Cuic.debug('move stop', ev);
+                                };
+                            }
                         });
                     </script>
                 </div>

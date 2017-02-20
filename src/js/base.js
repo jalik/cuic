@@ -139,7 +139,7 @@
         },
 
         /**
-         * Returns the element border
+         * Returns element border widths
          * @param element
          * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
          */

@@ -102,7 +102,7 @@ Cuic.Resizable = class extends Cuic.Component {
             const parentOffset = parent.offset();
             let elmHeight = self.outerHeight();
             let elmWidth = self.outerWidth();
-            let elmPadding = Cuic.padding(self);
+            let elmPadding = self.padding();
 
             // Calculate initial ratio
             let ratio = elmHeight / elmWidth;

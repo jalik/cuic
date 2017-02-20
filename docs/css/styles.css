@@ -276,9 +276,10 @@ tr {
 
 .testbox {
     background: rgba(255, 255, 255, 0.7);
+    border: solid 2px deepskyblue;
     height: 100px;
     width: 100px;
     padding: 10px;
     margin: 10px;
-    border: solid 2px deepskyblue;
+    text-align: center;
 }

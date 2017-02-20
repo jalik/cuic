@@ -61,7 +61,7 @@ Cuic.Hook = class extends Cuic.Component {
                     self.hook();
                 }
                 else {
-                    let margin = Cuic.margin(self);
+                    let margin = self.margin();
 
                     if (window.scrollY > offset.top - margin.top) {
                         self.hook();
@@ -95,7 +95,7 @@ Cuic.Hook = class extends Cuic.Component {
 
         if (self.css('position') !== 'fixed') {
             const offset = self.offset();
-            const margin = Cuic.margin(self);
+            const margin = self.margin();
 
             if (self.options.fixed) {
                 self.options.offsetTop = offset.top;
