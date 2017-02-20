@@ -1124,6 +1124,14 @@
         },
 
         /**
+         * Executes the callback when the DOM is ready
+         * @param callback
+         */
+        ready(callback) {
+            document.addEventListener('DOMContentLoaded', callback);
+        },
+
+        /**
          * Removes CSS class from the element
          * @param element
          * @param className
