@@ -30,9 +30,7 @@ Cuic.Panel = class extends Cuic.Component {
         options = Cuic.extend({}, Cuic.Panel.prototype.options, options);
 
         // Create element
-        super('div', {
-            className: options.className
-        }, options);
+        super('div', {className: options.className}, options);
 
         const self = this;
 
@@ -358,12 +356,11 @@ Cuic.Panel.prototype.options = {
     className: 'panel',
     closeable: true,
     closeButton: '',
-    parent: null,
     content: null,
-    css: null,
     footer: null,
     maximized: false,
     namespace: 'panel',
+    parent: null,
     position: 'left top',
     title: null,
     visible: false,

@@ -170,12 +170,10 @@ Cuic.Movable = class extends Cuic.Component {
 
 Cuic.Movable.prototype.options = {
     className: 'movable',
-    fps: 60,
     handle: null,
     handleClassName: 'movable-handle',
     horizontal: true,
+    namespace: 'movable',
     rootOnly: true,
-    stepX: 1,
-    stepY: 1,
     vertical: true
 };

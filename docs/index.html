@@ -568,10 +568,7 @@
                     <h2><a href="#ui-popup">Cuic.Popup</a></h2>
 
                     <p class="alert alert-info">Popups are often used to display menus, for example, when a user clicks
-                        on a
-                        button, a popup menu appears
-                        next to
-                        it.</p>
+                        on a button, a popup menu appears next to it.</p>
 
                     <div class="sandbox" id="sb-popup">
                         <form class="params">
@@ -595,8 +592,8 @@
                     </div>
                     <script>
                         $(document).ready(function () {
-                            var popupSection = $("#ui-popup");
-                            var sandbox = popupSection.find('.sandbox');
+                            var section = Cuic.element("#ui-popup");
+                            var sandbox = section.find('.sandbox');
                             var blueprint = sandbox.find('.blueprint');
                             var anchor = sandbox.find("[name=anchor]");
                             var popupButton = blueprint.find("button");
@@ -874,10 +871,10 @@
                     <script>
                         $(document).ready(function () {
                             var section = $('#ui-switcher');
-                            var sandbox = section.find(".sandbox");
+                            var sandbox = section.find('.sandbox');
 
                             window.switcher = new Cuic.Switcher({
-                                autoStart: true,
+                                autoStart: false,
                                 delay: 1000,
                                 element: sandbox.find('.switcher'),
                                 repeat: sandbox.find('[name=repeat]').is(':checked')

@@ -187,7 +187,6 @@ Cuic.Tooltip.prototype.options = {
     anchor: 'right bottom',
     attribute: 'title',
     className: 'tooltip',
-    css: null,
     followPointer: true,
     namespace: 'tooltip',
     selector: '[title]',

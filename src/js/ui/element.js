@@ -29,7 +29,7 @@ Cuic.Element = class {
         const self = this;
 
         // Set default attributes
-        attributes = Cuic.extend({}, attributes, options);
+        attributes = Cuic.extend({}, attributes);
 
         // Set default options
         self.options = Cuic.extend({}, Cuic.Element.prototype.options, options);
@@ -68,9 +68,14 @@ Cuic.Element = class {
             if (attributes.hasOwnProperty(attr)) {
                 const value = attributes[attr];
 
-                // Do not override existing classes
+                // Do not override classes
                 if (attr === 'className') {
                     self.addClass(value);
+                    continue;
+                }
+                // Apply CSS styles
+                if (attr === 'css') {
+                    self.css(value);
                     continue;
                 }
 
@@ -84,16 +89,18 @@ Cuic.Element = class {
                     else if (attr === 'text') {
                         self.element.innerText = value;
                     }
-                    else if (attr === 'zIndex') {
-                        self.css({'z-index': parseInt(value)});
-                    }
                 }
             }
         }
 
+        // Define Z-Index
+        if (typeof self.options.zIndex === 'number') {
+            self.css({'z-index': parseInt(self.options.zIndex)});
+        }
+
         // Set element styles
-        if (attributes.css) {
-            self.css(attributes.css);
+        if (self.options.css) {
+            self.css(self.options.css);
         }
 
         // Add debug class
@@ -582,8 +589,6 @@ Cuic.Element = class {
 
 Cuic.Element.prototype.options = {
     className: null,
-    css: null,
     namespace: 'cuic',
-    parent: null,
-    position: null
+    parent: null
 };

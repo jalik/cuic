@@ -1,3 +1,28 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2017 Karl STEIN
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -2048,7 +2073,7 @@ Cuic.Element = function () {
         var self = this;
 
         // Set default attributes
-        attributes = Cuic.extend({}, attributes, options);
+        attributes = Cuic.extend({}, attributes);
 
         // Set default options
         self.options = Cuic.extend({}, Cuic.Element.prototype.options, options);
@@ -2086,9 +2111,14 @@ Cuic.Element = function () {
             if (attributes.hasOwnProperty(attr)) {
                 var value = attributes[attr];
 
-                // Do not override existing classes
+                // Do not override classes
                 if (attr === 'className') {
                     self.addClass(value);
+                    continue;
+                }
+                // Apply CSS styles
+                if (attr === 'css') {
+                    self.css(value);
                     continue;
                 }
 
@@ -2099,16 +2129,19 @@ Cuic.Element = function () {
                         self.element.innerHTML = value;
                     } else if (attr === 'text') {
                         self.element.innerText = value;
-                    } else if (attr === 'zIndex') {
-                        self.css({ 'z-index': parseInt(value) });
                     }
                 }
             }
         }
 
+        // Define Z-Index
+        if (typeof self.options.zIndex === 'number') {
+            self.css({ 'z-index': parseInt(self.options.zIndex) });
+        }
+
         // Set element styles
-        if (attributes.css) {
-            self.css(attributes.css);
+        if (self.options.css) {
+            self.css(self.options.css);
         }
 
         // Add debug class
@@ -2740,10 +2773,8 @@ Cuic.Element = function () {
 
 Cuic.Element.prototype.options = {
     className: null,
-    css: null,
     namespace: 'cuic',
-    parent: null,
-    position: null
+    parent: null
 };
 
 /*
@@ -3505,13 +3536,11 @@ Cuic.Movable = function (_Cuic$Component3) {
 
 Cuic.Movable.prototype.options = {
     className: 'movable',
-    fps: 60,
     handle: null,
     handleClassName: 'movable-handle',
     horizontal: true,
+    namespace: 'movable',
     rootOnly: true,
-    stepX: 1,
-    stepY: 1,
     vertical: true
 };
 
@@ -3566,21 +3595,21 @@ Cuic.Resizable = function (_Cuic$Component4) {
         // Add Bottom handle
         self.bottomHandle = new Cuic.Element('div', {
             className: 'resize-handle resize-handle-s',
-            css: { height: options.handlerSize }
+            css: { height: options.handleSize }
         }).appendTo(self);
 
         // Add Right handler
         self.rightHandle = new Cuic.Element('div', {
             className: 'resize-handle resize-handle-e',
-            css: { width: options.handlerSize }
+            css: { width: options.handleSize }
         }).appendTo(self);
 
         // Add Bottom-Right handler
         self.bottomRightHandle = new Cuic.Element('div', {
             className: 'resize-handle resize-handle-se',
             css: {
-                height: options.handlerSize,
-                width: options.handlerSize
+                height: options.handleSize,
+                width: options.handleSize
             }
         }).appendTo(self);
 
@@ -3729,8 +3758,7 @@ Cuic.Resizable = function (_Cuic$Component4) {
 
 Cuic.Resizable.prototype.options = {
     className: 'resizable',
-    fps: 30,
-    handlerSize: 10,
+    handleSize: 10,
     horizontal: true,
     keepRatio: false,
     maxHeight: null,
@@ -3738,8 +3766,6 @@ Cuic.Resizable.prototype.options = {
     minHeight: 1,
     minWidth: 1,
     namespace: 'resizable',
-    stepX: 1,
-    stepY: 1,
     vertical: true
 };
 
@@ -5269,10 +5295,7 @@ Cuic.NotificationStack = function (_Cuic$GroupComponent) {
 
         // Create element
 
-        var _this16 = _possibleConstructorReturn(this, (_class14.__proto__ || Object.getPrototypeOf(_class14)).call(this, 'div', {
-            className: options.className,
-            html: options.content
-        }, options));
+        var _this16 = _possibleConstructorReturn(this, (_class14.__proto__ || Object.getPrototypeOf(_class14)).call(this, 'div', { className: options.className }, options));
 
         var self = _this16;
 
@@ -5355,9 +5378,7 @@ Cuic.Panel = function (_Cuic$Component9) {
 
         // Create element
 
-        var _this17 = _possibleConstructorReturn(this, (_class15.__proto__ || Object.getPrototypeOf(_class15)).call(this, 'div', {
-            className: options.className
-        }, options));
+        var _this17 = _possibleConstructorReturn(this, (_class15.__proto__ || Object.getPrototypeOf(_class15)).call(this, 'div', { className: options.className }, options));
 
         var self = _this17;
 
@@ -5708,12 +5729,11 @@ Cuic.Panel.prototype.options = {
     className: 'panel',
     closeable: true,
     closeButton: '',
-    parent: null,
     content: null,
-    css: null,
     footer: null,
     maximized: false,
     namespace: 'panel',
+    parent: null,
     position: 'left top',
     title: null,
     visible: false,
@@ -5878,7 +5898,6 @@ Cuic.Popup.prototype.options = {
     closeable: true,
     closeButton: '',
     content: null,
-    css: null,
     namespace: 'popup',
     target: null,
     zIndex: 9
@@ -6115,8 +6134,7 @@ Cuic.Switcher.prototype.options = {
     autoStart: true,
     delay: 3000,
     namespace: 'switcher',
-    repeat: true,
-    target: null
+    repeat: true
 };
 
 /*
@@ -6680,7 +6698,6 @@ Cuic.Tooltip.prototype.options = {
     anchor: 'right bottom',
     attribute: 'title',
     className: 'tooltip',
-    css: null,
     followPointer: true,
     namespace: 'tooltip',
     selector: '[title]',

@@ -30,10 +30,7 @@ Cuic.NotificationStack = class extends Cuic.GroupComponent {
         options = Cuic.extend({}, Cuic.NotificationStack.prototype.options, options);
 
         // Create element
-        super('div', {
-            className: options.className,
-            html: options.content
-        }, options);
+        super('div', {className: options.className}, options);
 
         const self = this;
 

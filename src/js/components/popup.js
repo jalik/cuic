@@ -135,7 +135,6 @@ Cuic.Popup.prototype.options = {
     closeable: true,
     closeButton: '',
     content: null,
-    css: null,
     namespace: 'popup',
     target: null,
     zIndex: 9

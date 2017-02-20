@@ -187,6 +187,5 @@ Cuic.Switcher.prototype.options = {
     autoStart: true,
     delay: 3000,
     namespace: 'switcher',
-    repeat: true,
-    target: null
+    repeat: true
 };
