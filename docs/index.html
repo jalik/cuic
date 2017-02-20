@@ -853,10 +853,7 @@
                     <h2><a href="#ui-switcher">Cuic.Switcher</a></h2>
 
                     <p class="alert alert-info">The switcher is a container that take a group of elements and displays
-                        only
-                        one
-                        at a time, allowing to
-                        navigate forward and backward.</p>
+                        only one at a time, allowing to navigate forward and backward.</p>
 
                     <div class="sandbox" id="sb-switcher">
                         <div class="btn-group" role="group">
@@ -916,13 +913,13 @@
                             // Options
                             sandbox.find('[name=repeat]').on('change', function (ev) {
                                 ev.preventDefault();
-                                switcher.repeat = ev.target.checked;
+                                switcher.repeat = ev.currentTarget.checked;
                             });
 
                             // Methods
                             sandbox.find('[name="method"]').on('click', function (ev) {
                                 ev.preventDefault();
-                                switcher[ev.target.value]();
+                                switcher[ev.currentTarget.value]();
                             });
                         });
                     </script>
