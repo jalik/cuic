@@ -64,134 +64,144 @@ Cuic.Resizable = class extends Cuic.Component {
         }).appendTo(self);
 
         // Group handles
-        self.handles = [
+        self.handles = new Cuic.Collection([
             self.rightHandle,
             self.bottomHandle,
             self.bottomRightHandle
-        ];
+        ]);
 
         // Group horizontal handles
-        self.horizontalHandles = [
+        self.horizontalHandles = new Cuic.Collection([
             self.rightHandle,
             self.bottomRightHandle
-        ];
+        ]);
 
         // Group vertical handles
-        self.verticalHandles = [
+        self.verticalHandles = new Cuic.Collection([
             self.bottomHandle,
             self.bottomRightHandle
-        ];
+        ]);
 
-        /**
-         * This method is called the element is resizing
-         * @param ev
-         */
-        const startResize = (ev) => {
-            // Execute callback
-            if (self.onResizeStart && self.onResizeStart.call(self, ev) === false) {
-                return;
-            }
-
-            // Prevent text selection
-            ev.preventDefault();
-
-            // Change element style
-            self.addClass('resizing');
-
-            const parent = self.parent();
-            const parentOffset = parent.offset();
-            let elmHeight = self.outerHeight();
-            let elmWidth = self.outerWidth();
-            let elmPadding = self.padding();
-
-            // Calculate initial ratio
-            let ratio = elmHeight / elmWidth;
-
-            // Stop resizing
-            Cuic.once('mouseup', document, (ev) => {
-                clearInterval(timer);
-                self.removeClass('resizing');
-                self.onResizeStop.call(self, ev);
-            });
-
-            let timer = setInterval(() => {
-                let prop = {};
-
+        self.handles.each((handle) => {
+            // Start resizing
+            handle.on('mousedown', (ev) => {
                 // Execute callback
-                if (self.onResize && self.onResize.call(self) === false) {
-                    return;
-                }
+                if (self.onResizeStart.call(self, ev) === false) return;
 
-                // Resize horizontally
-                if (self.options.horizontal) {
-                    for (let i = 0; i < self.horizontalHandles.length; i += 1) {
-                        if (self.horizontalHandles[i].getElement() === ev.target) {
-                            const diffX = Cuic.mouseX - ev.clientX;
-                            const offset = self.offset();
-                            const parentWidth = parent.innerWidth();
-                            const maxWidth = parentWidth - (offset.left - parentOffset.left + elmPadding.horizontal);
-                            let width = elmWidth + diffX;
+                // Prevent text selection
+                ev.preventDefault();
 
-                            // Limit to max width
-                            if (width > maxWidth) {
-                                width = maxWidth;
+                // Add resizing class
+                self.addClass('resizing');
+
+                const parent = self.parent();
+                const startX = ev.clientX;
+                const startY = ev.clientY;
+
+                let originalHeight = self.outerHeight();
+                let originalWidth = self.outerWidth();
+                const handleTarget = ev.currentTarget;
+
+                // Calculate initial ratio
+                const ratio = originalHeight / originalWidth;
+
+                const onMouseMove = (ev) => {
+                    // Execute callback
+                    if (self.onResize.call(self, ev) === false) return;
+
+                    let prop = {};
+
+                    // Resize horizontally
+                    if (self.options.horizontal) {
+                        for (let i = 0; i < self.horizontalHandles.length; i += 1) {
+                            if (self.horizontalHandles.get(i).getElement() === handleTarget) {
+                                const diffX = ev.clientX - startX;
+                                const width = originalWidth + diffX;
+
+                                // Width is between min and max
+                                if ((!Number(this.options.maxWidth) || width <= this.options.maxWidth)
+                                    && (!Number(this.options.minWidth) || width >= this.options.minWidth)) {
+                                    prop.width = width;
+                                }
+                                break;
                             }
-                            // Width is between min and max
-                            if ((!Number(this.options.maxWidth) || width <= this.options.maxWidth)
-                                && (!Number(this.options.minWidth) || width >= this.options.minWidth)) {
-                                width = Math.round(width / self.options.stepX) * self.options.stepX;
-                                prop.width = width;
-                            }
-                            break;
                         }
                     }
-                }
 
-                // Resize vertically
-                if (self.options.vertical) {
-                    for (let i = 0; i < self.verticalHandles.length; i += 1) {
-                        if (self.verticalHandles[i].getElement() === ev.target) {
-                            const diffY = Cuic.mouseY - ev.clientY;
-                            const offset = self.offset();
-                            const parentHeight = parent.innerHeight();
-                            const maxHeight = parentHeight - (offset.top - parentOffset.top + elmPadding.vertical);
-                            let height = elmHeight + diffY;
+                    // Resize vertically
+                    if (self.options.vertical) {
+                        for (let i = 0; i < self.verticalHandles.length; i += 1) {
+                            if (self.verticalHandles.get(i).getElement() === handleTarget) {
+                                const diffY = ev.clientY - startY;
+                                const height = originalHeight + diffY;
 
-                            // Limit to max height
-                            if (height > maxHeight) {
-                                height = maxHeight;
+                                // Height is between min and max
+                                if ((!Number(this.options.maxHeight) || height <= this.options.maxHeight)
+                                    && (!Number(this.options.minHeight) || height >= this.options.minHeight)) {
+                                    prop.height = height;
+                                }
+                                break;
                             }
-                            // Height is between min and max
-                            if ((!Number(this.options.maxHeight) || height <= this.options.maxHeight)
-                                && (!Number(this.options.minHeight) || height >= this.options.minHeight)) {
-                                height = Math.round(height / self.options.stepY) * self.options.stepY;
-                                prop.height = height;
-                            }
-                            break;
                         }
                     }
-                }
 
-                // Keep ratio
-                if (self.options.keepRatio) {
+                    // Limit to max height
                     if (prop.height) {
-                        prop.width = prop.height / ratio;
+                        const parentHeight = parent.innerHeight();
+                        const parentPadding = parent.padding();
+                        let maxHeight = parentHeight - parentPadding.vertical;
+
+                        if (self.css('position') === 'relative') {
+                            const margin = self.margin();
+                            maxHeight -= margin.horizontal;
+                        }
+                        if (prop.height > maxHeight) {
+                            prop.height = maxHeight;
+                        }
                     }
-                    else if (prop.width) {
-                        prop.height = prop.width * ratio;
+
+                    // Limit to max width
+                    if (prop.width) {
+                        const parentWidth = parent.innerWidth();
+                        const parentPadding = parent.padding();
+                        let maxWidth = parentWidth - parentPadding.horizontal;
+
+                        if (self.css('position') === 'relative') {
+                            const margin = self.margin();
+                            maxWidth -= margin.horizontal;
+                        }
+                        if (prop.width > maxWidth) {
+                            prop.width = maxWidth;
+                        }
                     }
-                }
 
-                // Apply new size
-                self.css(prop);
+                    // fixme element can be resized more than parent size if keep ratio is active
 
-            }, Math.round(1000 / self.options.fps));
-        };
+                    // Keep ratio
+                    if (self.options.keepRatio) {
+                        if (prop.height) {
+                            prop.width = prop.height / ratio;
+                        }
+                        else if (prop.width) {
+                            prop.height = prop.width * ratio;
+                        }
+                    }
 
-        // Resize element on resize with handles
-        self.bottomHandle.on('mousedown', startResize);
-        self.rightHandle.on('mousedown', startResize);
-        self.bottomRightHandle.on('mousedown', startResize);
+                    // Apply new size
+                    self.css(prop);
+                };
+
+                // Resizing
+                Cuic.on('mousemove', document, onMouseMove);
+
+                // Stop resizing
+                Cuic.once('mouseup', document, (ev) => {
+                    Cuic.off('mousemove', document, onMouseMove);
+                    self.removeClass('resizing');
+                    self.onResizeStop.call(self, ev);
+                });
+            });
+        });
     }
 
     onResize() {

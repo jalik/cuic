@@ -1,28 +1,3 @@
-/*
- * The MIT License (MIT)
- *
- * Copyright (c) 2017 Karl STEIN
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- */
-
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -291,13 +266,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             } else {
                 prop.left = getCenterX() + Math.max(parentPadding.left, elmMargin.left);
             }
-
-            // Add pixel unit to numbers
-            for (var attr in prop) {
-                if (typeof prop[attr] === 'number') {
-                    prop[attr] = prop[attr] + 'px';
-                }
-            }
             return prop;
         },
 
@@ -375,13 +343,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             // if (prop.top != null && prop.top < 0) {
             //     prop.top = 0;
             // }
-
-            // Add pixel unit to numbers
-            for (var attr in prop) {
-                if (typeof prop[attr] === 'number') {
-                    prop[attr] = prop[attr] + 'px';
-                }
-            }
             return prop;
         },
 
@@ -398,24 +359,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             var elmMargin = this.margin(element);
             var prop = {
                 bottom: '',
-                height: this.height(parent) - elmMargin.vertical + 'px',
+                height: this.height(parent) - elmMargin.vertical,
                 left: '',
                 right: '',
                 top: '',
-                width: this.width(parent) - elmMargin.horizontal + 'px'
+                width: this.width(parent) - elmMargin.horizontal
             };
 
             // Horizontal position
             if (this.isPosition('right', element)) {
-                prop.right = ctnPadding.right + 'px';
+                prop.right = ctnPadding.right;
             } else {
-                prop.left = ctnPadding.left + 'px';
+                prop.left = ctnPadding.left;
             }
             // Vertical position
             if (this.isPosition('bottom', element)) {
-                prop.bottom = ctnPadding.bottom + 'px';
+                prop.bottom = ctnPadding.bottom;
             } else {
-                prop.top = ctnPadding.top + 'px';
+                prop.top = ctnPadding.top;
             }
             return prop;
         },
@@ -437,8 +398,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
             // Calculate minimized size
             var prop = this.calculateAlign(clone, position, element.parentNode);
-            prop.height = this.outerHeight(clone) + 'px';
-            prop.width = this.outerWidth(clone) + 'px';
+            prop.height = this.outerHeight(clone);
+            prop.width = this.outerWidth(clone);
             clone.remove();
 
             return prop;
@@ -1451,6 +1412,19 @@ Cuic.Collection = function () {
         }
 
         /**
+         * Executes a callback on each values
+         * @param callback
+         */
+
+    }, {
+        key: 'each',
+        value: function each(callback) {
+            for (var i = 0; i < this.values.length; i += 1) {
+                callback.call(this, this.values[i]);
+            }
+        }
+
+        /**
          * Returns the specified value
          * @param index
          * @return {Array.<T>}
@@ -1460,6 +1434,18 @@ Cuic.Collection = function () {
         key: 'get',
         value: function get(index) {
             return this.values[index];
+        }
+
+        /**
+         * Returns the index of the value
+         * @param value
+         * @return {number}
+         */
+
+    }, {
+        key: 'indexOf',
+        value: function indexOf(value) {
+            return this.values.indexOf(value);
         }
 
         /**
@@ -3379,13 +3365,13 @@ Cuic.Movable = function (_Cuic$Component3) {
             self.css({ position: 'relative' });
         }
 
-        // Set the dragging area
+        // Set the moving area
         _this9.setDragHandle(options.handle || self.getElement());
         return _this9;
     }
 
     /**
-     * Called when dragging
+     * Called when moving
      */
 
 
@@ -3394,7 +3380,7 @@ Cuic.Movable = function (_Cuic$Component3) {
         value: function onMove() {}
 
         /**
-         * Called when drag start
+         * Called when move start
          */
 
     }, {
@@ -3402,7 +3388,7 @@ Cuic.Movable = function (_Cuic$Component3) {
         value: function onMoveStart() {}
 
         /**
-         * Called when drag stop
+         * Called when move stop
          */
 
     }, {
@@ -3410,7 +3396,7 @@ Cuic.Movable = function (_Cuic$Component3) {
         value: function onMoveStop() {}
 
         /**
-         * Sets the dragging area
+         * Sets the moving area
          * @param handle
          * @return {Cuic.Component}
          */
@@ -3420,16 +3406,16 @@ Cuic.Movable = function (_Cuic$Component3) {
         value: function setDragHandle(handle) {
             var self = this;
 
-            // Add the movable classes
+            // Add the handle class
             Cuic.addClass(handle, 'movable-handle');
 
-            // Start dragging
+            // Start moving
             Cuic.on('mousedown', handle, function (ev) {
-                // Ignore dragging if the target is not the root
+                // Ignore moving if the target is not the root
                 if (self.options.rootOnly && ev.target !== ev.currentTarget) return;
 
                 // Execute callback
-                if (self.onMoveStart(ev) === false) return;
+                if (self.onMoveStart.call(self, ev) === false) return;
 
                 // Prevent text selection
                 ev.preventDefault();
@@ -3443,7 +3429,9 @@ Cuic.Movable = function (_Cuic$Component3) {
                 var startY = ev.clientY;
 
                 var onMouseMove = function onMouseMove(ev) {
-                    var margin = self.margin();
+                    // Execute callback
+                    if (self.onMove.call(self, ev) === false) return;
+
                     var height = self.outerHeight();
                     var width = self.outerWidth();
                     var parentPadding = parent.padding();
@@ -3460,6 +3448,7 @@ Cuic.Movable = function (_Cuic$Component3) {
                     var maxY = parentHeight - parentPadding.vertical;
 
                     if (self.css('position') === 'relative') {
+                        var margin = self.margin();
                         maxX -= margin.horizontal;
                         maxY -= margin.vertical;
                     }
@@ -3483,11 +3472,6 @@ Cuic.Movable = function (_Cuic$Component3) {
                         top = maxY - height;
                     }
 
-                    // Execute callback
-                    if (self.onMove(ev, { x: left, y: top }) === false) {
-                        return;
-                    }
-
                     // Move horizontally
                     if (self.options.horizontal) {
                         prop.left = left;
@@ -3509,7 +3493,7 @@ Cuic.Movable = function (_Cuic$Component3) {
                 Cuic.once('mouseup', document, function (ev) {
                     Cuic.off('mousemove', document, onMouseMove);
                     self.removeClass('moving');
-                    self.onMoveStop(ev);
+                    self.onMoveStop.call(self, ev);
                 });
             });
             return self;
@@ -3582,139 +3566,150 @@ Cuic.Resizable = function (_Cuic$Component4) {
         // Add Bottom handle
         self.bottomHandle = new Cuic.Element('div', {
             className: 'resize-handle resize-handle-s',
-            css: { height: options.handlerSize + 'px' }
+            css: { height: options.handlerSize }
         }).appendTo(self);
 
         // Add Right handler
         self.rightHandle = new Cuic.Element('div', {
             className: 'resize-handle resize-handle-e',
-            css: { width: options.handlerSize + 'px' }
+            css: { width: options.handlerSize }
         }).appendTo(self);
 
         // Add Bottom-Right handler
         self.bottomRightHandle = new Cuic.Element('div', {
             className: 'resize-handle resize-handle-se',
             css: {
-                height: options.handlerSize + 'px',
-                width: options.handlerSize + 'px'
+                height: options.handlerSize,
+                width: options.handlerSize
             }
         }).appendTo(self);
 
         // Group handles
-        self.handles = [self.rightHandle, self.bottomHandle, self.bottomRightHandle];
+        self.handles = new Cuic.Collection([self.rightHandle, self.bottomHandle, self.bottomRightHandle]);
 
         // Group horizontal handles
-        self.horizontalHandles = [self.rightHandle, self.bottomRightHandle];
+        self.horizontalHandles = new Cuic.Collection([self.rightHandle, self.bottomRightHandle]);
 
         // Group vertical handles
-        self.verticalHandles = [self.bottomHandle, self.bottomRightHandle];
+        self.verticalHandles = new Cuic.Collection([self.bottomHandle, self.bottomRightHandle]);
 
-        /**
-         * This method is called the element is resizing
-         * @param ev
-         */
-        var startResize = function startResize(ev) {
-            // Execute callback
-            if (self.onResizeStart && self.onResizeStart.call(self, ev) === false) {
-                return;
-            }
-
-            // Prevent text selection
-            ev.preventDefault();
-
-            // Change element style
-            self.addClass('resizing');
-
-            var parent = self.parent();
-            var parentOffset = parent.offset();
-            var elmHeight = self.outerHeight();
-            var elmWidth = self.outerWidth();
-            var elmPadding = self.padding();
-
-            // Calculate initial ratio
-            var ratio = elmHeight / elmWidth;
-
-            // Stop resizing
-            Cuic.once('mouseup', document, function (ev) {
-                clearInterval(timer);
-                self.removeClass('resizing');
-                self.onResizeStop.call(self, ev);
-            });
-
-            var timer = setInterval(function () {
-                var prop = {};
-
+        self.handles.each(function (handle) {
+            // Start resizing
+            handle.on('mousedown', function (ev) {
                 // Execute callback
-                if (self.onResize && self.onResize.call(self) === false) {
-                    return;
-                }
+                if (self.onResizeStart.call(self, ev) === false) return;
 
-                // Resize horizontally
-                if (self.options.horizontal) {
-                    for (var i = 0; i < self.horizontalHandles.length; i += 1) {
-                        if (self.horizontalHandles[i].getElement() === ev.target) {
-                            var diffX = Cuic.mouseX - ev.clientX;
-                            var offset = self.offset();
-                            var parentWidth = parent.innerWidth();
-                            var maxWidth = parentWidth - (offset.left - parentOffset.left + elmPadding.horizontal);
-                            var width = elmWidth + diffX;
+                // Prevent text selection
+                ev.preventDefault();
 
-                            // Limit to max width
-                            if (width > maxWidth) {
-                                width = maxWidth;
+                // Add resizing class
+                self.addClass('resizing');
+
+                var parent = self.parent();
+                var startX = ev.clientX;
+                var startY = ev.clientY;
+
+                var originalHeight = self.outerHeight();
+                var originalWidth = self.outerWidth();
+                var handleTarget = ev.currentTarget;
+
+                // Calculate initial ratio
+                var ratio = originalHeight / originalWidth;
+
+                var onMouseMove = function onMouseMove(ev) {
+                    // Execute callback
+                    if (self.onResize.call(self, ev) === false) return;
+
+                    var prop = {};
+
+                    // Resize horizontally
+                    if (self.options.horizontal) {
+                        for (var i = 0; i < self.horizontalHandles.length; i += 1) {
+                            if (self.horizontalHandles.get(i).getElement() === handleTarget) {
+                                var diffX = ev.clientX - startX;
+                                var width = originalWidth + diffX;
+
+                                // Width is between min and max
+                                if ((!Number(_this10.options.maxWidth) || width <= _this10.options.maxWidth) && (!Number(_this10.options.minWidth) || width >= _this10.options.minWidth)) {
+                                    prop.width = width;
+                                }
+                                break;
                             }
-                            // Width is between min and max
-                            if ((!Number(_this10.options.maxWidth) || width <= _this10.options.maxWidth) && (!Number(_this10.options.minWidth) || width >= _this10.options.minWidth)) {
-                                width = Math.round(width / self.options.stepX) * self.options.stepX;
-                                prop.width = width;
-                            }
-                            break;
                         }
                     }
-                }
 
-                // Resize vertically
-                if (self.options.vertical) {
-                    for (var _i = 0; _i < self.verticalHandles.length; _i += 1) {
-                        if (self.verticalHandles[_i].getElement() === ev.target) {
-                            var diffY = Cuic.mouseY - ev.clientY;
-                            var _offset = self.offset();
-                            var parentHeight = parent.innerHeight();
-                            var maxHeight = parentHeight - (_offset.top - parentOffset.top + elmPadding.vertical);
-                            var height = elmHeight + diffY;
+                    // Resize vertically
+                    if (self.options.vertical) {
+                        for (var _i = 0; _i < self.verticalHandles.length; _i += 1) {
+                            if (self.verticalHandles.get(_i).getElement() === handleTarget) {
+                                var diffY = ev.clientY - startY;
+                                var height = originalHeight + diffY;
 
-                            // Limit to max height
-                            if (height > maxHeight) {
-                                height = maxHeight;
+                                // Height is between min and max
+                                if ((!Number(_this10.options.maxHeight) || height <= _this10.options.maxHeight) && (!Number(_this10.options.minHeight) || height >= _this10.options.minHeight)) {
+                                    prop.height = height;
+                                }
+                                break;
                             }
-                            // Height is between min and max
-                            if ((!Number(_this10.options.maxHeight) || height <= _this10.options.maxHeight) && (!Number(_this10.options.minHeight) || height >= _this10.options.minHeight)) {
-                                height = Math.round(height / self.options.stepY) * self.options.stepY;
-                                prop.height = height;
-                            }
-                            break;
                         }
                     }
-                }
 
-                // Keep ratio
-                if (self.options.keepRatio) {
+                    // Limit to max height
                     if (prop.height) {
-                        prop.width = prop.height / ratio;
-                    } else if (prop.width) {
-                        prop.height = prop.width * ratio;
+                        var parentHeight = parent.innerHeight();
+                        var parentPadding = parent.padding();
+                        var maxHeight = parentHeight - parentPadding.vertical;
+
+                        if (self.css('position') === 'relative') {
+                            var margin = self.margin();
+                            maxHeight -= margin.horizontal;
+                        }
+                        if (prop.height > maxHeight) {
+                            prop.height = maxHeight;
+                        }
                     }
-                }
 
-                // Apply new size
-                self.css(prop);
-            }, Math.round(1000 / self.options.fps));
-        };
+                    // Limit to max width
+                    if (prop.width) {
+                        var parentWidth = parent.innerWidth();
+                        var _parentPadding = parent.padding();
+                        var maxWidth = parentWidth - _parentPadding.horizontal;
 
-        // Resize element on resize with handles
-        self.bottomHandle.on('mousedown', startResize);
-        self.rightHandle.on('mousedown', startResize);
-        self.bottomRightHandle.on('mousedown', startResize);
+                        if (self.css('position') === 'relative') {
+                            var _margin = self.margin();
+                            maxWidth -= _margin.horizontal;
+                        }
+                        if (prop.width > maxWidth) {
+                            prop.width = maxWidth;
+                        }
+                    }
+
+                    // fixme element can be resized more than parent size if keep ratio is active
+
+                    // Keep ratio
+                    if (self.options.keepRatio) {
+                        if (prop.height) {
+                            prop.width = prop.height / ratio;
+                        } else if (prop.width) {
+                            prop.height = prop.width * ratio;
+                        }
+                    }
+
+                    // Apply new size
+                    self.css(prop);
+                };
+
+                // Resizing
+                Cuic.on('mousemove', document, onMouseMove);
+
+                // Stop resizing
+                Cuic.once('mouseup', document, function (ev) {
+                    Cuic.off('mousemove', document, onMouseMove);
+                    self.removeClass('resizing');
+                    self.onResizeStop.call(self, ev);
+                });
+            });
+        });
         return _this10;
     }
 
@@ -4213,7 +4208,7 @@ Cuic.Dialog = function (_Cuic$Component6) {
             var margin = this.margin();
             maxHeight -= margin.vertical;
             maxHeight -= border.vertical;
-            this.css({ 'max-height': maxHeight + 'px' });
+            this.css({ 'max-height': maxHeight });
 
             // Calculate content max height
             var contentMaxHeight = maxHeight;
@@ -4227,7 +4222,7 @@ Cuic.Dialog = function (_Cuic$Component6) {
 
             // Set content max height
             this.content.css({
-                'max-height': contentMaxHeight + 'px',
+                'max-height': contentMaxHeight,
                 overflow: 'auto'
             });
 
@@ -5535,10 +5530,10 @@ Cuic.Panel = function (_Cuic$Component9) {
 
             // Horizontal position
             if (Cuic.isPosition('left', this)) {
-                prop.left = -width + 'px';
+                prop.left = -width;
                 prop.right = '';
             } else if (Cuic.isPosition('right', this)) {
-                prop.right = -width + 'px';
+                prop.right = -width;
                 prop.left = '';
             } else {}
             // todo center
@@ -5546,10 +5541,10 @@ Cuic.Panel = function (_Cuic$Component9) {
 
             // Vertical position
             if (Cuic.isPosition('bottom', this)) {
-                prop.bottom = -height + 'px';
+                prop.bottom = -height;
                 prop.top = '';
             } else if (Cuic.isPosition('top', this)) {
-                prop.top = -height + 'px';
+                prop.top = -height;
                 prop.bottom = '';
             } else {}
             // todo center
@@ -5625,18 +5620,18 @@ Cuic.Panel = function (_Cuic$Component9) {
         //
         //     // Horizontal position
         //     if (position.indexOf('left') !== -1) {
-        //         prop.left = -self.outerWidth(true) + 'px';
+        //         prop.left = -self.outerWidth(true);
         //         prop.right = '';
         //     } else if (position.indexOf('right') !== -1) {
-        //         prop.right = -self.outerWidth(true) + 'px';
+        //         prop.right = -self.outerWidth(true);
         //         prop.left = '';
         //     }
         //     // Vertical position
         //     if (position.indexOf('bottom') !== -1) {
-        //         prop.bottom = -self.outerHeight(true) + 'px';
+        //         prop.bottom = -self.outerHeight(true);
         //         prop.top = '';
         //     } else if (position.indexOf('top') !== -1) {
-        //         prop.top = -self.outerHeight(true) + 'px';
+        //         prop.top = -self.outerHeight(true);
         //         prop.bottom = '';
         //     }
         //
@@ -5666,7 +5661,7 @@ Cuic.Panel = function (_Cuic$Component9) {
             var margin = this.margin();
             maxHeight -= margin.vertical;
             maxHeight -= border.vertical;
-            this.css({ 'max-height': maxHeight + 'px' });
+            this.css({ 'max-height': maxHeight });
 
             // Calculate content max height
             var contentMaxHeight = maxHeight;
@@ -5680,7 +5675,7 @@ Cuic.Panel = function (_Cuic$Component9) {
 
             // Set content max height
             this.content.css({
-                'max-height': contentMaxHeight + 'px',
+                'max-height': contentMaxHeight,
                 overflow: 'auto'
             });
 
@@ -6624,7 +6619,7 @@ Cuic.Tooltip = function (_Cuic$Component12) {
                         left: '50%',
                         right: 'auto',
                         top: 'auto',
-                        bottom: -this.tail.height() + 'px',
+                        bottom: -this.tail.height(),
                         margin: '0 0 0 ' + -this.tail.width() / 2 + 'px'
                     });
                     break;
@@ -6634,7 +6629,7 @@ Cuic.Tooltip = function (_Cuic$Component12) {
                     this.tail.css({
                         left: '50%',
                         right: 'auto',
-                        top: -this.tail.height() + 'px',
+                        top: -this.tail.height(),
                         bottom: 'auto',
                         margin: '0 0 0 ' + -this.tail.width() / 2 + 'px'
                     });
@@ -6643,7 +6638,7 @@ Cuic.Tooltip = function (_Cuic$Component12) {
                 case 'right':
                     this.tail.removeClass('tail-top tail-bottom tail-right').addClass('tail-left');
                     this.tail.css({
-                        left: -this.tail.width() + 'px',
+                        left: -this.tail.width(),
                         right: 'auto',
                         top: '50%',
                         bottom: 'auto',
@@ -6655,7 +6650,7 @@ Cuic.Tooltip = function (_Cuic$Component12) {
                     this.tail.removeClass('tail-top tail-bottom tail-left').addClass('tail-right');
                     this.tail.css({
                         left: 'auto',
-                        right: -this.tail.width() + 'px',
+                        right: -this.tail.width(),
                         top: '50%',
                         bottom: 'auto',
                         margin: -this.tail.height() / 2 + 'px 0 0 0'

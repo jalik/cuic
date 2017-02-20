@@ -42,46 +42,46 @@ Cuic.Movable = class extends Cuic.Component {
             self.css({position: 'relative'});
         }
 
-        // Set the dragging area
+        // Set the moving area
         this.setDragHandle(options.handle || self.getElement());
     }
 
     /**
-     * Called when dragging
+     * Called when moving
      */
     onMove() {
     }
 
     /**
-     * Called when drag start
+     * Called when move start
      */
     onMoveStart() {
     }
 
     /**
-     * Called when drag stop
+     * Called when move stop
      */
     onMoveStop() {
     }
 
     /**
-     * Sets the dragging area
+     * Sets the moving area
      * @param handle
      * @return {Cuic.Component}
      */
     setDragHandle(handle) {
         const self = this;
 
-        // Add the movable classes
+        // Add the handle class
         Cuic.addClass(handle, 'movable-handle');
 
-        // Start dragging
+        // Start moving
         Cuic.on('mousedown', handle, (ev) => {
-            // Ignore dragging if the target is not the root
+            // Ignore moving if the target is not the root
             if (self.options.rootOnly && ev.target !== ev.currentTarget) return;
 
             // Execute callback
-            if (self.onMoveStart(ev) === false) return;
+            if (self.onMoveStart.call(self, ev) === false) return;
 
             // Prevent text selection
             ev.preventDefault();
@@ -95,7 +95,9 @@ Cuic.Movable = class extends Cuic.Component {
             const startY = ev.clientY;
 
             const onMouseMove = (ev) => {
-                const margin = self.margin();
+                // Execute callback
+                if (self.onMove.call(self, ev) === false)  return;
+
                 const height = self.outerHeight();
                 const width = self.outerWidth();
                 const parentPadding = parent.padding();
@@ -112,6 +114,7 @@ Cuic.Movable = class extends Cuic.Component {
                 let maxY = parentHeight - parentPadding.vertical;
 
                 if (self.css('position') === 'relative') {
+                    const margin = self.margin();
                     maxX -= margin.horizontal;
                     maxY -= margin.vertical;
                 }
@@ -137,11 +140,6 @@ Cuic.Movable = class extends Cuic.Component {
                     top = maxY - height;
                 }
 
-                // Execute callback
-                if (self.onMove(ev, {x: left, y: top}) === false) {
-                    return;
-                }
-
                 // Move horizontally
                 if (self.options.horizontal) {
                     prop.left = left;
@@ -163,7 +161,7 @@ Cuic.Movable = class extends Cuic.Component {
             Cuic.once('mouseup', document, (ev) => {
                 Cuic.off('mousemove', document, onMouseMove);
                 self.removeClass('moving');
-                self.onMoveStop(ev);
+                self.onMoveStop.call(self, ev);
             });
         });
         return self;

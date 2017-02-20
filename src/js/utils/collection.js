@@ -41,12 +41,31 @@ Cuic.Collection = class {
     }
 
     /**
+     * Executes a callback on each values
+     * @param callback
+     */
+    each(callback) {
+        for (let i = 0; i < this.values.length; i += 1) {
+            callback.call(this, this.values[i]);
+        }
+    }
+
+    /**
      * Returns the specified value
      * @param index
      * @return {Array.<T>}
      */
     get(index) {
         return this.values[index];
+    }
+
+    /**
+     * Returns the index of the value
+     * @param value
+     * @return {number}
+     */
+    indexOf(value) {
+        return this.values.indexOf(value);
     }
 
     /**

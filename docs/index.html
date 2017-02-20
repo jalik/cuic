@@ -258,43 +258,43 @@
                         </div>
                     </div>
                     <script>
-                        $(document).ready(function () {
-                            var sandbox = $('#sb-grid');
-                            var autoResize = sandbox.find('[name=autoResize]');
-                            var cols = sandbox.find('[name=cols]');
-                            var colsWidth = sandbox.find('[name=colsWidth]');
-                            var editable = sandbox.find('[name=editable]');
-                            var rows = sandbox.find('[name=rows]');
-                            var rowsHeight = sandbox.find('[name=rowsHeight]');
-                            var spacing = sandbox.find('[name=spacing]');
-
-                            sandbox.find('.btn-run').on('click', function (ev) {
-                                ev.stopPropagation();
-                                var gridHeight = sandbox.find('[name=gridHeight]').val();
-                                var gridWidth = sandbox.find('[name=gridWidth]').val();
-
-                                grid = new Cuic.Grid({
-                                    animSpeed: 200,
-                                    autoResize: autoResize.is(":checked"),
-                                    cols: cols.val(),
-                                    colsWidth: colsWidth.val(),
-                                    editable: editable.is(":checked"),
-                                    maxCols: cols.val(),
-                                    maxRows: rows.val(),
-                                    rows: rows.val(),
-                                    rowsHeight: rowsHeight.val(),
-                                    spacing: spacing.val(),
-                                    target: "#grid"
-                                });
-                            }).click();
-                            autoResize.on("change", function () {
-                                grid.autoResize = autoResize.is(":checked");
-                                grid.minimize();
-                            });
-                            editable.on("change", function () {
-                                grid.editable = editable.is(":checked");
-                            });
-                        });
+                        //                        $(document).ready(function () {
+                        //                            var sandbox = $('#sb-grid');
+                        //                            var autoResize = sandbox.find('[name=autoResize]');
+                        //                            var cols = sandbox.find('[name=cols]');
+                        //                            var colsWidth = sandbox.find('[name=colsWidth]');
+                        //                            var editable = sandbox.find('[name=editable]');
+                        //                            var rows = sandbox.find('[name=rows]');
+                        //                            var rowsHeight = sandbox.find('[name=rowsHeight]');
+                        //                            var spacing = sandbox.find('[name=spacing]');
+                        //
+                        //                            sandbox.find('.btn-run').on('click', function (ev) {
+                        //                                ev.stopPropagation();
+                        //                                var gridHeight = sandbox.find('[name=gridHeight]').val();
+                        //                                var gridWidth = sandbox.find('[name=gridWidth]').val();
+                        //
+                        //                                grid = new Cuic.Grid({
+                        //                                    animSpeed: 200,
+                        //                                    autoResize: autoResize.is(":checked"),
+                        //                                    cols: cols.val(),
+                        //                                    colsWidth: colsWidth.val(),
+                        //                                    editable: editable.is(":checked"),
+                        //                                    maxCols: cols.val(),
+                        //                                    maxRows: rows.val(),
+                        //                                    rows: rows.val(),
+                        //                                    rowsHeight: rowsHeight.val(),
+                        //                                    spacing: spacing.val(),
+                        //                                    target: "#grid"
+                        //                                });
+                        //                            }).click();
+                        //                            autoResize.on("change", function () {
+                        //                                grid.autoResize = autoResize.is(":checked");
+                        //                                grid.minimize();
+                        //                            });
+                        //                            editable.on("change", function () {
+                        //                                grid.editable = editable.is(":checked");
+                        //                            });
+                        //                        });
                     </script>
                 </div>
 
@@ -451,7 +451,7 @@
                                 <option>right bottom</option>
                                 <option>bottom</option>
                                 <option>left bottom</option>
-                                <option selected>left</optionselected>
+                                <option selected>left</option>
                             </select>
                         </label>
                         <label class="inline">
@@ -747,7 +747,10 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="blueprint" style="height: 300px">
-                                    <div class="testbox"></div>
+                                    <div class="testbox testbox-a" style="position: relative;">Relative</div>
+                                    <div class="testbox testbox-b" style="position: absolute; bottom: 0; right: 0;">
+                                        Absolute
+                                    </div>
                                 </div>
                             </div>
                             <form class="col-sm-6">
@@ -778,7 +781,8 @@
                     </div>
                     <script>
                         $(document).ready(function () {
-                            var sandbox = $('#sb-resizable');
+                            var section = $('#ui-resizable');
+                            var sandbox = section.find('.sandbox');
                             var blueprint = sandbox.find('.blueprint');
                             var width = sandbox.find('[name="width"]');
                             var height = sandbox.find('[name="height"]');
@@ -787,9 +791,23 @@
 
                             window.resizable = new Cuic.Resizable({
                                 debug: true,
-                                element: sandbox.find('.testbox')
+                                element: sandbox.find('.testbox-a'),
+                                keepRatio: true
                             });
-                            resizable.onResize = function () {
+                            window.resizableB = new Cuic.Resizable({
+                                debug: true,
+                                element: sandbox.find('.testbox-b'),
+                                keepRatio: false
+                            });
+
+                            resizable.onResizeStart = function (ev) {
+//                                console.log('onResizeStart', ev.clientX, ev.clientY);
+                            };
+                            resizable.onResizeStop = function (ev) {
+//                                console.log('onResizeStop', ev.clientX, ev.clientY);
+                            };
+                            resizable.onResize = function (ev) {
+//                                console.log('resize', ev)
                                 width.val(resizable.width());
                                 height.val(resizable.height());
                                 hratio.val(Math.round(resizable.width() / resizable.height() * 100) / 100);
