@@ -87,6 +87,7 @@ gulp.task('compress:css', function () {
  */
 gulp.task('build:js', function () {
     return gulp.src([
+        "src/js/polyfill.js",
         "src/js/base.js",
         "src/js/utils/**/*.js",
         "src/js/ui/**/element.js",

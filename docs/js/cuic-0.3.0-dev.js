@@ -60,6 +60,40 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  *
  */
 
+if (!Element.prototype.matches) {
+    Element.prototype.matches = Element.prototype.matchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.oMatchesSelector || Element.prototype.webkitMatchesSelector || function (s) {
+        var matches = (this.document || this.ownerDocument).querySelectorAll(s);
+        var i = matches.length;
+        while (--i >= 0 && matches.item(i) !== this) {}
+        return i > -1;
+    };
+}
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2017 Karl STEIN
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 (function ($, window) {
     'use strict';
 
@@ -177,6 +211,34 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             if (typeof fn === 'function') {
                 return fn.apply(context, args);
             }
+        },
+
+
+        /**
+         * Adds pixel unit to numeric values if needed
+         * @param styles
+         * @return {*}
+         */
+        autoPixel: function autoPixel(styles) {
+            var properties = [
+            // positioning
+            'bottom', 'left', 'padding', 'right', 'top',
+            // dimension
+            'max-height', 'max-width', 'height', 'width',
+            // margin
+            'margin', 'margin-bottom', 'margin-left', 'margin-right', 'margin-top',
+            // padding
+            'padding', 'padding-bottom', 'padding-left', 'padding-right', 'padding-top'];
+
+            // Add pixel unit to numbers
+            for (var style in styles) {
+                if (styles.hasOwnProperty(style)) {
+                    if (typeof styles[style] === 'number' && properties.indexOf(style) !== -1) {
+                        styles[style] = styles[style] + 'px';
+                    }
+                }
+            }
+            return styles;
         },
 
 
@@ -459,34 +521,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         closest: function closest(element, selector) {
             element = this.getElement(element);
             return element.closest(selector);
-        },
-
-
-        /**
-         * Adds pixel unit to numeric values if needed
-         * @param styles
-         * @return {*}
-         */
-        autoPixel: function autoPixel(styles) {
-            var properties = [
-            // positioning
-            'bottom', 'left', 'padding', 'right', 'top',
-            // dimension
-            'max-height', 'max-width', 'height', 'width',
-            // margin
-            'margin', 'margin-bottom', 'margin-left', 'margin-right', 'margin-top',
-            // padding
-            'padding', 'padding-bottom', 'padding-left', 'padding-right', 'padding-top'];
-
-            // Add pixel unit to numbers
-            for (var style in styles) {
-                if (styles.hasOwnProperty(style)) {
-                    if (typeof styles[style] === 'number' && properties.indexOf(style) !== -1) {
-                        styles[style] = styles[style] + 'px';
-                    }
-                }
-            }
-            return styles;
         },
 
 
@@ -1228,6 +1262,28 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 text = text.replace(/[^a-zA-Z0-9_-]+/g, '');
             }
             return text;
+        },
+
+
+        /**
+         * Returns the string converted to CamelCase
+         * @param str
+         * @return {string}
+         */
+        toCamelCase: function toCamelCase(str) {
+            // Lower cases the string
+            return str.toLowerCase()
+            // Replaces any - or _ characters with a space
+            .replace(/[-_]+/g, ' ')
+            // Removes any non alphanumeric characters
+            .replace(/[^\w\s]/g, '')
+            // Uppercases the first character in each group immediately following a space
+            // (delimited by spaces)
+            .replace(/ (.)/g, function ($1) {
+                return $1.toUpperCase();
+            })
+            // Removes spaces
+            .replace(/ /g, '');
         },
 
 
@@ -2306,6 +2362,27 @@ Cuic.Element = function () {
         key: 'css',
         value: function css(styles) {
             return Cuic.css(this.getElement(), styles);
+        }
+
+        /**
+         * Sets or returns the element data
+         * @param key
+         * @param value
+         * @return {*}
+         */
+
+    }, {
+        key: 'data',
+        value: function data(key, value) {
+            var dataSet = this.getElement().dataset;
+
+            if (value !== undefined) {
+                dataSet[Cuic.toCamelCase(key)] = value;
+            } else if (key) {
+                return dataSet[key];
+            } else {
+                return dataSet;
+            }
         }
 
         /**
@@ -3839,6 +3916,7 @@ Cuic.Selectable = function (_Cuic$Element6) {
         key: 'deselect',
         value: function deselect() {
             this.removeClass('selected');
+            // todo call deselected hooks
         }
 
         /**
@@ -3849,6 +3927,7 @@ Cuic.Selectable = function (_Cuic$Element6) {
         key: 'select',
         value: function select() {
             this.addClass('selected');
+            // todo call selected hooks
         }
     }]);
 
@@ -3923,6 +4002,82 @@ Cuic.Set = function () {
             for (var i = 0; i < this.length; i += 1) {
                 callback.call(this, this[i]);
             }
+        }
+
+        /**
+         * Returns the element at the specified index
+         * @param index
+         * @return {Cuic.Element}
+         */
+
+    }, {
+        key: 'eq',
+        value: function eq(index) {
+            return this[index];
+        }
+
+        /**
+         * Returns elements from the list matching the selector
+         * @param selector
+         * @return {Cuic.Set}
+         */
+
+    }, {
+        key: 'filter',
+        value: function filter(selector) {
+            var elements = [];
+
+            if (typeof selector === 'string') {
+                this.each(function (elm) {
+                    if (elm.getElement().matches(selector)) {
+                        elements.push(elm);
+                    }
+                });
+            }
+            return new Cuic.Set(elements, this.context, selector);
+        }
+
+        /**
+         * Returns the first element in the list
+         * @return {Cuic.Element|null}
+         */
+
+    }, {
+        key: 'first',
+        value: function first() {
+            return this.length ? this[0] : null;
+        }
+
+        /**
+         * Returns the last element in the list
+         * @return {Cuic.Element|null}
+         */
+
+    }, {
+        key: 'last',
+        value: function last() {
+            return this.length ? this[this.length - 1] : null;
+        }
+
+        /**
+         * Returns elements from the list not matching the selector
+         * @param selector
+         * @return {Cuic.Set}
+         */
+
+    }, {
+        key: 'not',
+        value: function not(selector) {
+            var elements = [];
+
+            if (typeof selector === 'string') {
+                this.each(function (elm) {
+                    if (!elm.getElement().matches(selector)) {
+                        elements.push(elm);
+                    }
+                });
+            }
+            return new Cuic.Set(elements, this.context);
         }
     }]);
 
@@ -6699,10 +6854,6 @@ Cuic.Tooltip = function (_Cuic$Component8) {
         // Add component classes
         self.addClass('tooltip');
 
-        // Define attributes
-        self.attribute = options.attribute;
-        self.followPointer = options.followPointer === true;
-
         // Add content
         self.content = new Cuic.Element('div', {
             className: 'tooltip-content'
@@ -6713,52 +6864,49 @@ Cuic.Tooltip = function (_Cuic$Component8) {
             className: 'tooltip-tail'
         }).appendTo(self);
 
-        //
-        var targets = Cuic.element(self.options.selector);
+        // Find tooltip targets
+        var targets = Cuic.find(self.options.selector);
 
-        // Open tooltip when mouse enter area
-        Cuic.element(targets).on('mouseenter', function (ev) {
-            var target = Cuic.element(ev.currentTarget);
-            var text = target.attr('data-tooltip');
+        targets.each(function (target) {
+            // Open tooltip when mouse enter area
+            target.on('mouseenter', function (ev) {
+                // Get stored tooltip content
+                var content = target.data('tooltip');
 
-            if (!text || !text.length) {
-                text = target.attr(self.options.attribute);
-            }
-
-            if (text && text.length) {
-                target.attr(self.attribute, '');
-                target.attr('data-tooltip', text);
-                self.content.setHtml(text);
-
-                if (self.options.followPointer) {
-                    self.appendTo(document.body);
-                    self.anchor(self.options.anchor, [ev.pageX, ev.pageY]);
-                } else {
-                    self.appendTo(ev.target.parentNode);
-                    self.anchor(self.options.anchor, ev.target);
-                    self.refreshTail();
+                if (!content || !content.length) {
+                    // Get tooltip content from attribute
+                    content = target.attr(self.options.attribute);
+                    // Avoid tooltip conflict
+                    target.attr(self.options.attribute, '');
+                    // Store tooltip content
+                    target.data('tooltip', content);
                 }
-            }
-            self.open();
-        });
 
-        // Move tooltip when mouse moves over area
-        Cuic.element(targets).on('mousemove', function (ev) {
-            if (self.isOpened()) {
-                if (self.options.followPointer) {
-                    self.appendTo(document.body);
-                    self.anchor(self.options.anchor, [ev.pageX, ev.pageY]);
-                } else {
-                    self.appendTo(ev.target.parentNode);
-                    self.anchor(self.options.anchor, ev.target);
-                    self.refreshTail();
+                // Update tooltip content
+                if (content && content.length) {
+                    self.content.html(content);
                 }
-            }
-        });
+                self.open();
+            });
 
-        // Close tooltip when mouse leaves area
-        Cuic.element(targets).on('mouseleave', function () {
-            self.close();
+            // Move tooltip when mouse moves over area
+            target.on('mousemove', function (ev) {
+                if (self.isOpened()) {
+                    if (self.options.followPointer) {
+                        self.appendTo(document.body);
+                        self.anchor(self.options.anchor, [ev.pageX, ev.pageY]);
+                    } else {
+                        self.appendTo(ev.target.parentNode);
+                        self.anchor(self.options.anchor, ev.target);
+                        self.refreshTail();
+                    }
+                }
+            });
+
+            // Close tooltip when mouse leaves area
+            target.on('mouseleave', function () {
+                self.close();
+            });
         });
 
         // Close the panel when the user clicks outside of it

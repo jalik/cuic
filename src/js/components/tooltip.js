@@ -40,10 +40,6 @@ Cuic.Tooltip = class extends Cuic.Component {
         // Add component classes
         self.addClass('tooltip');
 
-        // Define attributes
-        self.attribute = options.attribute;
-        self.followPointer = options.followPointer === true;
-
         // Add content
         self.content = new Cuic.Element('div', {
             className: 'tooltip-content'
@@ -54,52 +50,49 @@ Cuic.Tooltip = class extends Cuic.Component {
             className: 'tooltip-tail'
         }).appendTo(self);
 
-        //
-        const targets = Cuic.element(self.options.selector);
+        // Find tooltip targets
+        const targets = Cuic.find(self.options.selector);
 
-        // Open tooltip when mouse enter area
-        Cuic.element(targets).on('mouseenter', (ev) => {
-            let target = Cuic.element(ev.currentTarget);
-            let text = target.attr('data-tooltip');
+        targets.each((target) => {
+            // Open tooltip when mouse enter area
+            target.on('mouseenter', (ev) => {
+                // Get stored tooltip content
+                let content = target.data('tooltip');
 
-            if (!text || !text.length) {
-                text = target.attr(self.options.attribute);
-            }
-
-            if (text && text.length) {
-                target.attr(self.attribute, '');
-                target.attr('data-tooltip', text);
-                self.content.setHtml(text);
-
-                if (self.options.followPointer) {
-                    self.appendTo(document.body);
-                    self.anchor(self.options.anchor, [ev.pageX, ev.pageY]);
-                } else {
-                    self.appendTo(ev.target.parentNode);
-                    self.anchor(self.options.anchor, ev.target);
-                    self.refreshTail();
+                if (!content || !content.length) {
+                    // Get tooltip content from attribute
+                    content = target.attr(self.options.attribute);
+                    // Avoid tooltip conflict
+                    target.attr(self.options.attribute, '');
+                    // Store tooltip content
+                    target.data('tooltip', content);
                 }
-            }
-            self.open();
-        });
 
-        // Move tooltip when mouse moves over area
-        Cuic.element(targets).on('mousemove', (ev) => {
-            if (self.isOpened()) {
-                if (self.options.followPointer) {
-                    self.appendTo(document.body);
-                    self.anchor(self.options.anchor, [ev.pageX, ev.pageY]);
-                } else {
-                    self.appendTo(ev.target.parentNode);
-                    self.anchor(self.options.anchor, ev.target);
-                    self.refreshTail();
+                // Update tooltip content
+                if (content && content.length) {
+                    self.content.html(content);
                 }
-            }
-        });
+                self.open();
+            });
 
-        // Close tooltip when mouse leaves area
-        Cuic.element(targets).on('mouseleave', () => {
-            self.close();
+            // Move tooltip when mouse moves over area
+            target.on('mousemove', (ev) => {
+                if (self.isOpened()) {
+                    if (self.options.followPointer) {
+                        self.appendTo(document.body);
+                        self.anchor(self.options.anchor, [ev.pageX, ev.pageY]);
+                    } else {
+                        self.appendTo(ev.target.parentNode);
+                        self.anchor(self.options.anchor, ev.target);
+                        self.refreshTail();
+                    }
+                }
+            });
+
+            // Close tooltip when mouse leaves area
+            target.on('mouseleave', () => {
+                self.close();
+            });
         });
 
         // Close the panel when the user clicks outside of it

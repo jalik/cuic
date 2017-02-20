@@ -139,6 +139,49 @@
         },
 
         /**
+         * Adds pixel unit to numeric values if needed
+         * @param styles
+         * @return {*}
+         */
+        autoPixel(styles) {
+            const properties = [
+                // positioning
+                'bottom',
+                'left',
+                'padding',
+                'right',
+                'top',
+                // dimension
+                'max-height',
+                'max-width',
+                'height',
+                'width',
+                // margin
+                'margin',
+                'margin-bottom',
+                'margin-left',
+                'margin-right',
+                'margin-top',
+                // padding
+                'padding',
+                'padding-bottom',
+                'padding-left',
+                'padding-right',
+                'padding-top'
+            ];
+
+            // Add pixel unit to numbers
+            for (let style in styles) {
+                if (styles.hasOwnProperty(style)) {
+                    if (typeof styles[style] === 'number' && properties.indexOf(style) !== -1) {
+                        styles[style] = styles[style] + 'px';
+                    }
+                }
+            }
+            return styles;
+        },
+
+        /**
          * Returns element border widths
          * @param element
          * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
@@ -419,49 +462,6 @@
         closest(element, selector) {
             element = this.getElement(element);
             return element.closest(selector);
-        },
-
-        /**
-         * Adds pixel unit to numeric values if needed
-         * @param styles
-         * @return {*}
-         */
-        autoPixel(styles) {
-            const properties = [
-                // positioning
-                'bottom',
-                'left',
-                'padding',
-                'right',
-                'top',
-                // dimension
-                'max-height',
-                'max-width',
-                'height',
-                'width',
-                // margin
-                'margin',
-                'margin-bottom',
-                'margin-left',
-                'margin-right',
-                'margin-top',
-                // padding
-                'padding',
-                'padding-bottom',
-                'padding-left',
-                'padding-right',
-                'padding-top'
-            ];
-
-            // Add pixel unit to numbers
-            for (let style in styles) {
-                if (styles.hasOwnProperty(style)) {
-                    if (typeof styles[style] === 'number' && properties.indexOf(style) !== -1) {
-                        styles[style] = styles[style] + 'px';
-                    }
-                }
-            }
-            return styles;
         },
 
         /**
@@ -1171,6 +1171,27 @@
                 text = text.replace(/[^a-zA-Z0-9_-]+/g, '');
             }
             return text;
+        },
+
+        /**
+         * Returns the string converted to CamelCase
+         * @param str
+         * @return {string}
+         */
+        toCamelCase(str) {
+            // Lower cases the string
+            return str.toLowerCase()
+            // Replaces any - or _ characters with a space
+                .replace(/[-_]+/g, ' ')
+                // Removes any non alphanumeric characters
+                .replace(/[^\w\s]/g, '')
+                // Uppercases the first character in each group immediately following a space
+                // (delimited by spaces)
+                .replace(/ (.)/g, function ($1) {
+                    return $1.toUpperCase();
+                })
+                // Removes spaces
+                .replace(/ /g, '');
         },
 
         /**

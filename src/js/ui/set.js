@@ -57,4 +57,65 @@ Cuic.Set = class {
             callback.call(this, this[i]);
         }
     }
+
+    /**
+     * Returns the element at the specified index
+     * @param index
+     * @return {Cuic.Element}
+     */
+    eq(index) {
+        return this[index];
+    }
+
+    /**
+     * Returns elements from the list matching the selector
+     * @param selector
+     * @return {Cuic.Set}
+     */
+    filter(selector) {
+        const elements = [];
+
+        if (typeof selector === 'string') {
+            this.each((elm) => {
+                if (elm.getElement().matches(selector)) {
+                    elements.push(elm);
+                }
+            });
+        }
+        return new Cuic.Set(elements, this.context, selector);
+    }
+
+    /**
+     * Returns the first element in the list
+     * @return {Cuic.Element|null}
+     */
+    first() {
+        return this.length ? this[0] : null;
+    }
+
+    /**
+     * Returns the last element in the list
+     * @return {Cuic.Element|null}
+     */
+    last() {
+        return this.length ? this[this.length - 1] : null;
+    }
+
+    /**
+     * Returns elements from the list not matching the selector
+     * @param selector
+     * @return {Cuic.Set}
+     */
+    not(selector) {
+        const elements = [];
+
+        if (typeof selector === 'string') {
+            this.each((elm) => {
+                if (!elm.getElement().matches(selector)) {
+                    elements.push(elm);
+                }
+            });
+        }
+        return new Cuic.Set(elements, this.context);
+    }
 };

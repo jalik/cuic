@@ -50,6 +50,7 @@ Cuic.Selectable = class extends Cuic.Element {
      */
     deselect() {
         this.removeClass('selected');
+        // todo call deselected hooks
     }
 
     /**
@@ -57,6 +58,7 @@ Cuic.Selectable = class extends Cuic.Element {
      */
     select() {
         this.addClass('selected');
+        // todo call selected hooks
     }
 };
 

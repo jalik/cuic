@@ -30,11 +30,13 @@
   color: #fff;
   display: inline-block;
   font-size: 1.3rem;
-  line-height: 1.2rem;
+  line-height: 1.3rem;
   margin: @margin;
+  max-width: 250px;
   opacity: 0;
   overflow: auto;
   padding: @padding;
+  transform: scale(0);
   transition-property: background, opacity, height, width, transform;
   transition-duration: @anim-close-duration;
 }
@@ -45,6 +47,7 @@
 
 .tooltip.opened {
   opacity: 1;
+  transform: scale(1);
   transition-duration: @anim-open-duration;
 }
 

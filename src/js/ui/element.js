@@ -227,6 +227,26 @@ Cuic.Element = class {
     }
 
     /**
+     * Sets or returns the element data
+     * @param key
+     * @param value
+     * @return {*}
+     */
+    data(key, value) {
+        const dataSet = this.getElement().dataset;
+
+        if (value !== undefined) {
+            dataSet[Cuic.toCamelCase(key)] = value;
+        }
+        else if (key) {
+            return dataSet[key];
+        }
+        else {
+            return dataSet;
+        }
+    }
+
+    /**
      * Disables the element
      * @return {Cuic.Element}
      */
