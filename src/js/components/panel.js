@@ -142,6 +142,118 @@ Cuic.Panel = class extends Cuic.Component {
                 }
             }
         });
+
+        // Called when the panel is closing
+        self.onClose(() => {
+            const height = self.outerHeight(true);
+            const width = self.outerWidth(true);
+            let prop = {};
+
+            // Horizontal position
+            if (Cuic.isPosition('left', self)) {
+                prop.left = -width;
+                prop.right = '';
+            }
+            else if (Cuic.isPosition('right', self)) {
+                prop.right = -width;
+                prop.left = '';
+            }
+            else {
+                // todo center
+            }
+
+            // Vertical position
+            if (Cuic.isPosition('bottom', self)) {
+                prop.bottom = -height;
+                prop.top = '';
+            }
+            else if (Cuic.isPosition('top', self)) {
+                prop.top = -height;
+                prop.bottom = '';
+            }
+            else {
+                // todo center
+            }
+            // Hide panel
+            self.css(prop);
+        });
+
+        // Called when the panel is minimized
+        self.onMinimize(() => {
+            const elm = self.getElement();
+            const parent = elm.parentNode;
+            const clone = elm.cloneNode(true);
+            Cuic.css(clone, {height: 'auto', width: 'auto'});
+
+            // Calculate minimized size
+            let prop = Cuic.calculateAlign(clone, self.options.position, parent);
+            prop.height = Cuic.height(clone);
+            prop.width = Cuic.width(clone);
+            clone.remove();
+
+            if (!self.isOpened()) {
+                // Horizontal position
+                if (Cuic.isPosition('left', self)) {
+                    prop.left = -self.outerWidth(true);
+                    prop.right = '';
+                }
+                else if (Cuic.isPosition('right', self)) {
+                    prop.right = -self.outerWidth(true);
+                    prop.left = '';
+                }
+                // Vertical position
+                if (Cuic.isPosition('bottom', self)) {
+                    prop.bottom = -self.outerHeight(true);
+                    prop.top = '';
+                }
+                else if (Cuic.isPosition('top', self)) {
+                    prop.top = -self.outerHeight(true);
+                    prop.bottom = '';
+                }
+            }
+
+            self.resizeContent();
+
+            // Minimize panel
+            self.css(prop);
+        });
+
+        // Called when the panel is opening
+        self.onOpen(() => {
+            // Resize content
+            self.resizeContent();
+            // Recalculate position
+            self.align(self.options.position);
+        });
+
+        //     // todo position panel when closed
+        // const pos = Cuic.offset(self);
+
+        // // Panel is hidden
+        // if (pos.bottom < 0 || pos.left < 0 || pos.right < 0 || pos.top < 0) {
+        //     const elm = self.getElement();
+        //     let prop = Cuic.calculateAlign(elm, position);
+        //
+        //     // Horizontal position
+        //     if (position.indexOf('left') !== -1) {
+        //         prop.left = -self.outerWidth(true);
+        //         prop.right = '';
+        //     } else if (position.indexOf('right') !== -1) {
+        //         prop.right = -self.outerWidth(true);
+        //         prop.left = '';
+        //     }
+        //     // Vertical position
+        //     if (position.indexOf('bottom') !== -1) {
+        //         prop.bottom = -self.outerHeight(true);
+        //         prop.top = '';
+        //     } else if (position.indexOf('top') !== -1) {
+        //         prop.top = -self.outerHeight(true);
+        //         prop.bottom = '';
+        //     }
+        //
+        //     self.css(prop);
+        //     self.options.position = position;
+        // }
     }
 
     /**
@@ -176,125 +288,6 @@ Cuic.Panel = class extends Cuic.Component {
     getHeader() {
         return this.header;
     }
-
-    /**
-     * Called when the panel is closing
-     */
-    onClose() {
-        const height = this.outerHeight(true);
-        const width = this.outerWidth(true);
-        let prop = {};
-
-        // Horizontal position
-        if (Cuic.isPosition('left', this)) {
-            prop.left = -width;
-            prop.right = '';
-        }
-        else if (Cuic.isPosition('right', this)) {
-            prop.right = -width;
-            prop.left = '';
-        }
-        else {
-            // todo center
-        }
-
-        // Vertical position
-        if (Cuic.isPosition('bottom', this)) {
-            prop.bottom = -height;
-            prop.top = '';
-        }
-        else if (Cuic.isPosition('top', this)) {
-            prop.top = -height;
-            prop.bottom = '';
-        }
-        else {
-            // todo center
-        }
-
-        // Hide panel
-        this.css(prop);
-    }
-
-    /**
-     * Called when the panel is minimized
-     */
-    onMinimize() {
-        const elm = this.getElement();
-        const parent = elm.parentNode;
-        const clone = elm.cloneNode(true);
-        Cuic.css(clone, {height: 'auto', width: 'auto'});
-
-        // Calculate minimized size
-        let prop = Cuic.calculateAlign(clone, this.options.position, parent);
-        prop.height = Cuic.height(clone);
-        prop.width = Cuic.width(clone);
-        clone.remove();
-
-        if (!this.isOpened()) {
-            // Horizontal position
-            if (Cuic.isPosition('left', this)) {
-                prop.left = -this.outerWidth(true);
-                prop.right = '';
-            }
-            else if (Cuic.isPosition('right', this)) {
-                prop.right = -this.outerWidth(true);
-                prop.left = '';
-            }
-            // Vertical position
-            if (Cuic.isPosition('bottom', this)) {
-                prop.bottom = -this.outerHeight(true);
-                prop.top = '';
-            }
-            else if (Cuic.isPosition('top', this)) {
-                prop.top = -this.outerHeight(true);
-                prop.bottom = '';
-            }
-        }
-
-        this.resizeContent();
-
-        // Minimize panel
-        this.css(prop);
-    }
-
-    /**
-     * Called when the panel is opening
-     */
-    onOpen() {
-        // Resize content
-        this.resizeContent();
-        // Recalculate position
-        this.align(this.options.position);
-    }
-
-    //     // todo position panel when closed
-    // const pos = Cuic.offset(self);
-
-    // // Panel is hidden
-    // if (pos.bottom < 0 || pos.left < 0 || pos.right < 0 || pos.top < 0) {
-    //     const elm = self.getElement();
-    //     let prop = Cuic.calculateAlign(elm, position);
-    //
-    //     // Horizontal position
-    //     if (position.indexOf('left') !== -1) {
-    //         prop.left = -self.outerWidth(true);
-    //         prop.right = '';
-    //     } else if (position.indexOf('right') !== -1) {
-    //         prop.right = -self.outerWidth(true);
-    //         prop.left = '';
-    //     }
-    //     // Vertical position
-    //     if (position.indexOf('bottom') !== -1) {
-    //         prop.bottom = -self.outerHeight(true);
-    //         prop.top = '';
-    //     } else if (position.indexOf('top') !== -1) {
-    //         prop.top = -self.outerHeight(true);
-    //         prop.bottom = '';
-    //     }
-    //
-    //     self.css(prop);
-    //     self.options.position = position;
-    // }
 
     /**
      * Resizes the content

@@ -43,11 +43,11 @@ Cuic.Component = class extends Cuic.Element {
      * @return {Cuic.Component}
      */
     close(callback) {
-        this.onClose();
+        this.events.trigger('close');
         this.removeClass('opened');
         this.addClass('closed');
         this.once('transitionend', (ev) => {
-            this.onClosed(ev);
+            this.events.trigger('closed', ev);
 
             if (!this.isOpened()) {
                 this.addClass('hidden');
@@ -72,12 +72,12 @@ Cuic.Component = class extends Cuic.Element {
      * @param callback
      */
     maximize(callback) {
-        this.onMaximize();
+        this.events.trigger('maximize');
         this.removeClass('minimized');
         this.addClass('maximized');
         Cuic.maximize(this.getElement());
         this.once('transitionend', (ev) => {
-            this.onMaximized(ev);
+            this.events.trigger('maximized', ev);
 
             if (typeof callback === 'function') {
                 callback.call(this, ev);
@@ -90,12 +90,12 @@ Cuic.Component = class extends Cuic.Element {
      * @param callback
      */
     minimize(callback) {
-        this.onMinimize();
+        this.events.trigger('minimize');
         this.removeClass('maximized');
         this.addClass('minimized');
         Cuic.minimize(this.getElement(), this.options.position);
         this.once('transitionend', (ev) => {
-            this.onMinimized(ev);
+            this.events.trigger('minimized', ev);
 
             if (typeof callback === 'function') {
                 callback.call(this, ev);
@@ -105,50 +105,66 @@ Cuic.Component = class extends Cuic.Element {
 
     /**
      * Called when the component is closing
+     * @param callback
      */
-    onClose() {
+    onClose(callback) {
+        this.events.on('close', callback);
     }
 
     /**
      * Called when the component is closed
+     * @param callback
      */
-    onClosed() {
+    onClosed(callback) {
+        this.events.on('closed', callback);
     }
 
     /**
      * Called when the component is maximizing
+     * @param callback
      */
-    onMaximize() {
+    onMaximize(callback) {
+        this.events.on('maximize', callback);
     }
 
     /**
      * Called when the component is maximized
+     * @param callback
      */
-    onMaximized() {
+    onMaximized(callback) {
+        this.events.on('maximized', callback);
     }
 
     /**
      * Called when the component is minimizing
+     * @param callback
      */
-    onMinimize() {
+    onMinimize(callback) {
+        this.events.on('minimize', callback);
     }
 
     /**
      * Called when the component is minimized
+     * @param callback
      */
-    onMinimized() {
+    onMinimized(callback) {
+        this.events.on('minimized', callback);
     }
 
     /**
      * Called when the component is opened
+     * @param callback
      */
-    onOpen() {
+    onOpen(callback) {
+        this.events.on('open', callback);
     }
 
     /**
      * Called when the component is opened
+     * @param callback
      */
-    onOpened() {
+    onOpened(callback) {
+        this.events.on('opened', callback);
     }
 
     /**
@@ -158,11 +174,11 @@ Cuic.Component = class extends Cuic.Element {
      */
     open(callback) {
         this.removeClass('hidden');
-        this.onOpen();
+        this.events.trigger('open');
         this.removeClass('closed');
         this.addClass('opened');
         this.once('transitionend', (ev) => {
-            this.onOpened(ev);
+            this.events.trigger('opened', ev);
 
             if (typeof callback === 'function') {
                 callback.call(this, ev);

@@ -29,6 +29,10 @@
 }
 .component.hidden {
   display: none;
+  -webkit-transition-property: all;
+  transition-property: all;
+  -webkit-transition-duration: 0s;
+          transition-duration: 0s;
 }
 .component.maximized {
   height: 100%;
@@ -64,6 +68,38 @@
           transform: scale(1);
   -webkit-transition-duration: 0.5s;
           transition-duration: 0.5s;
+}
+.dialog.dialog-bottom {
+  -webkit-transform-origin: bottom center;
+          transform-origin: bottom center;
+}
+.dialog.dialog-bottom.dialog-left {
+  -webkit-transform-origin: bottom left;
+          transform-origin: bottom left;
+}
+.dialog.dialog-bottom.dialog-right {
+  -webkit-transform-origin: bottom right;
+          transform-origin: bottom right;
+}
+.dialog.dialog-left {
+  -webkit-transform-origin: left center;
+          transform-origin: left center;
+}
+.dialog.dialog-right {
+  -webkit-transform-origin: right center;
+          transform-origin: right center;
+}
+.dialog.dialog-top {
+  -webkit-transform-origin: top center;
+          transform-origin: top center;
+}
+.dialog.dialog-top.dialog-left {
+  -webkit-transform-origin: top left;
+          transform-origin: top left;
+}
+.dialog.dialog-top.dialog-right {
+  -webkit-transform-origin: top right;
+          transform-origin: top right;
 }
 .dialog-content {
   padding: 20px;
@@ -175,21 +211,56 @@
   opacity: 0;
   overflow: auto;
   padding: 10px;
-  -webkit-transition-property: background, opacity, height, width;
-  transition-property: background, opacity, height, width;
+  -webkit-transform: scale(0);
+          transform: scale(0);
+  -webkit-transition-property: background, opacity, height, width, -webkit-transform;
+  transition-property: background, opacity, height, width, -webkit-transform;
+  transition-property: background, opacity, height, width, transform;
+  transition-property: background, opacity, height, width, transform, -webkit-transform;
   -webkit-transition-duration: 0.25s;
           transition-duration: 0.25s;
+}
+.notification.opened {
+  opacity: 1;
+  -webkit-transform: scale(1);
+          transform: scale(1);
+  -webkit-transition-duration: 0.5s;
+          transition-duration: 0.5s;
 }
 .notification.opened:hover {
   background: rgba(0, 0, 0, 0.8);
 }
-.notification.opened {
-  opacity: 1;
-  -webkit-transition-duration: 0.5s;
-          transition-duration: 0.5s;
+.notification.notification-bottom {
+  -webkit-transform-origin: bottom center;
+          transform-origin: bottom center;
 }
-.notification > * {
-  line-height: 1.2em;
+.notification.notification-bottom.notification-left {
+  -webkit-transform-origin: bottom left;
+          transform-origin: bottom left;
+}
+.notification.notification-bottom.notification-right {
+  -webkit-transform-origin: bottom right;
+          transform-origin: bottom right;
+}
+.notification.notification-left {
+  -webkit-transform-origin: left center;
+          transform-origin: left center;
+}
+.notification.notification-right {
+  -webkit-transform-origin: right center;
+          transform-origin: right center;
+}
+.notification.notification-top {
+  -webkit-transform-origin: top center;
+          transform-origin: top center;
+}
+.notification.notification-top.notification-left {
+  -webkit-transform-origin: top left;
+          transform-origin: top left;
+}
+.notification.notification-top.notification-right {
+  -webkit-transform-origin: top right;
+          transform-origin: top right;
 }
 .notification .btn-close {
   color: rgba(255, 255, 255, 0.5);
@@ -209,6 +280,70 @@
 }
 .notification-stack .notification {
   display: block !important;
+}
+.notification-stack.notification-stack-bottom {
+  -webkit-transform-origin: bottom center;
+          transform-origin: bottom center;
+}
+.notification-stack.notification-stack-bottom.notification-stack-left {
+  -webkit-transform-origin: bottom left;
+          transform-origin: bottom left;
+}
+.notification-stack.notification-stack-bottom.notification-stack-right {
+  -webkit-transform-origin: bottom right;
+          transform-origin: bottom right;
+}
+.notification-stack.notification-stack-left {
+  -webkit-transform-origin: left center;
+          transform-origin: left center;
+}
+.notification-stack.notification-stack-right {
+  -webkit-transform-origin: right center;
+          transform-origin: right center;
+}
+.notification-stack.notification-stack-top {
+  -webkit-transform-origin: top center;
+          transform-origin: top center;
+}
+.notification-stack.notification-stack-top.notification-stack-left {
+  -webkit-transform-origin: top left;
+          transform-origin: top left;
+}
+.notification-stack.notification-stack-top.notification-stack-right {
+  -webkit-transform-origin: top right;
+          transform-origin: top right;
+}
+.notification-stack.notification-stack-bottom .notification {
+  -webkit-transform-origin: bottom center;
+          transform-origin: bottom center;
+}
+.notification-stack.notification-stack-bottom.notification-stack-left .notification {
+  -webkit-transform-origin: bottom left;
+          transform-origin: bottom left;
+}
+.notification-stack.notification-stack-bottom.notification-stack-right .notification {
+  -webkit-transform-origin: bottom right;
+          transform-origin: bottom right;
+}
+.notification-stack.notification-stack-left .notification {
+  -webkit-transform-origin: left center;
+          transform-origin: left center;
+}
+.notification-stack.notification-stack-right .notification {
+  -webkit-transform-origin: right center;
+          transform-origin: right center;
+}
+.notification-stack.notification-stack-top .notification {
+  -webkit-transform-origin: top center;
+          transform-origin: top center;
+}
+.notification-stack.notification-stack-top.notification-stack-left .notification {
+  -webkit-transform-origin: top left;
+          transform-origin: top left;
+}
+.notification-stack.notification-stack-top.notification-stack-right .notification {
+  -webkit-transform-origin: top right;
+          transform-origin: top right;
 }
 .panel {
   background: #fff;
@@ -271,6 +406,8 @@
   overflow: auto;
   padding: 10px;
   position: absolute;
+  -webkit-transform: scale(0);
+          transform: scale(0);
   -webkit-transition-property: background, opacity, height, width, bottom, left, right, top, -webkit-transform;
   transition-property: background, opacity, height, width, bottom, left, right, top, -webkit-transform;
   transition-property: background, opacity, height, width, bottom, left, right, top, transform;
@@ -280,6 +417,8 @@
 }
 .popup.opened {
   opacity: 1;
+  -webkit-transform: scale(1);
+          transform: scale(1);
   -webkit-transition-duration: 0.5s;
           transition-duration: 0.5s;
 }
@@ -294,6 +433,38 @@
 .popup .btn-close:focus,
 .popup .btn-close:hover {
   color: rgba(255, 255, 255, 0.7);
+}
+.popup.popup-bottom {
+  -webkit-transform-origin: top center;
+          transform-origin: top center;
+}
+.popup.popup-bottom.popup-left {
+  -webkit-transform-origin: top right;
+          transform-origin: top right;
+}
+.popup.popup-bottom.popup-right {
+  -webkit-transform-origin: top left;
+          transform-origin: top left;
+}
+.popup.popup-left {
+  -webkit-transform-origin: right center;
+          transform-origin: right center;
+}
+.popup.popup-right {
+  -webkit-transform-origin: left center;
+          transform-origin: left center;
+}
+.popup.popup-top {
+  -webkit-transform-origin: bottom center;
+          transform-origin: bottom center;
+}
+.popup.popup-top.popup-left {
+  -webkit-transform-origin: bottom right;
+          transform-origin: bottom right;
+}
+.popup.popup-top.popup-right {
+  -webkit-transform-origin: bottom left;
+          transform-origin: bottom left;
 }
 .resizable {
   position: relative;
@@ -447,9 +618,24 @@ tr.selected {
   -webkit-transition-duration: 0.25s;
           transition-duration: 0.25s;
 }
+.tooltip.opened {
+  opacity: 1;
+  -webkit-transform: scale(1);
+          transform: scale(1);
+  -webkit-transition-duration: 0.5s;
+          transition-duration: 0.5s;
+}
 .tooltip.tooltip-bottom {
   -webkit-transform-origin: top center;
           transform-origin: top center;
+}
+.tooltip.tooltip-bottom.tooltip-left {
+  -webkit-transform-origin: top right;
+          transform-origin: top right;
+}
+.tooltip.tooltip-bottom.tooltip-right {
+  -webkit-transform-origin: top left;
+          transform-origin: top left;
 }
 .tooltip.tooltip-left {
   -webkit-transform-origin: right center;
@@ -463,15 +649,13 @@ tr.selected {
   -webkit-transform-origin: bottom center;
           transform-origin: bottom center;
 }
-.tooltip.closed {
-  opacity: 0;
+.tooltip.tooltip-top.tooltip-left {
+  -webkit-transform-origin: bottom right;
+          transform-origin: bottom right;
 }
-.tooltip.opened {
-  opacity: 1;
-  -webkit-transform: scale(1);
-          transform: scale(1);
-  -webkit-transition-duration: 0.5s;
-          transition-duration: 0.5s;
+.tooltip.tooltip-top.tooltip-right {
+  -webkit-transform-origin: bottom left;
+          transform-origin: bottom left;
 }
 .tooltip-tail {
   display: inline-block;
@@ -480,9 +664,9 @@ tr.selected {
   position: absolute;
 }
 .tooltip-tail-bottom {
-  border-left: solid 10px transparent;
-  border-right: solid 10px transparent;
-  border-top: solid 10px rgba(0, 0, 0, 0.7);
+  border-left: solid 6px transparent;
+  border-right: solid 6px transparent;
+  border-top: solid 6px rgba(0, 0, 0, 0.7);
   left: 50%;
   right: auto;
   top: auto;
@@ -494,25 +678,25 @@ tr.selected {
   display: none;
 }
 .tooltip-tail-left {
-  border-bottom: solid 10px transparent;
-  border-top: solid 10px transparent;
-  border-right: solid 10px rgba(0, 0, 0, 0.7);
+  border-bottom: solid 6px transparent;
+  border-top: solid 6px transparent;
+  border-right: solid 6px rgba(0, 0, 0, 0.7);
   bottom: auto;
   right: auto;
   top: 50%;
 }
 .tooltip-tail-right {
-  border-bottom: solid 10px transparent;
-  border-top: solid 10px transparent;
-  border-left: solid 10px rgba(0, 0, 0, 0.7);
+  border-bottom: solid 6px transparent;
+  border-top: solid 6px transparent;
+  border-left: solid 6px rgba(0, 0, 0, 0.7);
   bottom: auto;
   left: auto;
   top: 50%;
 }
 .tooltip-tail-top {
-  border-left: solid 10px transparent;
-  border-right: solid 10px transparent;
-  border-bottom: solid 10px rgba(0, 0, 0, 0.7);
+  border-left: solid 6px transparent;
+  border-right: solid 6px transparent;
+  border-bottom: solid 6px rgba(0, 0, 0, 0.7);
   bottom: auto;
   left: 50%;
   right: auto;

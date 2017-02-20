@@ -100,15 +100,13 @@ Cuic.Tooltip = class extends Cuic.Component {
 
         // Add the tooltip to the list
         Cuic.tooltips.add(self);
-    }
 
-    /**
-     * Called when the tooltip is closed
-     */
-    onClosed() {
-        if (this.options.autoRemove) {
-            this.remove();
-        }
+        // Called when the tooltip is closed
+        self.onClosed(() => {
+            if (self.options.autoRemove) {
+                self.remove();
+            }
+        });
     }
 
     /**
@@ -140,22 +138,6 @@ Cuic.Tooltip = class extends Cuic.Component {
             }
             this.anchor(this.options.anchor, ev.currentTarget);
             this.updateTail();
-        }
-        // Remove previous classes
-        this.removeClass('tooltip-bottom tooltip-left tooltip-right tooltip-top');
-
-        // Add tooltip position class
-        if (this.options.anchor.indexOf('bottom') !== -1) {
-            this.addClass('tooltip-bottom');
-        }
-        else if (this.options.anchor.indexOf('top') !== -1) {
-            this.addClass('tooltip-top');
-        }
-        if (this.options.anchor.indexOf('left') !== -1) {
-            this.addClass('tooltip-left');
-        }
-        else if (this.options.anchor.indexOf('right') !== -1) {
-            this.addClass('tooltip-right');
         }
         return this;
     }

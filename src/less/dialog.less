@@ -44,6 +44,38 @@
   transition-duration: @anim-open-duration;
 }
 
+.dialog.dialog-bottom {
+  transform-origin: bottom center;
+}
+
+.dialog.dialog-bottom.dialog-left {
+  transform-origin: bottom left;
+}
+
+.dialog.dialog-bottom.dialog-right {
+  transform-origin: bottom right;
+}
+
+.dialog.dialog-left {
+  transform-origin: left center;
+}
+
+.dialog.dialog-right {
+  transform-origin: right center;
+}
+
+.dialog.dialog-top {
+  transform-origin: top center;
+}
+
+.dialog.dialog-top.dialog-left {
+  transform-origin: top left;
+}
+
+.dialog.dialog-top.dialog-right {
+  transform-origin: top right;
+}
+
 .dialog-content {
   padding: @content-padding;
 }

@@ -37,28 +37,26 @@ Cuic.Fader = class extends Cuic.Component {
         // Add component classes
         self.addClass('fader');
 
-        let fixed = this.getParentElement() === document.body;
+        let fixed = self.getParentElement() === document.body;
 
         // Set position
         if (fixed) {
-            this.css({position: 'fixed'});
+            self.css({position: 'fixed'});
         }
 
         // Auto close when fader is clicked
-        this.on('click', () => {
-            if (this.options.autoClose) {
-                this.close();
+        self.on('click', () => {
+            if (self.options.autoClose) {
+                self.close();
             }
         });
-    }
 
-    /**
-     * Called when the fader is closed
-     */
-    onClosed() {
-        if (this.options.autoRemove) {
-            this.remove();
-        }
+        // Called when fader is closed
+        self.onClosed(() => {
+            if (self.options.autoRemove) {
+                self.remove();
+            }
+        });
     }
 };
 

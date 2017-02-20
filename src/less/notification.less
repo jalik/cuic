@@ -35,21 +35,51 @@
   opacity: 0;
   overflow: auto;
   padding: @padding;
-  transition-property: background, opacity, height, width;
+  transform: scale(0);
+  transition-property: background, opacity, height, width, transform;
   transition-duration: @anim-close-duration;
+}
+
+.notification.opened {
+  opacity: 1;
+  transform: scale(1);
+  transition-duration: @anim-open-duration;
 }
 
 .notification.opened:hover {
   background: rgba(0, 0, 0, 0.8);
 }
 
-.notification.opened {
-  opacity: 1;
-  transition-duration: @anim-open-duration;
+.notification.notification-bottom {
+  transform-origin: bottom center;
 }
 
-.notification > * {
-  line-height: 1.2em;
+.notification.notification-bottom.notification-left {
+  transform-origin: bottom left;
+}
+
+.notification.notification-bottom.notification-right {
+  transform-origin: bottom right;
+}
+
+.notification.notification-left {
+  transform-origin: left center;
+}
+
+.notification.notification-right {
+  transform-origin: right center;
+}
+
+.notification.notification-top {
+  transform-origin: top center;
+}
+
+.notification.notification-top.notification-left {
+  transform-origin: top left;
+}
+
+.notification.notification-top.notification-right {
+  transform-origin: top right;
 }
 
 .notification .btn-close {
@@ -66,10 +96,78 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
+// NOTIFICATION STACK
+
 .notification-stack {
   transition: all @anim-open-duration;
 }
 
 .notification-stack .notification {
   display: block !important;
+}
+
+.notification-stack.notification-stack-bottom {
+  transform-origin: bottom center;
+}
+
+.notification-stack.notification-stack-bottom.notification-stack-left {
+  transform-origin: bottom left;
+}
+
+.notification-stack.notification-stack-bottom.notification-stack-right {
+  transform-origin: bottom right;
+}
+
+.notification-stack.notification-stack-left {
+  transform-origin: left center;
+}
+
+.notification-stack.notification-stack-right {
+  transform-origin: right center;
+}
+
+.notification-stack.notification-stack-top {
+  transform-origin: top center;
+}
+
+.notification-stack.notification-stack-top.notification-stack-left {
+  transform-origin: top left;
+}
+
+.notification-stack.notification-stack-top.notification-stack-right {
+  transform-origin: top right;
+}
+
+// NOTIFICATIONS IN STACK
+
+.notification-stack.notification-stack-bottom .notification {
+  transform-origin: bottom center;
+}
+
+.notification-stack.notification-stack-bottom.notification-stack-left .notification {
+  transform-origin: bottom left;
+}
+
+.notification-stack.notification-stack-bottom.notification-stack-right .notification {
+  transform-origin: bottom right;
+}
+
+.notification-stack.notification-stack-left .notification {
+  transform-origin: left center;
+}
+
+.notification-stack.notification-stack-right .notification {
+  transform-origin: right center;
+}
+
+.notification-stack.notification-stack-top .notification {
+  transform-origin: top center;
+}
+
+.notification-stack.notification-stack-top.notification-stack-left .notification {
+  transform-origin: top left;
+}
+
+.notification-stack.notification-stack-top.notification-stack-right .notification {
+  transform-origin: top right;
 }

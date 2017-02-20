@@ -36,12 +36,14 @@
   overflow: auto;
   padding: @padding;
   position: absolute;
+  transform: scale(0);
   transition-property: background, opacity, height, width, bottom, left, right, top, transform;
   transition-duration: @anim-close-duration;
 }
 
 .popup.opened {
   opacity: 1;
+  transform: scale(1);
   transition-duration: @anim-open-duration;
 }
 
@@ -57,4 +59,38 @@
 .popup .btn-close:focus,
 .popup .btn-close:hover {
   color: rgba(255, 255, 255, 0.7);
+}
+
+// POPUP POSITION
+
+.popup.popup-bottom {
+  transform-origin: top center;
+}
+
+.popup.popup-bottom.popup-left {
+  transform-origin: top right;
+}
+
+.popup.popup-bottom.popup-right {
+  transform-origin: top left;
+}
+
+.popup.popup-left {
+  transform-origin: right center;
+}
+
+.popup.popup-right {
+  transform-origin: left center;
+}
+
+.popup.popup-top {
+  transform-origin: bottom center;
+}
+
+.popup.popup-top.popup-left {
+  transform-origin: bottom right;
+}
+
+.popup.popup-top.popup-right {
+  transform-origin: bottom left;
 }

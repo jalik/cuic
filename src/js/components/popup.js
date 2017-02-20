@@ -88,6 +88,20 @@ Cuic.Popup = class extends Cuic.Component {
                 }
             })
         };
+
+        // Called when the popup is closed
+        self.onClosed(() => {
+            if (self.options.autoRemove) {
+                self.remove();
+            }
+        });
+
+        // Called when the popup is opening
+        self.onOpen(() => {
+            const targetParent = Cuic.getElement(self.options.target).parentNode;
+            self.appendTo(targetParent);
+            self.anchor(self.options.anchor, self.options.target);
+        });
     }
 
     /**
@@ -96,24 +110,6 @@ Cuic.Popup = class extends Cuic.Component {
      */
     getContent() {
         return this.content;
-    }
-
-    /**
-     * Called when the popup is closed
-     */
-    onClosed() {
-        if (this.options.autoRemove) {
-            this.remove();
-        }
-    }
-
-    /**
-     * Called when the popup is opening
-     */
-    onOpen() {
-        const targetParent = Cuic.getElement(this.options.target).parentNode;
-        this.appendTo(targetParent);
-        this.anchor(this.options.anchor, this.options.target);
     }
 
     /**

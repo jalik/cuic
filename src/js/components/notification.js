@@ -87,6 +87,32 @@ Cuic.Notification = class extends Cuic.Component {
 
         // Add dialog to collection
         Cuic.notifications.add(self);
+
+        // Called when the notification is closed
+        self.onClosed(() => {
+            if (self.options.autoRemove) {
+                self.remove();
+            }
+        });
+
+        // Called when the notification is opening
+        self.onOpen(() => {
+            if (self.options.position) {
+                let isFixed = self.getParentElement() === document.body;
+                self.css({position: isFixed ? 'fixed' : 'absolute'});
+                self.align(self.options.position);
+            }
+        });
+
+        // Called when the notification is opened
+        self.onOpened(() => {
+            self.autoClose();
+        });
+
+        // Remove dialog from list
+        self.onRemoved(() => {
+            Cuic.notifications.remove(self);
+        });
     }
 
     /**
@@ -99,38 +125,6 @@ Cuic.Notification = class extends Cuic.Component {
                 this.close();
             }
         }, this.options.duration);
-    }
-
-    /**
-     * Called when the notification is closed
-     */
-    onClosed() {
-        if (this.options.autoRemove) {
-            this.remove();
-        }
-    }
-
-    /**
-     * Called when the notification is opening
-     */
-    onOpen() {
-        // Place the component if a position is set
-        if (this.options.position) {
-            let isFixed = this.getParentElement() === document.body;
-            this.css({position: isFixed ? 'fixed' : 'absolute'});
-            this.align(this.options.position);
-        }
-    }
-
-    /**
-     * Called when the notification is opened
-     */
-    onOpened() {
-        this.autoClose();
-    }
-
-    onRemove() {
-        Cuic.notifications.remove(this);
     }
 };
 

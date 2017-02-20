@@ -23,9 +23,6 @@
  *
  */
 
-/**
- * Benchmark tool to monitor code execution time
- */
 Cuic.Benchmark = class {
 
     constructor() {

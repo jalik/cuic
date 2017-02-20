@@ -108,17 +108,27 @@ Cuic.Element = class {
             self.addClass('debug');
         }
 
-        // Element is not in the DOM
-        if (!self.element.parentNode) {
-            // Put element in parent node
-            if (self.options.parent instanceof HTMLElement) {
-                self.appendTo(self.options.parent);
+        // Add default events
+        self.events = new Cuic.Events(this);
 
-                // Position the element
-                if (self.options.position) {
-                    self.align(self.options.position);
-                }
-            }
+        // Called when element is aligned
+        self.events.on('aligned', () => {
+            this.addPositionClass(this.options.position, self.options.namespace);
+        });
+
+        // Called when element is anchored
+        self.events.on('anchored', () => {
+            this.addPositionClass(this.options.anchor, self.options.namespace);
+        });
+
+        // Append element to parent node
+        if (self.options.parent instanceof HTMLElement) {
+            self.appendTo(self.options.parent);
+        }
+
+        // Position the element
+        if (self.options.position && self.element.parentNode) {
+            self.align(self.options.position);
         }
     }
 
@@ -133,6 +143,41 @@ Cuic.Element = class {
     }
 
     /**
+     * Adds position class
+     * @param position
+     * @param prefix
+     * @return {Cuic.Element}
+     */
+    addPositionClass(position, prefix) {
+        const pfx = (str) => {
+            return prefix ? prefix + '-' + str : str;
+        };
+
+        // Remove previous classes
+        this.removeClass([
+            pfx('bottom'),
+            pfx('left'),
+            pfx('right'),
+            pfx('top')
+        ].join(' '));
+
+        // Add dialog position class
+        if (position.indexOf('bottom') !== -1) {
+            this.addClass(pfx('bottom'));
+        }
+        else if (position.indexOf('top') !== -1) {
+            this.addClass(pfx('top'));
+        }
+        if (position.indexOf('left') !== -1) {
+            this.addClass(pfx('left'));
+        }
+        else if (position.indexOf('right') !== -1) {
+            this.addClass(pfx('right'));
+        }
+        return this;
+    }
+
+    /**
      * Sets the position of the element inside its parent
      * @param position
      * @return {Cuic.Element}
@@ -140,6 +185,7 @@ Cuic.Element = class {
     align(position) {
         Cuic.align(this.getElement(), position);
         this.options.position = position;
+        this.events.trigger('aligned', position);
         return this;
     }
 
@@ -154,6 +200,7 @@ Cuic.Element = class {
         Cuic.anchor(this.getElement(), position, target);
         this.options.anchor = position;
         this.options.target = target;
+        this.events.trigger('anchored', position);
         return this;
     }
 
@@ -253,6 +300,7 @@ Cuic.Element = class {
     disable() {
         this.getElement().disabled = true;
         this.addClass('disabled');
+        this.events.trigger('disabled');
         return this;
     }
 
@@ -263,6 +311,7 @@ Cuic.Element = class {
     enable() {
         this.getElement().disabled = false;
         this.removeClass('disabled');
+        this.events.trigger('enabled');
         return this;
     }
 
@@ -331,6 +380,7 @@ Cuic.Element = class {
      */
     hide() {
         this.css({display: 'none'});
+        this.events.trigger('hidden');
         return this;
     }
 
@@ -456,9 +506,11 @@ Cuic.Element = class {
     }
 
     /**
-     * Called when the element is removed from the DOM
+     * Adds a listener on "removed" event
+     * @param callback
      */
-    onRemove() {
+    onRemoved(callback) {
+        this.events.on('removed', callback);
     }
 
     /**
@@ -529,8 +581,8 @@ Cuic.Element = class {
      * @return {Cuic.Element}
      */
     remove() {
-        this.onRemove();
         this.getElement().remove();
+        this.events.trigger('removed');
         return this;
     }
 
@@ -581,6 +633,7 @@ Cuic.Element = class {
      */
     show() {
         this.css({display: ''});
+        this.events.trigger('showed'); // todo choose event name
         return this;
     }
 

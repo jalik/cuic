@@ -65,6 +65,7 @@ Cuic.Dialog = class extends Cuic.Component {
 
         /**
          * Adds a button to the dialog
+         * todo make public method
          * @return {Cuic.Button}
          * @param button
          */
@@ -95,11 +96,11 @@ Cuic.Dialog = class extends Cuic.Component {
 
             // Show footer if not empty
             if (self.buttons.length > 0) {
-                this.footer.show();
+                self.footer.show();
             }
             // Hide footer if empty
             else {
-                this.footer.hide();
+                self.footer.hide();
             }
             return button;
         };
@@ -167,12 +168,12 @@ Cuic.Dialog = class extends Cuic.Component {
 
         // Set content height
         if (parseFloat(options.contentHeight) > 0) {
-            content.css('height', options.contentHeight);
+            content.css({height: options.contentHeight});
         }
 
         // Set content width
         if (parseFloat(options.contentWidth) > 0) {
-            content.css('width', options.contentWidth);
+            content.css({width: options.contentWidth});
         }
 
         // Close dialog when fader is clicked
@@ -190,7 +191,7 @@ Cuic.Dialog = class extends Cuic.Component {
             }
         });
 
-        // // Close the dialog when the user clicks outside of it
+        // todo Close dialog when the user clicks outside of it
         // Cuic.on('click', document, (ev) => {
         //     const elm = self.getElement();
         //
@@ -201,15 +202,16 @@ Cuic.Dialog = class extends Cuic.Component {
         //     }
         // });
 
-        // Make the dialog movable
-        if (self.options.movable) {
-            self.movable = new Cuic.Movable({
-                element: self.getElement(),
-                handle: self.title,
-                parent: self.getParentElement(),
-                rootOnly: false
-            });
-        }
+        /**
+         * Movable interface
+         * @type {Cuic.Movable}
+         */
+        self.movable = new Cuic.Movable({
+            enabled: self.options.movable,
+            element: self.getElement(),
+            handle: self.title,
+            rootOnly: false
+        });
 
         /**
          * Dialog shortcuts
@@ -227,6 +229,67 @@ Cuic.Dialog = class extends Cuic.Component {
 
         // Add dialog to collection
         Cuic.dialogs.add(self);
+
+        // Called when dialog is closing
+        self.onClose(() => {
+            self.fader.options.autoRemove = self.options.autoRemove;
+            self.fader.close();
+        });
+
+        // Called when dialog is closed
+        self.onClosed(() => {
+            if (self.options.autoRemove) {
+                self.remove();
+            }
+        });
+
+        // Called when dialog is opening
+        self.onOpen(() => {
+            // Calculate z-index
+            let zIndex = self.options.zIndex + dialogZIndex;
+            self.css({'z-index': zIndex});
+
+            self.resizeContent();
+
+            // Open fader
+            if (self.options.modal) {
+                self.css({'z-index': zIndex + 1});
+                self.fader.css({'z-index': zIndex});
+                self.fader.open();
+            }
+            // Maximize or position the dialog
+            if (self.options.maximized) {
+                self.maximize();
+            } else {
+                self.align(self.options.position);
+            }
+            // Focus the last button
+            if (self.buttons.length > 0) {
+                const button = self.buttons.get(self.buttons.length - 1);
+                button.getElement().focus();
+            }
+        });
+
+        // Called when dialog is opened
+        self.onOpened((ev) => {
+            // // todo Find images
+            // let images = this.find('img');
+            //
+            // if (images.length > 0) {
+            //     // Position the dialog when images are loaded
+            //     images.off(ns('load')).on(ns('load'), () => {
+            //         this.resizeContent();
+            //     });
+            // } else {
+            //     // Position the dialog in the wrapper
+            //     this.resizeContent();
+            // }
+        });
+
+        // Remove dialog from list
+        self.onRemoved(() => {
+            Cuic.dialogs.remove(self);
+        });
     }
 
     /**
@@ -260,77 +323,6 @@ Cuic.Dialog = class extends Cuic.Component {
      */
     getHeader() {
         return this.header;
-    }
-
-    /**
-     * Called when dialog is closing
-     */
-    onClose() {
-        this.fader.options.autoRemove = this.options.autoRemove;
-        this.fader.close();
-    }
-
-    /**
-     * Called when dialog is closed
-     */
-    onClosed() {
-        if (this.options.autoRemove) {
-            this.remove();
-        }
-    }
-
-    /**
-     * Called when dialog is opening
-     */
-    onOpen() {
-        // Calculate z-index
-        let zIndex = this.options.zIndex + dialogZIndex;
-        this.css({'z-index': zIndex});
-
-        this.resizeContent();
-
-        // Open fader
-        if (this.options.modal) {
-            this.css({'z-index': zIndex + 1});
-            this.fader.css({'z-index': zIndex});
-            this.fader.open();
-        }
-        // Maximize or position the dialog
-        if (this.options.maximized) {
-            this.maximize();
-        } else {
-            this.align(this.options.position);
-        }
-        // Focus the last button
-        if (this.buttons.length > 0) {
-            const button = this.buttons.get(this.buttons.length - 1);
-            button.getElement().focus();
-        }
-    }
-
-    /**
-     * Called when dialog is opened
-     */
-    onOpened() {
-        // // todo Find images
-        // let images = this.find('img');
-        //
-        // if (images.length > 0) {
-        //     // Position the dialog when images are loaded
-        //     images.off(ns('load')).on(ns('load'), () => {
-        //         this.resizeContent();
-        //     });
-        // } else {
-        //     // Position the dialog in the wrapper
-        //     this.resizeContent();
-        // }
-    }
-
-    /**
-     * Called when dialog is removed
-     */
-    onRemove() {
-        Cuic.dialogs.remove(this);
     }
 
     /**

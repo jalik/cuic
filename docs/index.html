@@ -414,7 +414,6 @@
                             var position = sandbox.find('[name=position]');
                             window.notificationStack = new Cuic.NotificationStack({
                                 parent: $('#sb-notification-stack .blueprint'),
-                                css: "width:200px",
                                 position: position.val()
                             });
                             position.on("change", function () {
@@ -423,7 +422,7 @@
                             sandbox.find('[name="add-notif"]').on('click', function (ev) {
                                 notificationStack.add(new Cuic.Notification({
                                     position: null,
-                                    autoClose: true,
+                                    autoClose: false,
                                     content: "Custom event at <em>" + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds() + "</em>"
                                 }));
                             });
@@ -601,7 +600,7 @@
 
                             window.popup = new Cuic.Popup({
                                 anchor: anchor.val(),
-                                autoClose: true,
+                                autoClose: false,
                                 autoRemove: false,
                                 closeable: true,
                                 content: "This is a popup",
