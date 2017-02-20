@@ -45,21 +45,21 @@ Cuic.Resizable = class extends Cuic.Component {
         // Add Bottom handle
         self.bottomHandle = new Cuic.Element('div', {
             className: 'resize-handle resize-handle-s',
-            css: {height: options.handlerSize + 'px'}
+            css: {height: options.handlerSize}
         }).appendTo(self);
 
         // Add Right handler
         self.rightHandle = new Cuic.Element('div', {
             className: 'resize-handle resize-handle-e',
-            css: {width: options.handlerSize + 'px'}
+            css: {width: options.handlerSize}
         }).appendTo(self);
 
         // Add Bottom-Right handler
         self.bottomRightHandle = new Cuic.Element('div', {
             className: 'resize-handle resize-handle-se',
             css: {
-                height: options.handlerSize + 'px',
-                width: options.handlerSize + 'px'
+                height: options.handlerSize,
+                width: options.handlerSize
             }
         }).appendTo(self);
 

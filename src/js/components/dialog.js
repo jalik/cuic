@@ -352,7 +352,7 @@ Cuic.Dialog = class extends Cuic.Component {
         const margin = this.margin();
         maxHeight -= margin.vertical;
         maxHeight -= border.vertical;
-        this.css({'max-height': maxHeight + 'px'});
+        this.css({'max-height': maxHeight});
 
         // Calculate content max height
         let contentMaxHeight = maxHeight;
@@ -366,7 +366,7 @@ Cuic.Dialog = class extends Cuic.Component {
 
         // Set content max height
         this.content.css({
-            'max-height': contentMaxHeight + 'px',
+            'max-height': contentMaxHeight,
             overflow: 'auto'
         });
 

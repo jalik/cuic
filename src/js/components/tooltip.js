@@ -132,7 +132,7 @@ Cuic.Tooltip = class extends Cuic.Component {
                     left: '50%',
                     right: 'auto',
                     top: 'auto',
-                    bottom: -this.tail.height() + 'px',
+                    bottom: -this.tail.height(),
                     margin: '0 0 0 ' + (-this.tail.width() / 2) + 'px'
                 });
                 break;
@@ -142,7 +142,7 @@ Cuic.Tooltip = class extends Cuic.Component {
                 this.tail.css({
                     left: '50%',
                     right: 'auto',
-                    top: -this.tail.height() + 'px',
+                    top: -this.tail.height(),
                     bottom: 'auto',
                     margin: '0 0 0 ' + (-this.tail.width() / 2) + 'px'
                 });
@@ -151,7 +151,7 @@ Cuic.Tooltip = class extends Cuic.Component {
             case 'right':
                 this.tail.removeClass('tail-top tail-bottom tail-right').addClass('tail-left');
                 this.tail.css({
-                    left: -this.tail.width() + 'px',
+                    left: -this.tail.width(),
                     right: 'auto',
                     top: '50%',
                     bottom: 'auto',
@@ -163,7 +163,7 @@ Cuic.Tooltip = class extends Cuic.Component {
                 this.tail.removeClass('tail-top tail-bottom tail-left').addClass('tail-right');
                 this.tail.css({
                     left: 'auto',
-                    right: -this.tail.width() + 'px',
+                    right: -this.tail.width(),
                     top: '50%',
                     bottom: 'auto',
                     margin: (-this.tail.height() / 2) + 'px 0 0 0'

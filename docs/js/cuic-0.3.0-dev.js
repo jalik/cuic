@@ -3240,12 +3240,12 @@ Cuic.Hook = function (_Cuic$Component2) {
                 self.space.css({
                     display: self.css('display'),
                     float: self.css('float'),
-                    height: self.outerHeight() + 'px',
-                    width: self.outerWidth() + 'px',
-                    'margin-bottom': margin.bottom + 'px',
-                    'margin-left': margin.left + 'px',
-                    'margin-right': margin.right + 'px',
-                    'margin-top': margin.top + 'px'
+                    height: self.outerHeight(),
+                    width: self.outerWidth(),
+                    'margin-bottom': margin.bottom,
+                    'margin-left': margin.left,
+                    'margin-right': margin.right,
+                    'margin-top': margin.top
                 });
                 self.insertBefore(self.space);
                 self.space.show();
@@ -3253,10 +3253,10 @@ Cuic.Hook = function (_Cuic$Component2) {
                 // Make element scroll
                 self.css({
                     position: 'fixed',
-                    left: offset.left + 'px',
-                    top: self.options.offsetTop + 'px',
-                    height: self.space.height() + 'px',
-                    width: self.space.width() + 'px',
+                    left: offset.left,
+                    top: self.options.offsetTop,
+                    height: self.space.height(),
+                    width: self.space.width(),
                     zIndex: self.options.zIndex
                 });
                 self.addClass('hooked');

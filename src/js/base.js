@@ -251,13 +251,6 @@
             else {
                 prop.left = (getCenterX() + Math.max(parentPadding.left, elmMargin.left));
             }
-
-            // Add pixel unit to numbers
-            for (let attr in prop) {
-                if (typeof prop[attr] === 'number') {
-                    prop[attr] = prop[attr] + 'px';
-                }
-            }
             return prop;
         },
 
@@ -338,13 +331,6 @@
             // if (prop.top != null && prop.top < 0) {
             //     prop.top = 0;
             // }
-
-            // Add pixel unit to numbers
-            for (let attr in prop) {
-                if (typeof prop[attr] === 'number') {
-                    prop[attr] = prop[attr] + 'px';
-                }
-            }
             return prop;
         },
 
@@ -360,24 +346,24 @@
             const elmMargin = this.margin(element);
             let prop = {
                 bottom: '',
-                height: (this.height(parent) - elmMargin.vertical) + 'px',
+                height: (this.height(parent) - elmMargin.vertical),
                 left: '',
                 right: '',
                 top: '',
-                width: (this.width(parent) - elmMargin.horizontal) + 'px'
+                width: (this.width(parent) - elmMargin.horizontal)
             };
 
             // Horizontal position
             if (this.isPosition('right', element)) {
-                prop.right = ctnPadding.right + 'px';
+                prop.right = ctnPadding.right;
             } else {
-                prop.left = ctnPadding.left + 'px';
+                prop.left = ctnPadding.left;
             }
             // Vertical position
             if (this.isPosition('bottom', element)) {
-                prop.bottom = ctnPadding.bottom + 'px';
+                prop.bottom = ctnPadding.bottom;
             } else {
-                prop.top = ctnPadding.top + 'px';
+                prop.top = ctnPadding.top;
             }
             return prop;
         },
@@ -398,8 +384,8 @@
 
             // Calculate minimized size
             let prop = this.calculateAlign(clone, position, element.parentNode);
-            prop.height = this.outerHeight(clone) + 'px';
-            prop.width = this.outerWidth(clone) + 'px';
+            prop.height = this.outerHeight(clone);
+            prop.width = this.outerWidth(clone);
             clone.remove();
 
             return prop;

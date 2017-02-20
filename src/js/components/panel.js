@@ -189,11 +189,11 @@ Cuic.Panel = class extends Cuic.Component {
 
         // Horizontal position
         if (Cuic.isPosition('left', this)) {
-            prop.left = -width + 'px';
+            prop.left = -width;
             prop.right = '';
         }
         else if (Cuic.isPosition('right', this)) {
-            prop.right = -width + 'px';
+            prop.right = -width;
             prop.left = '';
         }
         else {
@@ -202,11 +202,11 @@ Cuic.Panel = class extends Cuic.Component {
 
         // Vertical position
         if (Cuic.isPosition('bottom', this)) {
-            prop.bottom = -height + 'px';
+            prop.bottom = -height;
             prop.top = '';
         }
         else if (Cuic.isPosition('top', this)) {
-            prop.top = -height + 'px';
+            prop.top = -height;
             prop.bottom = '';
         }
         else {
@@ -279,18 +279,18 @@ Cuic.Panel = class extends Cuic.Component {
     //
     //     // Horizontal position
     //     if (position.indexOf('left') !== -1) {
-    //         prop.left = -self.outerWidth(true) + 'px';
+    //         prop.left = -self.outerWidth(true);
     //         prop.right = '';
     //     } else if (position.indexOf('right') !== -1) {
-    //         prop.right = -self.outerWidth(true) + 'px';
+    //         prop.right = -self.outerWidth(true);
     //         prop.left = '';
     //     }
     //     // Vertical position
     //     if (position.indexOf('bottom') !== -1) {
-    //         prop.bottom = -self.outerHeight(true) + 'px';
+    //         prop.bottom = -self.outerHeight(true);
     //         prop.top = '';
     //     } else if (position.indexOf('top') !== -1) {
-    //         prop.top = -self.outerHeight(true) + 'px';
+    //         prop.top = -self.outerHeight(true);
     //         prop.bottom = '';
     //     }
     //
@@ -317,7 +317,7 @@ Cuic.Panel = class extends Cuic.Component {
         const margin = this.margin();
         maxHeight -= margin.vertical;
         maxHeight -= border.vertical;
-        this.css({'max-height': maxHeight + 'px'});
+        this.css({'max-height': maxHeight});
 
         // Calculate content max height
         let contentMaxHeight = maxHeight;
@@ -331,7 +331,7 @@ Cuic.Panel = class extends Cuic.Component {
 
         // Set content max height
         this.content.css({
-            'max-height': contentMaxHeight + 'px',
+            'max-height': contentMaxHeight,
             overflow: 'auto'
         });
 
