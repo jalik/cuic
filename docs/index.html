@@ -353,7 +353,7 @@
                                 window.notification = new Cuic.Notification({
                                     autoClose: autoClose.is(":checked"),
                                     autoRemove: true,
-                                    closeable: true,
+                                    closable: true,
                                     parent: container.is(':checked') ? $('#sb-notification .blueprint') : document.body,
                                     content: 'Notification from <b>' + position.val() + '</b>',
                                     duration: duration.val(),
@@ -602,7 +602,7 @@
                                 anchor: anchor.val(),
                                 autoClose: false,
                                 autoRemove: false,
-                                closeable: true,
+                                closable: true,
                                 content: "This is a popup",
                                 target: popupButton
                             });

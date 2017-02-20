@@ -59,7 +59,7 @@ Cuic.Notification = class extends Cuic.Component {
             role: 'button'
         }).appendTo(self);
 
-        if (self.options.closeable) {
+        if (self.options.closable) {
             self.closeButton.show();
         } else {
             self.closeButton.hide();
@@ -132,7 +132,7 @@ Cuic.Notification.prototype.options = {
     autoClose: true,
     autoRemove: true,
     className: 'notification',
-    closeable: true,
+    closable: true,
     closeButton: '',
     content: null,
     duration: 2000,

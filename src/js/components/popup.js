@@ -50,7 +50,7 @@ Cuic.Popup = class extends Cuic.Component {
             role: 'button'
         }).appendTo(self);
 
-        if (self.options.closeable) {
+        if (self.options.closable) {
             self.closeButton.show();
         } else {
             self.closeButton.hide();
@@ -128,7 +128,7 @@ Cuic.Popup.prototype.options = {
     autoClose: true,
     autoRemove: false,
     className: 'popup',
-    closeable: true,
+    closable: true,
     closeButton: '',
     content: null,
     namespace: 'popup',

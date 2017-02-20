@@ -112,7 +112,7 @@ Cuic.Panel = class extends Cuic.Component {
         }
 
         if (self.closeButton) {
-            if (self.options.closeable) {
+            if (self.options.closable) {
                 self.closeButton.show();
             } else {
                 self.closeButton.hide();
@@ -347,7 +347,7 @@ Cuic.Panel = class extends Cuic.Component {
 Cuic.Panel.prototype.options = {
     autoClose: false,
     className: 'panel',
-    closeable: true,
+    closable: true,
     closeButton: '',
     content: null,
     footer: null,

@@ -153,7 +153,7 @@ Cuic.Dialog = class extends Cuic.Component {
             role: 'button'
         }).appendTo(self.header);
 
-        if (self.options.closeable) {
+        if (self.options.closable) {
             self.closeButton.show();
         } else {
             self.closeButton.hide();
@@ -385,7 +385,7 @@ Cuic.Dialog.prototype.options = {
     autoResize: true,
     buttons: [],
     className: 'dialog',
-    closeable: true,
+    closable: true,
     closeButton: null,
     content: null,
     contentHeight: null,
