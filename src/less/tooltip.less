@@ -23,8 +23,11 @@
  *
  */
 
+@tooltip-background-color: rgba(0, 0, 0, 0.7);
+@tooltip-tail-size: 10px;
+
 .tooltip {
-  background: rgba(0, 0, 0, 0.7);
+  background: @tooltip-background-color;
   border-radius: @border-radius;
   box-shadow: @shadow-x @shadow-y @shadow-size @shadow-color;
   color: #fff;
@@ -34,11 +37,26 @@
   margin: @margin;
   max-width: 250px;
   opacity: 0;
-  overflow: auto;
   padding: @padding;
   transform: scale(0);
   transition-property: background, opacity, height, width, transform;
   transition-duration: @anim-close-duration;
+}
+
+.tooltip.tooltip-bottom {
+  transform-origin: top center;
+}
+
+.tooltip.tooltip-left {
+  transform-origin: right center;
+}
+
+.tooltip.tooltip-right {
+  transform-origin: left center;
+}
+
+.tooltip.tooltip-top {
+  transform-origin: bottom center;
 }
 
 .tooltip.closed {
@@ -53,5 +71,59 @@
 
 .tooltip-tail {
   display: inline-block;
+  height: 0;
+  width: 0;
   position: absolute;
+}
+
+.tooltip-tail-bottom {
+  border-left: solid @tooltip-tail-size transparent;
+  border-right: solid @tooltip-tail-size transparent;
+  border-top: solid @tooltip-tail-size @tooltip-background-color;
+  left: 50%;
+  right: auto;
+  top: auto;
+}
+
+.tooltip-tail-bottom.tooltip-tail-left {
+  display: none;
+}
+
+.tooltip-tail-bottom.tooltip-tail-right {
+  display: none;
+}
+
+.tooltip-tail-left {
+  border-bottom: solid @tooltip-tail-size transparent;
+  border-top: solid @tooltip-tail-size transparent;
+  border-right: solid @tooltip-tail-size @tooltip-background-color;
+  bottom: auto;
+  right: auto;
+  top: 50%;
+}
+
+.tooltip-tail-right {
+  border-bottom: solid @tooltip-tail-size transparent;
+  border-top: solid @tooltip-tail-size transparent;
+  border-left: solid @tooltip-tail-size @tooltip-background-color;
+  bottom: auto;
+  left: auto;
+  top: 50%;
+}
+
+.tooltip-tail-top {
+  border-left: solid @tooltip-tail-size transparent;
+  border-right: solid @tooltip-tail-size transparent;
+  border-bottom: solid @tooltip-tail-size @tooltip-background-color;
+  bottom: auto;
+  left: 50%;
+  right: auto;
+}
+
+.tooltip-tail-top.tooltip-tail-left {
+  display: none;
+}
+
+.tooltip-tail-top.tooltip-tail-right {
+  display: none;
 }

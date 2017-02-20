@@ -437,7 +437,7 @@ if (!Element.prototype.matches) {
         /**
          * Calculates maximized properties
          * @param element
-         * @return {{bottom: string, height: string, left: string, right: string, top: string, width: string}}
+         * @return {*}
          */
         calculateMaximize: function calculateMaximize(element) {
             element = this.getElement(element);
@@ -911,19 +911,22 @@ if (!Element.prototype.matches) {
          */
         isPosition: function isPosition(position, element) {
             element = this.getElement(element);
-            var style = element.style;
+            var pos = this.position(element);
 
+            if (position.indexOf('center') !== -1) {
+                return pos.top == pos.bottom || pos.left == pos.right;
+            }
             if (position.indexOf('bottom') !== -1) {
-                return style.bottom && !style.top;
+                return pos.bottom < pos.top;
             }
             if (position.indexOf('top') !== -1) {
-                return style.top && !style.bottom;
+                return pos.top < pos.bottom;
             }
             if (position.indexOf('left') !== -1) {
-                return style.left && !style.right;
+                return pos.left < pos.right;
             }
             if (position.indexOf('right') !== -1) {
-                return style.right && !style.left;
+                return pos.right < pos.left;
             }
             return false;
         },
@@ -2927,8 +2930,10 @@ Cuic.Component = function (_Cuic$Element) {
             this.addClass('closed');
             this.once('transitionend', function (ev) {
                 _this3.onClosed(ev);
-                _this3.css({ display: 'none' });
 
+                if (!_this3.isOpened()) {
+                    _this3.addClass('hidden');
+                }
                 if (typeof callback === 'function') {
                     callback.call(_this3, ev);
                 }
@@ -3068,7 +3073,7 @@ Cuic.Component = function (_Cuic$Element) {
         value: function open(callback) {
             var _this6 = this;
 
-            this.css({ display: '' });
+            this.removeClass('hidden');
             this.onOpen();
             this.removeClass('closed');
             this.addClass('opened');
@@ -6886,21 +6891,15 @@ Cuic.Tooltip = function (_Cuic$Component8) {
                 if (content && content.length) {
                     self.content.html(content);
                 }
+
+                // Position tooltip
+                self.update(ev);
                 self.open();
             });
 
             // Move tooltip when mouse moves over area
             target.on('mousemove', function (ev) {
-                if (self.isOpened()) {
-                    if (self.options.followPointer) {
-                        self.appendTo(document.body);
-                        self.anchor(self.options.anchor, [ev.pageX, ev.pageY]);
-                    } else {
-                        self.appendTo(ev.target.parentNode);
-                        self.anchor(self.options.anchor, ev.target);
-                        self.refreshTail();
-                    }
-                }
+                self.update(ev);
             });
 
             // Close tooltip when mouse leaves area
@@ -6935,55 +6934,6 @@ Cuic.Tooltip = function (_Cuic$Component8) {
                 this.remove();
             }
         }
-    }, {
-        key: 'refreshTail',
-        value: function refreshTail() {
-            switch (this.options.position) {
-                case 'top':
-                    this.tail.removeClass('tail-top tail-left tail-right').addClass('tail-bottom');
-                    this.tail.css({
-                        left: '50%',
-                        right: 'auto',
-                        top: 'auto',
-                        bottom: -this.tail.height(),
-                        margin: '0 0 0 ' + -this.tail.width() / 2 + 'px'
-                    });
-                    break;
-
-                case 'bottom':
-                    this.tail.removeClass('tail-bottom tail-left tail-right').addClass('tail-top');
-                    this.tail.css({
-                        left: '50%',
-                        right: 'auto',
-                        top: -this.tail.height(),
-                        bottom: 'auto',
-                        margin: '0 0 0 ' + -this.tail.width() / 2 + 'px'
-                    });
-                    break;
-
-                case 'right':
-                    this.tail.removeClass('tail-top tail-bottom tail-right').addClass('tail-left');
-                    this.tail.css({
-                        left: -this.tail.width(),
-                        right: 'auto',
-                        top: '50%',
-                        bottom: 'auto',
-                        margin: -this.tail.height() / 2 + 'px 0 0 0'
-                    });
-                    break;
-
-                case 'left':
-                    this.tail.removeClass('tail-top tail-bottom tail-left').addClass('tail-right');
-                    this.tail.css({
-                        left: 'auto',
-                        right: -this.tail.width(),
-                        top: '50%',
-                        bottom: 'auto',
-                        margin: -this.tail.height() / 2 + 'px 0 0 0'
-                    });
-                    break;
-            }
-        }
 
         /**
          * Sets the popup content
@@ -6994,7 +6944,99 @@ Cuic.Tooltip = function (_Cuic$Component8) {
     }, {
         key: 'setContent',
         value: function setContent(html) {
-            this.content.setHtml(html);
+            this.content.html(html);
+            return this;
+        }
+
+        /**
+         * Updates tooltip location
+         * @param ev
+         * @return {Cuic.Tooltip}
+         */
+
+    }, {
+        key: 'update',
+        value: function update(ev) {
+            // Position tooltip
+            if (this.options.followPointer) {
+                if (this.getParentElement() !== document.body) {
+                    this.appendTo(document.body);
+                }
+                this.anchor(this.options.anchor, [ev.pageX, ev.pageY]);
+            } else {
+                if (this.getParentElement() !== ev.currentTarget.parentNode) {
+                    this.appendTo(ev.currentTarget.parentNode);
+                }
+                this.anchor(this.options.anchor, ev.currentTarget);
+                this.updateTail();
+            }
+            // Remove previous classes
+            this.removeClass('tooltip-bottom tooltip-left tooltip-right tooltip-top');
+
+            // Add tooltip position class
+            if (this.options.anchor.indexOf('bottom') !== -1) {
+                this.addClass('tooltip-bottom');
+            } else if (this.options.anchor.indexOf('top') !== -1) {
+                this.addClass('tooltip-top');
+            }
+            if (this.options.anchor.indexOf('left') !== -1) {
+                this.addClass('tooltip-left');
+            } else if (this.options.anchor.indexOf('right') !== -1) {
+                this.addClass('tooltip-right');
+            }
+            return this;
+        }
+
+        /**
+         * Position the tooltip tail
+         * @return {Cuic.Tooltip}
+         */
+
+    }, {
+        key: 'updateTail',
+        value: function updateTail() {
+            var prop = {
+                'margin-bottom': 0,
+                'margin-left': 0,
+                'margin-right': 0,
+                'margin-top': 0,
+                bottom: '',
+                left: '',
+                right: '',
+                top: ''
+            };
+
+            // Remove previous classes
+            this.tail.removeClass('tooltip-tail-bottom tooltip-tail-left tooltip-tail-right tooltip-tail-top');
+
+            // Top tail
+            if (this.options.anchor.indexOf('bottom') !== -1) {
+                this.tail.addClass('tooltip-tail-top');
+                prop.top = -this.tail.outerHeight();
+                prop['margin-left'] = -this.tail.outerWidth() / 2;
+            }
+            // Bottom tail
+            if (this.options.anchor.indexOf('top') !== -1) {
+                this.tail.addClass('tooltip-tail-bottom');
+                prop.bottom = -this.tail.outerHeight();
+                prop['margin-left'] = -this.tail.outerWidth() / 2;
+            }
+            // Right tail
+            if (this.options.anchor.indexOf('left') !== -1) {
+                this.tail.addClass('tooltip-tail-right');
+                prop.right = -this.tail.outerWidth();
+                prop['margin-top'] = -this.tail.outerHeight() / 2;
+            }
+            // Left tail
+            if (this.options.anchor.indexOf('right') !== -1) {
+                this.tail.addClass('tooltip-tail-left');
+                prop.left = -this.tail.outerWidth();
+                prop['margin-top'] = -this.tail.outerHeight() / 2;
+            }
+
+            // Apply CSS
+            this.tail.css(prop);
+
             return this;
         }
     }]);
@@ -7003,7 +7045,7 @@ Cuic.Tooltip = function (_Cuic$Component8) {
 }(Cuic.Component);
 
 Cuic.Tooltip.prototype.options = {
-    anchor: 'right bottom',
+    anchor: 'right',
     attribute: 'title',
     className: 'tooltip',
     followPointer: true,

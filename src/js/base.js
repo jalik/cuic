@@ -380,7 +380,7 @@
         /**
          * Calculates maximized properties
          * @param element
-         * @return {{bottom: string, height: string, left: string, right: string, top: string, width: string}}
+         * @return {*}
          */
         calculateMaximize(element) {
             element = this.getElement(element);
@@ -835,19 +835,22 @@
          */
         isPosition(position, element) {
             element = this.getElement(element);
-            const style = element.style;
+            const pos = this.position(element);
 
+            if (position.indexOf('center') !== -1) {
+                return pos.top == pos.bottom || pos.left == pos.right;
+            }
             if (position.indexOf('bottom') !== -1) {
-                return style.bottom && !style.top;
+                return pos.bottom < pos.top;
             }
             if (position.indexOf('top') !== -1) {
-                return style.top && !style.bottom;
+                return pos.top < pos.bottom;
             }
             if (position.indexOf('left') !== -1) {
-                return style.left && !style.right;
+                return pos.left < pos.right;
             }
             if (position.indexOf('right') !== -1) {
-                return style.right && !style.left;
+                return pos.right < pos.left;
             }
             return false;
         },

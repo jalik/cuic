@@ -27,6 +27,9 @@
 .component {
   display: inline-block;
 }
+.component.hidden {
+  display: none;
+}
 .component.maximized {
   height: 100%;
   width: 100%;
@@ -434,7 +437,6 @@ tr.selected {
   margin: 10px;
   max-width: 250px;
   opacity: 0;
-  overflow: auto;
   padding: 10px;
   -webkit-transform: scale(0);
           transform: scale(0);
@@ -444,6 +446,22 @@ tr.selected {
   transition-property: background, opacity, height, width, transform, -webkit-transform;
   -webkit-transition-duration: 0.25s;
           transition-duration: 0.25s;
+}
+.tooltip.tooltip-bottom {
+  -webkit-transform-origin: top center;
+          transform-origin: top center;
+}
+.tooltip.tooltip-left {
+  -webkit-transform-origin: right center;
+          transform-origin: right center;
+}
+.tooltip.tooltip-right {
+  -webkit-transform-origin: left center;
+          transform-origin: left center;
+}
+.tooltip.tooltip-top {
+  -webkit-transform-origin: bottom center;
+          transform-origin: bottom center;
 }
 .tooltip.closed {
   opacity: 0;
@@ -457,7 +475,53 @@ tr.selected {
 }
 .tooltip-tail {
   display: inline-block;
+  height: 0;
+  width: 0;
   position: absolute;
+}
+.tooltip-tail-bottom {
+  border-left: solid 10px transparent;
+  border-right: solid 10px transparent;
+  border-top: solid 10px rgba(0, 0, 0, 0.7);
+  left: 50%;
+  right: auto;
+  top: auto;
+}
+.tooltip-tail-bottom.tooltip-tail-left {
+  display: none;
+}
+.tooltip-tail-bottom.tooltip-tail-right {
+  display: none;
+}
+.tooltip-tail-left {
+  border-bottom: solid 10px transparent;
+  border-top: solid 10px transparent;
+  border-right: solid 10px rgba(0, 0, 0, 0.7);
+  bottom: auto;
+  right: auto;
+  top: 50%;
+}
+.tooltip-tail-right {
+  border-bottom: solid 10px transparent;
+  border-top: solid 10px transparent;
+  border-left: solid 10px rgba(0, 0, 0, 0.7);
+  bottom: auto;
+  left: auto;
+  top: 50%;
+}
+.tooltip-tail-top {
+  border-left: solid 10px transparent;
+  border-right: solid 10px transparent;
+  border-bottom: solid 10px rgba(0, 0, 0, 0.7);
+  bottom: auto;
+  left: 50%;
+  right: auto;
+}
+.tooltip-tail-top.tooltip-tail-left {
+  display: none;
+}
+.tooltip-tail-top.tooltip-tail-right {
+  display: none;
 }
 
 .tree {

@@ -48,8 +48,10 @@ Cuic.Component = class extends Cuic.Element {
         this.addClass('closed');
         this.once('transitionend', (ev) => {
             this.onClosed(ev);
-            this.css({display: 'none'});
 
+            if (!this.isOpened()) {
+                this.addClass('hidden');
+            }
             if (typeof callback === 'function') {
                 callback.call(this, ev);
             }
@@ -155,7 +157,7 @@ Cuic.Component = class extends Cuic.Element {
      * @return {Cuic.Component}
      */
     open(callback) {
-        this.css({display: ''});
+        this.removeClass('hidden');
         this.onOpen();
         this.removeClass('closed');
         this.addClass('opened');
