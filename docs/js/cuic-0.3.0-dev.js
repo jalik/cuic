@@ -162,8 +162,6 @@ if (!Element.prototype.matches) {
          * @return {*}
          */
         addEventListener: function addEventListener(element, event, listener) {
-            element = this.node(element);
-
             if (typeof element.addEventListener === 'function') {
                 return element.addEventListener(event, listener);
             } else if (typeof element.attachEvent === 'function') {
@@ -248,10 +246,10 @@ if (!Element.prototype.matches) {
          * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
          */
         border: function border(element) {
-            var bottom = parseInt(this.getComputedStyle(element, 'border-bottom-width'));
-            var left = parseInt(this.getComputedStyle(element, 'border-left-width'));
-            var right = parseInt(this.getComputedStyle(element, 'border-right-width'));
-            var top = parseInt(this.getComputedStyle(element, 'border-top-width'));
+            var bottom = parseFloat(this.getComputedStyle(element, 'border-bottom-width'));
+            var left = parseFloat(this.getComputedStyle(element, 'border-left-width'));
+            var right = parseFloat(this.getComputedStyle(element, 'border-right-width'));
+            var top = parseFloat(this.getComputedStyle(element, 'border-top-width'));
             return {
                 bottom: bottom,
                 horizontal: left + right,
@@ -271,8 +269,6 @@ if (!Element.prototype.matches) {
          * @return {*}
          */
         calculateAlign: function calculateAlign(element, position, parent) {
-            var _this = this;
-
             element = this.node(element);
             position = position || '';
 
@@ -292,12 +288,10 @@ if (!Element.prototype.matches) {
                 parent = element.parentNode;
             }
 
-            var elmHeight = this.outerHeight(element, true);
-            var elmWidth = this.outerWidth(element, true);
-            var elmMargin = this.margin(element);
-            var parentHeight = this.innerHeight(parent);
-            var parentWidth = this.innerWidth(parent);
-            var parentPadding = this.padding(parent);
+            var elHeight = this.outerHeight(element, true);
+            var elWidth = this.outerWidth(element, true);
+            var parentHeight = this.height(parent);
+            var parentWidth = this.width(parent);
             var relativeLeft = parent.scrollLeft;
             var relativeTop = parent.scrollTop;
             var relativeBottom = -relativeTop;
@@ -310,48 +304,37 @@ if (!Element.prototype.matches) {
             };
 
             // If the target is fixed, we use the window as parent
-            if (this.css(element, 'position') === 'fixed') {
-                parent = window;
-                parentHeight = this.innerHeight(parent);
-                parentWidth = this.innerWidth(parent);
-                relativeLeft = 0;
-                relativeTop = 0;
-                relativeBottom = 0;
-                relativeRight = 0;
+            switch (this.css(element, 'position')) {
+                case 'fixed':
+                    parent = window;
+                    parentHeight = this.innerHeight(parent);
+                    parentWidth = this.innerWidth(parent);
+                    relativeLeft = 0;
+                    relativeTop = 0;
+                    relativeBottom = 0;
+                    relativeRight = 0;
+                    break;
             }
 
-            var getCenterX = function getCenterX() {
-                return relativeLeft + (_this.width(parent) / 2 - elmWidth / 2);
-            };
-
-            var getCenterY = function getCenterY() {
-                return relativeTop + (_this.height(parent) / 2 - elmHeight / 2);
-            };
-
-            // Limit element size to parent size
-            if (elmWidth > parentWidth) {
-                prop.width = parentWidth - (elmWidth - this.width(element));
-            }
-            if (elmHeight > parentHeight) {
-                prop.height = parentHeight - (elmHeight - this.height(element));
-            }
+            var centerX = relativeLeft + (this.innerWidth(parent) / 2 - elWidth / 2);
+            var centerY = relativeTop + (this.innerHeight(parent) / 2 - elHeight / 2);
 
             // Vertical position
-            if (position.indexOf('bottom') !== -1) {
-                prop.bottom = Math.max(parentPadding.bottom, elmMargin.bottom);
-            } else if (position.indexOf('top') !== -1) {
-                prop.top = Math.max(parentPadding.top, elmMargin.top);
+            if (position.indexOf('top') !== -1) {
+                prop.top = 0;
+            } else if (position.indexOf('bottom') !== -1) {
+                prop.bottom = 0;
             } else {
-                prop.top = getCenterY() + Math.max(parentPadding.top, elmMargin.top);
+                prop.top = centerY;
             }
 
             // Horizontal position
             if (position.indexOf('left') !== -1) {
-                prop.left = Math.max(parentPadding.left, elmMargin.left);
+                prop.left = 0;
             } else if (position.indexOf('right') !== -1) {
-                prop.right = Math.max(parentPadding.right, elmMargin.right);
+                prop.right = 0;
             } else {
-                prop.left = getCenterX() + Math.max(parentPadding.left, elmMargin.left);
+                prop.left = centerX;
             }
             return prop;
         },
@@ -379,12 +362,12 @@ if (!Element.prototype.matches) {
                 targetOffset = target.offset();
             }
 
-            var objWidth = element.outerWidth(true);
-            var objHeight = element.outerHeight(true);
-            var objCenterX = parseInt(objWidth / 2);
-            var objCenterY = parseInt(objHeight / 2);
-            var targetCenterX = parseInt(targetWidth / 2);
-            var targetCenterY = parseInt(targetHeight / 2);
+            var elWidth = element.outerWidth(true);
+            var elHeight = element.outerHeight(true);
+            var elCenterX = elWidth / 2;
+            var elCenterY = elHeight / 2;
+            var targetCenterX = targetWidth / 2;
+            var targetCenterY = targetHeight / 2;
 
             var prop = {
                 bottom: '',
@@ -397,18 +380,18 @@ if (!Element.prototype.matches) {
             if (position.indexOf('bottom') !== -1) {
                 prop.top = targetOffset.top + targetHeight;
             } else if (position.indexOf('top') !== -1) {
-                prop.top = targetOffset.top - objHeight;
+                prop.top = targetOffset.top - elHeight;
             } else {
-                prop.top = targetOffset.top + targetCenterY - objCenterY;
+                prop.top = targetOffset.top + targetCenterY - elCenterY;
             }
 
             // Horizontal positioning
             if (position.indexOf('left') !== -1) {
-                prop.left = targetOffset.left - objWidth;
+                prop.left = targetOffset.left - elWidth;
             } else if (position.indexOf('right') !== -1) {
                 prop.left = targetOffset.left + targetWidth;
             } else {
-                prop.left = targetOffset.left + targetCenterX - objCenterX;
+                prop.left = targetOffset.left + targetCenterX - elCenterX;
             }
 
             // Use window for positioning
@@ -442,28 +425,42 @@ if (!Element.prototype.matches) {
         calculateMaximize: function calculateMaximize(element) {
             element = this.node(element);
             var parent = element.parentNode;
-            var ctnPadding = this.padding(parent);
-            var elmMargin = this.margin(element);
+            var parentPadding = this.padding(parent);
+            var elMargin = this.margin(element);
             var prop = {
                 bottom: '',
-                height: this.height(parent) - elmMargin.vertical,
+                height: this.innerHeight(parent) - parentPadding.vertical,
                 left: '',
                 right: '',
                 top: '',
-                width: this.width(parent) - elmMargin.horizontal
+                width: this.innerWidth(parent) - parentPadding.horizontal
             };
+
+            // Adjust dimensions
+            switch (this.css(element, 'position')) {
+                case 'absolute':
+                    prop.height += parentPadding.vertical;
+                    prop.height -= elMargin.vertical;
+                    prop.width += parentPadding.horizontal;
+                    prop.width -= elMargin.horizontal;
+                    break;
+                case 'relative':
+                    prop.height -= elMargin.vertical;
+                    prop.width -= elMargin.horizontal;
+                    break;
+            }
 
             // Horizontal position
             if (this.isPosition('right', element)) {
-                prop.right = ctnPadding.right;
+                prop.right = 0;
             } else {
-                prop.left = ctnPadding.left;
+                prop.left = 0;
             }
             // Vertical position
             if (this.isPosition('bottom', element)) {
-                prop.bottom = ctnPadding.bottom;
+                prop.bottom = 0;
             } else {
-                prop.top = ctnPadding.top;
+                prop.top = 0;
             }
             return prop;
         },
@@ -873,15 +870,15 @@ if (!Element.prototype.matches) {
         isParent: function isParent(parent, element) {
             parent = this.node(parent);
             element = this.node(element);
-            var elm = element;
+            var el = element;
 
             do {
-                elm = elm.parentNode;
+                el = el.parentNode;
 
-                if (elm === parent) {
+                if (el === parent) {
                     return true;
                 }
-            } while (elm);
+            } while (el);
 
             return false;
         },
@@ -934,10 +931,10 @@ if (!Element.prototype.matches) {
          * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
          */
         margin: function margin(element) {
-            var bottom = parseInt(this.getComputedStyle(element, 'margin-bottom'));
-            var left = parseInt(this.getComputedStyle(element, 'margin-left'));
-            var right = parseInt(this.getComputedStyle(element, 'margin-right'));
-            var top = parseInt(this.getComputedStyle(element, 'margin-top'));
+            var bottom = parseFloat(this.getComputedStyle(element, 'margin-bottom'));
+            var left = parseFloat(this.getComputedStyle(element, 'margin-left'));
+            var right = parseFloat(this.getComputedStyle(element, 'margin-right'));
+            var top = parseFloat(this.getComputedStyle(element, 'margin-top'));
             return {
                 bottom: bottom,
                 horizontal: left + right,
@@ -1010,7 +1007,7 @@ if (!Element.prototype.matches) {
                 return element.get(0);
             }
             console.log(element);
-            throw new TypeError('cannot get HTMLElement from element:');
+            throw new TypeError('cannot get HTMLElement from element.');
         },
 
 
@@ -1022,8 +1019,20 @@ if (!Element.prototype.matches) {
          * @return {*}
          */
         off: function off(event, element, callback) {
-            element = this.node(element);
+            if (element instanceof this.Element) {
+                element = element.node();
+            } else if (element instanceof jQuery) {
+                element = element.get(0);
+            } else if (!(element instanceof HTMLElement) && !(element instanceof HTMLDocument) && element !== window) {
+                console.log(event, element);
+                throw new TypeError('Cannot add event listener on unsupported element.');
+            }
             var browserEvent = this.whichEvent(event);
+
+            // Check if event is supported
+            if (!browserEvent) {
+                console.warn('Event "' + event + '" is not supported by this browser.');
+            }
 
             // Event is a animation
             if (event.indexOf('animation') !== -1) {
@@ -1043,10 +1052,6 @@ if (!Element.prototype.matches) {
                         this.apply(callback, this, Array.prototype.slice.call(arguments));
                     }
                 }
-            // Check if event is supported
-            if (!browserEvent) {
-                console.warn('Event "' + event + '" is not supported by this browser.');
-            }
             return this.removeEventListener(element, browserEvent, callback);
         },
 
@@ -1073,8 +1078,20 @@ if (!Element.prototype.matches) {
          * @return {*}
          */
         on: function on(event, element, callback) {
-            element = this.node(element);
+            if (element instanceof this.Element) {
+                element = element.node();
+            } else if (element instanceof jQuery) {
+                element = element.get(0);
+            } else if (!(element instanceof HTMLElement) && !(element instanceof HTMLDocument) && element !== window) {
+                console.log(event, element);
+                throw new TypeError('Cannot add event listener on unsupported element.');
+            }
             var browserEvent = this.whichEvent(event);
+
+            // Check if event is supported
+            if (!browserEvent) {
+                console.warn('Event "' + event + '" is not supported by this browser.');
+            }
 
             // Event is a animation
             if (event.indexOf('animation') !== -1) {
@@ -1094,10 +1111,6 @@ if (!Element.prototype.matches) {
                         this.apply(callback, this, Array.prototype.slice.call(arguments));
                     }
                 }
-            // Check if event is supported
-            if (!browserEvent) {
-                console.warn('Event "' + event + '" is not supported by this browser.');
-            }
             return this.addEventListener(element, browserEvent, callback);
         },
 
@@ -1110,8 +1123,23 @@ if (!Element.prototype.matches) {
          * @return {*}
          */
         once: function once(event, element, callback) {
-            element = this.node(element);
+            var _this = this,
+                _arguments = arguments;
+
+            if (element instanceof this.Element) {
+                element = element.node();
+            } else if (element instanceof jQuery) {
+                element = element.get(0);
+            } else if (!(element instanceof HTMLElement) && !(element instanceof HTMLDocument) && element !== window) {
+                console.log(event, element);
+                throw new TypeError('Cannot add event listener on unsupported element.');
+            }
             var browserEvent = this.whichEvent(event);
+
+            // Check if event is supported
+            if (!browserEvent) {
+                console.warn('Event "' + event + '" is not supported by this browser.');
+            }
 
             // Event is a animation
             if (event.indexOf('animation') !== -1) {
@@ -1131,13 +1159,9 @@ if (!Element.prototype.matches) {
                         this.apply(callback, this, Array.prototype.slice.call(arguments));
                     }
                 }
-            // Check if event is supported
-            if (!browserEvent) {
-                console.warn('Event "' + event + '" is not supported by this browser.');
-            }
             var listener = function listener(ev) {
                 Cuic.removeEventListener(element, browserEvent, listener);
-                Cuic.apply(callback, this, Array.prototype.slice.call(arguments));
+                Cuic.apply(callback, _this, Array.prototype.slice.call(_arguments));
             };
             return this.addEventListener(element, browserEvent, listener);
         },
@@ -1175,10 +1199,10 @@ if (!Element.prototype.matches) {
          * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
          */
         padding: function padding(element) {
-            var bottom = parseInt(this.getComputedStyle(element, 'padding-bottom'));
-            var left = parseInt(this.getComputedStyle(element, 'padding-left'));
-            var right = parseInt(this.getComputedStyle(element, 'padding-right'));
-            var top = parseInt(this.getComputedStyle(element, 'padding-top'));
+            var bottom = parseFloat(this.getComputedStyle(element, 'padding-bottom'));
+            var left = parseFloat(this.getComputedStyle(element, 'padding-left'));
+            var right = parseFloat(this.getComputedStyle(element, 'padding-right'));
+            var top = parseFloat(this.getComputedStyle(element, 'padding-top'));
             return {
                 bottom: bottom,
                 horizontal: left + right,
@@ -1196,10 +1220,10 @@ if (!Element.prototype.matches) {
          * @return {{bottom: Number, left: Number, right: Number, top: Number}}
          */
         position: function position(element) {
-            var bottom = parseInt(this.getComputedStyle(element, 'bottom'));
-            var left = parseInt(this.getComputedStyle(element, 'left'));
-            var right = parseInt(this.getComputedStyle(element, 'right'));
-            var top = parseInt(this.getComputedStyle(element, 'top'));
+            var bottom = parseFloat(this.getComputedStyle(element, 'bottom'));
+            var left = parseFloat(this.getComputedStyle(element, 'left'));
+            var right = parseFloat(this.getComputedStyle(element, 'right'));
+            var top = parseFloat(this.getComputedStyle(element, 'top'));
             return {
                 bottom: bottom,
                 left: left,
@@ -1260,8 +1284,6 @@ if (!Element.prototype.matches) {
          * @return {*}
          */
         removeEventListener: function removeEventListener(element, event, listener) {
-            element = this.node(element);
-
             if (typeof element.removeEventListener === 'function') {
                 return element.removeEventListener(event, listener);
             } else if (typeof element.detachEvent === 'function') {
@@ -1352,6 +1374,10 @@ if (!Element.prototype.matches) {
             }
             // Check in document
             if (document[event] !== undefined || document['on' + event] !== undefined) {
+                return event;
+            }
+            // Check in window
+            if (window[event] !== undefined || window['on' + event] !== undefined) {
                 return event;
             }
         },
@@ -1705,14 +1731,14 @@ Cuic.Events = function () {
     }, {
         key: 'once',
         value: function once(event, callback) {
-            var _arguments = arguments,
+            var _arguments2 = arguments,
                 _this2 = this;
 
             if (!(this.callbacks[event] instanceof Array)) {
                 this.callbacks[event] = [];
             }
             var cb = function cb() {
-                var args = Array.prototype.slice.call(_arguments);
+                var args = Array.prototype.slice.call(_arguments2);
                 var context = args.shift();
                 callback.apply(context, args);
                 _this2.off(event, cb);
@@ -4425,15 +4451,15 @@ Cuic.Set = function () {
 
         for (var i = 0; i < elements.length; i += 1) {
             if (elements.hasOwnProperty(i)) {
-                var elm = elements[i];
+                var el = elements[i];
 
                 // Convert element
-                if (elm instanceof HTMLElement) {
-                    elm = Cuic.element(elm);
+                if (el instanceof HTMLElement) {
+                    el = Cuic.element(el);
                 }
 
                 // Add element to set
-                this[this.length] = elm;
+                this[this.length] = el;
 
                 // Increment set length
                 this.length += 1;
@@ -4657,9 +4683,9 @@ Cuic.Set = function () {
             var elements = [];
 
             if (typeof selector === 'string') {
-                this.each(function (elm) {
-                    if (!elm.node().matches(selector)) {
-                        elements.push(elm);
+                this.each(function (el) {
+                    if (!el.node().matches(selector)) {
+                        elements.push(el);
                     }
                 });
             }
@@ -5040,6 +5066,10 @@ Cuic.Dialog = function (_Cuic$Component2) {
         self.onRemoved(function () {
             Cuic.dialogs.remove(self);
         });
+
+        Cuic.on('resize', window, function () {
+            self.resizeContent();
+        });
         return _this17;
     }
 
@@ -5136,20 +5166,30 @@ Cuic.Dialog = function (_Cuic$Component2) {
     }, {
         key: 'resizeContent',
         value: function resizeContent() {
-            var parent = this.parentNode();
+            var parent = this.parent();
+            var parentPadding = parent.padding();
             var display = this.css('display');
-            var maxHeight = window.innerHeight;
+            var elMargin = this.margin();
+            var maxHeight = parent.innerHeight();
 
             // Use parent for max height
-            if (parent && parent !== document.body) {
-                maxHeight = Cuic.height(parent);
+            if (parent && parent.node() !== document.body) {
+                maxHeight = window.innerHeight;
+            }
+
+            // Adjust dimensions
+            switch (this.css('position')) {
+                case 'absolute':
+                    maxHeight += parentPadding.vertical;
+                    maxHeight -= elMargin.vertical;
+                    break;
+                case 'relative':
+                    maxHeight -= elMargin.vertical;
+                    prop.width -= elMargin.horizontal;
+                    break;
             }
 
             // Set panel max height
-            var border = this.border();
-            var margin = this.margin();
-            maxHeight -= margin.vertical;
-            maxHeight -= border.vertical;
             this.css({ 'max-height': maxHeight });
 
             // Calculate content max height
@@ -6377,10 +6417,10 @@ Cuic.Panel = function (_Cuic$Component5) {
 
         // Close the panel when the user clicks outside of it
         Cuic.on('click', document, function (ev) {
-            var elm = self.node();
+            var el = self.node();
 
-            if (ev.target !== elm && !Cuic.isParent(elm, ev.target)) {
-                if (self.options.autoClose && self.isOpened()) {
+            if (self.isOpened() && self.options.autoClose) {
+                if (ev.target !== el && !Cuic.isParent(el, ev.target)) {
                     // self.close(); // todo find how to avoid closing when opening from exterior (eg: button)
                 }
             }
@@ -6419,9 +6459,9 @@ Cuic.Panel = function (_Cuic$Component5) {
 
         // Called when the panel is minimized
         self.onMinimize(function () {
-            var elm = self.node();
-            var parent = elm.parentNode;
-            var clone = elm.cloneNode(true);
+            var el = self.node();
+            var parent = el.parentNode;
+            var clone = el.cloneNode(true);
             Cuic.css(clone, { height: 'auto', width: 'auto' });
 
             // Calculate minimized size
@@ -6463,34 +6503,9 @@ Cuic.Panel = function (_Cuic$Component5) {
             self.align(self.options.position);
         });
 
-        //     // todo position panel when closed
-        // const pos = Cuic.offset(self);
-
-        // // Panel is hidden
-        // if (pos.bottom < 0 || pos.left < 0 || pos.right < 0 || pos.top < 0) {
-        //     const elm = self.node();
-        //     let prop = Cuic.calculateAlign(elm, position);
-        //
-        //     // Horizontal position
-        //     if (position.indexOf('left') !== -1) {
-        //         prop.left = -self.outerWidth(true);
-        //         prop.right = '';
-        //     } else if (position.indexOf('right') !== -1) {
-        //         prop.right = -self.outerWidth(true);
-        //         prop.left = '';
-        //     }
-        //     // Vertical position
-        //     if (position.indexOf('bottom') !== -1) {
-        //         prop.bottom = -self.outerHeight(true);
-        //         prop.top = '';
-        //     } else if (position.indexOf('top') !== -1) {
-        //         prop.top = -self.outerHeight(true);
-        //         prop.bottom = '';
-        //     }
-        //
-        //     self.css(prop);
-        //     self.options.position = position;
-        // }
+        Cuic.on('resize', window, function () {
+            self.resizeContent();
+        });
         return _this23;
     }
 
@@ -6548,20 +6563,30 @@ Cuic.Panel = function (_Cuic$Component5) {
     }, {
         key: 'resizeContent',
         value: function resizeContent() {
-            var parent = this.parentNode();
+            var parent = this.parent();
+            var parentPadding = parent.padding();
             var display = this.css('display');
-            var maxHeight = window.innerHeight;
+            var elMargin = this.margin();
+            var maxHeight = parent.innerHeight();
 
             // Use parent for max height
-            if (parent && parent !== document.body) {
-                maxHeight = Cuic.height(parent);
+            if (parent && parent.node() !== document.body) {
+                maxHeight = window.innerHeight;
+            }
+
+            // Adjust dimensions
+            switch (this.css('position')) {
+                case 'absolute':
+                    maxHeight += parentPadding.vertical;
+                    maxHeight -= elMargin.vertical;
+                    break;
+                case 'relative':
+                    maxHeight -= elMargin.vertical;
+                    prop.width -= elMargin.horizontal;
+                    break;
             }
 
             // Set panel max height
-            var border = this.border();
-            var margin = this.margin();
-            maxHeight -= margin.vertical;
-            maxHeight -= border.vertical;
             this.css({ 'max-height': maxHeight });
 
             // Calculate content max height
@@ -6712,9 +6737,9 @@ Cuic.Popup = function (_Cuic$Component6) {
 
         // Close the popup when the user clicks outside of it
         Cuic.on('click', document, function (ev) {
-            var elm = self.node();
+            var el = self.node();
 
-            if (ev.target !== elm && !Cuic.isParent(elm, ev.target)) {
+            if (ev.target !== el && !Cuic.isParent(el, ev.target)) {
                 if (self.options.autoClose && self.isOpened()) {
                     self.close();
                 }
@@ -7471,9 +7496,9 @@ Cuic.Tooltip = function (_Cuic$Component8) {
 
         // Close the panel when the user clicks outside of it
         Cuic.on('click', document, function (ev) {
-            var elm = self.node();
+            var el = self.node();
 
-            if (ev.target !== elm && !Cuic.isParent(elm, ev.target)) {
+            if (ev.target !== el && !Cuic.isParent(el, ev.target)) {
                 self.close();
             }
         });

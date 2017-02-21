@@ -90,9 +90,9 @@ Cuic.Tooltip = class extends Cuic.Component {
 
         // Close the panel when the user clicks outside of it
         Cuic.on('click', document, (ev) => {
-            const elm = self.node();
+            const el = self.node();
 
-            if (ev.target !== elm && !Cuic.isParent(elm, ev.target)) {
+            if (ev.target !== el && !Cuic.isParent(el, ev.target)) {
                 self.close();
             }
         });

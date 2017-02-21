@@ -81,6 +81,38 @@
 .dialog.movable {
   position: absolute;
 }
+.dialog-content {
+  line-height: 1.5rem;
+  overflow: auto;
+  padding: 20px;
+}
+.dialog-footer {
+  border-top: solid 1px #eee;
+  padding: 20px;
+  text-align: right;
+}
+.dialog-header {
+  border-bottom: solid 1px #eee;
+  padding: 20px;
+}
+.dialog-header .btn-close {
+  color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 20px;
+}
+.dialog-header .btn-close:focus,
+.dialog-header .btn-close:hover {
+  color: rgba(0, 0, 0, 0.7);
+}
+.dialog-title {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+}
 .dialog.dialog-bottom {
   -webkit-transform-origin: bottom center;
           transform-origin: bottom center;
@@ -112,37 +144,6 @@
 .dialog.dialog-top.dialog-right {
   -webkit-transform-origin: top right;
           transform-origin: top right;
-}
-.dialog-content {
-  line-height: 1.5rem;
-  padding: 20px;
-}
-.dialog-footer {
-  border-top: solid 1px #eee;
-  padding: 20px;
-  text-align: right;
-}
-.dialog-header {
-  border-bottom: solid 1px #eee;
-  padding: 20px;
-}
-.dialog-header .btn-close {
-  color: rgba(0, 0, 0, 0.5);
-  cursor: pointer;
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 20px;
-}
-.dialog-header .btn-close:focus,
-.dialog-header .btn-close:hover {
-  color: rgba(0, 0, 0, 0.7);
-}
-.dialog-title {
-  font-size: 1.2em;
-  font-weight: bold;
-  margin: 0;
-  padding: 0;
 }
 .fader {
   background: rgba(240, 240, 240, 0.5);

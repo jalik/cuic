@@ -89,8 +89,6 @@
          * @return {*}
          */
         addEventListener(element, event, listener) {
-            element = this.node(element);
-
             if (typeof element.addEventListener === 'function') {
                 return element.addEventListener(event, listener);
             }
@@ -187,10 +185,10 @@
          * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
          */
         border(element) {
-            const bottom = parseInt(this.getComputedStyle(element, 'border-bottom-width'));
-            const left = parseInt(this.getComputedStyle(element, 'border-left-width'));
-            const right = parseInt(this.getComputedStyle(element, 'border-right-width'));
-            const top = parseInt(this.getComputedStyle(element, 'border-top-width'));
+            const bottom = parseFloat(this.getComputedStyle(element, 'border-bottom-width'));
+            const left = parseFloat(this.getComputedStyle(element, 'border-left-width'));
+            const right = parseFloat(this.getComputedStyle(element, 'border-right-width'));
+            const top = parseFloat(this.getComputedStyle(element, 'border-top-width'));
             return {
                 bottom: bottom,
                 horizontal: left + right,
@@ -229,12 +227,10 @@
                 parent = element.parentNode
             }
 
-            let elmHeight = this.outerHeight(element, true);
-            let elmWidth = this.outerWidth(element, true);
-            let elmMargin = this.margin(element);
-            let parentHeight = this.innerHeight(parent);
-            let parentWidth = this.innerWidth(parent);
-            let parentPadding = this.padding(parent);
+            let elHeight = this.outerHeight(element, true);
+            let elWidth = this.outerWidth(element, true);
+            let parentHeight = this.height(parent);
+            let parentWidth = this.width(parent);
             let relativeLeft = parent.scrollLeft;
             let relativeTop = parent.scrollTop;
             let relativeBottom = -relativeTop;
@@ -247,52 +243,41 @@
             };
 
             // If the target is fixed, we use the window as parent
-            if (this.css(element, 'position') === 'fixed') {
-                parent = window;
-                parentHeight = this.innerHeight(parent);
-                parentWidth = this.innerWidth(parent);
-                relativeLeft = 0;
-                relativeTop = 0;
-                relativeBottom = 0;
-                relativeRight = 0;
+            switch (this.css(element, 'position')) {
+                case 'fixed':
+                    parent = window;
+                    parentHeight = this.innerHeight(parent);
+                    parentWidth = this.innerWidth(parent);
+                    relativeLeft = 0;
+                    relativeTop = 0;
+                    relativeBottom = 0;
+                    relativeRight = 0;
+                    break;
             }
 
-            const getCenterX = () => {
-                return relativeLeft + (this.width(parent) / 2 - elmWidth / 2);
-            };
-
-            const getCenterY = () => {
-                return relativeTop + (this.height(parent) / 2 - elmHeight / 2);
-            };
-
-            // Limit element size to parent size
-            if (elmWidth > parentWidth) {
-                prop.width = (parentWidth - (elmWidth - this.width(element)));
-            }
-            if (elmHeight > parentHeight) {
-                prop.height = (parentHeight - (elmHeight - this.height(element)));
-            }
+            const centerX = relativeLeft + (this.innerWidth(parent) / 2 - elWidth / 2);
+            const centerY = relativeTop + (this.innerHeight(parent) / 2 - elHeight / 2);
 
             // Vertical position
-            if (position.indexOf('bottom') !== -1) {
-                prop.bottom = Math.max(parentPadding.bottom, elmMargin.bottom);
+            if (position.indexOf('top') !== -1) {
+                prop.top = 0;
             }
-            else if (position.indexOf('top') !== -1) {
-                prop.top = Math.max(parentPadding.top, elmMargin.top);
+            else if (position.indexOf('bottom') !== -1) {
+                prop.bottom = 0;
             }
             else {
-                prop.top = (getCenterY() + Math.max(parentPadding.top, elmMargin.top));
+                prop.top = centerY;
             }
 
             // Horizontal position
             if (position.indexOf('left') !== -1) {
-                prop.left = Math.max(parentPadding.left, elmMargin.left);
+                prop.left = 0;
             }
             else if (position.indexOf('right') !== -1) {
-                prop.right = Math.max(parentPadding.right, elmMargin.right);
+                prop.right = 0;
             }
             else {
-                prop.left = (getCenterX() + Math.max(parentPadding.left, elmMargin.left));
+                prop.left = centerX;
             }
             return prop;
         },
@@ -319,12 +304,12 @@
                 targetOffset = target.offset();
             }
 
-            let objWidth = element.outerWidth(true);
-            let objHeight = element.outerHeight(true);
-            let objCenterX = parseInt(objWidth / 2);
-            let objCenterY = parseInt(objHeight / 2);
-            let targetCenterX = parseInt(targetWidth / 2);
-            let targetCenterY = parseInt(targetHeight / 2);
+            let elWidth = element.outerWidth(true);
+            let elHeight = element.outerHeight(true);
+            let elCenterX = (elWidth / 2);
+            let elCenterY = (elHeight / 2);
+            let targetCenterX = (targetWidth / 2);
+            let targetCenterY = (targetHeight / 2);
 
             let prop = {
                 bottom: '',
@@ -338,21 +323,21 @@
                 prop.top = targetOffset.top + targetHeight;
             }
             else if (position.indexOf('top') !== -1) {
-                prop.top = targetOffset.top - objHeight;
+                prop.top = targetOffset.top - elHeight;
             }
             else {
-                prop.top = targetOffset.top + targetCenterY - objCenterY;
+                prop.top = targetOffset.top + targetCenterY - elCenterY;
             }
 
             // Horizontal positioning
             if (position.indexOf('left') !== -1) {
-                prop.left = targetOffset.left - objWidth;
+                prop.left = targetOffset.left - elWidth;
             }
             else if (position.indexOf('right') !== -1) {
                 prop.left = targetOffset.left + targetWidth;
             }
             else {
-                prop.left = targetOffset.left + targetCenterX - objCenterX;
+                prop.left = targetOffset.left + targetCenterX - elCenterX;
             }
 
             // Use window for positioning
@@ -385,28 +370,42 @@
         calculateMaximize(element) {
             element = this.node(element);
             const parent = element.parentNode;
-            const ctnPadding = this.padding(parent);
-            const elmMargin = this.margin(element);
+            const parentPadding = this.padding(parent);
+            const elMargin = this.margin(element);
             let prop = {
                 bottom: '',
-                height: (this.height(parent) - elmMargin.vertical),
+                height: this.innerHeight(parent) - parentPadding.vertical,
                 left: '',
                 right: '',
                 top: '',
-                width: (this.width(parent) - elmMargin.horizontal)
+                width: this.innerWidth(parent) - parentPadding.horizontal
             };
+
+            // Adjust dimensions
+            switch (this.css(element, 'position')) {
+                case 'absolute':
+                    prop.height += parentPadding.vertical;
+                    prop.height -= elMargin.vertical;
+                    prop.width += parentPadding.horizontal;
+                    prop.width -= elMargin.horizontal;
+                    break;
+                case 'relative':
+                    prop.height -= elMargin.vertical;
+                    prop.width -= elMargin.horizontal;
+                    break;
+            }
 
             // Horizontal position
             if (this.isPosition('right', element)) {
-                prop.right = ctnPadding.right;
+                prop.right = 0;
             } else {
-                prop.left = ctnPadding.left;
+                prop.left = 0;
             }
             // Vertical position
             if (this.isPosition('bottom', element)) {
-                prop.bottom = ctnPadding.bottom;
+                prop.bottom = 0;
             } else {
-                prop.top = ctnPadding.top;
+                prop.top = 0;
             }
             return prop;
         },
@@ -799,15 +798,15 @@
         isParent(parent, element) {
             parent = this.node(parent);
             element = this.node(element);
-            let elm = element;
+            let el = element;
 
             do {
-                elm = elm.parentNode;
+                el = el.parentNode;
 
-                if (elm === parent) {
+                if (el === parent) {
                     return true;
                 }
-            } while (elm);
+            } while (el);
 
             return false;
         },
@@ -858,10 +857,10 @@
          * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
          */
         margin(element) {
-            const bottom = parseInt(this.getComputedStyle(element, 'margin-bottom'));
-            const left = parseInt(this.getComputedStyle(element, 'margin-left'));
-            const right = parseInt(this.getComputedStyle(element, 'margin-right'));
-            const top = parseInt(this.getComputedStyle(element, 'margin-top'));
+            const bottom = parseFloat(this.getComputedStyle(element, 'margin-bottom'));
+            const left = parseFloat(this.getComputedStyle(element, 'margin-left'));
+            const right = parseFloat(this.getComputedStyle(element, 'margin-right'));
+            const top = parseFloat(this.getComputedStyle(element, 'margin-top'));
             return {
                 bottom: bottom,
                 horizontal: left + right,
@@ -930,7 +929,7 @@
                 return element.get(0);
             }
             console.log(element);
-            throw new TypeError(`cannot get HTMLElement from element:`);
+            throw new TypeError(`cannot get HTMLElement from element.`);
         },
 
         /**
@@ -941,8 +940,24 @@
          * @return {*}
          */
         off(event, element, callback) {
-            element = this.node(element);
+            if (element instanceof this.Element) {
+                element = element.node();
+            }
+            else if (element instanceof jQuery) {
+                element = element.get(0);
+            }
+            else if (!(element instanceof HTMLElement)
+                && !(element instanceof HTMLDocument)
+                && element !== window) {
+                console.log(event, element);
+                throw new TypeError(`Cannot add event listener on unsupported element.`);
+            }
             const browserEvent = this.whichEvent(event);
+
+            // Check if event is supported
+            if (!browserEvent) {
+                console.warn(`Event "${event}" is not supported by this browser.`);
+            }
 
             // Event is a animation
             if (event.indexOf('animation') !== -1) {
@@ -961,10 +976,6 @@
                 if (!browserEvent && !('transition' in element.style) || getComputedStyle(element)[duration] == '0s') {
                     this.apply(callback, this, Array.prototype.slice.call(arguments));
                 }
-            }
-            // Check if event is supported
-            if (!browserEvent) {
-                console.warn(`Event "${event}" is not supported by this browser.`);
             }
             return this.removeEventListener(element, browserEvent, callback);
         },
@@ -990,8 +1001,24 @@
          * @return {*}
          */
         on(event, element, callback) {
-            element = this.node(element);
+            if (element instanceof this.Element) {
+                element = element.node();
+            }
+            else if (element instanceof jQuery) {
+                element = element.get(0);
+            }
+            else if (!(element instanceof HTMLElement)
+                && !(element instanceof HTMLDocument)
+                && element !== window) {
+                console.log(event, element);
+                throw new TypeError(`Cannot add event listener on unsupported element.`);
+            }
             const browserEvent = this.whichEvent(event);
+
+            // Check if event is supported
+            if (!browserEvent) {
+                console.warn(`Event "${event}" is not supported by this browser.`);
+            }
 
             // Event is a animation
             if (event.indexOf('animation') !== -1) {
@@ -1010,10 +1037,6 @@
                 if (!browserEvent && !('transition' in element.style) || getComputedStyle(element)[duration] == '0s') {
                     this.apply(callback, this, Array.prototype.slice.call(arguments));
                 }
-            }
-            // Check if event is supported
-            if (!browserEvent) {
-                console.warn(`Event "${event}" is not supported by this browser.`);
             }
             return this.addEventListener(element, browserEvent, callback);
         },
@@ -1026,8 +1049,24 @@
          * @return {*}
          */
         once(event, element, callback) {
-            element = this.node(element);
+            if (element instanceof this.Element) {
+                element = element.node();
+            }
+            else if (element instanceof jQuery) {
+                element = element.get(0);
+            }
+            else if (!(element instanceof HTMLElement)
+                && !(element instanceof HTMLDocument)
+                && element !== window) {
+                console.log(event, element);
+                throw new TypeError(`Cannot add event listener on unsupported element.`);
+            }
             const browserEvent = this.whichEvent(event);
+
+            // Check if event is supported
+            if (!browserEvent) {
+                console.warn(`Event "${event}" is not supported by this browser.`);
+            }
 
             // Event is a animation
             if (event.indexOf('animation') !== -1) {
@@ -1047,11 +1086,7 @@
                     this.apply(callback, this, Array.prototype.slice.call(arguments));
                 }
             }
-            // Check if event is supported
-            if (!browserEvent) {
-                console.warn(`Event "${event}" is not supported by this browser.`);
-            }
-            const listener = function (ev) {
+            const listener = (ev) => {
                 Cuic.removeEventListener(element, browserEvent, listener);
                 Cuic.apply(callback, this, Array.prototype.slice.call(arguments));
             };
@@ -1088,10 +1123,10 @@
          * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
          */
         padding(element) {
-            const bottom = parseInt(this.getComputedStyle(element, 'padding-bottom'));
-            const left = parseInt(this.getComputedStyle(element, 'padding-left'));
-            const right = parseInt(this.getComputedStyle(element, 'padding-right'));
-            const top = parseInt(this.getComputedStyle(element, 'padding-top'));
+            const bottom = parseFloat(this.getComputedStyle(element, 'padding-bottom'));
+            const left = parseFloat(this.getComputedStyle(element, 'padding-left'));
+            const right = parseFloat(this.getComputedStyle(element, 'padding-right'));
+            const top = parseFloat(this.getComputedStyle(element, 'padding-top'));
             return {
                 bottom: bottom,
                 horizontal: left + right,
@@ -1108,10 +1143,10 @@
          * @return {{bottom: Number, left: Number, right: Number, top: Number}}
          */
         position(element) {
-            const bottom = parseInt(this.getComputedStyle(element, 'bottom'));
-            const left = parseInt(this.getComputedStyle(element, 'left'));
-            const right = parseInt(this.getComputedStyle(element, 'right'));
-            const top = parseInt(this.getComputedStyle(element, 'top'));
+            const bottom = parseFloat(this.getComputedStyle(element, 'bottom'));
+            const left = parseFloat(this.getComputedStyle(element, 'left'));
+            const right = parseFloat(this.getComputedStyle(element, 'right'));
+            const top = parseFloat(this.getComputedStyle(element, 'top'));
             return {
                 bottom: bottom,
                 left: left,
@@ -1168,8 +1203,6 @@
          * @return {*}
          */
         removeEventListener(element, event, listener) {
-            element = this.node(element);
-
             if (typeof element.removeEventListener === 'function') {
                 return element.removeEventListener(event, listener);
             }
@@ -1257,6 +1290,10 @@
             }
             // Check in document
             if (document[event] !== undefined || document[`on${event}`] !== undefined) {
+                return event;
+            }
+            // Check in window
+            if (window[event] !== undefined || window[`on${event}`] !== undefined) {
                 return event;
             }
         },

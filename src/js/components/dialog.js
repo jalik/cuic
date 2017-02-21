@@ -251,6 +251,10 @@ Cuic.Dialog = class extends Cuic.Component {
         self.onRemoved(() => {
             Cuic.dialogs.remove(self);
         });
+
+        Cuic.on('resize', window, () => {
+            self.resizeContent();
+        });
     }
 
     /**
@@ -323,20 +327,30 @@ Cuic.Dialog = class extends Cuic.Component {
      * @return {Cuic.Dialog}
      */
     resizeContent() {
-        const parent = this.parentNode();
+        const parent = this.parent();
+        const parentPadding = parent.padding();
         const display = this.css('display');
-        let maxHeight = window.innerHeight;
+        const elMargin = this.margin();
+        let maxHeight = parent.innerHeight();
 
         // Use parent for max height
-        if (parent && parent !== document.body) {
-            maxHeight = Cuic.height(parent);
+        if (parent && parent.node() !== document.body) {
+            maxHeight = window.innerHeight;
+        }
+
+        // Adjust dimensions
+        switch (this.css('position')) {
+            case 'absolute':
+                maxHeight += parentPadding.vertical;
+                maxHeight -= elMargin.vertical;
+                break;
+            case 'relative':
+                maxHeight -= elMargin.vertical;
+                prop.width -= elMargin.horizontal;
+                break;
         }
 
         // Set panel max height
-        const border = this.border();
-        const margin = this.margin();
-        maxHeight -= margin.vertical;
-        maxHeight -= border.vertical;
         this.css({'max-height': maxHeight});
 
         // Calculate content max height

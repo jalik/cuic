@@ -32,15 +32,15 @@ Cuic.Set = class {
 
         for (let i = 0; i < elements.length; i += 1) {
             if (elements.hasOwnProperty(i)) {
-                let elm = elements[i];
+                let el = elements[i];
 
                 // Convert element
-                if (elm instanceof HTMLElement) {
-                    elm = Cuic.element(elm);
+                if (el instanceof HTMLElement) {
+                    el = Cuic.element(el);
                 }
 
                 // Add element to set
-                this[this.length] = elm;
+                this[this.length] = el;
 
                 // Increment set length
                 this.length += 1;
@@ -218,9 +218,9 @@ Cuic.Set = class {
         const elements = [];
 
         if (typeof selector === 'string') {
-            this.each((elm) => {
-                if (!elm.node().matches(selector)) {
-                    elements.push(elm);
+            this.each((el) => {
+                if (!el.node().matches(selector)) {
+                    elements.push(el);
                 }
             });
         }
