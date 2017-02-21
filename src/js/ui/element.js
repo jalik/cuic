@@ -346,24 +346,6 @@ Cuic.Element = class {
     }
 
     /**
-     * Returns the HTML element
-     * todo rename to node()
-     * @return {HTMLElement}
-     */
-    node() {
-        return this.element;
-    }
-
-    /**
-     * Returns the parent of the element
-     * todo rename to parentNode()
-     * @return {HTMLElement}
-     */
-    getParentElement() {
-        return this.node().parentNode;
-    }
-
-    /**
      * Checks if the element has the class
      * @param className
      * @return {boolean}
@@ -480,6 +462,14 @@ Cuic.Element = class {
     }
 
     /**
+     * Returns the HTML element
+     * @return {HTMLElement}
+     */
+    node() {
+        return this.element;
+    }
+
+    /**
      * Remove the callback attached to the event
      * @param event
      * @param callback
@@ -581,8 +571,16 @@ Cuic.Element = class {
      * @return {*|Cuic.Element}
      */
     parent() {
-        const parent = this.getParentElement();
+        const parent = this.parentNode();
         return parent ? Cuic.element(parent) : null;
+    }
+
+    /**
+     * Returns the parent of the element
+     * @return {HTMLElement}
+     */
+    parentNode() {
+        return this.node().parentNode;
     }
 
     /**

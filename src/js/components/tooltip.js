@@ -131,13 +131,13 @@ Cuic.Tooltip = class extends Cuic.Component {
     update(ev) {
         // Position tooltip
         if (this.options.followPointer) {
-            if (this.getParentElement() !== document.body) {
+            if (this.parentNode() !== document.body) {
                 this.appendTo(document.body);
             }
             this.anchor(this.options.anchor, [ev.pageX, ev.pageY]);
         }
         else {
-            if (this.getParentElement() !== ev.currentTarget.parentNode) {
+            if (this.parentNode() !== ev.currentTarget.parentNode) {
                 this.appendTo(ev.currentTarget.parentNode);
             }
             this.anchor(this.options.anchor, ev.currentTarget);
@@ -162,7 +162,7 @@ Cuic.Tooltip = class extends Cuic.Component {
             top: '',
         };
 
-        // todo Copy tooltip background color
+        // todo copy tooltip background color
         // prop['border-color'] = this.css('background-color');
 
         // Remove previous classes

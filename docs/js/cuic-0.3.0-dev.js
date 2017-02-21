@@ -4640,7 +4640,7 @@ Cuic.Dialog = function (_Cuic$Component2) {
         self.addClass('dialog');
 
         // Set dialog position
-        var fixed = self.getParentElement() === document.body;
+        var fixed = self.parentNode() === document.body;
         self.css({ position: fixed ? 'fixed' : 'absolute' });
 
         // Create the fader
@@ -4929,7 +4929,7 @@ Cuic.Dialog = function (_Cuic$Component2) {
     }, {
         key: 'resizeContent',
         value: function resizeContent() {
-            var parent = this.getParentElement();
+            var parent = this.parentNode();
             var display = this.css('display');
             var maxHeight = window.innerHeight;
 
@@ -5074,7 +5074,7 @@ Cuic.Fader = function (_Cuic$Component3) {
         // Add component classes
         self.addClass('fader');
 
-        var fixed = self.getParentElement() === document.body;
+        var fixed = self.parentNode() === document.body;
 
         // Set position
         if (fixed) {
@@ -5906,7 +5906,7 @@ Cuic.Notification = function (_Cuic$Component4) {
         // Called when the notification is opening
         self.onOpen(function () {
             if (self.options.position) {
-                var isFixed = self.getParentElement() === document.body;
+                var isFixed = self.parentNode() === document.body;
                 self.css({ position: isFixed ? 'fixed' : 'absolute' });
                 self.align(self.options.position);
             }
@@ -6018,7 +6018,7 @@ Cuic.NotificationStack = function (_Cuic$Group) {
 
         // Set position
         if (self.options.position) {
-            var isFixed = self.getParentElement() === document.body;
+            var isFixed = self.parentNode() === document.body;
             self.css({ position: isFixed ? 'fixed' : 'absolute' });
             self.align(self.options.position);
         }
@@ -6144,7 +6144,7 @@ Cuic.Panel = function (_Cuic$Component5) {
         }
 
         // Set panel position
-        var fixed = self.getParentElement() === document.body;
+        var fixed = self.parentNode() === document.body;
         self.css({ position: fixed ? 'fixed' : 'absolute' });
 
         self.align(self.options.position);
@@ -6152,7 +6152,7 @@ Cuic.Panel = function (_Cuic$Component5) {
 
         // To hide the panel in the container,
         // the container must have a hidden overflow
-        Cuic.css(self.getParentElement(), { overflow: 'hidden' });
+        Cuic.css(self.parentNode(), { overflow: 'hidden' });
 
         self.on('click', function (ev) {
             // Close button
@@ -6340,7 +6340,7 @@ Cuic.Panel = function (_Cuic$Component5) {
     }, {
         key: 'resizeContent',
         value: function resizeContent() {
-            var parent = this.getParentElement();
+            var parent = this.parentNode();
             var display = this.css('display');
             var maxHeight = window.innerHeight;
 
@@ -7310,12 +7310,12 @@ Cuic.Tooltip = function (_Cuic$Component8) {
         value: function update(ev) {
             // Position tooltip
             if (this.options.followPointer) {
-                if (this.getParentElement() !== document.body) {
+                if (this.parentNode() !== document.body) {
                     this.appendTo(document.body);
                 }
                 this.anchor(this.options.anchor, [ev.pageX, ev.pageY]);
             } else {
-                if (this.getParentElement() !== ev.currentTarget.parentNode) {
+                if (this.parentNode() !== ev.currentTarget.parentNode) {
                     this.appendTo(ev.currentTarget.parentNode);
                 }
                 this.anchor(this.options.anchor, ev.currentTarget);
@@ -7343,7 +7343,7 @@ Cuic.Tooltip = function (_Cuic$Component8) {
                 top: ''
             };
 
-            // todo Copy tooltip background color
+            // todo copy tooltip background color
             // prop['border-color'] = this.css('background-color');
 
             // Remove previous classes

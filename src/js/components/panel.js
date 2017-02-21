@@ -87,7 +87,7 @@ Cuic.Panel = class extends Cuic.Component {
         }
 
         // Set panel position
-        let fixed = self.getParentElement() === document.body;
+        let fixed = self.parentNode() === document.body;
         self.css({position: fixed ? 'fixed' : 'absolute'});
 
         self.align(self.options.position);
@@ -95,7 +95,7 @@ Cuic.Panel = class extends Cuic.Component {
 
         // To hide the panel in the container,
         // the container must have a hidden overflow
-        Cuic.css(self.getParentElement(), {overflow: 'hidden'});
+        Cuic.css(self.parentNode(), {overflow: 'hidden'});
 
         self.on('click', (ev) => {
             // Close button
@@ -272,7 +272,7 @@ Cuic.Panel = class extends Cuic.Component {
      * @return {Cuic.Panel}
      */
     resizeContent() {
-        const parent = this.getParentElement();
+        const parent = this.parentNode();
         const display = this.css('display');
         let maxHeight = window.innerHeight;
 

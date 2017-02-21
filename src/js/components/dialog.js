@@ -53,7 +53,7 @@ Cuic.Dialog = class extends Cuic.Component {
         self.addClass('dialog');
 
         // Set dialog position
-        let fixed = self.getParentElement() === document.body;
+        let fixed = self.parentNode() === document.body;
         self.css({position: fixed ? 'fixed' : 'absolute'});
 
         // Create the fader
@@ -318,7 +318,7 @@ Cuic.Dialog = class extends Cuic.Component {
      * @return {Cuic.Dialog}
      */
     resizeContent() {
-        const parent = this.getParentElement();
+        const parent = this.parentNode();
         const display = this.css('display');
         let maxHeight = window.innerHeight;
 
