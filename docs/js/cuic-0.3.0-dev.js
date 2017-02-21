@@ -2698,13 +2698,17 @@ Cuic.Element = function () {
             if (_html !== undefined) {
                 // Get HTML from object
                 if (_html && (typeof _html === 'undefined' ? 'undefined' : _typeof(_html)) === 'object') {
+                    // Replace content keeping attached events on nodes
                     if (_html instanceof Cuic.Element) {
-                        _html = _html.node().outerHTML;
+                        this.innerHTML = '';
+                        this.append(_html.node());
                     } else if (_html instanceof jQuery) {
-                        _html = _html[0].outerHTML;
+                        this.innerHTML = '';
+                        this.append(_html.get(0));
                     }
+                } else if (typeof _html === 'string' || _html === null) {
+                    this.node().innerHTML = _html;
                 }
-                this.node().innerHTML = _html;
                 return this;
             } else {
                 return this.node().innerHTML;

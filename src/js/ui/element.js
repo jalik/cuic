@@ -386,14 +386,19 @@ Cuic.Element = class {
         if (html !== undefined) {
             // Get HTML from object
             if (html && typeof html === 'object') {
+                // Replace content keeping attached events on nodes
                 if (html instanceof Cuic.Element) {
-                    html = html.node().outerHTML;
+                    this.innerHTML = '';
+                    this.append(html.node());
                 }
                 else if (html instanceof jQuery) {
-                    html = html[0].outerHTML;
+                    this.innerHTML = '';
+                    this.append(html.get(0));
                 }
             }
-            this.node().innerHTML = html;
+            else if (typeof html === 'string' || html === null) {
+                this.node().innerHTML = html;
+            }
             return this;
         } else {
             return this.node().innerHTML;
