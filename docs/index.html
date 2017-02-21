@@ -1142,17 +1142,17 @@
                                     followPointer: followPointer.is(":checked"),
                                     selector: '.group2 [title]'
                                 });
+
+                                anchor.on("change", function () {
+                                    window.tooltip.anchor(anchor.val());
+                                    window.tooltipBlue.anchor(anchor.val());
+                                });
+
+                                followPointer.on("change", function () {
+                                    window.tooltip.followPointer = followPointer.is(":checked");
+                                    window.tooltipBlue.followPointer = followPointer.is(":checked");
+                                });
                             };
-
-                            anchor.on("change", function () {
-                                window.tooltip.anchor(anchor.val());
-                                window.tooltipBlue.anchor(anchor.val());
-                            });
-
-                            followPointer.on("change", function () {
-                                window.tooltip.followPointer = followPointer.is(":checked");
-                                window.tooltipBlue.followPointer = followPointer.is(":checked");
-                            });
 
                             sandbox.find('.btn-run').on('click', function (ev) {
                                 ev.stopPropagation();

@@ -62,7 +62,7 @@ Cuic.Notification = class extends Cuic.Component {
 
         // Close notification when mouse is out
         self.on('mouseleave', (ev) => {
-            if (ev.currentTarget === self.getElement()) {
+            if (ev.currentTarget === self.node()) {
                 self.autoClose();
             }
         });

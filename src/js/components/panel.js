@@ -112,7 +112,7 @@ Cuic.Panel = class extends Cuic.Component {
 
         // Close the panel when the user clicks outside of it
         Cuic.on('click', document, (ev) => {
-            const elm = self.getElement();
+            const elm = self.node();
 
             if (ev.target !== elm && !Cuic.isParent(elm, ev.target)) {
                 if (self.options.autoClose && self.isOpened()) {
@@ -158,7 +158,7 @@ Cuic.Panel = class extends Cuic.Component {
 
         // Called when the panel is minimized
         self.onMinimize(() => {
-            const elm = self.getElement();
+            const elm = self.node();
             const parent = elm.parentNode;
             const clone = elm.cloneNode(true);
             Cuic.css(clone, {height: 'auto', width: 'auto'});
@@ -209,7 +209,7 @@ Cuic.Panel = class extends Cuic.Component {
 
         // // Panel is hidden
         // if (pos.bottom < 0 || pos.left < 0 || pos.right < 0 || pos.top < 0) {
-        //     const elm = self.getElement();
+        //     const elm = self.node();
         //     let prop = Cuic.calculateAlign(elm, position);
         //
         //     // Horizontal position

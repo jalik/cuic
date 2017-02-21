@@ -46,7 +46,7 @@ Cuic.Movable = class extends Cuic.Element {
         self.handles = new Cuic.Collection();
 
         // Set the moving area
-        self.addMoveHandle(options.handle || self.getElement());
+        self.addMoveHandle(options.handle || self.node());
     }
 
     /**

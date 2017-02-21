@@ -33,7 +33,7 @@ Cuic.Shortcut = class {
         self.options = options;
 
         // Get the element
-        self.options.element = Cuic.getElement(options.element);
+        self.options.element = Cuic.node(options.element);
 
         // Check options
         if (typeof self.options.callback !== 'function') {
@@ -52,7 +52,7 @@ Cuic.Shortcut = class {
     activate() {
         const self = this;
         const options = this.options;
-        const element = this.getElement();
+        const element = this.node();
         Cuic.on(`keydown`, element, (ev) => {
             if ((options.keyCode === ev.keyCode || options.key === ev.key || options.key === ev.code)
                 && options.altKey === ev.altKey
@@ -70,15 +70,15 @@ Cuic.Shortcut = class {
      * Deactivates the shortcut
      */
     deactivate() {
-        Cuic.off(`keydown`, this.getElement(), this.options.callback);
+        Cuic.off(`keydown`, this.node(), this.options.callback);
     }
 
     /**
      * Returns the element
      * @return {HTMLElement}
      */
-    getElement() {
-        return Cuic.getElement(this.options.element);
+    node() {
+        return Cuic.node(this.options.element);
     }
 };
 

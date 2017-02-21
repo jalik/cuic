@@ -696,24 +696,24 @@ tr.selected {
   display: none;
 }
 .tooltip-tail-left {
-  border-bottom: solid 6px transparent;
-  border-top: solid 6px transparent;
+  border-bottom: solid 6px transparent !important;
+  border-top: solid 6px transparent !important;
   border-right: solid 6px rgba(0, 0, 0, 0.7);
   bottom: auto;
   right: auto;
   top: 50%;
 }
 .tooltip-tail-right {
-  border-bottom: solid 6px transparent;
-  border-top: solid 6px transparent;
+  border-bottom: solid 6px transparent !important;
+  border-top: solid 6px transparent !important;
   border-left: solid 6px rgba(0, 0, 0, 0.7);
   bottom: auto;
   left: auto;
   top: 50%;
 }
 .tooltip-tail-top {
-  border-left: solid 6px transparent;
-  border-right: solid 6px transparent;
+  border-left: solid 6px transparent !important;
+  border-right: solid 6px transparent !important;
   border-bottom: solid 6px rgba(0, 0, 0, 0.7);
   bottom: auto;
   left: 50%;

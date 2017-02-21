@@ -174,7 +174,7 @@ Cuic.Dialog = class extends Cuic.Component {
 
         // todo Close dialog when the user clicks outside of it
         // Cuic.on('click', document, (ev) => {
-        //     const elm = self.getElement();
+        //     const elm = self.node();
         //
         //     if (ev.target !== elm && !Cuic.isParent(elm, ev.target)) {
         //         if (self.options.autoClose) {
@@ -189,7 +189,7 @@ Cuic.Dialog = class extends Cuic.Component {
          */
         self.movable = new Cuic.Movable({
             enabled: self.options.movable,
-            element: self.getElement(),
+            element: self.node(),
             handle: self.title,
             rootOnly: false
         });
@@ -251,7 +251,7 @@ Cuic.Dialog = class extends Cuic.Component {
 
             if (buttons.length > 0) {
                 buttons[buttons.length - 1].focus();
-                // buttons.last().getElement().focus();
+                // buttons.last().node().focus();
             }
         });
 

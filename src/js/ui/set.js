@@ -77,7 +77,7 @@ Cuic.Set = class {
 
         if (typeof selector === 'string') {
             this.each((elm) => {
-                if (elm.getElement().matches(selector)) {
+                if (elm.node().matches(selector)) {
                     elements.push(elm);
                 }
             });
@@ -111,7 +111,7 @@ Cuic.Set = class {
 
         if (typeof selector === 'string') {
             this.each((elm) => {
-                if (!elm.getElement().matches(selector)) {
+                if (!elm.node().matches(selector)) {
                     elements.push(elm);
                 }
             });

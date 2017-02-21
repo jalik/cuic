@@ -138,7 +138,7 @@ if (!Element.prototype.matches) {
          * @return {Array|*}
          */
         addClass: function addClass(element, className) {
-            element = this.getElement(element);
+            element = this.node(element);
 
             var classes = this.getClasses(element);
             var target = (className || '').split(' ');
@@ -162,7 +162,7 @@ if (!Element.prototype.matches) {
          * @return {*}
          */
         addEventListener: function addEventListener(element, event, listener) {
-            element = this.getElement(element);
+            element = this.node(element);
 
             if (typeof element.addEventListener === 'function') {
                 return element.addEventListener(event, listener);
@@ -180,7 +180,7 @@ if (!Element.prototype.matches) {
          * @return {HTMLElement}
          */
         align: function align(element, position, parent) {
-            element = this.getElement(element);
+            element = this.node(element);
             this.css(element, this.calculateAlign(element, position, parent));
             return element;
         },
@@ -194,7 +194,7 @@ if (!Element.prototype.matches) {
          * @return {HTMLElement}
          */
         anchor: function anchor(element, position, target) {
-            element = this.getElement(element);
+            element = this.node(element);
             this.css(element, this.calculateAnchor(element, position, target));
             return element;
         },
@@ -273,11 +273,11 @@ if (!Element.prototype.matches) {
         calculateAlign: function calculateAlign(element, position, parent) {
             var _this = this;
 
-            element = this.getElement(element);
+            element = this.node(element);
             position = position || '';
 
             if (parent) {
-                parent = this.getElement(parent);
+                parent = this.node(parent);
 
                 // Use body as parent
                 if (parent.nodeName === 'HTML') {
@@ -300,8 +300,8 @@ if (!Element.prototype.matches) {
             var parentPadding = this.padding(parent);
             var relativeLeft = parent.scrollLeft;
             var relativeTop = parent.scrollTop;
-            var relativeBottom = -relativeTop; // todo maybe subtract element height ?
-            var relativeRight = -relativeLeft; // todo maybe subtract element width ?
+            var relativeBottom = -relativeTop;
+            var relativeRight = -relativeLeft;
             var prop = {
                 bottom: '',
                 left: '',
@@ -417,7 +417,7 @@ if (!Element.prototype.matches) {
                 prop.top -= window.scrollY;
             }
 
-            // // todo Check that the element is not positioned outside of the screen
+            // todo check that the element is not positioned outside of the screen
             // if (prop.bottom != null && prop.bottom < 0) {
             //     prop.bottom = 0;
             // }
@@ -440,7 +440,7 @@ if (!Element.prototype.matches) {
          * @return {*}
          */
         calculateMaximize: function calculateMaximize(element) {
-            element = this.getElement(element);
+            element = this.node(element);
             var parent = element.parentNode;
             var ctnPadding = this.padding(parent);
             var elmMargin = this.margin(element);
@@ -476,7 +476,7 @@ if (!Element.prototype.matches) {
          * @return {*}
          */
         calculateMinimize: function calculateMinimize(element, position) {
-            element = this.getElement(element);
+            element = this.node(element);
             position = position || '';
 
             // Create a clone with minimal size
@@ -516,11 +516,11 @@ if (!Element.prototype.matches) {
          * Returns the closest parent element matching the selector
          * @param element
          * @param selector
-         * @return {*}
+         * @return {Cuic.Element}
          */
         closest: function closest(element, selector) {
-            element = this.getElement(element);
-            return element.closest(selector);
+            element = this.node(element);
+            return this.element(element.closest(selector));
         },
 
 
@@ -532,7 +532,7 @@ if (!Element.prototype.matches) {
          * @return {*}
          */
         css: function css(element, styles) {
-            element = this.getElement(element);
+            element = this.node(element);
 
             // Writing styles
             if (styles) {
@@ -623,7 +623,7 @@ if (!Element.prototype.matches) {
          * @param element
          */
         enterFullScreen: function enterFullScreen(element) {
-            element = this.getElement(element);
+            element = this.node(element);
 
             if (element.requestFullscreen) {
                 element.requestFullscreen();
@@ -695,7 +695,7 @@ if (!Element.prototype.matches) {
          * @return {Cuic.Set}
          */
         find: function find(selector, context) {
-            context = this.getElement(context || document);
+            context = this.node(context || document);
             var elements = context.querySelectorAll(selector);
             return new this.Set(elements, context, selector);
         },
@@ -707,7 +707,7 @@ if (!Element.prototype.matches) {
          * @return {Array}
          */
         getClasses: function getClasses(element) {
-            element = this.getElement(element);
+            element = this.node(element);
             return element.className.split(' ');
         },
 
@@ -719,17 +719,18 @@ if (!Element.prototype.matches) {
          * @return {*}
          */
         getComputedStyle: function getComputedStyle(element, style) {
-            element = this.getElement(element);
+            element = this.node(element);
             return window.getComputedStyle(element, null).getPropertyValue(style);
         },
 
 
         /**
          * Returns the HTML element from various objects (Cuic, jQuery...)
+         * todo rename to node()
          * @param element
          * @return {*|HTMLElement|HTMLDocument}
          */
-        getElement: function getElement(element) {
+        node: function node(element) {
             if (element instanceof HTMLElement) {
                 return element;
             }
@@ -737,7 +738,7 @@ if (!Element.prototype.matches) {
                 return element;
             }
             if (element instanceof this.Element) {
-                return element.getElement();
+                return element.node();
             }
             if (element instanceof jQuery) {
                 return element.get(0);
@@ -774,7 +775,7 @@ if (!Element.prototype.matches) {
          * @return {boolean}
          */
         hasClass: function hasClass(element, className) {
-            element = this.getElement(element);
+            element = this.node(element);
             var classes = this.getClasses(element);
             var classNames = (className || '').split(' ');
             var result = classNames.length > 0;
@@ -795,7 +796,7 @@ if (!Element.prototype.matches) {
          * @return {number}
          */
         height: function height(element) {
-            element = this.getElement(element);
+            element = this.node(element);
             var padding = this.padding(element);
             return element.clientHeight - padding.vertical;
         },
@@ -807,7 +808,7 @@ if (!Element.prototype.matches) {
          * @return {number}
          */
         innerHeight: function innerHeight(element) {
-            element = this.getElement(element);
+            element = this.node(element);
             // todo subtract vertical scrollbar width
             return element.clientHeight;
         },
@@ -819,7 +820,7 @@ if (!Element.prototype.matches) {
          * @return {number}
          */
         innerWidth: function innerWidth(element) {
-            element = this.getElement(element);
+            element = this.node(element);
             // todo subtract horizontal scrollbar width
             return element.clientWidth;
         },
@@ -887,8 +888,8 @@ if (!Element.prototype.matches) {
          * @return {boolean}
          */
         isParent: function isParent(parent, element) {
-            parent = this.getElement(parent);
-            element = this.getElement(element);
+            parent = this.node(parent);
+            element = this.node(element);
             var elm = element;
 
             do {
@@ -910,7 +911,7 @@ if (!Element.prototype.matches) {
          * @return {boolean}
          */
         isPosition: function isPosition(position, element) {
-            element = this.getElement(element);
+            element = this.node(element);
             var pos = this.position(element);
 
             if (position.indexOf('center') !== -1) {
@@ -971,7 +972,7 @@ if (!Element.prototype.matches) {
          * @return {HTMLElement}
          */
         maximize: function maximize(element) {
-            element = this.getElement(element);
+            element = this.node(element);
             this.removeClass(element, 'minimized');
             this.addClass(element, 'maximized');
             this.css(element, this.calculateMaximize(element));
@@ -986,7 +987,7 @@ if (!Element.prototype.matches) {
          * @return {HTMLElement}
          */
         minimize: function minimize(element, position) {
-            element = this.getElement(element);
+            element = this.node(element);
             this.removeClass(element, 'maximized');
             this.addClass(element, 'minimized');
             this.css(element, this.calculateMinimize(element, position));
@@ -1015,7 +1016,7 @@ if (!Element.prototype.matches) {
          * @return {*}
          */
         off: function off(event, element, callback) {
-            element = this.getElement(element);
+            element = this.node(element);
             var browserEvent = this.whichEvent(event);
 
             // Event is a animation
@@ -1050,7 +1051,7 @@ if (!Element.prototype.matches) {
          * @return {{left: Number, top: Number}}
          */
         offset: function offset(element) {
-            element = this.getElement(element);
+            element = this.node(element);
             return {
                 left: element.offsetLeft,
                 top: element.offsetTop
@@ -1066,7 +1067,7 @@ if (!Element.prototype.matches) {
          * @return {*}
          */
         on: function on(event, element, callback) {
-            element = this.getElement(element);
+            element = this.node(element);
             var browserEvent = this.whichEvent(event);
 
             // Event is a animation
@@ -1103,7 +1104,7 @@ if (!Element.prototype.matches) {
          * @return {*}
          */
         once: function once(event, element, callback) {
-            element = this.getElement(element);
+            element = this.node(element);
             var browserEvent = this.whichEvent(event);
 
             // Event is a animation
@@ -1143,7 +1144,7 @@ if (!Element.prototype.matches) {
          * @return {number}
          */
         outerHeight: function outerHeight(element, includeMargin) {
-            element = this.getElement(element);
+            element = this.node(element);
             var margin = this.margin(element);
             return element.offsetHeight + (includeMargin ? margin.vertical : 0);
         },
@@ -1156,7 +1157,7 @@ if (!Element.prototype.matches) {
          * @return {number}
          */
         outerWidth: function outerWidth(element, includeMargin) {
-            element = this.getElement(element);
+            element = this.node(element);
             var margin = this.margin(element);
             return element.offsetWidth + (includeMargin ? margin.horizontal : 0);
         },
@@ -1229,7 +1230,7 @@ if (!Element.prototype.matches) {
          * @return {*|Array}
          */
         removeClass: function removeClass(element, className) {
-            element = this.getElement(element);
+            element = this.node(element);
             var classes = this.getClasses(element);
             var classNames = (className || '').split(' ');
 
@@ -1253,7 +1254,7 @@ if (!Element.prototype.matches) {
          * @return {*}
          */
         removeEventListener: function removeEventListener(element, event, listener) {
-            element = this.getElement(element);
+            element = this.node(element);
 
             if (typeof element.removeEventListener === 'function') {
                 return element.removeEventListener(event, listener);
@@ -1356,7 +1357,7 @@ if (!Element.prototype.matches) {
          * @return {number}
          */
         width: function width(element) {
-            element = this.getElement(element);
+            element = this.node(element);
             var padding = this.padding(element);
             return element.clientWidth - padding.horizontal;
         }
@@ -2167,7 +2168,7 @@ Cuic.Shortcut = function () {
         self.options = options;
 
         // Get the element
-        self.options.element = Cuic.getElement(options.element);
+        self.options.element = Cuic.node(options.element);
 
         // Check options
         if (typeof self.options.callback !== 'function') {
@@ -2190,7 +2191,7 @@ Cuic.Shortcut = function () {
         value: function activate() {
             var self = this;
             var options = this.options;
-            var element = this.getElement();
+            var element = this.node();
             Cuic.on('keydown', element, function (ev) {
                 if ((options.keyCode === ev.keyCode || options.key === ev.key || options.key === ev.code) && options.altKey === ev.altKey && options.ctrlKey === ev.ctrlKey && options.shiftKey === ev.shiftKey) {
                     ev.preventDefault();
@@ -2208,7 +2209,7 @@ Cuic.Shortcut = function () {
     }, {
         key: 'deactivate',
         value: function deactivate() {
-            Cuic.off('keydown', this.getElement(), this.options.callback);
+            Cuic.off('keydown', this.node(), this.options.callback);
         }
 
         /**
@@ -2217,9 +2218,9 @@ Cuic.Shortcut = function () {
          */
 
     }, {
-        key: 'getElement',
-        value: function getElement() {
-            return Cuic.getElement(this.options.element);
+        key: 'node',
+        value: function node() {
+            return Cuic.node(this.options.element);
         }
     }]);
 
@@ -2295,7 +2296,7 @@ Cuic.Element = function () {
 
         // Use existing element
         if (self.options.element) {
-            self.element = Cuic.getElement(self.options.element);
+            self.element = Cuic.node(self.options.element);
         }
         // Create element
         else if (typeof node === 'string') {
@@ -2307,7 +2308,7 @@ Cuic.Element = function () {
                 }
                 // Use Cuic element
                 else if (node instanceof Cuic.Element) {
-                        self.element = node.getElement();
+                        self.element = node.node();
                     }
                     // Use jQuery element
                     else if (node instanceof jQuery) {
@@ -2384,7 +2385,7 @@ Cuic.Element = function () {
                     parent = el[0];
                 }
             } else {
-                parent = Cuic.getElement(self.options.parent);
+                parent = Cuic.node(self.options.parent);
             }
 
             // Append element to parent node
@@ -2409,7 +2410,7 @@ Cuic.Element = function () {
     _createClass(_class5, [{
         key: 'addClass',
         value: function addClass(className) {
-            Cuic.addClass(this.getElement(), className);
+            Cuic.addClass(this.node(), className);
             return this;
         }
 
@@ -2453,7 +2454,7 @@ Cuic.Element = function () {
     }, {
         key: 'align',
         value: function align(position) {
-            Cuic.align(this.getElement(), position);
+            Cuic.align(this.node(), position);
             this.options.position = position;
             this.events.trigger('aligned', position);
             return this;
@@ -2470,7 +2471,7 @@ Cuic.Element = function () {
         key: 'anchor',
         value: function anchor(position, target) {
             target = target || this.options.target;
-            Cuic.anchor(this.getElement(), position, target);
+            Cuic.anchor(this.node(), position, target);
             this.options.anchor = position;
             this.options.target = target;
             this.events.trigger('anchored', position);
@@ -2486,7 +2487,7 @@ Cuic.Element = function () {
     }, {
         key: 'append',
         value: function append(element) {
-            this.getElement().append(Cuic.getElement(element));
+            this.node().append(Cuic.node(element));
             return this;
         }
 
@@ -2499,7 +2500,7 @@ Cuic.Element = function () {
     }, {
         key: 'appendTo',
         value: function appendTo(element) {
-            Cuic.getElement(element).append(this.getElement());
+            Cuic.node(element).append(this.node());
             return this;
         }
 
@@ -2514,11 +2515,11 @@ Cuic.Element = function () {
         key: 'attr',
         value: function attr(name, value) {
             if (value !== undefined) {
-                if (name in this.getElement()) {
-                    this.getElement()[name] = value;
+                if (name in this.node()) {
+                    this.node()[name] = value;
                 }
             } else {
-                return this.getElement()[name];
+                return this.node()[name];
             }
         }
 
@@ -2543,7 +2544,7 @@ Cuic.Element = function () {
         key: 'children',
         value: function children() {
             var children = [];
-            var nodes = this.getElement().children || this.getElement().childNodes;
+            var nodes = this.node().children || this.node().childNodes;
 
             for (var i = 0; i < nodes.length; i += 1) {
                 if (nodes[i] instanceof HTMLElement) {
@@ -2562,7 +2563,7 @@ Cuic.Element = function () {
     }, {
         key: 'css',
         value: function css(styles) {
-            return Cuic.css(this.getElement(), styles);
+            return Cuic.css(this.node(), styles);
         }
 
         /**
@@ -2575,7 +2576,7 @@ Cuic.Element = function () {
     }, {
         key: 'data',
         value: function data(key, value) {
-            var dataSet = this.getElement().dataset;
+            var dataSet = this.node().dataset;
 
             if (value !== undefined) {
                 dataSet[Cuic.toCamelCase(key)] = value;
@@ -2594,7 +2595,7 @@ Cuic.Element = function () {
     }, {
         key: 'disable',
         value: function disable() {
-            this.getElement().disabled = true;
+            this.node().disabled = true;
             this.addClass('disabled');
             this.events.trigger('disabled');
             return this;
@@ -2608,7 +2609,7 @@ Cuic.Element = function () {
     }, {
         key: 'enable',
         value: function enable() {
-            this.getElement().disabled = false;
+            this.node().disabled = false;
             this.removeClass('disabled');
             this.events.trigger('enabled');
             return this;
@@ -2624,7 +2625,7 @@ Cuic.Element = function () {
     }, {
         key: 'find',
         value: function find(selector) {
-            return Cuic.element(this.getElement().querySelector(selector));
+            return Cuic.element(this.node().querySelector(selector));
         }
 
         /**
@@ -2635,7 +2636,7 @@ Cuic.Element = function () {
     }, {
         key: 'getClasses',
         value: function getClasses() {
-            return Cuic.getClasses(this.getElement());
+            return Cuic.getClasses(this.node());
         }
 
         /**
@@ -2645,8 +2646,8 @@ Cuic.Element = function () {
          */
 
     }, {
-        key: 'getElement',
-        value: function getElement() {
+        key: 'node',
+        value: function node() {
             return this.element;
         }
 
@@ -2659,7 +2660,7 @@ Cuic.Element = function () {
     }, {
         key: 'getParentElement',
         value: function getParentElement() {
-            return this.getElement().parentNode;
+            return this.node().parentNode;
         }
 
         /**
@@ -2671,7 +2672,7 @@ Cuic.Element = function () {
     }, {
         key: 'hasClass',
         value: function hasClass(className) {
-            return Cuic.hasClass(this.getElement(), className);
+            return Cuic.hasClass(this.node(), className);
         }
 
         /**
@@ -2711,15 +2712,15 @@ Cuic.Element = function () {
                 // Get HTML from object
                 if (_html && (typeof _html === 'undefined' ? 'undefined' : _typeof(_html)) === 'object') {
                     if (_html instanceof Cuic.Element) {
-                        _html = _html.getElement().outerHTML;
+                        _html = _html.node().outerHTML;
                     } else if (_html instanceof jQuery) {
                         _html = _html[0].outerHTML;
                     }
                 }
-                this.getElement().innerHTML = _html;
+                this.node().innerHTML = _html;
                 return this;
             } else {
-                return this.getElement().innerHTML;
+                return this.node().innerHTML;
             }
         }
 
@@ -2754,9 +2755,9 @@ Cuic.Element = function () {
     }, {
         key: 'insertAfter',
         value: function insertAfter(element) {
-            element = Cuic.getElement(element);
-            var parent = this.getElement().parentNode;
-            parent.insertBefore(element, this.getElement().nextSibling);
+            element = Cuic.node(element);
+            var parent = this.node().parentNode;
+            parent.insertBefore(element, this.node().nextSibling);
             return this;
         }
 
@@ -2769,9 +2770,9 @@ Cuic.Element = function () {
     }, {
         key: 'insertBefore',
         value: function insertBefore(element) {
-            element = Cuic.getElement(element);
-            var parent = this.getElement().parentNode;
-            parent.insertBefore(element, this.getElement());
+            element = Cuic.node(element);
+            var parent = this.node().parentNode;
+            parent.insertBefore(element, this.node());
             return this;
         }
 
@@ -2783,7 +2784,7 @@ Cuic.Element = function () {
     }, {
         key: 'isEnabled',
         value: function isEnabled() {
-            return this.getElement().disabled !== true || !this.hasClass('disabled');
+            return this.node().disabled !== true || !this.hasClass('disabled');
         }
 
         /**
@@ -2794,7 +2795,7 @@ Cuic.Element = function () {
     }, {
         key: 'isRemoved',
         value: function isRemoved() {
-            var parent = this.getElement().parentNode;
+            var parent = this.node().parentNode;
             return parent === null || parent === undefined;
         }
 
@@ -2819,7 +2820,7 @@ Cuic.Element = function () {
     }, {
         key: 'off',
         value: function off(event, callback) {
-            Cuic.off(event, this.getElement(), callback);
+            Cuic.off(event, this.node(), callback);
             return this;
         }
 
@@ -2831,7 +2832,7 @@ Cuic.Element = function () {
     }, {
         key: 'offset',
         value: function offset() {
-            return Cuic.offset(this.getElement());
+            return Cuic.offset(this.node());
         }
 
         /**
@@ -2844,7 +2845,7 @@ Cuic.Element = function () {
     }, {
         key: 'on',
         value: function on(event, callback) {
-            Cuic.on(event, this.getElement(), callback);
+            Cuic.on(event, this.node(), callback);
             return this;
         }
 
@@ -2858,19 +2859,47 @@ Cuic.Element = function () {
     }, {
         key: 'once',
         value: function once(event, callback) {
-            Cuic.once(event, this.getElement(), callback);
+            Cuic.once(event, this.node(), callback);
             return this;
         }
 
         /**
-         * Adds a listener on "removed" event
+         * Called when element is aligned
          * @param callback
+         * @return {Cuic.Element}
+         */
+
+    }, {
+        key: 'onAligned',
+        value: function onAligned(callback) {
+            this.events.on('aligned', callback);
+            return this;
+        }
+
+        /**
+         * Called when element is positioned towards another element
+         * @param callback
+         * @return {Cuic.Element}
+         */
+
+    }, {
+        key: 'onAnchored',
+        value: function onAnchored(callback) {
+            this.events.on('anchored', callback);
+            return this;
+        }
+
+        /**
+         * Called when element is removed from the DOM
+         * @param callback
+         * @return {Cuic.Element}
          */
 
     }, {
         key: 'onRemoved',
         value: function onRemoved(callback) {
             this.events.on('removed', callback);
+            return this;
         }
 
         /**
@@ -2928,7 +2957,7 @@ Cuic.Element = function () {
     }, {
         key: 'position',
         value: function position() {
-            return Cuic.position(this.getElement());
+            return Cuic.position(this.node());
         }
 
         /**
@@ -2940,7 +2969,7 @@ Cuic.Element = function () {
     }, {
         key: 'prepend',
         value: function prepend(element) {
-            this.getElement().prepend(Cuic.getElement(element));
+            this.node().prepend(Cuic.node(element));
             return this;
         }
 
@@ -2953,7 +2982,7 @@ Cuic.Element = function () {
     }, {
         key: 'prependTo',
         value: function prependTo(element) {
-            Cuic.getElement(element).prepend(this.getElement());
+            Cuic.node(element).prepend(this.node());
             return this;
         }
 
@@ -2965,7 +2994,7 @@ Cuic.Element = function () {
     }, {
         key: 'remove',
         value: function remove() {
-            this.getElement().remove();
+            this.node().remove();
             this.events.trigger('removed');
             return this;
         }
@@ -2979,7 +3008,7 @@ Cuic.Element = function () {
     }, {
         key: 'removeClass',
         value: function removeClass(className) {
-            Cuic.removeClass(this.getElement(), className);
+            Cuic.removeClass(this.node(), className);
             return this;
         }
 
@@ -3006,10 +3035,10 @@ Cuic.Element = function () {
         key: 'text',
         value: function text(_text) {
             if (_text !== undefined) {
-                this.getElement().innerText = _text;
+                this.node().innerText = _text;
                 return this;
             } else {
-                return this.getElement().innerText;
+                return this.node().innerText;
             }
         }
 
@@ -3023,10 +3052,10 @@ Cuic.Element = function () {
         key: 'val',
         value: function val(value) {
             if (value !== undefined) {
-                this.getElement().value = value;
+                this.node().value = value;
                 return this;
             } else {
-                return this.getElement().value;
+                return this.node().value;
             }
         }
 
@@ -3434,7 +3463,7 @@ Cuic.Group = function (_Cuic$Element2) {
                 throw new TypeError('Cannot add non component to a Group.');
             }
             // fixme check position with this.options.position
-            if (Cuic.isPosition('top', this.getElement())) {
+            if (Cuic.isPosition('top', this.node())) {
                 component.prependTo(this);
             } else {
                 component.appendTo(this);
@@ -3749,7 +3778,7 @@ Cuic.Movable = function (_Cuic$Element4) {
         self.handles = new Cuic.Collection();
 
         // Set the moving area
-        self.addMoveHandle(options.handle || self.getElement());
+        self.addMoveHandle(options.handle || self.node());
         return _this11;
     }
 
@@ -4022,7 +4051,7 @@ Cuic.Resizable = function (_Cuic$Element5) {
                     // Resize horizontally
                     if (self.options.horizontal) {
                         for (var i = 0; i < self.horizontalHandles.length; i += 1) {
-                            if (self.horizontalHandles.get(i).getElement() === handleTarget) {
+                            if (self.horizontalHandles.get(i).node() === handleTarget) {
                                 var diffX = ev.clientX - startX;
                                 var width = initialWidth + diffX;
 
@@ -4038,7 +4067,7 @@ Cuic.Resizable = function (_Cuic$Element5) {
                     // Resize vertically
                     if (self.options.vertical) {
                         for (var _i = 0; _i < self.verticalHandles.length; _i += 1) {
-                            if (self.verticalHandles.get(_i).getElement() === handleTarget) {
+                            if (self.verticalHandles.get(_i).node() === handleTarget) {
                                 var diffY = ev.clientY - startY;
                                 var height = initialHeight + diffY;
 
@@ -4425,7 +4454,7 @@ Cuic.Set = function () {
 
             if (typeof selector === 'string') {
                 this.each(function (elm) {
-                    if (elm.getElement().matches(selector)) {
+                    if (elm.node().matches(selector)) {
                         elements.push(elm);
                     }
                 });
@@ -4468,7 +4497,7 @@ Cuic.Set = function () {
 
             if (typeof selector === 'string') {
                 this.each(function (elm) {
-                    if (!elm.getElement().matches(selector)) {
+                    if (!elm.node().matches(selector)) {
                         elements.push(elm);
                     }
                 });
@@ -4535,7 +4564,7 @@ Cuic.Button = function (_Cuic$Component) {
                 keyCode: options.shortcut,
                 target: self.element,
                 callback: function callback() {
-                    self.getElement().click();
+                    self.node().click();
                 }
             });
         }
@@ -4735,7 +4764,7 @@ Cuic.Dialog = function (_Cuic$Component2) {
 
         // todo Close dialog when the user clicks outside of it
         // Cuic.on('click', document, (ev) => {
-        //     const elm = self.getElement();
+        //     const elm = self.node();
         //
         //     if (ev.target !== elm && !Cuic.isParent(elm, ev.target)) {
         //         if (self.options.autoClose) {
@@ -4750,7 +4779,7 @@ Cuic.Dialog = function (_Cuic$Component2) {
          */
         self.movable = new Cuic.Movable({
             enabled: self.options.movable,
-            element: self.getElement(),
+            element: self.node(),
             handle: self.title,
             rootOnly: false
         });
@@ -4812,7 +4841,7 @@ Cuic.Dialog = function (_Cuic$Component2) {
 
             if (buttons.length > 0) {
                 buttons[buttons.length - 1].focus();
-                // buttons.last().getElement().focus();
+                // buttons.last().node().focus();
             }
         });
 
@@ -5844,7 +5873,7 @@ Cuic.Notification = function (_Cuic$Component4) {
 
         // Close notification when mouse is out
         self.on('mouseleave', function (ev) {
-            if (ev.currentTarget === self.getElement()) {
+            if (ev.currentTarget === self.node()) {
                 self.autoClose();
             }
         });
@@ -6133,7 +6162,7 @@ Cuic.Panel = function (_Cuic$Component5) {
 
         // Close the panel when the user clicks outside of it
         Cuic.on('click', document, function (ev) {
-            var elm = self.getElement();
+            var elm = self.node();
 
             if (ev.target !== elm && !Cuic.isParent(elm, ev.target)) {
                 if (self.options.autoClose && self.isOpened()) {
@@ -6175,7 +6204,7 @@ Cuic.Panel = function (_Cuic$Component5) {
 
         // Called when the panel is minimized
         self.onMinimize(function () {
-            var elm = self.getElement();
+            var elm = self.node();
             var parent = elm.parentNode;
             var clone = elm.cloneNode(true);
             Cuic.css(clone, { height: 'auto', width: 'auto' });
@@ -6224,7 +6253,7 @@ Cuic.Panel = function (_Cuic$Component5) {
 
         // // Panel is hidden
         // if (pos.bottom < 0 || pos.left < 0 || pos.right < 0 || pos.top < 0) {
-        //     const elm = self.getElement();
+        //     const elm = self.node();
         //     let prop = Cuic.calculateAlign(elm, position);
         //
         //     // Horizontal position
@@ -6468,7 +6497,7 @@ Cuic.Popup = function (_Cuic$Component6) {
 
         // Close the popup when the user clicks outside of it
         Cuic.on('click', document, function (ev) {
-            var elm = self.getElement();
+            var elm = self.node();
 
             if (ev.target !== elm && !Cuic.isParent(elm, ev.target)) {
                 if (self.options.autoClose && self.isOpened()) {
@@ -6500,7 +6529,7 @@ Cuic.Popup = function (_Cuic$Component6) {
 
         // Called when the popup is opening
         self.onOpen(function () {
-            var targetParent = Cuic.getElement(self.options.target).parentNode;
+            var targetParent = Cuic.node(self.options.target).parentNode;
             self.appendTo(targetParent);
             self.anchor(self.options.anchor, self.options.target);
         });
@@ -7225,7 +7254,7 @@ Cuic.Tooltip = function (_Cuic$Component8) {
 
         // Close the panel when the user clicks outside of it
         Cuic.on('click', document, function (ev) {
-            var elm = self.getElement();
+            var elm = self.node();
 
             if (ev.target !== elm && !Cuic.isParent(elm, ev.target)) {
                 self.close();
@@ -7240,6 +7269,11 @@ Cuic.Tooltip = function (_Cuic$Component8) {
             if (self.options.autoRemove) {
                 self.remove();
             }
+        });
+
+        // Reposition tail when tooltip position change
+        self.onAnchored(function () {
+            self.updateTail();
         });
         return _this26;
     }

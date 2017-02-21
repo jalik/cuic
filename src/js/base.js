@@ -66,7 +66,7 @@
          * @return {Array|*}
          */
         addClass(element, className) {
-            element = this.getElement(element);
+            element = this.node(element);
 
             let classes = this.getClasses(element);
             const target = (className || '').split(' ');
@@ -89,7 +89,7 @@
          * @return {*}
          */
         addEventListener(element, event, listener) {
-            element = this.getElement(element);
+            element = this.node(element);
 
             if (typeof element.addEventListener === 'function') {
                 return element.addEventListener(event, listener);
@@ -107,7 +107,7 @@
          * @return {HTMLElement}
          */
         align(element, position, parent) {
-            element = this.getElement(element);
+            element = this.node(element);
             this.css(element, this.calculateAlign(element, position, parent));
             return element;
         },
@@ -120,7 +120,7 @@
          * @return {HTMLElement}
          */
         anchor(element, position, target) {
-            element = this.getElement(element);
+            element = this.node(element);
             this.css(element, this.calculateAnchor(element, position, target));
             return element;
         },
@@ -209,11 +209,11 @@
          * @return {*}
          */
         calculateAlign(element, position, parent) {
-            element = this.getElement(element);
+            element = this.node(element);
             position = position || '';
 
             if (parent) {
-                parent = this.getElement(parent);
+                parent = this.node(parent);
 
                 // Use body as parent
                 if (parent.nodeName === 'HTML') {
@@ -237,8 +237,8 @@
             let parentPadding = this.padding(parent);
             let relativeLeft = parent.scrollLeft;
             let relativeTop = parent.scrollTop;
-            let relativeBottom = -relativeTop;// todo maybe subtract element height ?
-            let relativeRight = -relativeLeft;// todo maybe subtract element width ?
+            let relativeBottom = -relativeTop;
+            let relativeRight = -relativeLeft;
             let prop = {
                 bottom: '',
                 left: '',
@@ -361,7 +361,7 @@
                 prop.top -= window.scrollY;
             }
 
-            // // todo Check that the element is not positioned outside of the screen
+            // todo check that the element is not positioned outside of the screen
             // if (prop.bottom != null && prop.bottom < 0) {
             //     prop.bottom = 0;
             // }
@@ -383,7 +383,7 @@
          * @return {*}
          */
         calculateMaximize(element) {
-            element = this.getElement(element);
+            element = this.node(element);
             const parent = element.parentNode;
             const ctnPadding = this.padding(parent);
             const elmMargin = this.margin(element);
@@ -418,7 +418,7 @@
          * @return {*}
          */
         calculateMinimize(element, position) {
-            element = this.getElement(element);
+            element = this.node(element);
             position = position || '';
 
             // Create a clone with minimal size
@@ -457,11 +457,11 @@
          * Returns the closest parent element matching the selector
          * @param element
          * @param selector
-         * @return {*}
+         * @return {Cuic.Element}
          */
         closest(element, selector) {
-            element = this.getElement(element);
-            return element.closest(selector);
+            element = this.node(element);
+            return this.element(element.closest(selector));
         },
 
         /**
@@ -472,7 +472,7 @@
          * @return {*}
          */
         css(element, styles) {
-            element = this.getElement(element);
+            element = this.node(element);
 
             // Writing styles
             if (styles) {
@@ -561,7 +561,7 @@
          * @param element
          */
         enterFullScreen(element) {
-            element = this.getElement(element);
+            element = this.node(element);
 
             if (element.requestFullscreen) {
                 element.requestFullscreen();
@@ -631,7 +631,7 @@
          * @return {Cuic.Set}
          */
         find(selector, context) {
-            context = this.getElement(context || document);
+            context = this.node(context || document);
             const elements = context.querySelectorAll(selector);
             return new this.Set(elements, context, selector);
         },
@@ -642,7 +642,7 @@
          * @return {Array}
          */
         getClasses(element) {
-            element = this.getElement(element);
+            element = this.node(element);
             return element.className.split(' ');
         },
 
@@ -653,16 +653,17 @@
          * @return {*}
          */
         getComputedStyle(element, style) {
-            element = this.getElement(element);
+            element = this.node(element);
             return window.getComputedStyle(element, null).getPropertyValue(style);
         },
 
         /**
          * Returns the HTML element from various objects (Cuic, jQuery...)
+         * todo rename to node()
          * @param element
          * @return {*|HTMLElement|HTMLDocument}
          */
-        getElement(element) {
+        node(element) {
             if (element instanceof HTMLElement) {
                 return element;
             }
@@ -670,7 +671,7 @@
                 return element;
             }
             if (element instanceof this.Element) {
-                return element.getElement();
+                return element.node();
             }
             if (element instanceof jQuery) {
                 return element.get(0);
@@ -705,7 +706,7 @@
          * @return {boolean}
          */
         hasClass(element, className) {
-            element = this.getElement(element);
+            element = this.node(element);
             const classes = this.getClasses(element);
             const classNames = (className || '').split(' ');
             let result = classNames.length > 0;
@@ -725,7 +726,7 @@
          * @return {number}
          */
         height(element) {
-            element = this.getElement(element);
+            element = this.node(element);
             const padding = this.padding(element);
             return element.clientHeight - padding.vertical;
         },
@@ -736,7 +737,7 @@
          * @return {number}
          */
         innerHeight(element) {
-            element = this.getElement(element);
+            element = this.node(element);
             // todo subtract vertical scrollbar width
             return element.clientHeight;
         },
@@ -747,7 +748,7 @@
          * @return {number}
          */
         innerWidth(element) {
-            element = this.getElement(element);
+            element = this.node(element);
             // todo subtract horizontal scrollbar width
             return element.clientWidth;
         },
@@ -812,8 +813,8 @@
          * @return {boolean}
          */
         isParent(parent, element) {
-            parent = this.getElement(parent);
-            element = this.getElement(element);
+            parent = this.node(parent);
+            element = this.node(element);
             let elm = element;
 
             do {
@@ -834,7 +835,7 @@
          * @return {boolean}
          */
         isPosition(position, element) {
-            element = this.getElement(element);
+            element = this.node(element);
             const pos = this.position(element);
 
             if (position.indexOf('center') !== -1) {
@@ -893,7 +894,7 @@
          * @return {HTMLElement}
          */
         maximize(element) {
-            element = this.getElement(element);
+            element = this.node(element);
             this.removeClass(element, 'minimized');
             this.addClass(element, 'maximized');
             this.css(element, this.calculateMaximize(element));
@@ -907,7 +908,7 @@
          * @return {HTMLElement}
          */
         minimize(element, position) {
-            element = this.getElement(element);
+            element = this.node(element);
             this.removeClass(element, 'maximized');
             this.addClass(element, 'minimized');
             this.css(element, this.calculateMinimize(element, position));
@@ -934,7 +935,7 @@
          * @return {*}
          */
         off(event, element, callback) {
-            element = this.getElement(element);
+            element = this.node(element);
             const browserEvent = this.whichEvent(event);
 
             // Event is a animation
@@ -968,7 +969,7 @@
          * @return {{left: Number, top: Number}}
          */
         offset(element) {
-            element = this.getElement(element);
+            element = this.node(element);
             return {
                 left: element.offsetLeft,
                 top: element.offsetTop
@@ -983,7 +984,7 @@
          * @return {*}
          */
         on(event, element, callback) {
-            element = this.getElement(element);
+            element = this.node(element);
             const browserEvent = this.whichEvent(event);
 
             // Event is a animation
@@ -1019,7 +1020,7 @@
          * @return {*}
          */
         once(event, element, callback) {
-            element = this.getElement(element);
+            element = this.node(element);
             const browserEvent = this.whichEvent(event);
 
             // Event is a animation
@@ -1058,7 +1059,7 @@
          * @return {number}
          */
         outerHeight(element, includeMargin) {
-            element = this.getElement(element);
+            element = this.node(element);
             const margin = this.margin(element);
             return element.offsetHeight + (includeMargin ? margin.vertical : 0);
         },
@@ -1070,7 +1071,7 @@
          * @return {number}
          */
         outerWidth(element, includeMargin) {
-            element = this.getElement(element);
+            element = this.node(element);
             const margin = this.margin(element);
             return element.offsetWidth + (includeMargin ? margin.horizontal : 0);
         },
@@ -1138,7 +1139,7 @@
          * @return {*|Array}
          */
         removeClass(element, className) {
-            element = this.getElement(element);
+            element = this.node(element);
             let classes = this.getClasses(element);
             const classNames = (className || '').split(' ');
 
@@ -1161,7 +1162,7 @@
          * @return {*}
          */
         removeEventListener(element, event, listener) {
-            element = this.getElement(element);
+            element = this.node(element);
 
             if (typeof element.removeEventListener === 'function') {
                 return element.removeEventListener(event, listener);
@@ -1260,7 +1261,7 @@
          * @return {number}
          */
         width(element) {
-            element = this.getElement(element);
+            element = this.node(element);
             const padding = this.padding(element);
             return element.clientWidth - padding.horizontal;
         }

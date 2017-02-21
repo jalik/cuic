@@ -90,7 +90,7 @@ Cuic.Tooltip = class extends Cuic.Component {
 
         // Close the panel when the user clicks outside of it
         Cuic.on('click', document, (ev) => {
-            const elm = self.getElement();
+            const elm = self.node();
 
             if (ev.target !== elm && !Cuic.isParent(elm, ev.target)) {
                 self.close();
@@ -105,6 +105,11 @@ Cuic.Tooltip = class extends Cuic.Component {
             if (self.options.autoRemove) {
                 self.remove();
             }
+        });
+
+        // Reposition tail when tooltip position change
+        self.onAnchored(() => {
+            self.updateTail();
         });
     }
 

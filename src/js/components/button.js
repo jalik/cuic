@@ -49,7 +49,7 @@ Cuic.Button = class extends Cuic.Component {
                 keyCode: options.shortcut,
                 target: self.element,
                 callback() {
-                    self.getElement().click();
+                    self.node().click();
                 }
             });
         }

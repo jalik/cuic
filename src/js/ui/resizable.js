@@ -113,7 +113,7 @@ Cuic.Resizable = class extends Cuic.Element {
                     // Resize horizontally
                     if (self.options.horizontal) {
                         for (let i = 0; i < self.horizontalHandles.length; i += 1) {
-                            if (self.horizontalHandles.get(i).getElement() === handleTarget) {
+                            if (self.horizontalHandles.get(i).node() === handleTarget) {
                                 const diffX = ev.clientX - startX;
                                 const width = initialWidth + diffX;
 
@@ -130,7 +130,7 @@ Cuic.Resizable = class extends Cuic.Element {
                     // Resize vertically
                     if (self.options.vertical) {
                         for (let i = 0; i < self.verticalHandles.length; i += 1) {
-                            if (self.verticalHandles.get(i).getElement() === handleTarget) {
+                            if (self.verticalHandles.get(i).node() === handleTarget) {
                                 const diffY = ev.clientY - startY;
                                 const height = initialHeight + diffY;
 

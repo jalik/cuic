@@ -60,7 +60,7 @@ Cuic.Popup = class extends Cuic.Component {
 
         // Close the popup when the user clicks outside of it
         Cuic.on('click', document, (ev) => {
-            const elm = self.getElement();
+            const elm = self.node();
 
             if (ev.target !== elm && !Cuic.isParent(elm, ev.target)) {
                 if (self.options.autoClose && self.isOpened()) {
@@ -92,7 +92,7 @@ Cuic.Popup = class extends Cuic.Component {
 
         // Called when the popup is opening
         self.onOpen(() => {
-            const targetParent = Cuic.getElement(self.options.target).parentNode;
+            const targetParent = Cuic.node(self.options.target).parentNode;
             self.appendTo(targetParent);
             self.anchor(self.options.anchor, self.options.target);
         });
