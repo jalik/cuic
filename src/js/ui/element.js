@@ -34,27 +34,27 @@ Cuic.Element = class {
         // Set default options
         self.options = Cuic.extend({}, Cuic.Element.prototype.options, options);
 
-        // Use existing element
+        // Use existing node
         if (self.options.element) {
             self.element = Cuic.node(self.options.element);
         }
-        // Create element
+        // Create node
         else if (typeof node === 'string') {
             self.element = document.createElement(node);
         }
-        // Use HTML element/document
+        // Use HTML node
         else if (node instanceof HTMLElement || node instanceof HTMLDocument) {
             self.element = node;
         }
-        // Use Cuic element
+        // Use node from Cuic.Element
         else if (node instanceof Cuic.Element) {
             self.element = node.node();
         }
-        // Use the first element of a Cuic.Set object
-        else if (node instanceof Cuic.Set) {
+        // Use the first node of a Cuic.Elements object
+        else if (node instanceof Cuic.Elements) {
             self.element = node.get(0);
         }
-        // Use the first element of a jQuery object
+        // Use the first node of a jQuery object
         else if (node instanceof jQuery) {
             self.element = node.get(0);
         }
@@ -270,7 +270,7 @@ Cuic.Element = class {
     /**
      * Returns element child nodes
      * @param selector
-     * @return {Cuic.Set}
+     * @return {Cuic.Elements}
      */
     children(selector) {
         let children = [];
@@ -283,7 +283,7 @@ Cuic.Element = class {
                 }
             }
         }
-        return new Cuic.Set(children, this.node(), selector);
+        return new Cuic.Elements(children, this.node(), selector);
     }
 
     /**
@@ -350,7 +350,7 @@ Cuic.Element = class {
     /**
      * Returns the first element that matches the selector
      * @param selector
-     * @return {Cuic.Set}
+     * @return {Cuic.Elements}
      */
     find(selector) {
         return Cuic.find(selector, this.node());

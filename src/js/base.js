@@ -636,12 +636,12 @@
          * Returns all elements matching the selector
          * @param selector
          * @param context
-         * @return {Cuic.Set}
+         * @return {Cuic.Elements}
          */
         find(selector, context) {
             context = this.node(context || document);
             const elements = context.querySelectorAll(selector);
-            return new this.Set(elements, context, selector);
+            return new this.Elements(elements, context, selector);
         },
 
         /**

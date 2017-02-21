@@ -23,7 +23,7 @@
  *
  */
 
-Cuic.Set = class {
+Cuic.Elements = class {
 
     constructor(elements, context, selector) {
         this.length = 0;
@@ -51,7 +51,7 @@ Cuic.Set = class {
     /**
      * Aligns all elements
      * @param position
-     * @return {Cuic.Set}
+     * @return {Cuic.Elements}
      */
     align(position) {
         return this.each((el) => {
@@ -63,7 +63,7 @@ Cuic.Set = class {
      * Anchors all elements
      * @param position
      * @param target
-     * @return {Cuic.Set}
+     * @return {Cuic.Elements}
      */
     anchor(position, target) {
         return this.each((el) => {
@@ -74,7 +74,7 @@ Cuic.Set = class {
     /**
      * Removes all elements
      * @param styles
-     * @return {Cuic.Set}
+     * @return {Cuic.Elements}
      */
     css(styles) {
         return this.each((el) => {
@@ -85,7 +85,7 @@ Cuic.Set = class {
     /**
      * Executes a callback on each elements
      * @param callback
-     * @return {Cuic.Set}
+     * @return {Cuic.Elements}
      */
     each(callback) {
         for (let i = 0; i < this.length; i += 1) {
@@ -96,7 +96,7 @@ Cuic.Set = class {
 
     /**
      * Removes elements content
-     * @return {Cuic.Set}
+     * @return {Cuic.Elements}
      */
     empty() {
         return this.each((el) => {
@@ -116,7 +116,7 @@ Cuic.Set = class {
     /**
      * Returns elements from the list matching the selector
      * @param selector
-     * @return {Cuic.Set}
+     * @return {Cuic.Elements}
      */
     filter(selector) {
         const elements = [];
@@ -128,13 +128,13 @@ Cuic.Set = class {
                 }
             });
         }
-        return new Cuic.Set(elements, this.context, selector);
+        return new Cuic.Elements(elements, this.context, selector);
     }
 
     /**
      * Returns elements matching the selector
      * @param selector
-     * @return {Cuic.Set}
+     * @return {Cuic.Elements}
      */
     find(selector) {
         const elements = [];
@@ -146,7 +146,7 @@ Cuic.Set = class {
                 });
             });
         }
-        return new Cuic.Set(elements, this.context, selector);
+        return new Cuic.Elements(elements, this.context, selector);
     }
 
     /**
@@ -168,7 +168,7 @@ Cuic.Set = class {
 
     /**
      * Hides all elements
-     * @return {Cuic.Set}
+     * @return {Cuic.Elements}
      */
     hide() {
         return this.each((el) => {
@@ -179,7 +179,7 @@ Cuic.Set = class {
     /**
      * Sets elements content
      * @param html
-     * @return {Cuic.Set}
+     * @return {Cuic.Elements}
      */
     html(html) {
         return this.each((el) => {
@@ -212,7 +212,7 @@ Cuic.Set = class {
     /**
      * Returns elements from the list not matching the selector
      * @param selector
-     * @return {Cuic.Set}
+     * @return {Cuic.Elements}
      */
     not(selector) {
         const elements = [];
@@ -224,12 +224,12 @@ Cuic.Set = class {
                 }
             });
         }
-        return new Cuic.Set(elements, this.context);
+        return new Cuic.Elements(elements, this.context);
     }
 
     /**
      * Removes all elements
-     * @return {Cuic.Set}
+     * @return {Cuic.Elements}
      */
     remove() {
         return this.each((el) => {
@@ -239,7 +239,7 @@ Cuic.Set = class {
 
     /**
      * Shows all elements
-     * @return {Cuic.Set}
+     * @return {Cuic.Elements}
      */
     show() {
         return this.each((el) => {
@@ -250,7 +250,7 @@ Cuic.Set = class {
     /**
      * Sets elements value
      * @param value
-     * @return {Cuic.Set}
+     * @return {Cuic.Elements}
      */
     val(value) {
         return this.each((el) => {

@@ -698,12 +698,12 @@ if (!Element.prototype.matches) {
          * Returns all elements matching the selector
          * @param selector
          * @param context
-         * @return {Cuic.Set}
+         * @return {Cuic.Elements}
          */
         find: function find(selector, context) {
             context = this.node(context || document);
             var elements = context.querySelectorAll(selector);
-            return new this.Set(elements, context, selector);
+            return new this.Elements(elements, context, selector);
         },
 
 
@@ -2329,27 +2329,27 @@ Cuic.Element = function () {
         // Set default options
         self.options = Cuic.extend({}, Cuic.Element.prototype.options, options);
 
-        // Use existing element
+        // Use existing node
         if (self.options.element) {
             self.element = Cuic.node(self.options.element);
         }
-        // Create element
+        // Create node
         else if (typeof node === 'string') {
                 self.element = document.createElement(node);
             }
-            // Use HTML element/document
+            // Use HTML node
             else if (node instanceof HTMLElement || node instanceof HTMLDocument) {
                     self.element = node;
                 }
-                // Use Cuic element
+                // Use node from Cuic.Element
                 else if (node instanceof Cuic.Element) {
                         self.element = node.node();
                     }
-                    // Use the first element of a Cuic.Set object
-                    else if (node instanceof Cuic.Set) {
+                    // Use the first node of a Cuic.Elements object
+                    else if (node instanceof Cuic.Elements) {
                             self.element = node.get(0);
                         }
-                        // Use the first element of a jQuery object
+                        // Use the first node of a jQuery object
                         else if (node instanceof jQuery) {
                                 self.element = node.get(0);
                             } else {
@@ -2580,7 +2580,7 @@ Cuic.Element = function () {
         /**
          * Returns element child nodes
          * @param selector
-         * @return {Cuic.Set}
+         * @return {Cuic.Elements}
          */
 
     }, {
@@ -2596,7 +2596,7 @@ Cuic.Element = function () {
                     }
                 }
             }
-            return new Cuic.Set(children, this.node(), selector);
+            return new Cuic.Elements(children, this.node(), selector);
         }
 
         /**
@@ -2676,7 +2676,7 @@ Cuic.Element = function () {
         /**
          * Returns the first element that matches the selector
          * @param selector
-         * @return {Cuic.Set}
+         * @return {Cuic.Elements}
          */
 
     }, {
@@ -3627,18 +3627,338 @@ Cuic.Group.prototype.options = {
  *
  */
 
-Cuic.Hook = function (_Cuic$Element3) {
-    _inherits(_class8, _Cuic$Element3);
-
-    function _class8(options) {
+Cuic.Elements = function () {
+    function _class8(elements, context, selector) {
         _classCallCheck(this, _class8);
+
+        this.length = 0;
+        this.context = context;
+        this.selector = selector;
+
+        for (var i = 0; i < elements.length; i += 1) {
+            if (elements.hasOwnProperty(i)) {
+                var el = elements[i];
+
+                // Get element from node
+                if (el instanceof HTMLDocument || el instanceof HTMLElement) {
+                    el = Cuic.element(el);
+                }
+
+                // Add element to set
+                this[this.length] = el;
+
+                // Increment set length
+                this.length += 1;
+            }
+        }
+    }
+
+    /**
+     * Aligns all elements
+     * @param position
+     * @return {Cuic.Elements}
+     */
+
+
+    _createClass(_class8, [{
+        key: 'align',
+        value: function align(position) {
+            return this.each(function (el) {
+                el.align(position);
+            });
+        }
+
+        /**
+         * Anchors all elements
+         * @param position
+         * @param target
+         * @return {Cuic.Elements}
+         */
+
+    }, {
+        key: 'anchor',
+        value: function anchor(position, target) {
+            return this.each(function (el) {
+                el.anchor(position, target);
+            });
+        }
+
+        /**
+         * Removes all elements
+         * @param styles
+         * @return {Cuic.Elements}
+         */
+
+    }, {
+        key: 'css',
+        value: function css(styles) {
+            return this.each(function (el) {
+                el.css(styles);
+            });
+        }
+
+        /**
+         * Executes a callback on each elements
+         * @param callback
+         * @return {Cuic.Elements}
+         */
+
+    }, {
+        key: 'each',
+        value: function each(callback) {
+            for (var i = 0; i < this.length; i += 1) {
+                callback.call(this, this[i]);
+            }
+            return this;
+        }
+
+        /**
+         * Removes elements content
+         * @return {Cuic.Elements}
+         */
+
+    }, {
+        key: 'empty',
+        value: function empty() {
+            return this.each(function (el) {
+                el.empty();
+            });
+        }
+
+        /**
+         * Returns the element at the specified index
+         * @param index
+         * @return {Cuic.Element}
+         */
+
+    }, {
+        key: 'eq',
+        value: function eq(index) {
+            return this[index];
+        }
+
+        /**
+         * Returns elements from the list matching the selector
+         * @param selector
+         * @return {Cuic.Elements}
+         */
+
+    }, {
+        key: 'filter',
+        value: function filter(selector) {
+            var elements = [];
+
+            if (typeof selector === 'string') {
+                this.each(function (el) {
+                    if (el.node().matches(selector)) {
+                        elements.push(el);
+                    }
+                });
+            }
+            return new Cuic.Elements(elements, this.context, selector);
+        }
+
+        /**
+         * Returns elements matching the selector
+         * @param selector
+         * @return {Cuic.Elements}
+         */
+
+    }, {
+        key: 'find',
+        value: function find(selector) {
+            var elements = [];
+
+            if (typeof selector === 'string') {
+                this.each(function (el) {
+                    el.find(selector).each(function (el2) {
+                        elements.push(el2);
+                    });
+                });
+            }
+            return new Cuic.Elements(elements, this.context, selector);
+        }
+
+        /**
+         * Returns the first element in the list
+         * @return {Cuic.Element|null}
+         */
+
+    }, {
+        key: 'first',
+        value: function first() {
+            return this.length ? this[0] : null;
+        }
+
+        /**
+         * Returns the HTML element at the specified index
+         * @param index
+         * @return {HTMLDocument|HTMLElement|null}
+         */
+
+    }, {
+        key: 'get',
+        value: function get(index) {
+            return this[index].node();
+        }
+
+        /**
+         * Hides all elements
+         * @return {Cuic.Elements}
+         */
+
+    }, {
+        key: 'hide',
+        value: function hide() {
+            return this.each(function (el) {
+                el.hide();
+            });
+        }
+
+        /**
+         * Sets elements content
+         * @param html
+         * @return {Cuic.Elements}
+         */
+
+    }, {
+        key: 'html',
+        value: function html(_html2) {
+            return this.each(function (el) {
+                el.html(_html2);
+            });
+        }
+
+        /**
+         * Returns the index of the element
+         * @param element
+         * @return {number}
+         */
+
+    }, {
+        key: 'index',
+        value: function index(element) {
+            for (var i = 0; i < this.length; i += 1) {
+                if (this.eq(i) === element || this.get(i) === element) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        /**
+         * Returns the last element in the list
+         * @return {Cuic.Element|null}
+         */
+
+    }, {
+        key: 'last',
+        value: function last() {
+            return this.length ? this[this.length - 1] : null;
+        }
+
+        /**
+         * Returns elements from the list not matching the selector
+         * @param selector
+         * @return {Cuic.Elements}
+         */
+
+    }, {
+        key: 'not',
+        value: function not(selector) {
+            var elements = [];
+
+            if (typeof selector === 'string') {
+                this.each(function (el) {
+                    if (!el.node().matches(selector)) {
+                        elements.push(el);
+                    }
+                });
+            }
+            return new Cuic.Elements(elements, this.context);
+        }
+
+        /**
+         * Removes all elements
+         * @return {Cuic.Elements}
+         */
+
+    }, {
+        key: 'remove',
+        value: function remove() {
+            return this.each(function (el) {
+                el.remove();
+            });
+        }
+
+        /**
+         * Shows all elements
+         * @return {Cuic.Elements}
+         */
+
+    }, {
+        key: 'show',
+        value: function show() {
+            return this.each(function (el) {
+                el.show();
+            });
+        }
+
+        /**
+         * Sets elements value
+         * @param value
+         * @return {Cuic.Elements}
+         */
+
+    }, {
+        key: 'val',
+        value: function val(value) {
+            return this.each(function (el) {
+                el.val(value);
+            });
+        }
+    }]);
+
+    return _class8;
+}();
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2017 Karl STEIN
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
+Cuic.Hook = function (_Cuic$Element3) {
+    _inherits(_class9, _Cuic$Element3);
+
+    function _class9(options) {
+        _classCallCheck(this, _class9);
 
         // Set default options
         options = Cuic.extend({}, Cuic.Hook.prototype.options, options);
 
         // Create element
 
-        var _this10 = _possibleConstructorReturn(this, (_class8.__proto__ || Object.getPrototypeOf(_class8)).call(this, 'div', { className: options.className }, options));
+        var _this10 = _possibleConstructorReturn(this, (_class9.__proto__ || Object.getPrototypeOf(_class9)).call(this, 'div', { className: options.className }, options));
 
         var self = _this10;
 
@@ -3699,7 +4019,7 @@ Cuic.Hook = function (_Cuic$Element3) {
      */
 
 
-    _createClass(_class8, [{
+    _createClass(_class9, [{
         key: 'hook',
         value: function hook() {
             var self = this;
@@ -3795,7 +4115,7 @@ Cuic.Hook = function (_Cuic$Element3) {
         }
     }]);
 
-    return _class8;
+    return _class9;
 }(Cuic.Element);
 
 Cuic.Hook.prototype.options = {
@@ -3834,17 +4154,17 @@ Cuic.Hook.prototype.options = {
  */
 
 Cuic.Movable = function (_Cuic$Element4) {
-    _inherits(_class9, _Cuic$Element4);
+    _inherits(_class10, _Cuic$Element4);
 
-    function _class9(options) {
-        _classCallCheck(this, _class9);
+    function _class10(options) {
+        _classCallCheck(this, _class10);
 
         // Set default options
         options = Cuic.extend({}, Cuic.Movable.prototype.options, options);
 
         // Create element
 
-        var _this11 = _possibleConstructorReturn(this, (_class9.__proto__ || Object.getPrototypeOf(_class9)).call(this, 'div', { className: options.className }, options));
+        var _this11 = _possibleConstructorReturn(this, (_class10.__proto__ || Object.getPrototypeOf(_class10)).call(this, 'div', { className: options.className }, options));
 
         var self = _this11;
 
@@ -3871,7 +4191,7 @@ Cuic.Movable = function (_Cuic$Element4) {
      */
 
 
-    _createClass(_class9, [{
+    _createClass(_class10, [{
         key: 'addMoveHandle',
         value: function addMoveHandle(handle) {
             var self = this;
@@ -4012,7 +4332,7 @@ Cuic.Movable = function (_Cuic$Element4) {
         }
     }]);
 
-    return _class9;
+    return _class10;
 }(Cuic.Element);
 
 Cuic.Movable.prototype.options = {
@@ -4051,17 +4371,17 @@ Cuic.Movable.prototype.options = {
  */
 
 Cuic.Resizable = function (_Cuic$Element5) {
-    _inherits(_class10, _Cuic$Element5);
+    _inherits(_class11, _Cuic$Element5);
 
-    function _class10(options) {
-        _classCallCheck(this, _class10);
+    function _class11(options) {
+        _classCallCheck(this, _class11);
 
         // Set default options
         options = Cuic.extend({}, Cuic.Resizable.prototype.options, options);
 
         // Create element
 
-        var _this12 = _possibleConstructorReturn(this, (_class10.__proto__ || Object.getPrototypeOf(_class10)).call(this, 'div', { className: options.className }, options));
+        var _this12 = _possibleConstructorReturn(this, (_class11.__proto__ || Object.getPrototypeOf(_class11)).call(this, 'div', { className: options.className }, options));
 
         var self = _this12;
 
@@ -4243,7 +4563,7 @@ Cuic.Resizable = function (_Cuic$Element5) {
      */
 
 
-    _createClass(_class10, [{
+    _createClass(_class11, [{
         key: 'onResize',
         value: function onResize(callback) {
             this.events.on('resize', callback);
@@ -4277,7 +4597,7 @@ Cuic.Resizable = function (_Cuic$Element5) {
         }
     }]);
 
-    return _class10;
+    return _class11;
 }(Cuic.Element);
 
 Cuic.Resizable.prototype.options = {
@@ -4319,17 +4639,17 @@ Cuic.Resizable.prototype.options = {
  */
 
 Cuic.Selectable = function (_Cuic$Element6) {
-    _inherits(_class11, _Cuic$Element6);
+    _inherits(_class12, _Cuic$Element6);
 
-    function _class11(options) {
-        _classCallCheck(this, _class11);
+    function _class12(options) {
+        _classCallCheck(this, _class12);
 
         // Set default options
         options = Cuic.extend({}, Cuic.Selectable.prototype.options, options);
 
         // Create element
 
-        var _this13 = _possibleConstructorReturn(this, (_class11.__proto__ || Object.getPrototypeOf(_class11)).call(this, 'div', { className: options.className }, options));
+        var _this13 = _possibleConstructorReturn(this, (_class12.__proto__ || Object.getPrototypeOf(_class12)).call(this, 'div', { className: options.className }, options));
 
         var self = _this13;
 
@@ -4359,7 +4679,7 @@ Cuic.Selectable = function (_Cuic$Element6) {
      */
 
 
-    _createClass(_class11, [{
+    _createClass(_class12, [{
         key: 'deselect',
         value: function deselect(callback) {
             var _this14 = this;
@@ -4439,335 +4759,13 @@ Cuic.Selectable = function (_Cuic$Element6) {
         }
     }]);
 
-    return _class11;
+    return _class12;
 }(Cuic.Element);
 
 Cuic.Selectable.prototype.options = {
     className: 'selectable',
     namespace: 'selectable'
 };
-
-/*
- * The MIT License (MIT)
- *
- * Copyright (c) 2017 Karl STEIN
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- */
-
-Cuic.Set = function () {
-    function _class12(elements, context, selector) {
-        _classCallCheck(this, _class12);
-
-        this.length = 0;
-        this.context = context;
-        this.selector = selector;
-
-        for (var i = 0; i < elements.length; i += 1) {
-            if (elements.hasOwnProperty(i)) {
-                var el = elements[i];
-
-                // Convert element
-                if (el instanceof HTMLDocument) {
-                    el = Cuic.element(el);
-                } else if (el instanceof HTMLElement) {
-                    el = Cuic.element(el);
-                }
-
-                // Add element to set
-                this[this.length] = el;
-
-                // Increment set length
-                this.length += 1;
-            }
-        }
-    }
-
-    /**
-     * Aligns all elements
-     * @param position
-     * @return {Cuic.Set}
-     */
-
-
-    _createClass(_class12, [{
-        key: 'align',
-        value: function align(position) {
-            return this.each(function (el) {
-                el.align(position);
-            });
-        }
-
-        /**
-         * Anchors all elements
-         * @param position
-         * @param target
-         * @return {Cuic.Set}
-         */
-
-    }, {
-        key: 'anchor',
-        value: function anchor(position, target) {
-            return this.each(function (el) {
-                el.anchor(position, target);
-            });
-        }
-
-        /**
-         * Removes all elements
-         * @param styles
-         * @return {Cuic.Set}
-         */
-
-    }, {
-        key: 'css',
-        value: function css(styles) {
-            return this.each(function (el) {
-                el.css(styles);
-            });
-        }
-
-        /**
-         * Executes a callback on each elements
-         * @param callback
-         * @return {Cuic.Set}
-         */
-
-    }, {
-        key: 'each',
-        value: function each(callback) {
-            for (var i = 0; i < this.length; i += 1) {
-                callback.call(this, this[i]);
-            }
-            return this;
-        }
-
-        /**
-         * Removes elements content
-         * @return {Cuic.Set}
-         */
-
-    }, {
-        key: 'empty',
-        value: function empty() {
-            return this.each(function (el) {
-                el.empty();
-            });
-        }
-
-        /**
-         * Returns the element at the specified index
-         * @param index
-         * @return {Cuic.Element}
-         */
-
-    }, {
-        key: 'eq',
-        value: function eq(index) {
-            return this[index];
-        }
-
-        /**
-         * Returns elements from the list matching the selector
-         * @param selector
-         * @return {Cuic.Set}
-         */
-
-    }, {
-        key: 'filter',
-        value: function filter(selector) {
-            var elements = [];
-
-            if (typeof selector === 'string') {
-                this.each(function (el) {
-                    if (el.node().matches(selector)) {
-                        elements.push(el);
-                    }
-                });
-            }
-            return new Cuic.Set(elements, this.context, selector);
-        }
-
-        /**
-         * Returns elements matching the selector
-         * @param selector
-         * @return {Cuic.Set}
-         */
-
-    }, {
-        key: 'find',
-        value: function find(selector) {
-            var elements = [];
-
-            if (typeof selector === 'string') {
-                this.each(function (el) {
-                    el.find(selector).each(function (el2) {
-                        elements.push(el2);
-                    });
-                });
-            }
-            return new Cuic.Set(elements, this.context, selector);
-        }
-
-        /**
-         * Returns the first element in the list
-         * @return {Cuic.Element|null}
-         */
-
-    }, {
-        key: 'first',
-        value: function first() {
-            return this.length ? this[0] : null;
-        }
-
-        /**
-         * Returns the HTML element at the specified index
-         * @param index
-         * @return {HTMLDocument|HTMLElement|null}
-         */
-
-    }, {
-        key: 'get',
-        value: function get(index) {
-            return this[index].node();
-        }
-
-        /**
-         * Hides all elements
-         * @return {Cuic.Set}
-         */
-
-    }, {
-        key: 'hide',
-        value: function hide() {
-            return this.each(function (el) {
-                el.hide();
-            });
-        }
-
-        /**
-         * Sets elements content
-         * @param html
-         * @return {Cuic.Set}
-         */
-
-    }, {
-        key: 'html',
-        value: function html(_html2) {
-            return this.each(function (el) {
-                el.html(_html2);
-            });
-        }
-
-        /**
-         * Returns the index of the element
-         * @param element
-         * @return {number}
-         */
-
-    }, {
-        key: 'index',
-        value: function index(element) {
-            for (var i = 0; i < this.length; i += 1) {
-                if (this.eq(i) === element || this.get(i) === element) {
-                    return i;
-                }
-            }
-            return -1;
-        }
-
-        /**
-         * Returns the last element in the list
-         * @return {Cuic.Element|null}
-         */
-
-    }, {
-        key: 'last',
-        value: function last() {
-            return this.length ? this[this.length - 1] : null;
-        }
-
-        /**
-         * Returns elements from the list not matching the selector
-         * @param selector
-         * @return {Cuic.Set}
-         */
-
-    }, {
-        key: 'not',
-        value: function not(selector) {
-            var elements = [];
-
-            if (typeof selector === 'string') {
-                this.each(function (el) {
-                    if (!el.node().matches(selector)) {
-                        elements.push(el);
-                    }
-                });
-            }
-            return new Cuic.Set(elements, this.context);
-        }
-
-        /**
-         * Removes all elements
-         * @return {Cuic.Set}
-         */
-
-    }, {
-        key: 'remove',
-        value: function remove() {
-            return this.each(function (el) {
-                el.remove();
-            });
-        }
-
-        /**
-         * Shows all elements
-         * @return {Cuic.Set}
-         */
-
-    }, {
-        key: 'show',
-        value: function show() {
-            return this.each(function (el) {
-                el.show();
-            });
-        }
-
-        /**
-         * Sets elements value
-         * @param value
-         * @return {Cuic.Set}
-         */
-
-    }, {
-        key: 'val',
-        value: function val(value) {
-            return this.each(function (el) {
-                el.val(value);
-            });
-        }
-    }]);
-
-    return _class12;
-}();
 
 /*
  * The MIT License (MIT)
