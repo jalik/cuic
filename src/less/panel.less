@@ -33,17 +33,15 @@
   z-index: 5;
 }
 
-.panel.closed {
-}
-
 .panel.opened {
   box-shadow: @shadow-x @shadow-y @shadow-size @shadow-color;
   transition-duration: @anim-open-duration;
 }
 
 .panel-content {
-  padding: @content-padding;
+  line-height: @content-line-height;
   overflow: auto;
+  padding: @content-padding;
 }
 
 .panel-footer {

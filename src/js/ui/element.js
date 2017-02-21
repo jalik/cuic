@@ -261,6 +261,7 @@ Cuic.Element = class {
 
     /**
      * Returns element child nodes
+     * todo return Cuic.Set ?
      * @return {Array}
      */
     children() {
@@ -328,20 +329,12 @@ Cuic.Element = class {
 
     /**
      * Returns the first element that matches the selector
+     * todo return Cuic.Set ?
      * @param selector
      * @return {*}
      */
     find(selector) {
         return Cuic.element(this.getElement().querySelector(selector));
-    }
-
-    /**
-     * Returns all elements that match the selector
-     * @param selector
-     * @return {*}
-     */
-    findAll(selector) {
-        return this.getElement().querySelectorAll(selector);
     }
 
     /**
@@ -354,6 +347,7 @@ Cuic.Element = class {
 
     /**
      * Returns the HTML element
+     * todo rename to node()
      * @return {HTMLElement}
      */
     getElement() {
@@ -362,6 +356,7 @@ Cuic.Element = class {
 
     /**
      * Returns the parent of the element
+     * todo rename to parentNode()
      * @return {HTMLElement}
      */
     getParentElement() {
@@ -564,8 +559,8 @@ Cuic.Element = class {
      * @return {*|Cuic.Element}
      */
     parent() {
-        let parent = this.getElement().parentNode;
-        return parent ? Cuic.element(parent) : parent;
+        const parent = this.getParentElement();
+        return parent ? Cuic.element(parent) : null;
     }
 
     /**
@@ -617,23 +612,12 @@ Cuic.Element = class {
     }
 
     /**
-     * Sets the content
-     * @deprecated
-     * @param html
-     * @return {Cuic.Element}
-     */
-    setContent(html) {
-        this.html(html);
-        return this;
-    };
-
-    /**
      * Shows the element
      * @return {Cuic.Element}
      */
     show() {
         this.css({display: ''});
-        this.events.trigger('showed'); // todo choose event name
+        this.events.trigger('showed');
         return this;
     }
 

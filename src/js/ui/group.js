@@ -50,9 +50,10 @@ Cuic.Group = class extends Cuic.Element {
      * @return {Cuic.Group}
      */
     addComponent(component) {
-        if (!(component instanceof Cuic.Component)) {
+        if (!(component instanceof Cuic.Element)) {
             throw new TypeError(`Cannot add non component to a Group.`);
         }
+        // fixme check position with this.options.position
         if (Cuic.isPosition('top', this.getElement())) {
             component.prependTo(this);
         } else {

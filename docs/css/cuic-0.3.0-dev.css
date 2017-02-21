@@ -34,7 +34,6 @@
 .component {
   display: inline-block;
   font-size: 1.3rem;
-  line-height: 1.3rem;
 }
 .component.hidden {
   display: none;
@@ -111,6 +110,7 @@
           transform-origin: top right;
 }
 .dialog-content {
+  line-height: 1.5rem;
   padding: 20px;
 }
 .dialog-footer {
@@ -235,6 +235,9 @@
 }
 .notification.opened:hover {
   background: rgba(0, 0, 0, 0.8);
+}
+.notification-content {
+  line-height: 1.5rem;
 }
 .notification.closable .notification-content {
   margin-right: 20px;
@@ -372,8 +375,9 @@
           transition-duration: 0.5s;
 }
 .panel-content {
-  padding: 20px;
+  line-height: 1.5rem;
   overflow: auto;
+  padding: 20px;
 }
 .panel-footer {
   color: #888;
@@ -427,6 +431,9 @@
           transform: scale(1);
   -webkit-transition-duration: 0.5s;
           transition-duration: 0.5s;
+}
+.popup-content {
+  line-height: 1.5rem;
 }
 .popup.closable .popup-content {
   margin-right: 20px;
@@ -632,6 +639,9 @@ tr.selected {
           transform: scale(1);
   -webkit-transition-duration: 0.5s;
           transition-duration: 0.5s;
+}
+.tooltip-content {
+  line-height: 1.5rem;
 }
 .tooltip.tooltip-bottom {
   -webkit-transform-origin: top center;

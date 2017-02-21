@@ -23,15 +23,8 @@
  *
  */
 
-
-/**
- * Collection of notifications
- */
 Cuic.notifications = new Cuic.Collection();
 
-/**
- * Notification component
- */
 Cuic.Notification = class extends Cuic.Component {
 
     constructor(options) {

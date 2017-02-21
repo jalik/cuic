@@ -25,9 +25,6 @@
 
 let dialogZIndex = 0;
 
-/**
- * Collection of dialogs
- */
 Cuic.dialogs = new Cuic.Collection();
 
 Cuic.dialogs.onAdded(() => {
@@ -38,9 +35,6 @@ Cuic.dialogs.onRemoved(() => {
     dialogZIndex -= 1;
 });
 
-/**
- * Basic dialog
- */
 Cuic.Dialog = class extends Cuic.Component {
 
     constructor(options) {
@@ -57,11 +51,6 @@ Cuic.Dialog = class extends Cuic.Component {
 
         // Add component classes
         self.addClass('dialog');
-
-        let buttons;//todo use a Group
-
-        // Public attributes
-        self.buttons = new Cuic.Collection();
 
         /**
          * Adds a button to the dialog
@@ -91,11 +80,10 @@ Cuic.Dialog = class extends Cuic.Component {
             }
 
             // Add button in footer
-            buttons.append(button.getElement());
-            self.buttons.add(button);
+            self.buttons.addComponent(button);
 
             // Show footer if not empty
-            if (self.buttons.length > 0) {
+            if (self.buttons.children().length > 0) {
                 self.footer.show();
             }
             // Hide footer if empty
@@ -114,36 +102,35 @@ Cuic.Dialog = class extends Cuic.Component {
             className: 'fader dialog-fader',
             autoClose: false,
             autoRemove: false
-        }).appendTo(options.parent);
+        }).appendTo(self.options.parent);
 
         // Add header
         self.header = new Cuic.Element('header', {
             className: 'dialog-header',
-            css: {display: options.title != null ? 'block' : 'none'}
+            css: {display: self.options.title != null ? 'block' : 'none'}
         }).appendTo(self);
 
         // Add title
         self.title = new Cuic.Element('h3', {
             className: 'dialog-title',
-            html: options.title
+            html: self.options.title
         }).appendTo(self.header);
 
         // Add content
         self.content = new Cuic.Element('section', {
             className: 'dialog-content',
-            html: options.content
+            html: self.options.content
         }).appendTo(self);
 
         // Add footer
         self.footer = new Cuic.Element('footer', {
             className: 'dialog-footer',
-            css: {display: options.buttons != null ? 'block' : 'none'}
+            css: {display: self.options.buttons != null ? 'block' : 'none'}
         }).appendTo(self);
 
         // Add buttons group
-        buttons = new Cuic.Element('div', {
-            className: 'btn-group',
-            role: 'group'
+        self.buttons = new Cuic.Group('div', {
+            className: 'btn-group'
         }).appendTo(self.footer);
 
         // Add close button
@@ -154,9 +141,9 @@ Cuic.Dialog = class extends Cuic.Component {
         }).appendTo(self.header);
 
         // Add buttons
-        if (options.buttons instanceof Array) {
-            for (let i = 0; i < options.buttons.length; i += 1) {
-                self.addButton(options.buttons[i]);
+        if (self.options.buttons instanceof Array) {
+            for (let i = 0; i < self.options.buttons.length; i += 1) {
+                self.addButton(self.options.buttons[i]);
             }
         }
 
@@ -251,16 +238,20 @@ Cuic.Dialog = class extends Cuic.Component {
                 self.fader.css({'z-index': zIndex});
                 self.fader.open();
             }
+
             // Maximize or position the dialog
             if (self.options.maximized) {
                 self.maximize();
             } else {
                 self.align(self.options.position);
             }
+
             // Focus the last button
-            if (self.buttons.length > 0) {
-                const button = self.buttons.get(self.buttons.length - 1);
-                button.getElement().focus();
+            const buttons = self.buttons.children();
+
+            if (buttons.length > 0) {
+                buttons[buttons.length - 1].focus();
+                // buttons.last().getElement().focus();
             }
         });
 

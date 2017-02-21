@@ -2535,6 +2535,7 @@ Cuic.Element = function () {
 
         /**
          * Returns element child nodes
+         * todo return Cuic.Set ?
          * @return {Array}
          */
 
@@ -2615,6 +2616,7 @@ Cuic.Element = function () {
 
         /**
          * Returns the first element that matches the selector
+         * todo return Cuic.Set ?
          * @param selector
          * @return {*}
          */
@@ -2623,18 +2625,6 @@ Cuic.Element = function () {
         key: 'find',
         value: function find(selector) {
             return Cuic.element(this.getElement().querySelector(selector));
-        }
-
-        /**
-         * Returns all elements that match the selector
-         * @param selector
-         * @return {*}
-         */
-
-    }, {
-        key: 'findAll',
-        value: function findAll(selector) {
-            return this.getElement().querySelectorAll(selector);
         }
 
         /**
@@ -2650,6 +2640,7 @@ Cuic.Element = function () {
 
         /**
          * Returns the HTML element
+         * todo rename to node()
          * @return {HTMLElement}
          */
 
@@ -2661,6 +2652,7 @@ Cuic.Element = function () {
 
         /**
          * Returns the parent of the element
+         * todo rename to parentNode()
          * @return {HTMLElement}
          */
 
@@ -2924,8 +2916,8 @@ Cuic.Element = function () {
     }, {
         key: 'parent',
         value: function parent() {
-            var parent = this.getElement().parentNode;
-            return parent ? Cuic.element(parent) : parent;
+            var parent = this.getParentElement();
+            return parent ? Cuic.element(parent) : null;
         }
 
         /**
@@ -2992,29 +2984,15 @@ Cuic.Element = function () {
         }
 
         /**
-         * Sets the content
-         * @deprecated
-         * @param html
-         * @return {Cuic.Element}
-         */
-
-    }, {
-        key: 'setContent',
-        value: function setContent(html) {
-            this.html(html);
-            return this;
-        }
-    }, {
-        key: 'show',
-
-
-        /**
          * Shows the element
          * @return {Cuic.Element}
          */
+
+    }, {
+        key: 'show',
         value: function show() {
             this.css({ display: '' });
-            this.events.trigger('showed'); // todo choose event name
+            this.events.trigger('showed');
             return this;
         }
 
@@ -3122,10 +3100,13 @@ Cuic.Component = function (_Cuic$Element) {
         // Set the panel visibility
         // Since the visible option is used to check if the panel is visible
         // we force the panel to show or hide by setting visible to the inverse value.
-        if (self.options.opened) {
-            self.open();
-        } else {
-            self.close();
+        if (typeof self.options.opened === 'boolean') {
+            if (self.options.opened) {
+                self.open();
+            } else {
+                self.hide(); // Hide to avoid animations
+                self.close();
+            }
         }
 
         // Maximize the panel
@@ -3449,9 +3430,10 @@ Cuic.Group = function (_Cuic$Element2) {
     _createClass(_class7, [{
         key: 'addComponent',
         value: function addComponent(component) {
-            if (!(component instanceof Cuic.Component)) {
+            if (!(component instanceof Cuic.Element)) {
                 throw new TypeError('Cannot add non component to a Group.');
             }
+            // fixme check position with this.options.position
             if (Cuic.isPosition('top', this.getElement())) {
                 component.prependTo(this);
             } else {
@@ -4598,9 +4580,6 @@ Cuic.Button.prototype.options = {
 
 var dialogZIndex = 0;
 
-/**
- * Collection of dialogs
- */
 Cuic.dialogs = new Cuic.Collection();
 
 Cuic.dialogs.onAdded(function () {
@@ -4611,9 +4590,6 @@ Cuic.dialogs.onRemoved(function () {
     dialogZIndex -= 1;
 });
 
-/**
- * Basic dialog
- */
 Cuic.Dialog = function (_Cuic$Component2) {
     _inherits(_class14, _Cuic$Component2);
 
@@ -4634,11 +4610,6 @@ Cuic.Dialog = function (_Cuic$Component2) {
 
         // Add component classes
         self.addClass('dialog');
-
-        var buttons = void 0; //todo use a Group
-
-        // Public attributes
-        self.buttons = new Cuic.Collection();
 
         /**
          * Adds a button to the dialog
@@ -4670,11 +4641,10 @@ Cuic.Dialog = function (_Cuic$Component2) {
             }
 
             // Add button in footer
-            buttons.append(button.getElement());
-            self.buttons.add(button);
+            self.buttons.addComponent(button);
 
             // Show footer if not empty
-            if (self.buttons.length > 0) {
+            if (self.buttons.children().length > 0) {
                 self.footer.show();
             }
             // Hide footer if empty
@@ -4693,36 +4663,35 @@ Cuic.Dialog = function (_Cuic$Component2) {
             className: 'fader dialog-fader',
             autoClose: false,
             autoRemove: false
-        }).appendTo(options.parent);
+        }).appendTo(self.options.parent);
 
         // Add header
         self.header = new Cuic.Element('header', {
             className: 'dialog-header',
-            css: { display: options.title != null ? 'block' : 'none' }
+            css: { display: self.options.title != null ? 'block' : 'none' }
         }).appendTo(self);
 
         // Add title
         self.title = new Cuic.Element('h3', {
             className: 'dialog-title',
-            html: options.title
+            html: self.options.title
         }).appendTo(self.header);
 
         // Add content
         self.content = new Cuic.Element('section', {
             className: 'dialog-content',
-            html: options.content
+            html: self.options.content
         }).appendTo(self);
 
         // Add footer
         self.footer = new Cuic.Element('footer', {
             className: 'dialog-footer',
-            css: { display: options.buttons != null ? 'block' : 'none' }
+            css: { display: self.options.buttons != null ? 'block' : 'none' }
         }).appendTo(self);
 
         // Add buttons group
-        buttons = new Cuic.Element('div', {
-            className: 'btn-group',
-            role: 'group'
+        self.buttons = new Cuic.Group('div', {
+            className: 'btn-group'
         }).appendTo(self.footer);
 
         // Add close button
@@ -4733,9 +4702,9 @@ Cuic.Dialog = function (_Cuic$Component2) {
         }).appendTo(self.header);
 
         // Add buttons
-        if (options.buttons instanceof Array) {
-            for (var i = 0; i < options.buttons.length; i += 1) {
-                self.addButton(options.buttons[i]);
+        if (self.options.buttons instanceof Array) {
+            for (var i = 0; i < self.options.buttons.length; i += 1) {
+                self.addButton(self.options.buttons[i]);
             }
         }
 
@@ -4830,16 +4799,20 @@ Cuic.Dialog = function (_Cuic$Component2) {
                 self.fader.css({ 'z-index': zIndex });
                 self.fader.open();
             }
+
             // Maximize or position the dialog
             if (self.options.maximized) {
                 self.maximize();
             } else {
                 self.align(self.options.position);
             }
+
             // Focus the last button
-            if (self.buttons.length > 0) {
-                var button = self.buttons.get(self.buttons.length - 1);
-                button.getElement().focus();
+            var buttons = self.buttons.children();
+
+            if (buttons.length > 0) {
+                buttons[buttons.length - 1].focus();
+                // buttons.last().getElement().focus();
             }
         });
 
@@ -5828,14 +5801,8 @@ Cuic.Button.prototype.options = {
  *
  */
 
-/**
- * Collection of notifications
- */
 Cuic.notifications = new Cuic.Collection();
 
-/**
- * Notification component
- */
 Cuic.Notification = function (_Cuic$Component4) {
     _inherits(_class16, _Cuic$Component4);
 
@@ -7334,6 +7301,9 @@ Cuic.Tooltip = function (_Cuic$Component8) {
                 right: '',
                 top: ''
             };
+
+            // todo Copy tooltip background color
+            // prop['border-color'] = this.css('background-color');
 
             // Remove previous classes
             this.tail.removeClass('tooltip-tail-bottom tooltip-tail-left tooltip-tail-right tooltip-tail-top');

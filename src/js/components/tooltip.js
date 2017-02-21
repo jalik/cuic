@@ -23,7 +23,6 @@
  *
  */
 
-
 Cuic.tooltips = new Cuic.Collection();
 
 Cuic.Tooltip = class extends Cuic.Component {
@@ -157,6 +156,9 @@ Cuic.Tooltip = class extends Cuic.Component {
             right: '',
             top: '',
         };
+
+        // todo Copy tooltip background color
+        // prop['border-color'] = this.css('background-color');
 
         // Remove previous classes
         this.tail.removeClass('tooltip-tail-bottom tooltip-tail-left tooltip-tail-right tooltip-tail-top');
