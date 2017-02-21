@@ -100,6 +100,20 @@ Cuic.Dialog = class extends Cuic.Component {
             role: 'button'
         }).appendTo(self.header);
 
+        // Show footer if not empty
+        self.buttons.onComponentAdded(() => {
+            if (self.buttons.components.length > 0) {
+                self.footer.show();
+            }
+        });
+
+        // Hide footer if empty
+        self.buttons.onComponentRemoved(() => {
+            if (self.buttons.components.length < 1) {
+                self.footer.hide();
+            }
+        });
+
         // Add buttons
         if (self.options.buttons instanceof Array) {
             for (let i = 0; i < self.options.buttons.length; i += 1) {
@@ -109,12 +123,12 @@ Cuic.Dialog = class extends Cuic.Component {
 
         // Set content height
         if (parseFloat(options.contentHeight) > 0) {
-            content.css({height: options.contentHeight});
+            self.content.css({height: options.contentHeight});
         }
 
         // Set content width
         if (parseFloat(options.contentWidth) > 0) {
-            content.css({width: options.contentWidth});
+            self.content.css({width: options.contentWidth});
         }
 
         // Close dialog when fader is clicked
@@ -248,6 +262,7 @@ Cuic.Dialog = class extends Cuic.Component {
         if (!(button instanceof Cuic.Button)) {
             const callback = button.callback;
 
+            // Create button
             button = new Cuic.Button({
                 className: 'btn btn-default',
                 label: button.label
@@ -267,15 +282,6 @@ Cuic.Dialog = class extends Cuic.Component {
 
         // Add button in footer
         this.buttons.addComponent(button);
-
-        // Show footer if not empty
-        if (this.buttons.children().length > 0) {
-            this.footer.show();
-        }
-        // Hide footer if empty
-        else {
-            this.footer.hide();
-        }
         return button;
     }
 

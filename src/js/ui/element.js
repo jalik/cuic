@@ -83,10 +83,10 @@ Cuic.Element = class {
                         self.element[attr] = value;
                     }
                     else if (attr === 'html') {
-                        self.element.innerHTML = value;
+                        self.html(value);
                     }
                     else if (attr === 'text') {
-                        self.element.innerText = value;
+                        self.text(value);
                     }
                 }
             }
@@ -323,6 +323,15 @@ Cuic.Element = class {
     }
 
     /**
+     * Removes element content
+     * @return {Cuic.Element}
+     */
+    empty() {
+        this.node().innerHTML = '';
+        return this;
+    }
+
+    /**
      * Enables the element
      * @return {Cuic.Element}
      */
@@ -388,11 +397,11 @@ Cuic.Element = class {
             if (html && typeof html === 'object') {
                 // Replace content keeping attached events on nodes
                 if (html instanceof Cuic.Element) {
-                    this.innerHTML = '';
+                    this.empty();
                     this.append(html.node());
                 }
                 else if (html instanceof jQuery) {
-                    this.innerHTML = '';
+                    this.empty();
                     this.append(html.get(0));
                 }
             }

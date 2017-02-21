@@ -49,13 +49,59 @@ Cuic.Set = class {
     }
 
     /**
+     * Aligns all elements
+     * @param position
+     * @return {Cuic.Set}
+     */
+    align(position) {
+        return this.each((el) => {
+            el.align(position);
+        });
+    }
+
+    /**
+     * Anchors all elements
+     * @param position
+     * @param target
+     * @return {Cuic.Set}
+     */
+    anchor(position, target) {
+        return this.each((el) => {
+            el.anchor(position, target);
+        });
+    }
+
+    /**
+     * Removes all elements
+     * @param styles
+     * @return {Cuic.Set}
+     */
+    css(styles) {
+        return this.each((el) => {
+            el.css(styles);
+        });
+    }
+
+    /**
      * Executes a callback on each elements
      * @param callback
+     * @return {Cuic.Set}
      */
     each(callback) {
         for (let i = 0; i < this.length; i += 1) {
             callback.call(this, this[i]);
         }
+        return this;
+    }
+
+    /**
+     * Removes elements content
+     * @return {Cuic.Set}
+     */
+    empty() {
+        return this.each((el) => {
+            el.empty();
+        });
     }
 
     /**
@@ -121,6 +167,27 @@ Cuic.Set = class {
     }
 
     /**
+     * Hides all elements
+     * @return {Cuic.Set}
+     */
+    hide() {
+        return this.each((el) => {
+            el.hide();
+        });
+    }
+
+    /**
+     * Sets elements content
+     * @param html
+     * @return {Cuic.Set}
+     */
+    html(html) {
+        return this.each((el) => {
+            el.html(html);
+        });
+    }
+
+    /**
      * Returns the index of the element
      * @param element
      * @return {number}
@@ -158,5 +225,36 @@ Cuic.Set = class {
             });
         }
         return new Cuic.Set(elements, this.context);
+    }
+
+    /**
+     * Removes all elements
+     * @return {Cuic.Set}
+     */
+    remove() {
+        return this.each((el) => {
+            el.remove();
+        });
+    }
+
+    /**
+     * Shows all elements
+     * @return {Cuic.Set}
+     */
+    show() {
+        return this.each((el) => {
+            el.show();
+        });
+    }
+
+    /**
+     * Sets elements value
+     * @param value
+     * @return {Cuic.Set}
+     */
+    val(value) {
+        return this.each((el) => {
+            el.val(value);
+        });
     }
 };

@@ -2347,9 +2347,9 @@ Cuic.Element = function () {
                     if (self.element[attr] !== undefined) {
                         self.element[attr] = value;
                     } else if (attr === 'html') {
-                        self.element.innerHTML = value;
+                        self.html(value);
                     } else if (attr === 'text') {
-                        self.element.innerText = value;
+                        self.text(value);
                     }
                 }
             }
@@ -2614,6 +2614,18 @@ Cuic.Element = function () {
         }
 
         /**
+         * Removes element content
+         * @return {Cuic.Element}
+         */
+
+    }, {
+        key: 'empty',
+        value: function empty() {
+            this.node().innerHTML = '';
+            return this;
+        }
+
+        /**
          * Enables the element
          * @return {Cuic.Element}
          */
@@ -2700,10 +2712,10 @@ Cuic.Element = function () {
                 if (_html && (typeof _html === 'undefined' ? 'undefined' : _typeof(_html)) === 'object') {
                     // Replace content keeping attached events on nodes
                     if (_html instanceof Cuic.Element) {
-                        this.innerHTML = '';
+                        this.empty();
                         this.append(_html.node());
                     } else if (_html instanceof jQuery) {
-                        this.innerHTML = '';
+                        this.empty();
                         this.append(_html.get(0));
                     }
                 } else if (typeof _html === 'string' || _html === null) {
@@ -4430,17 +4442,75 @@ Cuic.Set = function () {
     }
 
     /**
-     * Executes a callback on each elements
-     * @param callback
+     * Aligns all elements
+     * @param position
+     * @return {Cuic.Set}
      */
 
 
     _createClass(_class12, [{
+        key: 'align',
+        value: function align(position) {
+            return this.each(function (el) {
+                el.align(position);
+            });
+        }
+
+        /**
+         * Anchors all elements
+         * @param position
+         * @param target
+         * @return {Cuic.Set}
+         */
+
+    }, {
+        key: 'anchor',
+        value: function anchor(position, target) {
+            return this.each(function (el) {
+                el.anchor(position, target);
+            });
+        }
+
+        /**
+         * Removes all elements
+         * @param styles
+         * @return {Cuic.Set}
+         */
+
+    }, {
+        key: 'css',
+        value: function css(styles) {
+            return this.each(function (el) {
+                el.css(styles);
+            });
+        }
+
+        /**
+         * Executes a callback on each elements
+         * @param callback
+         * @return {Cuic.Set}
+         */
+
+    }, {
         key: 'each',
         value: function each(callback) {
             for (var i = 0; i < this.length; i += 1) {
                 callback.call(this, this[i]);
             }
+            return this;
+        }
+
+        /**
+         * Removes elements content
+         * @return {Cuic.Set}
+         */
+
+    }, {
+        key: 'empty',
+        value: function empty() {
+            return this.each(function (el) {
+                el.empty();
+            });
         }
 
         /**
@@ -4521,6 +4591,33 @@ Cuic.Set = function () {
         }
 
         /**
+         * Hides all elements
+         * @return {Cuic.Set}
+         */
+
+    }, {
+        key: 'hide',
+        value: function hide() {
+            return this.each(function (el) {
+                el.hide();
+            });
+        }
+
+        /**
+         * Sets elements content
+         * @param html
+         * @return {Cuic.Set}
+         */
+
+    }, {
+        key: 'html',
+        value: function html(_html2) {
+            return this.each(function (el) {
+                el.html(_html2);
+            });
+        }
+
+        /**
          * Returns the index of the element
          * @param element
          * @return {number}
@@ -4567,6 +4664,46 @@ Cuic.Set = function () {
                 });
             }
             return new Cuic.Set(elements, this.context);
+        }
+
+        /**
+         * Removes all elements
+         * @return {Cuic.Set}
+         */
+
+    }, {
+        key: 'remove',
+        value: function remove() {
+            return this.each(function (el) {
+                el.remove();
+            });
+        }
+
+        /**
+         * Shows all elements
+         * @return {Cuic.Set}
+         */
+
+    }, {
+        key: 'show',
+        value: function show() {
+            return this.each(function (el) {
+                el.show();
+            });
+        }
+
+        /**
+         * Sets elements value
+         * @param value
+         * @return {Cuic.Set}
+         */
+
+    }, {
+        key: 'val',
+        value: function val(value) {
+            return this.each(function (el) {
+                el.val(value);
+            });
         }
     }]);
 
@@ -4752,6 +4889,20 @@ Cuic.Dialog = function (_Cuic$Component2) {
             role: 'button'
         }).appendTo(self.header);
 
+        // Show footer if not empty
+        self.buttons.onComponentAdded(function () {
+            if (self.buttons.components.length > 0) {
+                self.footer.show();
+            }
+        });
+
+        // Hide footer if empty
+        self.buttons.onComponentRemoved(function () {
+            if (self.buttons.components.length < 1) {
+                self.footer.hide();
+            }
+        });
+
         // Add buttons
         if (self.options.buttons instanceof Array) {
             for (var i = 0; i < self.options.buttons.length; i += 1) {
@@ -4761,12 +4912,12 @@ Cuic.Dialog = function (_Cuic$Component2) {
 
         // Set content height
         if (parseFloat(options.contentHeight) > 0) {
-            content.css({ height: options.contentHeight });
+            self.content.css({ height: options.contentHeight });
         }
 
         // Set content width
         if (parseFloat(options.contentWidth) > 0) {
-            content.css({ width: options.contentWidth });
+            self.content.css({ width: options.contentWidth });
         }
 
         // Close dialog when fader is clicked
@@ -4908,6 +5059,7 @@ Cuic.Dialog = function (_Cuic$Component2) {
                 (function () {
                     var callback = button.callback;
 
+                    // Create button
                     button = new Cuic.Button({
                         className: 'btn btn-default',
                         label: button.label
@@ -4928,15 +5080,6 @@ Cuic.Dialog = function (_Cuic$Component2) {
 
             // Add button in footer
             this.buttons.addComponent(button);
-
-            // Show footer if not empty
-            if (this.buttons.children().length > 0) {
-                this.footer.show();
-            }
-            // Hide footer if empty
-            else {
-                    this.footer.hide();
-                }
             return button;
         }
 
@@ -5165,7 +5308,7 @@ Cuic.Fader = function (_Cuic$Component3) {
     return _class15;
 }(Cuic.Component);
 
-Cuic.Button.prototype.options = {
+Cuic.Fader.prototype.options = {
     autoClose: false,
     autoRemove: false,
     className: 'fader',

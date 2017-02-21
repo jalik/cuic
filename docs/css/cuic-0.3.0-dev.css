@@ -208,6 +208,12 @@
 .movable {
   position: relative;
 }
+.movable.moving {
+  -webkit-transition-property: bottom, left, right, top;
+  transition-property: bottom, left, right, top;
+  -webkit-transition-duration: 0s;
+          transition-duration: 0s;
+}
 .movable-handle {
   cursor: move;
 }
