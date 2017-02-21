@@ -164,6 +164,7 @@
                     <script>
                         $(document).ready(function () {
                             var sandbox = $('#sb-dialog');
+                            var blueprint = sandbox.find('.blueprint');
                             var modal = sandbox.find('[name=modal]');
                             var parent = sandbox.find('[name="parent"]');
                             var css = sandbox.find('[name="css"]');
@@ -174,7 +175,7 @@
                                     autoClose: autoClose.is(':checked'),
                                     css: css.val(),
                                     modal: modal.is(':checked'),
-                                    parent: parent.is(':checked') ? $('#sb-dialog .blueprint') : document.body,
+                                    parent: parent.is(':checked') ? blueprint : document.body,
                                     position: position.val(),
                                     title: sandbox.find("[name=title]").is(":checked") ? 'Header & title' : null,
                                     content: 'This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p>',

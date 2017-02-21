@@ -53,8 +53,9 @@ Cuic.Dialog = class extends Cuic.Component {
         self.addClass('dialog');
 
         // Set dialog position
-        let fixed = self.parentNode() === document.body;
-        self.css({position: fixed ? 'fixed' : 'absolute'});
+        if (self.parentNode() === document.body) {
+            self.css({position: 'absolute'});
+        }
 
         // Create the fader
         self.fader = new Cuic.Fader({
@@ -131,31 +132,29 @@ Cuic.Dialog = class extends Cuic.Component {
             }
         });
 
-        // Close dialog when user clicks outside
-        const onClick = (ev) => {
-            const el = self.node();
-
-            if (ev.target !== el && !Cuic.isParent(el, ev.target)) {
-                if (self.options.autoClose) {
-                    self.close();
-                }
-            }
-        };
-        Cuic.on('click', document, onClick);
-        self.onRemoved(() => {
-            Cuic.off('click', document, onClick);
-        });
-
         /**
          * Movable interface
          * @type {Cuic.Movable}
          */
-        self.movable = new Cuic.Movable({
-            enabled: self.options.movable,
-            element: self.node(),
-            handle: self.title,
-            rootOnly: false
-        });
+        if (self.options.movable) {
+            self.movable = new Cuic.Movable({
+                enabled: self.options.movable,
+                element: self.node(),
+                handle: self.title,
+                rootOnly: false
+            });
+        }
+
+        /**
+         * Resizable interface
+         * @type {Cuic.Resizable}
+         */
+        if (self.options.resizable) {
+            self.resizable = new Cuic.Resizable({
+                enabled: self.options.resizable,
+                element: self.node()
+            });
+        }
 
         /**
          * Dialog shortcuts
@@ -184,6 +183,7 @@ Cuic.Dialog = class extends Cuic.Component {
         self.onClosed(() => {
             if (self.options.autoRemove) {
                 self.remove();
+                self.fader.remove();
             }
         });
 
@@ -403,6 +403,7 @@ Cuic.Dialog.prototype.options = {
     namespace: 'dialog',
     parent: document.body,
     position: 'center',
+    resizable: false,
     title: null,
     zIndex: 5
 };

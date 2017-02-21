@@ -517,6 +517,12 @@
                     if (styles.indexOf(':') !== -1) {
                         element.style = styles;
                     } else {
+                        // Return computed version for some properties
+                        // that would return nothing.
+                        switch (styles) {
+                            case 'position':
+                                return this.getComputedStyle(element, styles);
+                        }
                         // Return specific style
                         return element.style[styles];
                     }
@@ -906,7 +912,7 @@
         },
 
         /**
-         * Returns the HTML element from various objects (Cuic, jQuery...)
+         * Returns the HTML element from the element
          * @param element
          * @return {*|HTMLElement|HTMLDocument}
          */
@@ -923,7 +929,8 @@
             if (element instanceof jQuery) {
                 return element.get(0);
             }
-            throw new TypeError(`element is not supported (HTMLElement, Cuic.Element or jQuery)`);
+            console.log(element);
+            throw new TypeError(`cannot get HTMLElement from element:`);
         },
 
         /**

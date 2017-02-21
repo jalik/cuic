@@ -31,7 +31,7 @@
   margin: @margin;
   padding: 0;
   opacity: 0;
-  position: relative;
+  position: absolute;
   transform: scale(0);
   transition-property: opacity, height, width, transform;
   transition-duration: @anim-close-duration;
@@ -42,6 +42,10 @@
   opacity: 1;
   transform: scale(1);
   transition-duration: @anim-open-duration;
+}
+
+.dialog.movable {
+  position: absolute;
 }
 
 .dialog.dialog-bottom {

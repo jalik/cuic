@@ -27,6 +27,11 @@
   position: relative;
 }
 
+.resizable.resizing {
+  transition-property: height, width;
+  transition-duration: 0s;
+}
+
 .resizable .resize-handle {
   cursor: nwse-resize;
   display: none;

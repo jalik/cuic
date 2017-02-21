@@ -576,6 +576,12 @@ if (!Element.prototype.matches) {
                     if (styles.indexOf(':') !== -1) {
                         element.style = styles;
                     } else {
+                        // Return computed version for some properties
+                        // that would return nothing.
+                        switch (styles) {
+                            case 'position':
+                                return this.getComputedStyle(element, styles);
+                        }
                         // Return specific style
                         return element.style[styles];
                     }
@@ -986,7 +992,7 @@ if (!Element.prototype.matches) {
 
 
         /**
-         * Returns the HTML element from various objects (Cuic, jQuery...)
+         * Returns the HTML element from the element
          * @param element
          * @return {*|HTMLElement|HTMLDocument}
          */
@@ -1003,7 +1009,8 @@ if (!Element.prototype.matches) {
             if (element instanceof jQuery) {
                 return element.get(0);
             }
-            throw new TypeError('element is not supported (HTMLElement, Cuic.Element or jQuery)');
+            console.log(element);
+            throw new TypeError('cannot get HTMLElement from element:');
         },
 
 
@@ -3845,35 +3852,36 @@ Cuic.Movable = function (_Cuic$Element4) {
                             break;
                     }
 
-                    var diffX = ev.clientX - startX;
-                    var diffY = ev.clientY - startY;
-                    var left = startPosition.left + diffX;
-                    var top = startPosition.top + diffY;
-
-                    // Check horizontal location
-                    if (left < minX) {
-                        left = minX;
-                    } else if (left + width > maxX) {
-                        left = maxX - width;
-                    }
-
-                    // Check vertical location
-                    if (top < minY) {
-                        top = minY;
-                    } else if (top + height > maxY) {
-                        top = maxY - height;
-                    }
-
                     // Move horizontally
                     if (self.options.horizontal) {
+                        var diffX = ev.clientX - startX;
+                        var left = startPosition.left + diffX;
+
+                        // Check horizontal location
+                        if (left < minX) {
+                            left = minX;
+                        } else if (left + width > maxX) {
+                            left = maxX - width;
+                        }
                         prop.left = left;
                         prop.right = '';
                     }
+
                     // Move vertically
                     if (self.options.vertical) {
+                        var diffY = ev.clientY - startY;
+                        var top = startPosition.top + diffY;
+
+                        // Check vertical location
+                        if (top < minY) {
+                            top = minY;
+                        } else if (top + height > maxY) {
+                            top = maxY - height;
+                        }
                         prop.top = top;
                         prop.bottom = '';
                     }
+
                     // Move element
                     self.css(prop);
                 };
@@ -4693,8 +4701,9 @@ Cuic.Dialog = function (_Cuic$Component2) {
         self.addClass('dialog');
 
         // Set dialog position
-        var fixed = self.parentNode() === document.body;
-        self.css({ position: fixed ? 'fixed' : 'absolute' });
+        if (self.parentNode() === document.body) {
+            self.css({ position: 'absolute' });
+        }
 
         // Create the fader
         self.fader = new Cuic.Fader({
@@ -4771,31 +4780,29 @@ Cuic.Dialog = function (_Cuic$Component2) {
             }
         });
 
-        // Close dialog when user clicks outside
-        var onClick = function onClick(ev) {
-            var el = self.node();
-
-            if (ev.target !== el && !Cuic.isParent(el, ev.target)) {
-                if (self.options.autoClose) {
-                    self.close();
-                }
-            }
-        };
-        Cuic.on('click', document, onClick);
-        self.onRemoved(function () {
-            Cuic.off('click', document, onClick);
-        });
-
         /**
          * Movable interface
          * @type {Cuic.Movable}
          */
-        self.movable = new Cuic.Movable({
-            enabled: self.options.movable,
-            element: self.node(),
-            handle: self.title,
-            rootOnly: false
-        });
+        if (self.options.movable) {
+            self.movable = new Cuic.Movable({
+                enabled: self.options.movable,
+                element: self.node(),
+                handle: self.title,
+                rootOnly: false
+            });
+        }
+
+        /**
+         * Resizable interface
+         * @type {Cuic.Resizable}
+         */
+        if (self.options.resizable) {
+            self.resizable = new Cuic.Resizable({
+                enabled: self.options.resizable,
+                element: self.node()
+            });
+        }
 
         /**
          * Dialog shortcuts
@@ -4824,6 +4831,7 @@ Cuic.Dialog = function (_Cuic$Component2) {
         self.onClosed(function () {
             if (self.options.autoRemove) {
                 self.remove();
+                self.fader.remove();
             }
         });
 
@@ -5079,6 +5087,7 @@ Cuic.Dialog.prototype.options = {
     namespace: 'dialog',
     parent: document.body,
     position: 'center',
+    resizable: false,
     title: null,
     zIndex: 5
 };

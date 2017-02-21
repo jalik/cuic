@@ -106,37 +106,38 @@ Cuic.Movable = class extends Cuic.Element {
                         break;
                 }
 
-                const diffX = ev.clientX - startX;
-                const diffY = ev.clientY - startY;
-                let left = startPosition.left + diffX;
-                let top = startPosition.top + diffY;
-
-                // Check horizontal location
-                if (left < minX) {
-                    left = minX;
-                }
-                else if (left + width > maxX) {
-                    left = maxX - width;
-                }
-
-                // Check vertical location
-                if (top < minY) {
-                    top = minY;
-                }
-                else if (top + height > maxY) {
-                    top = maxY - height;
-                }
-
                 // Move horizontally
                 if (self.options.horizontal) {
+                    const diffX = ev.clientX - startX;
+                    let left = startPosition.left + diffX;
+
+                    // Check horizontal location
+                    if (left < minX) {
+                        left = minX;
+                    }
+                    else if (left + width > maxX) {
+                        left = maxX - width;
+                    }
                     prop.left = left;
                     prop.right = '';
                 }
+
                 // Move vertically
                 if (self.options.vertical) {
+                    const diffY = ev.clientY - startY;
+                    let top = startPosition.top + diffY;
+
+                    // Check vertical location
+                    if (top < minY) {
+                        top = minY;
+                    }
+                    else if (top + height > maxY) {
+                        top = maxY - height;
+                    }
                     prop.top = top;
                     prop.bottom = '';
                 }
+
                 // Move element
                 self.css(prop);
             };
