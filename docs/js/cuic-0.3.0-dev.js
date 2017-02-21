@@ -488,6 +488,10 @@ if (!Element.prototype.matches) {
 
             return prop;
         },
+        calculateParentAvailableSpace: function calculateParentAvailableSpace(parent, element) {
+            element = this.element(element);
+            parent = this.element(parent);
+        },
 
 
         /**
@@ -3631,26 +3635,18 @@ Cuic.Elements = function () {
     function _class8(elements, context, selector) {
         _classCallCheck(this, _class8);
 
-        this.length = 0;
-        this.context = context;
-        this.selector = selector;
+        var i = void 0;
 
-        for (var i = 0; i < elements.length; i += 1) {
+        for (i = 0; i < elements.length; i += 1) {
             if (elements.hasOwnProperty(i)) {
-                var el = elements[i];
-
-                // Get element from node
-                if (el instanceof HTMLDocument || el instanceof HTMLElement) {
-                    el = Cuic.element(el);
-                }
-
-                // Add element to set
-                this[this.length] = el;
-
-                // Increment set length
-                this.length += 1;
+                this[i] = Cuic.element(elements[i]);
             }
         }
+
+        // Public attributes
+        this.length = i;
+        this.context = context;
+        this.selector = selector;
     }
 
     /**
@@ -3706,8 +3702,8 @@ Cuic.Elements = function () {
     }, {
         key: 'each',
         value: function each(callback) {
-            for (var i = 0; i < this.length; i += 1) {
-                callback.call(this, this[i]);
+            for (var _i = 0; _i < this.length; _i += 1) {
+                callback.call(this, this[_i]);
             }
             return this;
         }
@@ -3838,9 +3834,9 @@ Cuic.Elements = function () {
     }, {
         key: 'index',
         value: function index(element) {
-            for (var i = 0; i < this.length; i += 1) {
-                if (this.eq(i) === element || this.get(i) === element) {
-                    return i;
+            for (var _i2 = 0; _i2 < this.length; _i2 += 1) {
+                if (this.eq(_i2) === element || this.get(_i2) === element) {
+                    return _i2;
                 }
             }
             return -1;
@@ -4453,8 +4449,8 @@ Cuic.Resizable = function (_Cuic$Element5) {
 
                     // Resize horizontally
                     if (self.options.horizontal) {
-                        for (var i = 0; i < self.horizontalHandles.length; i += 1) {
-                            if (self.horizontalHandles.get(i).node() === handleTarget) {
+                        for (var _i3 = 0; _i3 < self.horizontalHandles.length; _i3 += 1) {
+                            if (self.horizontalHandles.get(_i3).node() === handleTarget) {
                                 var diffX = ev.clientX - startX;
                                 var width = initialWidth + diffX;
 
@@ -4469,8 +4465,8 @@ Cuic.Resizable = function (_Cuic$Element5) {
 
                     // Resize vertically
                     if (self.options.vertical) {
-                        for (var _i = 0; _i < self.verticalHandles.length; _i += 1) {
-                            if (self.verticalHandles.get(_i).node() === handleTarget) {
+                        for (var _i4 = 0; _i4 < self.verticalHandles.length; _i4 += 1) {
+                            if (self.verticalHandles.get(_i4).node() === handleTarget) {
                                 var diffY = ev.clientY - startY;
                                 var height = initialHeight + diffY;
 
@@ -4962,8 +4958,8 @@ Cuic.Dialog = function (_Cuic$Component2) {
 
         // Add buttons
         if (self.options.buttons instanceof Array) {
-            for (var i = 0; i < self.options.buttons.length; i += 1) {
-                self.addButton(self.options.buttons[i]);
+            for (var _i5 = 0; _i5 < self.options.buttons.length; _i5 += 1) {
+                self.addButton(self.options.buttons[_i5]);
             }
         }
 
@@ -6969,10 +6965,10 @@ Cuic.Switcher = function (_Cuic$Component7) {
                 this.stop();
 
                 // Hide visible elements
-                for (var i = 0; i < children.length; i += 1) {
-                    var child = Cuic.element(children[i]);
+                for (var _i6 = 0; _i6 < children.length; _i6 += 1) {
+                    var child = Cuic.element(children[_i6]);
 
-                    if (this.index === i) {
+                    if (this.index === _i6) {
                         child.addClass('visible');
                         child.removeClass('hidden');
                     } else {

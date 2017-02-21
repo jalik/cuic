@@ -26,26 +26,18 @@
 Cuic.Elements = class {
 
     constructor(elements, context, selector) {
-        this.length = 0;
-        this.context = context;
-        this.selector = selector;
+        let i;
 
-        for (let i = 0; i < elements.length; i += 1) {
+        for (i = 0; i < elements.length; i += 1) {
             if (elements.hasOwnProperty(i)) {
-                let el = elements[i];
-
-                // Get element from node
-                if (el instanceof HTMLDocument || el instanceof HTMLElement) {
-                    el = Cuic.element(el);
-                }
-
-                // Add element to set
-                this[this.length] = el;
-
-                // Increment set length
-                this.length += 1;
+                this[i] = Cuic.element(elements[i]);
             }
         }
+
+        // Public attributes
+        this.length = i;
+        this.context = context;
+        this.selector = selector;
     }
 
     /**
