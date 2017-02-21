@@ -135,8 +135,8 @@
                             <input class="form-control" type="text" name="css" value="width: 400px">
                         </label>
                         <label class="inline">
-                            <span class="help-block">container</span>
-                            <input type="checkbox" name="container" checked>
+                            <span class="help-block">parent</span>
+                            <input type="checkbox" name="parent" checked>
                         </label>
                         <label class="inline">
                             <span class="help-block">buttons</span>
@@ -151,8 +151,8 @@
                             <input type="checkbox" name="modal" checked>
                         </label>
                         <label class="inline">
-                            <span class="help-block">autoResize</span>
-                            <input type="checkbox" name="autoResize" checked>
+                            <span class="help-block">autoClose</span>
+                            <input type="checkbox" name="autoClose" checked>
                         </label>
                         <button class="btn btn-primary btn-run" type="submit">
                             <span class="glyphicon glyphicon-console"></span>
@@ -165,16 +165,16 @@
                         $(document).ready(function () {
                             var sandbox = $('#sb-dialog');
                             var modal = sandbox.find('[name=modal]');
-                            var container = sandbox.find('[name=container]');
-                            var css = sandbox.find('[name=css]');
-                            var position = sandbox.find('[name=position]');
-                            var autoResize = sandbox.find('[name=autoResize]');
+                            var parent = sandbox.find('[name="parent"]');
+                            var css = sandbox.find('[name="css"]');
+                            var position = sandbox.find('[name="position"]');
+                            var autoClose = sandbox.find('[name="autoClose"]');
                             var run = function () {
                                 window.dialog = new Cuic.Dialog({
-                                    autoResize: autoResize.is(':checked'),
+                                    autoClose: autoClose.is(':checked'),
                                     css: css.val(),
                                     modal: modal.is(':checked'),
-                                    parent: container.is(':checked') ? $('#sb-dialog .blueprint') : document.body,
+                                    parent: parent.is(':checked') ? $('#sb-dialog .blueprint') : document.body,
                                     position: position.val(),
                                     title: sandbox.find("[name=title]").is(":checked") ? 'Header & title' : null,
                                     content: 'This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p>',
@@ -331,8 +331,8 @@
                             <input type="checkbox" name="autoClose" checked>
                         </label>
                         <label class="inline">
-                            <span class="help-block">container</span>
-                            <input type="checkbox" name="container" checked>
+                            <span class="help-block">parent</span>
+                            <input type="checkbox" name="parent" checked>
                         </label>
                         <button class="btn btn-primary btn-run" type="submit">
                             <span class="glyphicon glyphicon-console"></span>
@@ -345,7 +345,7 @@
                         $(document).ready(function () {
                             var sandbox = $('#sb-notification');
                             var autoClose = sandbox.find('[name=autoClose]');
-                            var container = sandbox.find('[name=container]');
+                            var parent = sandbox.find('[name=parent]');
                             var duration = sandbox.find('[name=duration]');
                             var position = sandbox.find('[name=position]');
 
@@ -354,7 +354,7 @@
                                     autoClose: autoClose.is(":checked"),
                                     autoRemove: true,
                                     closable: true,
-                                    parent: container.is(':checked') ? $('#sb-notification .blueprint') : document.body,
+                                    parent: parent.is(':checked') ? $('#sb-notification .blueprint') : document.body,
                                     content: 'Notification from <b>' + position.val() + '</b>',
                                     duration: duration.val(),
                                     position: position.val()
@@ -363,7 +363,7 @@
 
                                 position.off('change').on("change", function () {
                                     if (!notification.isRemoved()) {
-                                        notification.align(position.val(), container.is(':checked') ? '#sb-notification .blueprint' : document.body);
+                                        notification.align(position.val(), parent.is(':checked') ? '#sb-notification .blueprint' : document.body);
                                     }
                                 });
                             };
@@ -463,8 +463,8 @@
                             <input type="checkbox" name="autoClose">
                         </label>
                         <label class="inline">
-                            <span class="help-block">container</span>
-                            <input type="checkbox" name="container" checked>
+                            <span class="help-block">parent</span>
+                            <input type="checkbox" name="parent" checked>
                         </label>
                         <label class="inline">
                             <span class="help-block">maximized</span>
@@ -520,7 +520,7 @@
                             var sandbox = $('#sb-panel');
                             var blueprint = sandbox.find('.blueprint');
                             var autoClose = sandbox.find('[name=autoClose]');
-                            var container = sandbox.find('[name=container]');
+                            var parent = sandbox.find('[name=parent]');
                             var css = sandbox.find('[name=css]');
                             var position = sandbox.find('[name=position]');
                             var maximized = sandbox.find('[name=maximized]');
@@ -532,7 +532,7 @@
                                     css: css.val(),
                                     maximized: maximized.is(':checked'),
                                     opened: opened.is(':checked'),
-                                    parent: container.is(':checked') ? blueprint : document.body,
+                                    parent: parent.is(':checked') ? blueprint : document.body,
                                     position: position.val()
                                 });
                             };
@@ -852,7 +852,7 @@
                 <div id="ui-switcher">
                     <h2><a href="#ui-switcher">Cuic.Switcher</a></h2>
 
-                    <p class="alert alert-info">The switcher is a container that take a group of elements and displays
+                    <p class="alert alert-info">The switcher is a parent that take a group of elements and displays
                         only one at a time, allowing to navigate forward and backward.</p>
 
                     <div class="sandbox" id="sb-switcher">

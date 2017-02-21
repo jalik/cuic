@@ -658,28 +658,6 @@
         },
 
         /**
-         * Returns the HTML element from various objects (Cuic, jQuery...)
-         * todo rename to node()
-         * @param element
-         * @return {*|HTMLElement|HTMLDocument}
-         */
-        node(element) {
-            if (element instanceof HTMLElement) {
-                return element;
-            }
-            if (element instanceof HTMLDocument) {
-                return element;
-            }
-            if (element instanceof this.Element) {
-                return element.node();
-            }
-            if (element instanceof jQuery) {
-                return element.get(0);
-            }
-            throw new TypeError(`element is not supported (HTMLElement, Cuic.Element or jQuery)`);
-        },
-
-        /**
          * Returns the CSS style prefix depending of the browser
          * @return {*}
          */
@@ -921,10 +899,31 @@
          * @return {Function}
          */
         namespace(ns) {
-            return function (event, id) {
+            return (event, id) => {
                 id = Cuic.slug(id);
                 return `${event}.cuic.${ns}` + (id ? `.${id}` : '');
             };
+        },
+
+        /**
+         * Returns the HTML element from various objects (Cuic, jQuery...)
+         * @param element
+         * @return {*|HTMLElement|HTMLDocument}
+         */
+        node(element) {
+            if (element instanceof HTMLElement) {
+                return element;
+            }
+            if (element instanceof HTMLDocument) {
+                return element;
+            }
+            if (element instanceof this.Element) {
+                return element.node();
+            }
+            if (element instanceof jQuery) {
+                return element.get(0);
+            }
+            throw new TypeError(`element is not supported (HTMLElement, Cuic.Element or jQuery)`);
         },
 
         /**

@@ -52,47 +52,6 @@ Cuic.Dialog = class extends Cuic.Component {
         // Add component classes
         self.addClass('dialog');
 
-        /**
-         * Adds a button to the dialog
-         * todo make public method
-         * @return {Cuic.Button}
-         * @param button
-         */
-        self.addButton = (button) => {
-            if (!(button instanceof Cuic.Button)) {
-                const callback = button.callback;
-
-                button = new Cuic.Button({
-                    className: 'btn btn-default',
-                    label: button.label
-                });
-
-                // Set button callback
-                if (typeof callback === 'function') {
-                    button.on('click', (ev) => {
-                        callback.call(self, ev);
-                    });
-                } else if (callback === 'close') {
-                    button.on('click', () => {
-                        self.close();
-                    });
-                }
-            }
-
-            // Add button in footer
-            self.buttons.addComponent(button);
-
-            // Show footer if not empty
-            if (self.buttons.children().length > 0) {
-                self.footer.show();
-            }
-            // Hide footer if empty
-            else {
-                self.footer.hide();
-            }
-            return button;
-        };
-
         // Set dialog position
         let fixed = self.getParentElement() === document.body;
         self.css({position: fixed ? 'fixed' : 'absolute'});
@@ -172,16 +131,20 @@ Cuic.Dialog = class extends Cuic.Component {
             }
         });
 
-        // todo Close dialog when the user clicks outside of it
-        // Cuic.on('click', document, (ev) => {
-        //     const elm = self.node();
-        //
-        //     if (ev.target !== elm && !Cuic.isParent(elm, ev.target)) {
-        //         if (self.options.autoClose) {
-        //             self.close();
-        //         }
-        //     }
-        // });
+        // Close dialog when user clicks outside
+        const onClick = (ev) => {
+            const el = self.node();
+
+            if (ev.target !== el && !Cuic.isParent(el, ev.target)) {
+                if (self.options.autoClose) {
+                    self.close();
+                }
+            }
+        };
+        Cuic.on('click', document, onClick);
+        self.onRemoved(() => {
+            Cuic.off('click', document, onClick);
+        });
 
         /**
          * Movable interface
@@ -257,7 +220,7 @@ Cuic.Dialog = class extends Cuic.Component {
 
         // Called when dialog is opened
         self.onOpened((ev) => {
-            // // todo Find images
+            // // todo wait images to be loaded to resize content
             // let images = this.find('img');
             //
             // if (images.length > 0) {
@@ -275,6 +238,46 @@ Cuic.Dialog = class extends Cuic.Component {
         self.onRemoved(() => {
             Cuic.dialogs.remove(self);
         });
+    }
+
+    /**
+     * Adds a button to the dialog
+     * @param button
+     * @return {Cuic.Button}
+     */
+    addButton(button) {
+        if (!(button instanceof Cuic.Button)) {
+            const callback = button.callback;
+
+            button = new Cuic.Button({
+                className: 'btn btn-default',
+                label: button.label
+            });
+
+            // Set button callback
+            if (typeof callback === 'function') {
+                button.on('click', (ev) => {
+                    callback.call(this, ev);
+                });
+            } else if (callback === 'close') {
+                button.on('click', () => {
+                    this.close();
+                });
+            }
+        }
+
+        // Add button in footer
+        this.buttons.addComponent(button);
+
+        // Show footer if not empty
+        if (this.buttons.children().length > 0) {
+            this.footer.show();
+        }
+        // Hide footer if empty
+        else {
+            this.footer.hide();
+        }
+        return button;
     }
 
     /**
