@@ -363,6 +363,69 @@
         },
 
         /**
+         * Returns the available position inside a container
+         * @param element
+         * @param parent
+         * @return {{height, width}}
+         */
+        calculateAvailablePosition(element, parent) {
+            element = this.element(element);
+            parent = parent ? this.element(parent) : element.offsetParent();
+
+            let prop = {
+                minX: 0,
+                minY: 0,
+                maxX: parent.width() - element.outerWidth(true),
+                maxY: parent.height() - element.outerHeight(true)
+            };
+
+            // Adjust limits depending of element position
+            switch (element.css('position')) {
+                case 'absolute':
+                    const prPadding = parent.padding();
+                    prop.maxX += prPadding.horizontal;
+                    prop.maxY += prPadding.vertical;
+                    break;
+            }
+            return prop;
+        },
+
+        /**
+         * Returns the available space inside a container
+         * @param element
+         * @param parent
+         * @return {{height, width}}
+         */
+        calculateAvailableSpace(element, parent) {
+            element = this.element(element);
+            parent = parent ? this.element(parent) : element.offsetParent();
+
+            const elMargin = element.margin();
+
+            let prop = {
+                height: parent.height(),
+                width: parent.width()
+            };
+
+            // Adjust limits depending of element position
+            switch (element.css('position')) {
+                case 'absolute':
+                    const prPadding = parent.padding();
+                    prop.height += prPadding.vertical;
+                    prop.width += prPadding.horizontal;
+                    prop.height -= elMargin.vertical;
+                    prop.width -= elMargin.horizontal;
+                    break;
+
+                case 'relative':
+                    prop.height -= elMargin.vertical;
+                    prop.width -= elMargin.horizontal;
+                    break;
+            }
+            return prop;
+        },
+
+        /**
          * Calculates maximized properties
          * @param element
          * @return {*}

@@ -144,48 +144,16 @@ Cuic.Resizable = class extends Cuic.Element {
                         }
                     }
 
+                    // Get available space
+                    const availableSpace = Cuic.calculateAvailableSpace(self, parent);
+
                     // Limit to max width
-                    if (prop.width) {
-                        const parentWidth = parent.width();
-                        const parentPadding = parent.padding();
-                        const margin = self.margin();
-                        let maxWidth = parentWidth;
-
-                        // Adjust limits
-                        switch (self.css('position')) {
-                            case 'absolute':
-                                maxWidth += parentPadding.horizontal;
-                                maxWidth -= margin.horizontal;
-                                break;
-                            case 'relative':
-                                maxWidth -= margin.horizontal;
-                                break;
-                        }
-                        if (prop.width > maxWidth) {
-                            prop.width = maxWidth;
-                        }
+                    if (prop.width && prop.width > availableSpace.width) {
+                        prop.width = availableSpace.width;
                     }
-
                     // Limit to max height
-                    if (prop.height) {
-                        const parentHeight = parent.innerHeight();
-                        const parentPadding = parent.padding();
-                        const margin = self.margin();
-                        let maxHeight = parentHeight - parentPadding.vertical;
-
-                        // Adjust limits
-                        switch (self.css('position')) {
-                            case 'absolute':
-                                maxHeight += parentPadding.vertical;
-                                maxHeight -= margin.vertical;
-                                break;
-                            case 'relative':
-                                maxHeight -= margin.vertical;
-                                break;
-                        }
-                        if (prop.height > maxHeight) {
-                            prop.height = maxHeight;
-                        }
+                    if (prop.height && prop.height > availableSpace.height) {
+                        prop.height = availableSpace.height;
                     }
 
                     // fixme element can be resized more than parent size if keep ratio is active

@@ -85,26 +85,10 @@ Cuic.Movable = class extends Cuic.Element {
                 // Execute callback
                 if (self.events.trigger('move', ev) === false)  return;
 
-                const height = self.outerHeight(true);
-                const width = self.outerWidth(true);
                 let prop = {};
 
-                // Calculate minimal values
-                const minX = 0;
-                const minY = 0;
-
-                // Calculate maximal values
-                let maxX = parent.width();
-                let maxY = parent.height();
-
-                // Adjust limits
-                switch (self.css('position')) {
-                    case 'absolute':
-                        const padding = parent.padding();
-                        maxX += padding.horizontal;
-                        maxY += padding.vertical;
-                        break;
-                }
+                // Calculate available position
+                const availablePosition = Cuic.calculateAvailablePosition(self, parent);
 
                 // Move horizontally
                 if (self.options.horizontal) {
@@ -112,11 +96,11 @@ Cuic.Movable = class extends Cuic.Element {
                     let left = startPosition.left + diffX;
 
                     // Check horizontal location
-                    if (left < minX) {
-                        left = minX;
+                    if (left < availablePosition.minX) {
+                        left = availablePosition.minX;
                     }
-                    else if (left + width > maxX) {
-                        left = maxX - width;
+                    else if (left > availablePosition.maxX) {
+                        left = availablePosition.maxX;
                     }
                     prop.left = left;
                     prop.right = '';
@@ -128,11 +112,11 @@ Cuic.Movable = class extends Cuic.Element {
                     let top = startPosition.top + diffY;
 
                     // Check vertical location
-                    if (top < minY) {
-                        top = minY;
+                    if (top < availablePosition.minY) {
+                        top = availablePosition.minY;
                     }
-                    else if (top + height > maxY) {
-                        top = maxY - height;
+                    else if (top > availablePosition.maxY) {
+                        top = availablePosition.maxY;
                     }
                     prop.top = top;
                     prop.bottom = '';

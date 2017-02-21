@@ -418,6 +418,71 @@ if (!Element.prototype.matches) {
 
 
         /**
+         * Returns the available position inside a container
+         * @param element
+         * @param parent
+         * @return {{height, width}}
+         */
+        calculateAvailablePosition: function calculateAvailablePosition(element, parent) {
+            element = this.element(element);
+            parent = parent ? this.element(parent) : element.offsetParent();
+
+            var prop = {
+                minX: 0,
+                minY: 0,
+                maxX: parent.width() - element.outerWidth(true),
+                maxY: parent.height() - element.outerHeight(true)
+            };
+
+            // Adjust limits depending of element position
+            switch (element.css('position')) {
+                case 'absolute':
+                    var prPadding = parent.padding();
+                    prop.maxX += prPadding.horizontal;
+                    prop.maxY += prPadding.vertical;
+                    break;
+            }
+            return prop;
+        },
+
+
+        /**
+         * Returns the available space inside a container
+         * @param element
+         * @param parent
+         * @return {{height, width}}
+         */
+        calculateAvailableSpace: function calculateAvailableSpace(element, parent) {
+            element = this.element(element);
+            parent = parent ? this.element(parent) : element.offsetParent();
+
+            var elMargin = element.margin();
+
+            var prop = {
+                height: parent.height(),
+                width: parent.width()
+            };
+
+            // Adjust limits depending of element position
+            switch (element.css('position')) {
+                case 'absolute':
+                    var prPadding = parent.padding();
+                    prop.height += prPadding.vertical;
+                    prop.width += prPadding.horizontal;
+                    prop.height -= elMargin.vertical;
+                    prop.width -= elMargin.horizontal;
+                    break;
+
+                case 'relative':
+                    prop.height -= elMargin.vertical;
+                    prop.width -= elMargin.horizontal;
+                    break;
+            }
+            return prop;
+        },
+
+
+        /**
          * Calculates maximized properties
          * @param element
          * @return {*}
@@ -487,10 +552,6 @@ if (!Element.prototype.matches) {
             clone.remove();
 
             return prop;
-        },
-        calculateParentAvailableSpace: function calculateParentAvailableSpace(parent, element) {
-            element = this.element(element);
-            parent = this.element(parent);
         },
 
 
@@ -4220,26 +4281,10 @@ Cuic.Movable = function (_Cuic$Element4) {
                     // Execute callback
                     if (self.events.trigger('move', ev) === false) return;
 
-                    var height = self.outerHeight(true);
-                    var width = self.outerWidth(true);
                     var prop = {};
 
-                    // Calculate minimal values
-                    var minX = 0;
-                    var minY = 0;
-
-                    // Calculate maximal values
-                    var maxX = parent.width();
-                    var maxY = parent.height();
-
-                    // Adjust limits
-                    switch (self.css('position')) {
-                        case 'absolute':
-                            var padding = parent.padding();
-                            maxX += padding.horizontal;
-                            maxY += padding.vertical;
-                            break;
-                    }
+                    // Calculate available position
+                    var availablePosition = Cuic.calculateAvailablePosition(self, parent);
 
                     // Move horizontally
                     if (self.options.horizontal) {
@@ -4247,10 +4292,10 @@ Cuic.Movable = function (_Cuic$Element4) {
                         var left = startPosition.left + diffX;
 
                         // Check horizontal location
-                        if (left < minX) {
-                            left = minX;
-                        } else if (left + width > maxX) {
-                            left = maxX - width;
+                        if (left < availablePosition.minX) {
+                            left = availablePosition.minX;
+                        } else if (left > availablePosition.maxX) {
+                            left = availablePosition.maxX;
                         }
                         prop.left = left;
                         prop.right = '';
@@ -4262,10 +4307,10 @@ Cuic.Movable = function (_Cuic$Element4) {
                         var top = startPosition.top + diffY;
 
                         // Check vertical location
-                        if (top < minY) {
-                            top = minY;
-                        } else if (top + height > maxY) {
-                            top = maxY - height;
+                        if (top < availablePosition.minY) {
+                            top = availablePosition.minY;
+                        } else if (top > availablePosition.maxY) {
+                            top = availablePosition.maxY;
                         }
                         prop.top = top;
                         prop.bottom = '';
@@ -4479,48 +4524,16 @@ Cuic.Resizable = function (_Cuic$Element5) {
                         }
                     }
 
+                    // Get available space
+                    var availableSpace = Cuic.calculateAvailableSpace(self, parent);
+
                     // Limit to max width
-                    if (prop.width) {
-                        var parentWidth = parent.width();
-                        var parentPadding = parent.padding();
-                        var margin = self.margin();
-                        var maxWidth = parentWidth;
-
-                        // Adjust limits
-                        switch (self.css('position')) {
-                            case 'absolute':
-                                maxWidth += parentPadding.horizontal;
-                                maxWidth -= margin.horizontal;
-                                break;
-                            case 'relative':
-                                maxWidth -= margin.horizontal;
-                                break;
-                        }
-                        if (prop.width > maxWidth) {
-                            prop.width = maxWidth;
-                        }
+                    if (prop.width && prop.width > availableSpace.width) {
+                        prop.width = availableSpace.width;
                     }
-
                     // Limit to max height
-                    if (prop.height) {
-                        var parentHeight = parent.innerHeight();
-                        var _parentPadding = parent.padding();
-                        var _margin = self.margin();
-                        var maxHeight = parentHeight - _parentPadding.vertical;
-
-                        // Adjust limits
-                        switch (self.css('position')) {
-                            case 'absolute':
-                                maxHeight += _parentPadding.vertical;
-                                maxHeight -= _margin.vertical;
-                                break;
-                            case 'relative':
-                                maxHeight -= _margin.vertical;
-                                break;
-                        }
-                        if (prop.height > maxHeight) {
-                            prop.height = maxHeight;
-                        }
+                    if (prop.height && prop.height > availableSpace.height) {
+                        prop.height = availableSpace.height;
                     }
 
                     // fixme element can be resized more than parent size if keep ratio is active
