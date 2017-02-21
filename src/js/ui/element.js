@@ -403,8 +403,13 @@ Cuic.Element = class {
     html(html) {
         if (html !== undefined) {
             // Get HTML from object
-            if (html && typeof html === 'object' && typeof html.html === 'function') {
-                html = html.html();
+            if (html && typeof html === 'object') {
+                if (html instanceof Cuic.Element) {
+                    html = html.getElement().outerHTML;
+                }
+                else if (html instanceof jQuery) {
+                    html = html[0].outerHTML;
+                }
             }
             this.getElement().innerHTML = html;
             return this;

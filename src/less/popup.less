@@ -29,8 +29,6 @@
   box-shadow: @shadow-x @shadow-y @shadow-size @shadow-color;
   color: #fff;
   display: inline-block;
-  font-size: 1.3rem;
-  line-height: 1.2rem;
   margin: @margin;
   opacity: 0;
   overflow: auto;
@@ -47,13 +45,18 @@
   transition-duration: @anim-open-duration;
 }
 
+.popup.closable .popup-content {
+  margin-right: @margin * 2;
+}
+
 .popup .btn-close {
   color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
-  float: right;
-  font-size: 1em;
   font-weight: bolder;
-  margin-left: @margin;
+  margin: @margin;
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 .popup .btn-close:focus,

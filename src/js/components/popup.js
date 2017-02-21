@@ -50,12 +50,6 @@ Cuic.Popup = class extends Cuic.Component {
             role: 'button'
         }).appendTo(self);
 
-        if (self.options.closable) {
-            self.closeButton.show();
-        } else {
-            self.closeButton.hide();
-        }
-
         self.on('click', (ev) => {
             // Close button
             if (Cuic.hasClass(ev.target, 'btn-close')) {

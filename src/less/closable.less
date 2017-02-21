@@ -23,25 +23,11 @@
  *
  */
 
-.component {
-  display: inline-block;
-  font-size: 1.3rem;
-  line-height: 1.3rem;
-}
-
-.component.hidden {
+.component .btn-close {
+  cursor: pointer;
   display: none;
-  transition-property: all;
-  transition-duration: 0s;
 }
 
-.component.maximized {
-  height: 100%;
-  width: 100%;
-  min-width: 100%;
-}
-
-.component.minimized {
-  height: auto;
-  width: auto;
+.component.closable .btn-close {
+  display: inline-block;
 }

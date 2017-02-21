@@ -29,8 +29,6 @@
   box-shadow: @shadow-x @shadow-y @shadow-size @shadow-color;
   color: #fff;
   display: inline-block;
-  font-size: 1.3rem;
-  line-height: 1.2rem;
   margin: @margin;
   opacity: 0;
   overflow: auto;
@@ -49,6 +47,27 @@
 .notification.opened:hover {
   background: rgba(0, 0, 0, 0.8);
 }
+
+.notification.closable .notification-content {
+  margin-right: @margin * 2;
+}
+
+.notification .btn-close {
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  font-weight: bolder;
+  margin: @margin;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.notification .btn-close:focus,
+.notification .btn-close:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+// NOTIFICATION POSITION
 
 .notification.notification-bottom {
   transform-origin: bottom center;
@@ -80,20 +99,6 @@
 
 .notification.notification-top.notification-right {
   transform-origin: top right;
-}
-
-.notification .btn-close {
-  color: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  float: right;
-  font-size: 1em;
-  font-weight: bolder;
-  margin-left: @margin;
-}
-
-.notification .btn-close:focus,
-.notification .btn-close:hover {
-  color: rgba(255, 255, 255, 0.7);
 }
 
 // NOTIFICATION STACK

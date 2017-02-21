@@ -172,9 +172,9 @@
                             var run = function () {
                                 window.dialog = new Cuic.Dialog({
                                     autoResize: autoResize.is(':checked'),
-                                    parent: container.is(':checked') ? $('#sb-dialog .blueprint') : document.body,
                                     css: css.val(),
                                     modal: modal.is(':checked'),
+                                    parent: container.is(':checked') ? $('#sb-dialog .blueprint') : document.body,
                                     position: position.val(),
                                     title: sandbox.find("[name=title]").is(":checked") ? 'Header & title' : null,
                                     content: 'This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p>',
@@ -710,27 +710,27 @@
                             var movables = [movable, movableB];
 
                             for (var i = 0; i < movables.length; i += 1) {
-                                movables[i].onMove = function (ev) {
+                                movables[i].onMove(function (ev) {
                                     state.val('onMove');
                                     const position = this.position();
                                     x.val(position.left);
                                     y.val(position.top);
 //                                Cuic.debug('moving', position);
-                                };
-                                movables[i].onMoveStart = function (ev) {
+                                });
+                                movables[i].onMoveStart(function (ev) {
                                     state.val('onMoveStart');
                                     const position = this.position();
                                     x.val(position.left);
                                     y.val(position.top);
 //                                Cuic.debug('move start', ev);
-                                };
-                                movables[i].onMoveStop = function (ev) {
-                                    state.val('onMoveStop');
+                                });
+                                movables[i].onMoveEnd(function (ev) {
+                                    state.val('onMoveEnd');
                                     const position = this.position();
                                     x.val(position.left);
                                     y.val(position.top);
 //                                Cuic.debug('move stop', ev);
-                                };
+                                });
                             }
                         });
                     </script>
@@ -790,7 +790,7 @@
                             window.resizable = new Cuic.Resizable({
                                 debug: true,
                                 element: sandbox.find('.testbox-a'),
-                                keepRatio: true
+                                keepRatio: false
                             });
                             window.resizableB = new Cuic.Resizable({
                                 debug: true,
@@ -798,19 +798,19 @@
                                 keepRatio: false
                             });
 
-                            resizable.onResizeStart = function (ev) {
+                            resizable.onResizeStart(function (ev) {
 //                                console.log('onResizeStart', ev.clientX, ev.clientY);
-                            };
-                            resizable.onResizeStop = function (ev) {
-//                                console.log('onResizeStop', ev.clientX, ev.clientY);
-                            };
-                            resizable.onResize = function (ev) {
+                            });
+                            resizable.onResizeEnd(function (ev) {
+//                                console.log('onResizeEnd', ev.clientX, ev.clientY);
+                            });
+                            resizable.onResize(function (ev) {
 //                                console.log('resize', ev)
                                 width.val(resizable.width());
                                 height.val(resizable.height());
                                 hratio.val(Math.round(resizable.width() / resizable.height() * 100) / 100);
                                 vratio.val(Math.round(resizable.height() / resizable.width() * 100) / 100);
-                            };
+                            });
                         });
                     </script>
                 </div>

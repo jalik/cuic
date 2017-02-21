@@ -86,7 +86,7 @@ Cuic.Resizable = class extends Cuic.Element {
             // Start resizing
             handle.on('mousedown', (ev) => {
                 // Execute callback
-                if (self.onResizeStart.call(self, ev) === false) return;
+                if (self.events.trigger('resizeStart', ev) === false) return;
 
                 // Prevent text selection
                 ev.preventDefault();
@@ -97,17 +97,16 @@ Cuic.Resizable = class extends Cuic.Element {
                 const parent = self.parent();
                 const startX = ev.clientX;
                 const startY = ev.clientY;
-
-                let originalHeight = self.outerHeight();
-                let originalWidth = self.outerWidth();
+                const initialHeight = self.outerHeight();
+                const initialWidth = self.outerWidth();
                 const handleTarget = ev.currentTarget;
 
                 // Calculate initial ratio
-                const ratio = originalHeight / originalWidth;
+                const ratio = initialHeight / initialWidth;
 
                 const onMouseMove = (ev) => {
                     // Execute callback
-                    if (self.onResize.call(self, ev) === false) return;
+                    if (self.events.trigger('resize', ev) === false) return;
 
                     let prop = {};
 
@@ -116,7 +115,7 @@ Cuic.Resizable = class extends Cuic.Element {
                         for (let i = 0; i < self.horizontalHandles.length; i += 1) {
                             if (self.horizontalHandles.get(i).getElement() === handleTarget) {
                                 const diffX = ev.clientX - startX;
-                                const width = originalWidth + diffX;
+                                const width = initialWidth + diffX;
 
                                 // Width is between min and max
                                 if ((!Number(this.options.maxWidth) || width <= this.options.maxWidth)
@@ -133,7 +132,7 @@ Cuic.Resizable = class extends Cuic.Element {
                         for (let i = 0; i < self.verticalHandles.length; i += 1) {
                             if (self.verticalHandles.get(i).getElement() === handleTarget) {
                                 const diffY = ev.clientY - startY;
-                                const height = originalHeight + diffY;
+                                const height = initialHeight + diffY;
 
                                 // Height is between min and max
                                 if ((!Number(this.options.maxHeight) || height <= this.options.maxHeight)
@@ -145,33 +144,47 @@ Cuic.Resizable = class extends Cuic.Element {
                         }
                     }
 
+                    // Limit to max width
+                    if (prop.width) {
+                        const parentWidth = parent.width();
+                        const parentPadding = parent.padding();
+                        const margin = self.margin();
+                        let maxWidth = parentWidth;
+
+                        // Adjust limits
+                        switch (self.css('position')) {
+                            case 'absolute':
+                                maxWidth += parentPadding.horizontal;
+                                maxWidth -= margin.horizontal;
+                                break;
+                            case 'relative':
+                                maxWidth -= margin.horizontal;
+                                break;
+                        }
+                        if (prop.width > maxWidth) {
+                            prop.width = maxWidth;
+                        }
+                    }
+
                     // Limit to max height
                     if (prop.height) {
                         const parentHeight = parent.innerHeight();
                         const parentPadding = parent.padding();
+                        const margin = self.margin();
                         let maxHeight = parentHeight - parentPadding.vertical;
 
-                        if (self.css('position') === 'relative') {
-                            const margin = self.margin();
-                            maxHeight -= margin.horizontal;
+                        // Adjust limits
+                        switch (self.css('position')) {
+                            case 'absolute':
+                                maxHeight += parentPadding.vertical;
+                                maxHeight -= margin.vertical;
+                                break;
+                            case 'relative':
+                                maxHeight -= margin.vertical;
+                                break;
                         }
                         if (prop.height > maxHeight) {
                             prop.height = maxHeight;
-                        }
-                    }
-
-                    // Limit to max width
-                    if (prop.width) {
-                        const parentWidth = parent.innerWidth();
-                        const parentPadding = parent.padding();
-                        let maxWidth = parentWidth - parentPadding.horizontal;
-
-                        if (self.css('position') === 'relative') {
-                            const margin = self.margin();
-                            maxWidth -= margin.horizontal;
-                        }
-                        if (prop.width > maxWidth) {
-                            prop.width = maxWidth;
                         }
                     }
 
@@ -198,19 +211,40 @@ Cuic.Resizable = class extends Cuic.Element {
                 Cuic.once('mouseup', document, (ev) => {
                     Cuic.off('mousemove', document, onMouseMove);
                     self.removeClass('resizing');
-                    self.onResizeStop.call(self, ev);
+                    self.events.trigger('resizeEnd', ev);
                 });
             });
         });
     }
 
-    onResize() {
+    /**
+     * Called when resizing
+     * @param callback
+     * @return {Cuic.Resizable}
+     */
+    onResize(callback) {
+        this.events.on('resize', callback);
+        return this;
     }
 
-    onResizeStart() {
+    /**
+     * Called when resize end
+     * @param callback
+     * @return {Cuic.Resizable}
+     */
+    onResizeEnd(callback) {
+        this.events.on('resizeEnd', callback);
+        return this;
     }
 
-    onResizeStop() {
+    /**
+     * Called when resize start
+     * @param callback
+     * @return {Cuic.Resizable}
+     */
+    onResizeStart(callback) {
+        this.events.on('resizeStart', callback);
+        return this;
     }
 };
 

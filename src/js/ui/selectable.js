@@ -32,33 +32,90 @@ Cuic.Selectable = class extends Cuic.Element {
         // Create element
         super('div', {className: options.className}, options);
 
+        const self = this;
+
         // Add component class
-        this.addClass('selectable');
+        self.addClass('selectable');
+
+        // Add selected class
+        if (self.options.selected) {
+            self.addClass('selected');
+        }
 
         // Add or remove selected class
-        this.on('click', () => {
-            if (this.hasClass('selected')) {
-                this.deselect();
+        self.on('click', () => {
+            if (self.hasClass('selected')) {
+                self.deselect();
             } else {
-                this.select();
+                self.select();
             }
         });
     }
 
     /**
      * Deselect element
+     * @param callback
+     * @return {Cuic.Selectable}
      */
-    deselect() {
+    deselect(callback) {
         this.removeClass('selected');
-        // todo call deselected hooks
+        this.once('transitionend', (ev) => {
+            if (!this.isSelected()) {
+                this.events.trigger('deselected', ev);
+
+                if (typeof callback === 'function') {
+                    callback.call(this, ev);
+                }
+            }
+        });
+        return this;
+    }
+
+    /**
+     * Checks if the element is selected
+     * @return {boolean}
+     */
+    isSelected() {
+        return (this.hasClass('selected') || this.attr('selected')) === true;
+    }
+
+    /**
+     * Called when element is deselected
+     * @param callback
+     * @return {Cuic.Selectable}
+     */
+    onDeselected(callback) {
+        this.events.on('deselected', callback);
+        return this;
+    }
+
+    /**
+     * Called when element is selected
+     * @param callback
+     * @return {Cuic.Selectable}
+     */
+    onSelected(callback) {
+        this.events.on('selected', callback);
+        return this;
     }
 
     /**
      * Select element
+     * @param callback
+     * @return {Cuic.Selectable}
      */
-    select() {
+    select(callback) {
         this.addClass('selected');
-        // todo call selected hooks
+        this.once('transitionend', (ev) => {
+            if (this.isSelected()) {
+                this.events.trigger('selected', ev);
+
+                if (typeof callback === 'function') {
+                    callback.call(this, ev);
+                }
+            }
+        });
+        return this;
     }
 };
 

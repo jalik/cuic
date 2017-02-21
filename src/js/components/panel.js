@@ -97,14 +97,6 @@ Cuic.Panel = class extends Cuic.Component {
         // the container must have a hidden overflow
         Cuic.css(self.getParentElement(), {overflow: 'hidden'});
 
-        if (self.closeButton) {
-            if (self.options.closable) {
-                self.closeButton.show();
-            } else {
-                self.closeButton.hide();
-            }
-        }
-
         self.on('click', (ev) => {
             // Close button
             if (Cuic.hasClass(ev.target, 'btn-close')) {

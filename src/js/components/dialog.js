@@ -153,12 +153,6 @@ Cuic.Dialog = class extends Cuic.Component {
             role: 'button'
         }).appendTo(self.header);
 
-        if (self.options.closable) {
-            self.closeButton.show();
-        } else {
-            self.closeButton.hide();
-        }
-
         // Add buttons
         if (options.buttons instanceof Array) {
             for (let i = 0; i < options.buttons.length; i += 1) {

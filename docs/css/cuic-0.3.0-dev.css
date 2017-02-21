@@ -24,8 +24,17 @@
  */
 
 /* ANIMATIONS */
+.component .btn-close {
+  cursor: pointer;
+  display: none;
+}
+.component.closable .btn-close {
+  display: inline-block;
+}
 .component {
   display: inline-block;
+  font-size: 1.3rem;
+  line-height: 1.3rem;
 }
 .component.hidden {
   display: none;
@@ -116,7 +125,6 @@
 .dialog-header .btn-close {
   color: rgba(0, 0, 0, 0.5);
   cursor: pointer;
-  font-size: 1em;
   position: absolute;
   top: 0;
   right: 0;
@@ -205,8 +213,6 @@
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
   color: #fff;
   display: inline-block;
-  font-size: 1.3rem;
-  line-height: 1.2rem;
   margin: 10px;
   opacity: 0;
   overflow: auto;
@@ -229,6 +235,22 @@
 }
 .notification.opened:hover {
   background: rgba(0, 0, 0, 0.8);
+}
+.notification.closable .notification-content {
+  margin-right: 20px;
+}
+.notification .btn-close {
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  font-weight: bolder;
+  margin: 10px;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.notification .btn-close:focus,
+.notification .btn-close:hover {
+  color: rgba(255, 255, 255, 0.7);
 }
 .notification.notification-bottom {
   -webkit-transform-origin: bottom center;
@@ -261,18 +283,6 @@
 .notification.notification-top.notification-right {
   -webkit-transform-origin: top right;
           transform-origin: top right;
-}
-.notification .btn-close {
-  color: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  float: right;
-  font-size: 1em;
-  font-weight: bolder;
-  margin-left: 10px;
-}
-.notification .btn-close:focus,
-.notification .btn-close:hover {
-  color: rgba(255, 255, 255, 0.7);
 }
 .notification-stack {
   -webkit-transition: all 0.5s;
@@ -378,7 +388,6 @@
 .panel-header .btn-close {
   color: rgba(0, 0, 0, 0.5);
   cursor: pointer;
-  font-size: 1em;
   position: absolute;
   top: 0;
   right: 0;
@@ -390,7 +399,6 @@
 }
 .panel-title {
   font-weight: bold;
-  font-size: 1em;
   margin: 0;
 }
 .popup {
@@ -399,8 +407,6 @@
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
   color: #fff;
   display: inline-block;
-  font-size: 1.3rem;
-  line-height: 1.2rem;
   margin: 10px;
   opacity: 0;
   overflow: auto;
@@ -422,13 +428,17 @@
   -webkit-transition-duration: 0.5s;
           transition-duration: 0.5s;
 }
+.popup.closable .popup-content {
+  margin-right: 20px;
+}
 .popup .btn-close {
   color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
-  float: right;
-  font-size: 1em;
   font-weight: bolder;
-  margin-left: 10px;
+  margin: 10px;
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 .popup .btn-close:focus,
 .popup .btn-close:hover {
@@ -603,8 +613,6 @@ tr.selected {
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
   color: #fff;
   display: inline-block;
-  font-size: 1.3rem;
-  line-height: 1.3rem;
   margin: 10px;
   max-width: 250px;
   opacity: 0;

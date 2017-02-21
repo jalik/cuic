@@ -39,10 +39,7 @@ Cuic.Notification = class extends Cuic.Component {
         options = Cuic.extend({}, Cuic.Notification.prototype.options, options);
 
         // Create element
-        super('div', {
-            className: options.className,
-            html: options.content
-        }, options);
+        super('div', {className: options.className}, options);
 
         const self = this;
 
@@ -54,7 +51,7 @@ Cuic.Notification = class extends Cuic.Component {
 
         // Add content
         self.content = new Cuic.Element('div', {
-            className: 'popup-content',
+            className: 'notification-content',
             html: options.content
         }).appendTo(self);
 
@@ -64,12 +61,6 @@ Cuic.Notification = class extends Cuic.Component {
             html: self.options.closeButton,
             role: 'button'
         }).appendTo(self);
-
-        if (self.options.closable) {
-            self.closeButton.show();
-        } else {
-            self.closeButton.hide();
-        }
 
         // Avoid closing notification when mouse is over
         self.on('mouseenter', (ev) => {
@@ -152,6 +143,7 @@ Cuic.Notification.prototype.options = {
     closeButton: '',
     content: null,
     duration: 2000,
+    namespace: 'notification',
     parent: document.body,
     position: 'center',
     zIndex: 10

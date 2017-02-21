@@ -67,16 +67,13 @@
         grid.resize(options.cols, options.rows);
 
         // Set the grid resizable
-        new Cuic.Resizable({
-            target: grid.element
-
-        }).onResizeStop = function () {
+        new Cuic.Resizable({target: grid.element}).onResizeEnd(function () {
             var cols = grid.getSizeX(grid.element.outerWidth());
             var rows = grid.getSizeY(grid.element.outerHeight());
             grid.maxCols = cols;
             grid.maxRows = rows;
             grid.maximize();
-        };
+        });
 
         // Create the widget preview
         grid.preview = $('<div>', {
@@ -216,7 +213,7 @@
         };
 
         // Set behavior when resizing stops
-        resizable.onResizeStop = function () {
+        resizable.onResizeEnd(function () {
             // Remove the preview
             preview.detach();
 
@@ -229,7 +226,7 @@
             if (grid.autoResize) {
                 grid.minimize();
             }
-        };
+        });
 
         // Make the widget movable
         var movable = new Cuic.Movable({
@@ -283,7 +280,7 @@
         };
 
         // Set behavior when dragging stops
-        movable.onMoveStop = function () {
+        movable.onMoveEnd = function () {
             // Remove the preview
             preview.detach();
 

@@ -36,6 +36,11 @@ Cuic.Component = class extends Cuic.Element {
         // Add component classes
         self.addClass('component');
 
+        // Add closable class
+        if (self.options.closable) {
+            self.addClass('closable');
+        }
+
         // Set the panel visibility
         // Since the visible option is used to check if the panel is visible
         // we force the panel to show or hide by setting visible to the inverse value.
@@ -61,16 +66,32 @@ Cuic.Component = class extends Cuic.Element {
         this.removeClass('opened');
         this.addClass('closed');
         this.once('transitionend', (ev) => {
-            this.events.trigger('closed', ev);
-
             if (!this.isOpened()) {
-                this.addClass('hidden');
-            }
-            if (typeof callback === 'function') {
-                callback.call(this, ev);
+                this.events.trigger('closed', ev);
+                this.hide();
+
+                if (typeof callback === 'function') {
+                    callback.call(this, ev);
+                }
             }
         });
         return this;
+    }
+
+    /**
+     * Checks if the component is maximized
+     * @return {boolean}
+     */
+    isMaximized() {
+        return this.hasClass('maximized');
+    }
+
+    /**
+     * Checks if the component is minimized
+     * @return {boolean}
+     */
+    isMinimized() {
+        return this.hasClass('minimized');
     }
 
     /**
@@ -89,12 +110,14 @@ Cuic.Component = class extends Cuic.Element {
         this.events.trigger('maximize');
         this.removeClass('minimized');
         this.addClass('maximized');
-        Cuic.maximize(this.getElement());
+        Cuic.maximize(this);
         this.once('transitionend', (ev) => {
-            this.events.trigger('maximized', ev);
+            if (this.isMaximized()) {
+                this.events.trigger('maximized', ev);
 
-            if (typeof callback === 'function') {
-                callback.call(this, ev);
+                if (typeof callback === 'function') {
+                    callback.call(this, ev);
+                }
             }
         });
     }
@@ -107,12 +130,14 @@ Cuic.Component = class extends Cuic.Element {
         this.events.trigger('minimize');
         this.removeClass('maximized');
         this.addClass('minimized');
-        Cuic.minimize(this.getElement(), this.options.position);
+        Cuic.minimize(this, this.options.position);
         this.once('transitionend', (ev) => {
-            this.events.trigger('minimized', ev);
+            if (this.isMinimized()) {
+                this.events.trigger('minimized', ev);
 
-            if (typeof callback === 'function') {
-                callback.call(this, ev);
+                if (typeof callback === 'function') {
+                    callback.call(this, ev);
+                }
             }
         });
     }
@@ -187,15 +212,17 @@ Cuic.Component = class extends Cuic.Element {
      * @return {Cuic.Component}
      */
     open(callback) {
-        this.removeClass('hidden');
+        this.show();
         this.events.trigger('open');
         this.removeClass('closed');
         this.addClass('opened');
         this.once('transitionend', (ev) => {
-            this.events.trigger('opened', ev);
+            if (this.isOpened()) {
+                this.events.trigger('opened', ev);
 
-            if (typeof callback === 'function') {
-                callback.call(this, ev);
+                if (typeof callback === 'function') {
+                    callback.call(this, ev);
+                }
             }
         });
         return this;

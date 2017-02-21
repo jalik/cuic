@@ -42,8 +42,11 @@ Cuic.Movable = class extends Cuic.Element {
             self.css({position: 'relative'});
         }
 
+        // Group handles
+        self.handles = new Cuic.Collection();
+
         // Set the moving area
-        this.addMoveHandle(options.handle || self.getElement());
+        self.addMoveHandle(options.handle || self.getElement());
     }
 
     /**
@@ -54,6 +57,8 @@ Cuic.Movable = class extends Cuic.Element {
     addMoveHandle(handle) {
         const self = this;
 
+        self.handles.add(handle);
+
         // Add the handle class
         Cuic.addClass(handle, 'movable-handle');
 
@@ -63,7 +68,7 @@ Cuic.Movable = class extends Cuic.Element {
             if (self.options.rootOnly && ev.target !== ev.currentTarget) return;
 
             // Execute callback
-            if (self.onMoveStart.call(self, ev) === false) return;
+            if (self.events.trigger('moveStart', ev) === false) return;
 
             // Prevent text selection
             ev.preventDefault();
@@ -72,39 +77,39 @@ Cuic.Movable = class extends Cuic.Element {
             self.addClass('moving');
 
             const parent = self.parent();
-            const startOffset = self.position();
+            const startPosition = self.position();
             const startX = ev.clientX;
             const startY = ev.clientY;
 
             const onMouseMove = (ev) => {
                 // Execute callback
-                if (self.onMove.call(self, ev) === false)  return;
+                if (self.events.trigger('move', ev) === false)  return;
 
-                const height = self.outerHeight();
-                const width = self.outerWidth();
-                const parentPadding = parent.padding();
-                const parentHeight = parent.innerHeight();
-                const parentWidth = parent.innerWidth();
+                const height = self.outerHeight(true);
+                const width = self.outerWidth(true);
                 let prop = {};
 
                 // Calculate minimal values
-                let minX = 0;
-                let minY = 0;
+                const minX = 0;
+                const minY = 0;
 
                 // Calculate maximal values
-                let maxX = parentWidth - parentPadding.horizontal;
-                let maxY = parentHeight - parentPadding.vertical;
+                let maxX = parent.width();
+                let maxY = parent.height();
 
-                if (self.css('position') === 'relative') {
-                    const margin = self.margin();
-                    maxX -= margin.horizontal;
-                    maxY -= margin.vertical;
+                // Adjust limits
+                switch (self.css('position')) {
+                    case 'absolute':
+                        const padding = parent.padding();
+                        maxX += padding.horizontal;
+                        maxY += padding.vertical;
+                        break;
                 }
 
                 const diffX = ev.clientX - startX;
                 const diffY = ev.clientY - startY;
-                let left = startOffset.left + diffX;
-                let top = startOffset.top + diffY;
+                let left = startPosition.left + diffX;
+                let top = startPosition.top + diffY;
 
                 // Check horizontal location
                 if (left < minX) {
@@ -143,7 +148,7 @@ Cuic.Movable = class extends Cuic.Element {
             Cuic.once('mouseup', document, (ev) => {
                 Cuic.off('mousemove', document, onMouseMove);
                 self.removeClass('moving');
-                self.onMoveStop.call(self, ev);
+                self.events.trigger('moveEnd', ev);
             });
         });
         return self;
@@ -151,20 +156,32 @@ Cuic.Movable = class extends Cuic.Element {
 
     /**
      * Called when moving
+     * @param callback
+     * @return {Cuic.Movable}
      */
-    onMove() {
+    onMove(callback) {
+        this.events.on('move', callback);
+        return this;
+    }
+
+    /**
+     * Called when move end
+     * @param callback
+     * @return {Cuic.Movable}
+     */
+    onMoveEnd(callback) {
+        this.events.on('moveEnd', callback);
+        return this;
     }
 
     /**
      * Called when move start
+     * @param callback
+     * @return {Cuic.Movable}
      */
-    onMoveStart() {
-    }
-
-    /**
-     * Called when move stop
-     */
-    onMoveStop() {
+    onMoveStart(callback) {
+        this.events.on('moveStart', callback);
+        return this;
     }
 };
 
