@@ -42,24 +42,25 @@ Cuic.Element = class {
         else if (typeof node === 'string') {
             self.element = document.createElement(node);
         }
-        // Use HTML element
-        else if (node instanceof HTMLElement) {
+        // Use HTML element/document
+        else if (node instanceof HTMLElement || node instanceof HTMLDocument) {
             self.element = node;
         }
         // Use Cuic element
         else if (node instanceof Cuic.Element) {
             self.element = node.node();
         }
-        // Use Cuic.Set element
+        // Use the first element of a Cuic.Set object
         else if (node instanceof Cuic.Set) {
             self.element = node.get(0);
         }
-        // Use jQuery element
+        // Use the first element of a jQuery object
         else if (node instanceof jQuery) {
             self.element = node.get(0);
         }
         else {
-            throw new TypeError(`Cannot create element.`);
+            console.log(node);
+            throw new TypeError(`Cannot create element using given node.`);
         }
 
         // Set element attributes
@@ -243,15 +244,18 @@ Cuic.Element = class {
      * Sets or returns the element attribute
      * @param name
      * @param value
-     * @return {*}
+     * @return {Cuic.Element|*}
      */
     attr(name, value) {
+        const node = this.node();
+
         if (value !== undefined) {
-            if (name in this.node()) {
-                this.node()[name] = value;
+            if (name in node) {
+                node[name] = value;
             }
+            return this;
         } else {
-            return this.node()[name];
+            return node[name];
         }
     }
 
@@ -285,7 +289,7 @@ Cuic.Element = class {
     /**
      * Set styles
      * @param styles
-     * @return {*}
+     * @return {Cuic.Element|*}
      */
     css(styles) {
         return Cuic.css(this.node(), styles);
@@ -295,13 +299,14 @@ Cuic.Element = class {
      * Sets or returns the element data
      * @param key
      * @param value
-     * @return {*}
+     * @return {Cuic.Element|*}
      */
     data(key, value) {
         const dataSet = this.node().dataset;
 
         if (value !== undefined) {
             dataSet[Cuic.toCamelCase(key)] = value;
+            return this;
         }
         else if (key) {
             return dataSet[key];
@@ -482,7 +487,7 @@ Cuic.Element = class {
 
     /**
      * Returns the HTML element
-     * @return {HTMLElement}
+     * @return {HTMLDocument|HTMLElement}
      */
     node() {
         return this.element;
@@ -505,6 +510,23 @@ Cuic.Element = class {
      */
     offset() {
         return Cuic.offset(this.node());
+    }
+
+    /**
+     * Returns the first positioned parent element
+     * @return {Cuic.Element|null}
+     */
+    offsetParent() {
+        const parent = this.offsetParentNode();
+        return parent ? Cuic.element(parent) : null;
+    }
+
+    /**
+     * Returns the first positioned parent node
+     * @return {HTMLDocument|HTMLElement|null}
+     */
+    offsetParentNode() {
+        return this.node().offsetParent;
     }
 
     /**
@@ -587,7 +609,7 @@ Cuic.Element = class {
 
     /**
      * Returns the parent element
-     * @return {*|Cuic.Element}
+     * @return {Cuic.Element|null}
      */
     parent() {
         const parent = this.parentNode();
@@ -596,7 +618,7 @@ Cuic.Element = class {
 
     /**
      * Returns the parent of the element
-     * @return {HTMLElement}
+     * @return {HTMLDocument|HTMLElement|null}
      */
     parentNode() {
         return this.node().parentNode;
@@ -661,7 +683,7 @@ Cuic.Element = class {
     }
 
     /**
-     * Gets or sets element text
+     * Gets or sets element content as text
      * @param text
      * @return {Cuic.Element|string}
      */

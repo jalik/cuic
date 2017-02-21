@@ -608,6 +608,9 @@ if (!Element.prototype.matches) {
             if (_element instanceof this.Element) {
                 return _element;
             }
+            if (_element instanceof HTMLDocument) {
+                return new this.Element(_element);
+            }
             if (_element instanceof HTMLElement) {
                 return new this.Element(_element);
             }
@@ -989,9 +992,9 @@ if (!Element.prototype.matches) {
 
 
         /**
-         * Returns the HTML element from the element
+         * Returns the HTML node from the element
          * @param element
-         * @return {*|HTMLElement|HTMLDocument}
+         * @return {HTMLDocument|HTMLElement|null}
          */
         node: function node(element) {
             if (element instanceof HTMLElement) {
@@ -2334,23 +2337,24 @@ Cuic.Element = function () {
         else if (typeof node === 'string') {
                 self.element = document.createElement(node);
             }
-            // Use HTML element
-            else if (node instanceof HTMLElement) {
+            // Use HTML element/document
+            else if (node instanceof HTMLElement || node instanceof HTMLDocument) {
                     self.element = node;
                 }
                 // Use Cuic element
                 else if (node instanceof Cuic.Element) {
                         self.element = node.node();
                     }
-                    // Use Cuic.Set element
+                    // Use the first element of a Cuic.Set object
                     else if (node instanceof Cuic.Set) {
                             self.element = node.get(0);
                         }
-                        // Use jQuery element
+                        // Use the first element of a jQuery object
                         else if (node instanceof jQuery) {
                                 self.element = node.get(0);
                             } else {
-                                throw new TypeError('Cannot create element.');
+                                console.log(node);
+                                throw new TypeError('Cannot create element using given node.');
                             }
 
         // Set element attributes
@@ -2544,18 +2548,21 @@ Cuic.Element = function () {
          * Sets or returns the element attribute
          * @param name
          * @param value
-         * @return {*}
+         * @return {Cuic.Element|*}
          */
 
     }, {
         key: 'attr',
         value: function attr(name, value) {
+            var node = this.node();
+
             if (value !== undefined) {
-                if (name in this.node()) {
-                    this.node()[name] = value;
+                if (name in node) {
+                    node[name] = value;
                 }
+                return this;
             } else {
-                return this.node()[name];
+                return node[name];
             }
         }
 
@@ -2595,7 +2602,7 @@ Cuic.Element = function () {
         /**
          * Set styles
          * @param styles
-         * @return {*}
+         * @return {Cuic.Element|*}
          */
 
     }, {
@@ -2608,7 +2615,7 @@ Cuic.Element = function () {
          * Sets or returns the element data
          * @param key
          * @param value
-         * @return {*}
+         * @return {Cuic.Element|*}
          */
 
     }, {
@@ -2618,6 +2625,7 @@ Cuic.Element = function () {
 
             if (value !== undefined) {
                 dataSet[Cuic.toCamelCase(key)] = value;
+                return this;
             } else if (key) {
                 return dataSet[key];
             } else {
@@ -2841,7 +2849,7 @@ Cuic.Element = function () {
 
         /**
          * Returns the HTML element
-         * @return {HTMLElement}
+         * @return {HTMLDocument|HTMLElement}
          */
 
     }, {
@@ -2873,6 +2881,29 @@ Cuic.Element = function () {
         key: 'offset',
         value: function offset() {
             return Cuic.offset(this.node());
+        }
+
+        /**
+         * Returns the first positioned parent element
+         * @return {Cuic.Element|null}
+         */
+
+    }, {
+        key: 'offsetParent',
+        value: function offsetParent() {
+            var parent = this.offsetParentNode();
+            return parent ? Cuic.element(parent) : null;
+        }
+
+        /**
+         * Returns the first positioned parent node
+         * @return {HTMLDocument|HTMLElement|null}
+         */
+
+    }, {
+        key: 'offsetParentNode',
+        value: function offsetParentNode() {
+            return this.node().offsetParent;
         }
 
         /**
@@ -2979,7 +3010,7 @@ Cuic.Element = function () {
 
         /**
          * Returns the parent element
-         * @return {*|Cuic.Element}
+         * @return {Cuic.Element|null}
          */
 
     }, {
@@ -2991,7 +3022,7 @@ Cuic.Element = function () {
 
         /**
          * Returns the parent of the element
-         * @return {HTMLElement}
+         * @return {HTMLDocument|HTMLElement|null}
          */
 
     }, {
@@ -3077,7 +3108,7 @@ Cuic.Element = function () {
         }
 
         /**
-         * Gets or sets element text
+         * Gets or sets element content as text
          * @param text
          * @return {Cuic.Element|string}
          */
@@ -4454,7 +4485,9 @@ Cuic.Set = function () {
                 var el = elements[i];
 
                 // Convert element
-                if (el instanceof HTMLElement) {
+                if (el instanceof HTMLDocument) {
+                    el = Cuic.element(el);
+                } else if (el instanceof HTMLElement) {
                     el = Cuic.element(el);
                 }
 
@@ -4607,7 +4640,7 @@ Cuic.Set = function () {
         /**
          * Returns the HTML element at the specified index
          * @param index
-         * @return {HTMLElement}
+         * @return {HTMLDocument|HTMLElement|null}
          */
 
     }, {

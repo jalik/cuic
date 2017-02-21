@@ -549,6 +549,9 @@
             if (element instanceof this.Element) {
                 return element;
             }
+            if (element instanceof HTMLDocument) {
+                return new this.Element(element);
+            }
             if (element instanceof HTMLElement) {
                 return new this.Element(element);
             }
@@ -911,9 +914,9 @@
         },
 
         /**
-         * Returns the HTML element from the element
+         * Returns the HTML node from the element
          * @param element
-         * @return {*|HTMLElement|HTMLDocument}
+         * @return {HTMLDocument|HTMLElement|null}
          */
         node(element) {
             if (element instanceof HTMLElement) {

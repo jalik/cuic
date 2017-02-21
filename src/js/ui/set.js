@@ -34,8 +34,8 @@ Cuic.Set = class {
             if (elements.hasOwnProperty(i)) {
                 let el = elements[i];
 
-                // Convert element
-                if (el instanceof HTMLElement) {
+                // Get element from node
+                if (el instanceof HTMLDocument || el instanceof HTMLElement) {
                     el = Cuic.element(el);
                 }
 
@@ -160,7 +160,7 @@ Cuic.Set = class {
     /**
      * Returns the HTML element at the specified index
      * @param index
-     * @return {HTMLElement}
+     * @return {HTMLDocument|HTMLElement|null}
      */
     get(index) {
         return this[index].node();
