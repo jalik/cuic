@@ -83,9 +83,14 @@ Cuic.Tooltip = class extends Cuic.Component {
             });
 
             // Close tooltip when mouse leaves area
-            target.on('mouseleave', () => {
+            target.on('mouseleave', (ev) => {
                 self.close();
             });
+        });
+
+        // Move tooltip if mouse is over
+        self.on('mousemove', (ev) => {
+            self.update(ev);
         });
 
         // Close the panel when the user clicks outside of it
