@@ -35,6 +35,20 @@ Cuic.Component = class extends Cuic.Element {
 
         // Add component classes
         self.addClass('component');
+
+        // Set the panel visibility
+        // Since the visible option is used to check if the panel is visible
+        // we force the panel to show or hide by setting visible to the inverse value.
+        if (self.options.opened) {
+            self.open();
+        } else {
+            self.close();
+        }
+
+        // Maximize the panel
+        if (self.options.maximized) {
+            self.maximize();
+        }
     }
 
     /**

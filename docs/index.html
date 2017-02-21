@@ -471,8 +471,8 @@
                             <input type="checkbox" name="maximized">
                         </label>
                         <label class="inline">
-                            <span class="help-block">visible</span>
-                            <input type="checkbox" name="visible" checked>
+                            <span class="help-block">opened</span>
+                            <input type="checkbox" name="opened" checked>
                         </label>
 
                         <div>
@@ -518,21 +518,22 @@
                     <script>
                         $(document).ready(function () {
                             var sandbox = $('#sb-panel');
+                            var blueprint = sandbox.find('.blueprint');
                             var autoClose = sandbox.find('[name=autoClose]');
                             var container = sandbox.find('[name=container]');
                             var css = sandbox.find('[name=css]');
                             var position = sandbox.find('[name=position]');
                             var maximized = sandbox.find('[name=maximized]');
-                            var visible = sandbox.find('[name=visible]');
+                            var opened = sandbox.find('[name=opened]');
                             var run = function () {
                                 window.panel = new Cuic.Panel({
-                                    element: document.getElementById('panel'),
                                     autoClose: autoClose.is(':checked'),
-                                    parent: container.is(':checked') ? $('#sb-panel .blueprint') : document.body,
+                                    element: document.getElementById('panel'),
                                     css: css.val(),
-                                    position: position.val(),
                                     maximized: maximized.is(':checked'),
-                                    visible: visible.is(':checked')
+                                    opened: opened.is(':checked'),
+                                    parent: container.is(':checked') ? blueprint : document.body,
+                                    position: position.val()
                                 });
                             };
                             sandbox.find('.btn-run').on('click', run);

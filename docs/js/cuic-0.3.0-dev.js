@@ -2307,11 +2307,6 @@ Cuic.Element = function () {
                             throw new TypeError('Cannot create element.');
                         }
 
-        // Get parent element
-        if (self.options.parent) {
-            self.options.parent = Cuic.getElement(self.options.parent);
-        }
-
         // Set element attributes
         for (var attr in attributes) {
             if (attributes.hasOwnProperty(attr)) {
@@ -2368,9 +2363,25 @@ Cuic.Element = function () {
             _this3.addPositionClass(_this3.options.anchor, self.options.namespace);
         });
 
-        // Append element to parent node
-        if (self.options.parent instanceof HTMLElement) {
-            self.appendTo(self.options.parent);
+        // Get parent element
+        if (self.options.parent) {
+            var parent = null;
+
+            // Find element in DOM
+            if (typeof self.options.parent === 'string') {
+                var el = Cuic.find(self.options.parent);
+
+                if (el.length) {
+                    parent = el[0];
+                }
+            } else {
+                parent = Cuic.getElement(self.options.parent);
+            }
+
+            // Append element to parent node
+            if (parent) {
+                self.appendTo(parent);
+            }
         }
 
         // Position the element
@@ -3094,6 +3105,20 @@ Cuic.Component = function (_Cuic$Element) {
 
         // Add component classes
         self.addClass('component');
+
+        // Set the panel visibility
+        // Since the visible option is used to check if the panel is visible
+        // we force the panel to show or hide by setting visible to the inverse value.
+        if (self.options.opened) {
+            self.open();
+        } else {
+            self.close();
+        }
+
+        // Maximize the panel
+        if (self.options.maximized) {
+            self.maximize();
+        }
         return _this4;
     }
 
@@ -4531,7 +4556,7 @@ Cuic.Dialog = function (_Cuic$Component2) {
             role: 'button'
         }).appendTo(self.header);
 
-        if (self.options.closeable) {
+        if (self.options.closable) {
             self.closeButton.show();
         } else {
             self.closeButton.hide();
@@ -4786,7 +4811,7 @@ Cuic.Dialog.prototype.options = {
     autoResize: true,
     buttons: [],
     className: 'dialog',
-    closeable: true,
+    closable: true,
     closeButton: null,
     content: null,
     contentHeight: null,
@@ -5649,7 +5674,7 @@ Cuic.Notification = function (_Cuic$Component4) {
             role: 'button'
         }).appendTo(self);
 
-        if (self.options.closeable) {
+        if (self.options.closable) {
             self.closeButton.show();
         } else {
             self.closeButton.hide();
@@ -5732,7 +5757,7 @@ Cuic.Notification.prototype.options = {
     autoClose: true,
     autoRemove: true,
     className: 'notification',
-    closeable: true,
+    closable: true,
     closeButton: '',
     content: null,
     duration: 2000,
@@ -5926,22 +5951,8 @@ Cuic.Panel = function (_Cuic$Component5) {
         // the container must have a hidden overflow
         Cuic.css(self.getParentElement(), { overflow: 'hidden' });
 
-        // Set the panel visibility
-        // Since the visible option is used to check if the panel is visible
-        // we force the panel to show or hide by setting visible to the inverse value.
-        if (self.options.visible) {
-            self.open();
-        } else {
-            self.close();
-        }
-
-        // Maximize the panel
-        if (self.options.maximized) {
-            self.maximize();
-        }
-
         if (self.closeButton) {
-            if (self.options.closeable) {
+            if (self.options.closable) {
                 self.closeButton.show();
             } else {
                 self.closeButton.hide();
@@ -6193,16 +6204,16 @@ Cuic.Panel = function (_Cuic$Component5) {
 Cuic.Panel.prototype.options = {
     autoClose: false,
     className: 'panel',
-    closeable: true,
+    closable: true,
     closeButton: '',
     content: null,
     footer: null,
     maximized: false,
     namespace: 'panel',
+    opened: false,
     parent: null,
     position: 'left top',
     title: null,
-    visible: false,
     zIndex: 1
 };
 
@@ -6262,7 +6273,7 @@ Cuic.Popup = function (_Cuic$Component6) {
             role: 'button'
         }).appendTo(self);
 
-        if (self.options.closeable) {
+        if (self.options.closable) {
             self.closeButton.show();
         } else {
             self.closeButton.hide();
@@ -6351,7 +6362,7 @@ Cuic.Popup.prototype.options = {
     autoClose: true,
     autoRemove: false,
     className: 'popup',
-    closeable: true,
+    closable: true,
     closeButton: '',
     content: null,
     namespace: 'popup',

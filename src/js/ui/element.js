@@ -58,11 +58,6 @@ Cuic.Element = class {
             throw new TypeError(`Cannot create element.`);
         }
 
-        // Get parent element
-        if (self.options.parent) {
-            self.options.parent = Cuic.getElement(self.options.parent);
-        }
-
         // Set element attributes
         for (let attr in attributes) {
             if (attributes.hasOwnProperty(attr)) {
@@ -121,9 +116,25 @@ Cuic.Element = class {
             this.addPositionClass(this.options.anchor, self.options.namespace);
         });
 
-        // Append element to parent node
-        if (self.options.parent instanceof HTMLElement) {
-            self.appendTo(self.options.parent);
+        // Get parent element
+        if (self.options.parent) {
+            let parent = null;
+
+            // Find element in DOM
+            if (typeof self.options.parent === 'string') {
+                const el = Cuic.find(self.options.parent);
+
+                if (el.length) {
+                    parent = el[0];
+                }
+            } else {
+                parent = Cuic.getElement(self.options.parent);
+            }
+
+            // Append element to parent node
+            if (parent) {
+                self.appendTo(parent);
+            }
         }
 
         // Position the element

@@ -97,20 +97,6 @@ Cuic.Panel = class extends Cuic.Component {
         // the container must have a hidden overflow
         Cuic.css(self.getParentElement(), {overflow: 'hidden'});
 
-        // Set the panel visibility
-        // Since the visible option is used to check if the panel is visible
-        // we force the panel to show or hide by setting visible to the inverse value.
-        if (self.options.visible) {
-            self.open();
-        } else {
-            self.close();
-        }
-
-        // Maximize the panel
-        if (self.options.maximized) {
-            self.maximize();
-        }
-
         if (self.closeButton) {
             if (self.options.closable) {
                 self.closeButton.show();
@@ -353,9 +339,9 @@ Cuic.Panel.prototype.options = {
     footer: null,
     maximized: false,
     namespace: 'panel',
+    opened: false,
     parent: null,
     position: 'left top',
     title: null,
-    visible: false,
     zIndex: 1
 };
