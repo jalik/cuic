@@ -1496,6 +1496,7 @@ Cuic.Collection = function () {
     function _class2(values) {
         _classCallCheck(this, _class2);
 
+        this.events = new Cuic.Events();
         this.values = values instanceof Array ? values : [];
         this.length = this.values.length;
     }
@@ -1511,7 +1512,7 @@ Cuic.Collection = function () {
         value: function add(value) {
             this.values.push(value);
             this.length += 1;
-            this.onAdded(value);
+            this.events.trigger('added', value);
         }
 
         /**
@@ -1553,21 +1554,29 @@ Cuic.Collection = function () {
 
         /**
          * Called when a value is added
-         * @param value
+         * @param callback
+         * @return {Cuic.Collection}
          */
 
     }, {
         key: 'onAdded',
-        value: function onAdded(value) {}
+        value: function onAdded(callback) {
+            this.events.on('added', callback);
+            return this;
+        }
 
         /**
          * Called when a value is removed
-         * @param value
+         * @param callback
+         * @return {Cuic.Collection}
          */
 
     }, {
         key: 'onRemoved',
-        value: function onRemoved(value) {}
+        value: function onRemoved(callback) {
+            this.events.on('removed', callback);
+            return this;
+        }
 
         /**
          * Removes the value from the collection
@@ -1582,7 +1591,7 @@ Cuic.Collection = function () {
             if (index !== -1) {
                 this.values.splice(index, 1);
                 this.length -= 1;
-                this.onRemoved(value);
+                this.events.trigger('removed', value);
             }
         }
 
@@ -3060,7 +3069,7 @@ Cuic.Element = function () {
 
 Cuic.Element.prototype.options = {
     className: null,
-    namespace: 'cuic',
+    namespace: null,
     parent: null
 };
 
@@ -3404,14 +3413,14 @@ Cuic.Component.prototype.options = {
  *
  */
 
-Cuic.GroupComponent = function (_Cuic$Element2) {
+Cuic.Group = function (_Cuic$Element2) {
     _inherits(_class7, _Cuic$Element2);
 
     function _class7(node, attributes, options) {
         _classCallCheck(this, _class7);
 
         // Set default options
-        options = Cuic.extend({}, Cuic.GroupComponent.prototype.options, options);
+        options = Cuic.extend({}, Cuic.Group.prototype.options, options);
 
         // Create element
 
@@ -3426,29 +3435,22 @@ Cuic.GroupComponent = function (_Cuic$Element2) {
         self.addClass('component-group');
 
         // Prepare components collection
-        _this9.components = new Cuic.Collection();
-
-        _this9.components.onAdded = function (component) {
-            _this9.onComponentAdded(component);
-        };
-        _this9.components.onRemoved = function (component) {
-            _this9.onComponentRemoved(component);
-        };
+        self.components = new Cuic.Collection();
         return _this9;
     }
 
     /**
      * Add the component to the group
      * @param component
-     * @return {Cuic.Component}
+     * @return {Cuic.Group}
      */
 
 
     _createClass(_class7, [{
-        key: 'add',
-        value: function add(component) {
+        key: 'addComponent',
+        value: function addComponent(component) {
             if (!(component instanceof Cuic.Component)) {
-                throw new TypeError('Cannot add non component to a GroupComponent.');
+                throw new TypeError('Cannot add non component to a Group.');
             }
             if (Cuic.isPosition('top', this.getElement())) {
                 component.prependTo(this);
@@ -3456,46 +3458,55 @@ Cuic.GroupComponent = function (_Cuic$Element2) {
                 component.appendTo(this);
             }
             this.components.add(component);
-            return component;
+            return this;
         }
 
         /**
          * Called when component is added
-         * @param component
+         * @param callback
+         * @return {Cuic.Group}
          */
 
     }, {
         key: 'onComponentAdded',
-        value: function onComponentAdded(component) {}
+        value: function onComponentAdded(callback) {
+            this.components.onAdded(callback);
+            return this;
+        }
 
         /**
          * Called when component is removed
-         * @param component
+         * @param callback
+         * @return {Cuic.Group}
          */
 
     }, {
         key: 'onComponentRemoved',
-        value: function onComponentRemoved(component) {}
+        value: function onComponentRemoved(callback) {
+            this.components.onRemoved(callback);
+            return this;
+        }
 
         /**
          * Removes the component from the group
          * @param component
-         * @return {Cuic.Component}
+         * @return {Cuic.Group}
          */
 
     }, {
-        key: 'remove',
-        value: function remove(component) {
+        key: 'removeComponent',
+        value: function removeComponent(component) {
             this.components.remove(component);
-            return component;
+            return this;
         }
     }]);
 
     return _class7;
 }(Cuic.Element);
 
-Cuic.GroupComponent.prototype.options = {
-    className: 'group'
+Cuic.Group.prototype.options = {
+    className: 'group',
+    namespace: 'group'
 };
 
 /*
@@ -4592,13 +4603,13 @@ var dialogZIndex = 0;
  */
 Cuic.dialogs = new Cuic.Collection();
 
-Cuic.dialogs.onAdded = function () {
+Cuic.dialogs.onAdded(function () {
     dialogZIndex += 1;
-};
+});
 
-Cuic.dialogs.onRemoved = function () {
+Cuic.dialogs.onRemoved(function () {
     dialogZIndex -= 1;
-};
+});
 
 /**
  * Basic dialog
@@ -4624,7 +4635,7 @@ Cuic.Dialog = function (_Cuic$Component2) {
         // Add component classes
         self.addClass('dialog');
 
-        var buttons = void 0; //todo use a GroupComponent
+        var buttons = void 0; //todo use a Group
 
         // Public attributes
         self.buttons = new Cuic.Collection();
@@ -5984,8 +5995,8 @@ Cuic.Notification.prototype.options = {
  *
  */
 
-Cuic.NotificationStack = function (_Cuic$GroupComponent) {
-    _inherits(_class17, _Cuic$GroupComponent);
+Cuic.NotificationStack = function (_Cuic$Group) {
+    _inherits(_class17, _Cuic$Group);
 
     function _class17(options) {
         _classCallCheck(this, _class17);
@@ -6008,32 +6019,28 @@ Cuic.NotificationStack = function (_Cuic$GroupComponent) {
             self.css({ position: isFixed ? 'fixed' : 'absolute' });
             self.align(self.options.position);
         }
-        return _this21;
-    }
 
-    _createClass(_class17, [{
-        key: 'onComponentAdded',
-        value: function onComponentAdded(component) {
-            // Display the notification when it's added to the stack
+        // Display the notification when it's added to the stack
+        self.onComponentAdded(function (component) {
             if (component instanceof Cuic.Notification) {
                 // fixme Not using a timeout to open blocks the animation
                 setTimeout(function () {
                     component.open();
                 }, 10);
             }
-        }
-    }, {
-        key: 'onComponentRemoved',
-        value: function onComponentRemoved(component) {
-            // Display the notification when it's added to the stack
+        });
+
+        // Display the notification when it's added to the stack
+        self.onComponentRemoved(function (component) {
             if (component instanceof Cuic.Notification) {
                 component.close();
             }
-        }
-    }]);
+        });
+        return _this21;
+    }
 
     return _class17;
-}(Cuic.GroupComponent);
+}(Cuic.Group);
 
 Cuic.NotificationStack.prototype.options = {
     className: 'notification-stack',

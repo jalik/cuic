@@ -26,6 +26,7 @@
 Cuic.Collection = class {
 
     constructor(values) {
+        this.events = new Cuic.Events();
         this.values = values instanceof Array ? values : [];
         this.length = this.values.length;
     }
@@ -37,7 +38,7 @@ Cuic.Collection = class {
     add(value) {
         this.values.push(value);
         this.length += 1;
-        this.onAdded(value);
+        this.events.trigger('added', value);
     }
 
     /**
@@ -70,16 +71,22 @@ Cuic.Collection = class {
 
     /**
      * Called when a value is added
-     * @param value
+     * @param callback
+     * @return {Cuic.Collection}
      */
-    onAdded(value) {
+    onAdded(callback) {
+        this.events.on('added', callback);
+        return this;
     }
 
     /**
      * Called when a value is removed
-     * @param value
+     * @param callback
+     * @return {Cuic.Collection}
      */
-    onRemoved(value) {
+    onRemoved(callback) {
+        this.events.on('removed', callback);
+        return this;
     }
 
     /**
@@ -92,7 +99,7 @@ Cuic.Collection = class {
         if (index !== -1) {
             this.values.splice(index, 1);
             this.length -= 1;
-            this.onRemoved(value);
+            this.events.trigger('removed', value);
         }
     }
 

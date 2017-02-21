@@ -420,7 +420,7 @@
                                 notificationStack.align(position.val());
                             });
                             sandbox.find('[name="add-notif"]').on('click', function (ev) {
-                                notificationStack.add(new Cuic.Notification({
+                                notificationStack.addComponent(new Cuic.Notification({
                                     position: null,
                                     autoClose: false,
                                     content: "Custom event at <em>" + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds() + "</em>"

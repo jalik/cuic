@@ -676,6 +676,6 @@ Cuic.Element = class {
 
 Cuic.Element.prototype.options = {
     className: null,
-    namespace: 'cuic',
+    namespace: null,
     parent: null
 };

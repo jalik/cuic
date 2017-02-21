@@ -30,13 +30,13 @@ let dialogZIndex = 0;
  */
 Cuic.dialogs = new Cuic.Collection();
 
-Cuic.dialogs.onAdded = function () {
+Cuic.dialogs.onAdded(() => {
     dialogZIndex += 1;
-};
+});
 
-Cuic.dialogs.onRemoved = function () {
+Cuic.dialogs.onRemoved(() => {
     dialogZIndex -= 1;
-};
+});
 
 /**
  * Basic dialog
@@ -58,7 +58,7 @@ Cuic.Dialog = class extends Cuic.Component {
         // Add component classes
         self.addClass('dialog');
 
-        let buttons;//todo use a GroupComponent
+        let buttons;//todo use a Group
 
         // Public attributes
         self.buttons = new Cuic.Collection();

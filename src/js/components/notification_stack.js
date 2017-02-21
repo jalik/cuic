@@ -23,7 +23,7 @@
  *
  */
 
-Cuic.NotificationStack = class extends Cuic.GroupComponent {
+Cuic.NotificationStack = class extends Cuic.Group {
 
     constructor(options) {
         // Set default options
@@ -43,23 +43,23 @@ Cuic.NotificationStack = class extends Cuic.GroupComponent {
             self.css({position: isFixed ? 'fixed' : 'absolute'});
             self.align(self.options.position);
         }
-    }
 
-    onComponentAdded(component) {
         // Display the notification when it's added to the stack
-        if (component instanceof Cuic.Notification) {
-            // fixme Not using a timeout to open blocks the animation
-            setTimeout(function () {
-                component.open();
-            }, 10);
-        }
-    }
+        self.onComponentAdded((component) => {
+            if (component instanceof Cuic.Notification) {
+                // fixme Not using a timeout to open blocks the animation
+                setTimeout(function () {
+                    component.open();
+                }, 10);
+            }
+        });
 
-    onComponentRemoved(component) {
         // Display the notification when it's added to the stack
-        if (component instanceof Cuic.Notification) {
-            component.close();
-        }
+        self.onComponentRemoved((component) => {
+            if (component instanceof Cuic.Notification) {
+                component.close();
+            }
+        });
     }
 };
 
