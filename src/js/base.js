@@ -279,6 +279,18 @@
             else {
                 prop.left = centerX;
             }
+
+            // todo call a method to Calculate available position
+            const availablePosition = this.calculateAvailablePosition(element, parent);
+
+            // Constraint position
+            if (prop.left < availablePosition.minX) {
+                prop.left = availablePosition.minX;
+            }
+            else if (prop.left > availablePosition.maxX) {
+                prop.left = availablePosition.maxX;
+            }
+
             return prop;
         },
 

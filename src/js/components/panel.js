@@ -248,44 +248,31 @@ Cuic.Panel = class extends Cuic.Component {
      */
     resizeContent() {
         const parent = this.parent();
-        const parentPadding = parent.padding();
         const display = this.css('display');
-        const elMargin = this.margin();
-        let maxHeight = parent.innerHeight();
 
-        // Use parent for max height
-        if (parent && parent.node() !== document.body) {
-            maxHeight = window.innerHeight;
-        }
-
-        // Adjust dimensions
-        switch (this.css('position')) {
-            case 'absolute':
-                maxHeight += parentPadding.vertical;
-                maxHeight -= elMargin.vertical;
-                break;
-            case 'relative':
-                maxHeight -= elMargin.vertical;
-                prop.width -= elMargin.horizontal;
-                break;
-        }
+        // Calculate available space
+        const availableSpace = Cuic.calculateAvailableSpace(this, parent);
 
         // Set panel max height
-        this.css({'max-height': maxHeight});
+        this.css({'max-height': availableSpace.height});
 
         // Calculate content max height
-        let contentMaxHeight = maxHeight;
+        let maxHeight = availableSpace.height;
 
+        // Subtract header height
         if (this.header instanceof Cuic.Element) {
-            contentMaxHeight -= this.header.outerHeight(true);
+            maxHeight -= this.header.outerHeight(true);
         }
+        // Subtract footer height
         if (this.footer instanceof Cuic.Element) {
-            contentMaxHeight -= this.footer.outerHeight(true);
+            maxHeight -= this.footer.outerHeight(true);
         }
+        // Subtract content margin
+        maxHeight -= this.content.margin().vertical;
 
         // Set content max height
         this.content.css({
-            'max-height': contentMaxHeight,
+            'max-height': maxHeight,
             overflow: 'auto'
         });
 

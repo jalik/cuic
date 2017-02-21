@@ -260,6 +260,100 @@ Cuic.Element = class {
     }
 
     /**
+     * Auto align element in its parent
+     * @return {Cuic.Element}
+     */
+    autoAlign() {
+        const available = Cuic.calculateAvailablePosition(this, this.parent());
+        const alignments = ['bottom', 'left', 'right', 'top'];
+        let prop = this.position();
+
+        // Only keep properties that are styled
+        for (let i = 0; i < alignments.length; i += 1) {
+            if (!this.css(alignments[i])) {
+                prop[alignments[i]] = '';
+            }
+        }
+
+        // Limit horizontal align
+        if (typeof prop.left === 'number') {
+            if (prop.left < available.minX) {
+                prop.left = available.minX;
+            }
+            else if (prop.left > available.maxX) {
+                prop.left = available.maxX;
+            }
+        }
+        if (typeof prop.right === 'number') {
+            if (prop.right < available.minX) {
+                prop.right = available.minX;
+            }
+            else if (prop.right > available.maxX) {
+                prop.right = available.maxX;
+            }
+        }
+
+        // Limit vertical align
+        if (typeof prop.top === 'number') {
+            if (prop.top < available.minY) {
+                prop.top = available.minY;
+            }
+            else if (prop.top > available.maxY) {
+                prop.top = available.maxY;
+            }
+        }
+        if (typeof prop.bottom === 'number') {
+            if (prop.bottom < available.minY) {
+                prop.bottom = available.minY;
+            }
+            else if (prop.bottom > available.maxY) {
+                prop.bottom = available.maxY;
+            }
+        }
+
+        // Apply alignment
+        this.css(prop);
+
+        return this;
+    }
+
+    /**
+     * Auto fits element in its parent
+     * @return {Cuic.Element}
+     */
+    autoFit() {
+        this.autoAlign();
+        this.autoResize();
+        return this;
+    }
+
+    /**
+     * Auto resize element in its parent
+     * @return {Cuic.Element}
+     */
+    autoResize() {
+        const available = Cuic.calculateAvailableSpace(this, this.parent());
+
+        let prop = {
+            height: this.outerHeight(),
+            width: this.outerWidth()
+        };
+
+        // Limit to max width
+        if (prop.width && prop.width > available.width) {
+            prop.width = available.width;
+        }
+        // Limit to max height
+        if (prop.height && prop.height > available.height) {
+            prop.height = available.height;
+        }
+        // Apply size
+        this.css(prop);
+
+        return this;
+    }
+
+    /**
      * Returns element border widths
      * @return {*|{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
      */

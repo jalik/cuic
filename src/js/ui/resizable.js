@@ -94,7 +94,6 @@ Cuic.Resizable = class extends Cuic.Element {
                 // Add resizing class
                 self.addClass('resizing');
 
-                const parent = self.parent();
                 const startX = ev.clientX;
                 const startY = ev.clientY;
                 const initialHeight = self.outerHeight();
@@ -144,18 +143,6 @@ Cuic.Resizable = class extends Cuic.Element {
                         }
                     }
 
-                    // Get available space
-                    const availableSpace = Cuic.calculateAvailableSpace(self, parent);
-
-                    // Limit to max width
-                    if (prop.width && prop.width > availableSpace.width) {
-                        prop.width = availableSpace.width;
-                    }
-                    // Limit to max height
-                    if (prop.height && prop.height > availableSpace.height) {
-                        prop.height = availableSpace.height;
-                    }
-
                     // fixme element can be resized more than parent size if keep ratio is active
 
                     // Keep ratio
@@ -170,6 +157,7 @@ Cuic.Resizable = class extends Cuic.Element {
 
                     // Apply new size
                     self.css(prop);
+                    self.autoResize();
                 };
 
                 // Resizing

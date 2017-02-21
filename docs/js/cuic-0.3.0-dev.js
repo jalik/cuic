@@ -336,6 +336,17 @@ if (!Element.prototype.matches) {
             } else {
                 prop.left = centerX;
             }
+
+            // todo call a method to Calculate available position
+            var availablePosition = this.calculateAvailablePosition(element, parent);
+
+            // Constraint position
+            if (prop.left < availablePosition.minX) {
+                prop.left = availablePosition.minX;
+            } else if (prop.left > availablePosition.maxX) {
+                prop.left = availablePosition.maxX;
+            }
+
             return prop;
         },
 
@@ -2632,6 +2643,105 @@ Cuic.Element = function () {
         }
 
         /**
+         * Auto align element in its parent
+         * @return {Cuic.Element}
+         */
+
+    }, {
+        key: 'autoAlign',
+        value: function autoAlign() {
+            var available = Cuic.calculateAvailablePosition(this, this.parent());
+            var alignments = ['bottom', 'left', 'right', 'top'];
+            var prop = this.position();
+
+            // Only keep properties that are styled
+            for (var i = 0; i < alignments.length; i += 1) {
+                if (!this.css(alignments[i])) {
+                    prop[alignments[i]] = '';
+                }
+            }
+
+            // Limit horizontal align
+            if (typeof prop.left === 'number') {
+                if (prop.left < available.minX) {
+                    prop.left = available.minX;
+                } else if (prop.left > available.maxX) {
+                    prop.left = available.maxX;
+                }
+            }
+            if (typeof prop.right === 'number') {
+                if (prop.right < available.minX) {
+                    prop.right = available.minX;
+                } else if (prop.right > available.maxX) {
+                    prop.right = available.maxX;
+                }
+            }
+
+            // Limit vertical align
+            if (typeof prop.top === 'number') {
+                if (prop.top < available.minY) {
+                    prop.top = available.minY;
+                } else if (prop.top > available.maxY) {
+                    prop.top = available.maxY;
+                }
+            }
+            if (typeof prop.bottom === 'number') {
+                if (prop.bottom < available.minY) {
+                    prop.bottom = available.minY;
+                } else if (prop.bottom > available.maxY) {
+                    prop.bottom = available.maxY;
+                }
+            }
+
+            // Apply alignment
+            this.css(prop);
+
+            return this;
+        }
+
+        /**
+         * Auto fits element in its parent
+         * @return {Cuic.Element}
+         */
+
+    }, {
+        key: 'autoFit',
+        value: function autoFit() {
+            this.autoAlign();
+            this.autoResize();
+            return this;
+        }
+
+        /**
+         * Auto resize element in its parent
+         * @return {Cuic.Element}
+         */
+
+    }, {
+        key: 'autoResize',
+        value: function autoResize() {
+            var available = Cuic.calculateAvailableSpace(this, this.parent());
+
+            var prop = {
+                height: this.outerHeight(),
+                width: this.outerWidth()
+            };
+
+            // Limit to max width
+            if (prop.width && prop.width > available.width) {
+                prop.width = available.width;
+            }
+            // Limit to max height
+            if (prop.height && prop.height > available.height) {
+                prop.height = available.height;
+            }
+            // Apply size
+            this.css(prop);
+
+            return this;
+        }
+
+        /**
          * Returns element border widths
          * @return {*|{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
          */
@@ -4272,7 +4382,6 @@ Cuic.Movable = function (_Cuic$Element4) {
                 // Add moving class
                 self.addClass('moving');
 
-                var parent = self.parent();
                 var startPosition = self.position();
                 var startX = ev.clientX;
                 var startY = ev.clientY;
@@ -4283,41 +4392,23 @@ Cuic.Movable = function (_Cuic$Element4) {
 
                     var prop = {};
 
-                    // Calculate available position
-                    var availablePosition = Cuic.calculateAvailablePosition(self, parent);
-
                     // Move horizontally
                     if (self.options.horizontal) {
                         var diffX = ev.clientX - startX;
-                        var left = startPosition.left + diffX;
-
-                        // Check horizontal location
-                        if (left < availablePosition.minX) {
-                            left = availablePosition.minX;
-                        } else if (left > availablePosition.maxX) {
-                            left = availablePosition.maxX;
-                        }
-                        prop.left = left;
+                        prop.left = startPosition.left + diffX;
                         prop.right = '';
                     }
 
                     // Move vertically
                     if (self.options.vertical) {
                         var diffY = ev.clientY - startY;
-                        var top = startPosition.top + diffY;
-
-                        // Check vertical location
-                        if (top < availablePosition.minY) {
-                            top = availablePosition.minY;
-                        } else if (top > availablePosition.maxY) {
-                            top = availablePosition.maxY;
-                        }
-                        prop.top = top;
+                        prop.top = startPosition.top + diffY;
                         prop.bottom = '';
                     }
 
                     // Move element
                     self.css(prop);
+                    self.autoAlign();
                 };
 
                 // Moving
@@ -4476,7 +4567,6 @@ Cuic.Resizable = function (_Cuic$Element5) {
                 // Add resizing class
                 self.addClass('resizing');
 
-                var parent = self.parent();
                 var startX = ev.clientX;
                 var startY = ev.clientY;
                 var initialHeight = self.outerHeight();
@@ -4524,18 +4614,6 @@ Cuic.Resizable = function (_Cuic$Element5) {
                         }
                     }
 
-                    // Get available space
-                    var availableSpace = Cuic.calculateAvailableSpace(self, parent);
-
-                    // Limit to max width
-                    if (prop.width && prop.width > availableSpace.width) {
-                        prop.width = availableSpace.width;
-                    }
-                    // Limit to max height
-                    if (prop.height && prop.height > availableSpace.height) {
-                        prop.height = availableSpace.height;
-                    }
-
                     // fixme element can be resized more than parent size if keep ratio is active
 
                     // Keep ratio
@@ -4549,6 +4627,7 @@ Cuic.Resizable = function (_Cuic$Element5) {
 
                     // Apply new size
                     self.css(prop);
+                    self.autoResize();
                 };
 
                 // Resizing
@@ -5207,44 +5286,31 @@ Cuic.Dialog = function (_Cuic$Component2) {
         key: 'resizeContent',
         value: function resizeContent() {
             var parent = this.parent();
-            var parentPadding = parent.padding();
             var display = this.css('display');
-            var elMargin = this.margin();
-            var maxHeight = parent.innerHeight();
 
-            // Use parent for max height
-            if (parent && parent.node() !== document.body) {
-                maxHeight = window.innerHeight;
-            }
-
-            // Adjust dimensions
-            switch (this.css('position')) {
-                case 'absolute':
-                    maxHeight += parentPadding.vertical;
-                    maxHeight -= elMargin.vertical;
-                    break;
-                case 'relative':
-                    maxHeight -= elMargin.vertical;
-                    prop.width -= elMargin.horizontal;
-                    break;
-            }
+            // Calculate available space
+            var availableSpace = Cuic.calculateAvailableSpace(this, parent);
 
             // Set panel max height
-            this.css({ 'max-height': maxHeight });
+            this.css({ 'max-height': availableSpace.height });
 
             // Calculate content max height
-            var contentMaxHeight = maxHeight;
+            var maxHeight = availableSpace.height;
 
+            // Subtract header height
             if (this.header instanceof Cuic.Element) {
-                contentMaxHeight -= this.header.outerHeight(true);
+                maxHeight -= this.header.outerHeight(true);
             }
+            // Subtract footer height
             if (this.footer instanceof Cuic.Element) {
-                contentMaxHeight -= this.footer.outerHeight(true);
+                maxHeight -= this.footer.outerHeight(true);
             }
+            // Subtract content margin
+            maxHeight -= this.content.margin().vertical;
 
             // Set content max height
             this.content.css({
-                'max-height': contentMaxHeight,
+                'max-height': maxHeight,
                 overflow: 'auto'
             });
 
@@ -6604,44 +6670,31 @@ Cuic.Panel = function (_Cuic$Component5) {
         key: 'resizeContent',
         value: function resizeContent() {
             var parent = this.parent();
-            var parentPadding = parent.padding();
             var display = this.css('display');
-            var elMargin = this.margin();
-            var maxHeight = parent.innerHeight();
 
-            // Use parent for max height
-            if (parent && parent.node() !== document.body) {
-                maxHeight = window.innerHeight;
-            }
-
-            // Adjust dimensions
-            switch (this.css('position')) {
-                case 'absolute':
-                    maxHeight += parentPadding.vertical;
-                    maxHeight -= elMargin.vertical;
-                    break;
-                case 'relative':
-                    maxHeight -= elMargin.vertical;
-                    prop.width -= elMargin.horizontal;
-                    break;
-            }
+            // Calculate available space
+            var availableSpace = Cuic.calculateAvailableSpace(this, parent);
 
             // Set panel max height
-            this.css({ 'max-height': maxHeight });
+            this.css({ 'max-height': availableSpace.height });
 
             // Calculate content max height
-            var contentMaxHeight = maxHeight;
+            var maxHeight = availableSpace.height;
 
+            // Subtract header height
             if (this.header instanceof Cuic.Element) {
-                contentMaxHeight -= this.header.outerHeight(true);
+                maxHeight -= this.header.outerHeight(true);
             }
+            // Subtract footer height
             if (this.footer instanceof Cuic.Element) {
-                contentMaxHeight -= this.footer.outerHeight(true);
+                maxHeight -= this.footer.outerHeight(true);
             }
+            // Subtract content margin
+            maxHeight -= this.content.margin().vertical;
 
             // Set content max height
             this.content.css({
-                'max-height': contentMaxHeight,
+                'max-height': maxHeight,
                 overflow: 'auto'
             });
 

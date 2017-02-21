@@ -76,7 +76,6 @@ Cuic.Movable = class extends Cuic.Element {
             // Add moving class
             self.addClass('moving');
 
-            const parent = self.parent();
             const startPosition = self.position();
             const startX = ev.clientX;
             const startY = ev.clientY;
@@ -87,43 +86,23 @@ Cuic.Movable = class extends Cuic.Element {
 
                 let prop = {};
 
-                // Calculate available position
-                const availablePosition = Cuic.calculateAvailablePosition(self, parent);
-
                 // Move horizontally
                 if (self.options.horizontal) {
                     const diffX = ev.clientX - startX;
-                    let left = startPosition.left + diffX;
-
-                    // Check horizontal location
-                    if (left < availablePosition.minX) {
-                        left = availablePosition.minX;
-                    }
-                    else if (left > availablePosition.maxX) {
-                        left = availablePosition.maxX;
-                    }
-                    prop.left = left;
+                    prop.left = startPosition.left + diffX;
                     prop.right = '';
                 }
 
                 // Move vertically
                 if (self.options.vertical) {
                     const diffY = ev.clientY - startY;
-                    let top = startPosition.top + diffY;
-
-                    // Check vertical location
-                    if (top < availablePosition.minY) {
-                        top = availablePosition.minY;
-                    }
-                    else if (top > availablePosition.maxY) {
-                        top = availablePosition.maxY;
-                    }
-                    prop.top = top;
+                    prop.top = startPosition.top + diffY;
                     prop.bottom = '';
                 }
 
                 // Move element
                 self.css(prop);
+                self.autoAlign();
             };
 
             // Moving
