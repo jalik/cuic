@@ -105,20 +105,12 @@ Cuic.Popup = class extends Cuic.Component {
     }
 
     /**
-     * Returns the content
-     * @return {Cuic.Element}
-     */
-    getContent() {
-        return this.content;
-    }
-
-    /**
-     * Sets the popup content
+     * Sets popup content
      * @param html
      * @return {Cuic.Popup}
      */
     setContent(html) {
-        this.content.setHtml(html);
+        this.content.html(html);
         return this;
     }
 };

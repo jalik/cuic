@@ -369,7 +369,27 @@ Cuic.Dialog = class extends Cuic.Component {
     }
 
     /**
-     * Sets the title
+     * Sets dialog content
+     * @param html
+     * @return {Cuic.Dialog}
+     */
+    setContent(html) {
+        this.content.html(html);
+        return this;
+    }
+
+    /**
+     * Sets dialog footer
+     * @param html
+     * @return {Cuic.Dialog}
+     */
+    setFooter(html) {
+        this.footer.html(html);
+        return this;
+    }
+
+    /**
+     * Sets dialog title
      * @param html
      * @return {Cuic.Dialog}
      */

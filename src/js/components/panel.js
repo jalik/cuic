@@ -319,7 +319,27 @@ Cuic.Panel = class extends Cuic.Component {
     }
 
     /**
-     * Sets the title
+     * Sets panel content
+     * @param html
+     * @return {Cuic.Panel}
+     */
+    setContent(html) {
+        this.content.html(html);
+        return this;
+    }
+
+    /**
+     * Sets panel footer
+     * @param html
+     * @return {Cuic.Panel}
+     */
+    setFooter(html) {
+        this.footer.html(html);
+        return this;
+    }
+
+    /**
+     * Sets panel title
      * @param html
      * @return {Cuic.Panel}
      */

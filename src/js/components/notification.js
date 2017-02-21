@@ -52,6 +52,12 @@ Cuic.Notification = class extends Cuic.Component {
         // Public attributes
         self.closeTimer = null;
 
+        // Add content
+        self.content = new Cuic.Element('div', {
+            className: 'popup-content',
+            html: options.content
+        }).appendTo(self);
+
         // Add close button
         self.closeButton = new Cuic.Element('span', {
             className: 'btn-close glyphicon glyphicon-remove-sign',
@@ -125,6 +131,16 @@ Cuic.Notification = class extends Cuic.Component {
                 this.close();
             }
         }, this.options.duration);
+    }
+
+    /**
+     * Sets notification content
+     * @param html
+     * @return {Cuic.Notification}
+     */
+    setContent(html) {
+        this.content.html(html);
+        return this;
     }
 };
 

@@ -396,12 +396,16 @@ Cuic.Element = class {
     }
 
     /**
-     * Sets HTML content
+     * Gets or sets HTML content
      * @param html
      * @return {Cuic.Element|string}
      */
     html(html) {
-        if (html) {
+        if (html !== undefined) {
+            // Get HTML from object
+            if (html && typeof html === 'object' && typeof html.html === 'function') {
+                html = html.html();
+            }
             this.getElement().innerHTML = html;
             return this;
         } else {
@@ -609,34 +613,14 @@ Cuic.Element = class {
 
     /**
      * Sets the content
-     * @param html
      * @deprecated
+     * @param html
      * @return {Cuic.Element}
      */
     setContent(html) {
-        this.setHtml(html);
+        this.html(html);
         return this;
     };
-
-    /**
-     * Sets content HTML
-     * @param html
-     * @return {Cuic.Element}
-     */
-    setHtml(html) {
-        this.getElement().innerHTML = html;
-        return this;
-    }
-
-    /**
-     * Sets content text
-     * @param text
-     * @return {Cuic.Element}
-     */
-    setText(text) {
-        this.getElement().innerText = text;
-        return this;
-    }
 
     /**
      * Shows the element
@@ -646,6 +630,20 @@ Cuic.Element = class {
         this.css({display: ''});
         this.events.trigger('showed'); // todo choose event name
         return this;
+    }
+
+    /**
+     * Gets or sets element text
+     * @param text
+     * @return {Cuic.Element|string}
+     */
+    text(text) {
+        if (text !== undefined) {
+            this.getElement().innerText = text;
+            return this;
+        } else {
+            return this.getElement().innerText;
+        }
     }
 
     /**

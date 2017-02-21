@@ -110,7 +110,7 @@ Cuic.Tooltip = class extends Cuic.Component {
     }
 
     /**
-     * Sets the popup content
+     * Sets tooltip content
      * @param html
      * @return {Cuic.Tooltip}
      */

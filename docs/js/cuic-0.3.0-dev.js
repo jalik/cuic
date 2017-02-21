@@ -2698,7 +2698,7 @@ Cuic.Element = function () {
         }
 
         /**
-         * Sets HTML content
+         * Gets or sets HTML content
          * @param html
          * @return {Cuic.Element|string}
          */
@@ -2706,7 +2706,11 @@ Cuic.Element = function () {
     }, {
         key: 'html',
         value: function html(_html) {
-            if (_html) {
+            if (_html !== undefined) {
+                // Get HTML from object
+                if (_html && (typeof _html === 'undefined' ? 'undefined' : _typeof(_html)) === 'object' && typeof _html.html === 'function') {
+                    _html = _html.html();
+                }
                 this.getElement().innerHTML = _html;
                 return this;
             } else {
@@ -2976,55 +2980,46 @@ Cuic.Element = function () {
 
         /**
          * Sets the content
-         * @param html
          * @deprecated
+         * @param html
          * @return {Cuic.Element}
          */
 
     }, {
         key: 'setContent',
         value: function setContent(html) {
-            this.setHtml(html);
+            this.html(html);
             return this;
         }
     }, {
-        key: 'setHtml',
+        key: 'show',
 
-
-        /**
-         * Sets content HTML
-         * @param html
-         * @return {Cuic.Element}
-         */
-        value: function setHtml(html) {
-            this.getElement().innerHTML = html;
-            return this;
-        }
-
-        /**
-         * Sets content text
-         * @param text
-         * @return {Cuic.Element}
-         */
-
-    }, {
-        key: 'setText',
-        value: function setText(text) {
-            this.getElement().innerText = text;
-            return this;
-        }
 
         /**
          * Shows the element
          * @return {Cuic.Element}
          */
-
-    }, {
-        key: 'show',
         value: function show() {
             this.css({ display: '' });
             this.events.trigger('showed'); // todo choose event name
             return this;
+        }
+
+        /**
+         * Gets or sets element text
+         * @param text
+         * @return {Cuic.Element|string}
+         */
+
+    }, {
+        key: 'text',
+        value: function text(_text) {
+            if (_text !== undefined) {
+                this.getElement().innerText = _text;
+                return this;
+            } else {
+                return this.getElement().innerText;
+            }
         }
 
         /**
@@ -5667,6 +5662,12 @@ Cuic.Notification = function (_Cuic$Component4) {
         // Public attributes
         self.closeTimer = null;
 
+        // Add content
+        self.content = new Cuic.Element('div', {
+            className: 'popup-content',
+            html: options.content
+        }).appendTo(self);
+
         // Add close button
         self.closeButton = new Cuic.Element('span', {
             className: 'btn-close glyphicon glyphicon-remove-sign',
@@ -5747,6 +5748,19 @@ Cuic.Notification = function (_Cuic$Component4) {
                     _this18.close();
                 }
             }, this.options.duration);
+        }
+
+        /**
+         * Sets notification content
+         * @param html
+         * @return {Cuic.Notification}
+         */
+
+    }, {
+        key: 'setContent',
+        value: function setContent(html) {
+            this.content.html(html);
+            return this;
         }
     }]);
 
@@ -6184,7 +6198,33 @@ Cuic.Panel = function (_Cuic$Component5) {
         }
 
         /**
-         * Sets the title
+         * Sets panel content
+         * @param html
+         * @return {Cuic.Panel}
+         */
+
+    }, {
+        key: 'setContent',
+        value: function setContent(html) {
+            this.content.html(html);
+            return this;
+        }
+
+        /**
+         * Sets panel footer
+         * @param html
+         * @return {Cuic.Panel}
+         */
+
+    }, {
+        key: 'setFooter',
+        value: function setFooter(html) {
+            this.footer.html(html);
+            return this;
+        }
+
+        /**
+         * Sets panel title
          * @param html
          * @return {Cuic.Panel}
          */
@@ -6329,27 +6369,16 @@ Cuic.Popup = function (_Cuic$Component6) {
     }
 
     /**
-     * Returns the content
-     * @return {Cuic.Element}
+     * Sets popup content
+     * @param html
+     * @return {Cuic.Popup}
      */
 
 
     _createClass(_class19, [{
-        key: 'getContent',
-        value: function getContent() {
-            return this.content;
-        }
-
-        /**
-         * Sets the popup content
-         * @param html
-         * @return {Cuic.Popup}
-         */
-
-    }, {
         key: 'setContent',
         value: function setContent(html) {
-            this.content.setHtml(html);
+            this.content.html(html);
             return this;
         }
     }]);
@@ -7077,7 +7106,7 @@ Cuic.Tooltip = function (_Cuic$Component8) {
     }
 
     /**
-     * Sets the popup content
+     * Sets tooltip content
      * @param html
      * @return {Cuic.Tooltip}
      */
