@@ -213,8 +213,7 @@ Cuic.Dialog = class extends Cuic.Component {
             const buttons = self.buttons.children();
 
             if (buttons.length > 0) {
-                buttons[buttons.length - 1].focus();
-                // buttons.last().node().focus();
+                buttons.last().node().focus();
             }
         });
 

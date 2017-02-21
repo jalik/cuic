@@ -63,7 +63,7 @@ Cuic.Switcher = class extends Cuic.Component {
 
     /**
      * Returns the active element
-     * @return {HTMLElement}
+     * @return {Cuic.Element}
      */
     getActiveElement() {
         return this.activeElement;
@@ -72,10 +72,10 @@ Cuic.Switcher = class extends Cuic.Component {
     /**
      * Returns the element at the specified index
      * @param index
-     * @return {HTMLElement}
+     * @return {Cuic.Element}
      */
     getElementAt(index) {
-        return this.children()[index];
+        return this.children().eq(index);
     }
 
     /**
@@ -83,7 +83,7 @@ Cuic.Switcher = class extends Cuic.Component {
      * @return {number}
      */
     getIndex() {
-        return this.children().indexOf(this.activeElement);
+        return this.children().index(this.activeElement);
     }
 
     /**
@@ -109,9 +109,6 @@ Cuic.Switcher = class extends Cuic.Component {
             const started = this.isStarted();
             this.stop();
 
-            // Get the visible element
-            this.activeElement = children[this.index];
-
             // Hide visible elements
             for (let i = 0; i < children.length; i += 1) {
                 let child = Cuic.element(children[i]);
@@ -124,6 +121,11 @@ Cuic.Switcher = class extends Cuic.Component {
                     child.removeClass('visible');
                 }
             }
+
+            // Get the visible element
+            this.activeElement = children.eq(this.index);
+            this.activeElement.addClass('visible');
+            this.activeElement.removeClass('hidden');
 
             // Show the active element
             if (started) {

@@ -76,10 +76,28 @@ Cuic.Set = class {
         const elements = [];
 
         if (typeof selector === 'string') {
-            this.each((elm) => {
-                if (elm.node().matches(selector)) {
-                    elements.push(elm);
+            this.each((el) => {
+                if (el.node().matches(selector)) {
+                    elements.push(el);
                 }
+            });
+        }
+        return new Cuic.Set(elements, this.context, selector);
+    }
+
+    /**
+     * Returns elements matching the selector
+     * @param selector
+     * @return {Cuic.Set}
+     */
+    find(selector) {
+        const elements = [];
+
+        if (typeof selector === 'string') {
+            this.each((el) => {
+                el.find(selector).each((el2) => {
+                    elements.push(el2);
+                });
             });
         }
         return new Cuic.Set(elements, this.context, selector);
@@ -91,6 +109,29 @@ Cuic.Set = class {
      */
     first() {
         return this.length ? this[0] : null;
+    }
+
+    /**
+     * Returns the HTML element at the specified index
+     * @param index
+     * @return {HTMLElement}
+     */
+    get(index) {
+        return this[index].node();
+    }
+
+    /**
+     * Returns the index of the element
+     * @param element
+     * @return {number}
+     */
+    index(element) {
+        for (let i = 0; i < this.length; i += 1) {
+            if (this.eq(i) === element || this.get(i) === element) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     /**

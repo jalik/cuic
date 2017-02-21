@@ -50,6 +50,10 @@ Cuic.Element = class {
         else if (node instanceof Cuic.Element) {
             self.element = node.node();
         }
+        // Use Cuic.Set element
+        else if (node instanceof Cuic.Set) {
+            self.element = node.get(0);
+        }
         // Use jQuery element
         else if (node instanceof jQuery) {
             self.element = node.get(0);
@@ -261,19 +265,21 @@ Cuic.Element = class {
 
     /**
      * Returns element child nodes
-     * todo return Cuic.Set ?
-     * @return {Array}
+     * @param selector
+     * @return {Cuic.Set}
      */
-    children() {
+    children(selector) {
         let children = [];
         let nodes = this.node().children || this.node().childNodes;
 
         for (let i = 0; i < nodes.length; i += 1) {
             if (nodes[i] instanceof HTMLElement) {
-                children.push(nodes[i]);
+                if (!selector || nodes[i].matches(selector)) {
+                    children.push(nodes[i]);
+                }
             }
         }
-        return children;
+        return new Cuic.Set(children, this.node(), selector);
     }
 
     /**
@@ -329,12 +335,11 @@ Cuic.Element = class {
 
     /**
      * Returns the first element that matches the selector
-     * todo return Cuic.Set ?
      * @param selector
-     * @return {*}
+     * @return {Cuic.Set}
      */
     find(selector) {
-        return Cuic.element(this.node().querySelector(selector));
+        return Cuic.find(selector, this.node());
     }
 
     /**

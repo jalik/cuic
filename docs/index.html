@@ -45,8 +45,8 @@
 
             window.onresize = function () {
                 var windowHeight = window.innerHeight;
-                var sidebar = Cuic.element('#sidebar');
-                var content = Cuic.element('#content');
+                var sidebar = Cuic.find('#sidebar').eq(0);
+                var content = Cuic.find('#content').eq(0);
                 sidebar.css({'max-height': windowHeight});
                 content.css({'max-height': windowHeight});
             };
@@ -593,11 +593,11 @@
                     </div>
                     <script>
                         $(document).ready(function () {
-                            var section = Cuic.element("#ui-popup");
-                            var sandbox = section.find('.sandbox');
-                            var blueprint = sandbox.find('.blueprint');
-                            var anchor = sandbox.find("[name=anchor]");
-                            var popupButton = blueprint.find("button");
+                            var section = Cuic.find("#ui-popup").eq(0);
+                            var sandbox = section.find('.sandbox').eq(0);
+                            var blueprint = sandbox.find('.blueprint').eq(0);
+                            var anchor = sandbox.find("[name=anchor]").eq(0);
+                            var popupButton = blueprint.find("button").eq(0);
 
                             window.popup = new Cuic.Popup({
                                 anchor: anchor.val(),
@@ -635,9 +635,9 @@
                     </div>
                     <script>
                         $(document).ready(function () {
-                            var section = Cuic.element('#ui-hook');
-                            var sandbox = section.find('.sandbox');
-                            var testBox = sandbox.find('.testbox');
+                            var section = Cuic.find('#ui-hook').eq(0);
+                            var sandbox = section.find('.sandbox').eq(0);
+                            var testBox = sandbox.find('.testbox').eq(0);
 
                             // todo fix Cuic.Hook
 //                        window.hook = new Cuic.Hook({
@@ -686,14 +686,14 @@
                     </div>
                     <script>
                         $(document).ready(function () {
-                            var section = Cuic.element('#ui-movable');
-                            var form = section.find('form');
-                            var sandbox = section.find('.sandbox');
-                            var testBoxA = sandbox.find('.testbox-a');
-                            var testBoxB = sandbox.find('.testbox-b');
-                            var x = form.find('[name="x"]');
-                            var y = form.find('[name="y"]');
-                            var state = form.find('[name="state"]');
+                            var section = Cuic.find('#ui-movable').eq(0);
+                            var form = section.find('form').eq(0);
+                            var sandbox = section.find('.sandbox').eq(0);
+                            var testBoxA = sandbox.find('.testbox-a').eq(0);
+                            var testBoxB = sandbox.find('.testbox-b').eq(0);
+                            var x = form.find('[name="x"]').eq(0);
+                            var y = form.find('[name="y"]').eq(0);
+                            var state = form.find('[name="state"]').eq(0);
 
                             window.movable = new Cuic.Movable({
                                 element: testBoxA,
@@ -834,9 +834,9 @@
                     </div>
                     <script>
                         $(document).ready(function () {
-                            var section = Cuic.element('#ui-selectable');
-                            var sandbox = section.find('.sandbox');
-                            var blueprint = sandbox.find('.blueprint');
+                            var section = Cuic.find('#ui-selectable').eq(0);
+                            var sandbox = section.find('.sandbox').eq(0);
+                            var blueprint = sandbox.find('.blueprint').eq(0);
 
                             Cuic.find('.testbox', blueprint).each(function (box) {
                                 window.selectable = new Cuic.Selectable({

@@ -2309,12 +2309,16 @@ Cuic.Element = function () {
                 else if (node instanceof Cuic.Element) {
                         self.element = node.node();
                     }
-                    // Use jQuery element
-                    else if (node instanceof jQuery) {
+                    // Use Cuic.Set element
+                    else if (node instanceof Cuic.Set) {
                             self.element = node.get(0);
-                        } else {
-                            throw new TypeError('Cannot create element.');
                         }
+                        // Use jQuery element
+                        else if (node instanceof jQuery) {
+                                self.element = node.get(0);
+                            } else {
+                                throw new TypeError('Cannot create element.');
+                            }
 
         // Set element attributes
         for (var attr in attributes) {
@@ -2535,22 +2539,24 @@ Cuic.Element = function () {
 
         /**
          * Returns element child nodes
-         * todo return Cuic.Set ?
-         * @return {Array}
+         * @param selector
+         * @return {Cuic.Set}
          */
 
     }, {
         key: 'children',
-        value: function children() {
+        value: function children(selector) {
             var children = [];
             var nodes = this.node().children || this.node().childNodes;
 
             for (var i = 0; i < nodes.length; i += 1) {
                 if (nodes[i] instanceof HTMLElement) {
-                    children.push(nodes[i]);
+                    if (!selector || nodes[i].matches(selector)) {
+                        children.push(nodes[i]);
+                    }
                 }
             }
-            return children;
+            return new Cuic.Set(children, this.node(), selector);
         }
 
         /**
@@ -2616,15 +2622,14 @@ Cuic.Element = function () {
 
         /**
          * Returns the first element that matches the selector
-         * todo return Cuic.Set ?
          * @param selector
-         * @return {*}
+         * @return {Cuic.Set}
          */
 
     }, {
         key: 'find',
         value: function find(selector) {
-            return Cuic.element(this.node().querySelector(selector));
+            return Cuic.find(selector, this.node());
         }
 
         /**
@@ -2636,30 +2641,6 @@ Cuic.Element = function () {
         key: 'getClasses',
         value: function getClasses() {
             return Cuic.getClasses(this.node());
-        }
-
-        /**
-         * Returns the HTML element
-         * todo rename to node()
-         * @return {HTMLElement}
-         */
-
-    }, {
-        key: 'node',
-        value: function node() {
-            return this.element;
-        }
-
-        /**
-         * Returns the parent of the element
-         * todo rename to parentNode()
-         * @return {HTMLElement}
-         */
-
-    }, {
-        key: 'getParentElement',
-        value: function getParentElement() {
-            return this.node().parentNode;
         }
 
         /**
@@ -2810,6 +2791,17 @@ Cuic.Element = function () {
         }
 
         /**
+         * Returns the HTML element
+         * @return {HTMLElement}
+         */
+
+    }, {
+        key: 'node',
+        value: function node() {
+            return this.element;
+        }
+
+        /**
          * Remove the callback attached to the event
          * @param event
          * @param callback
@@ -2944,8 +2936,19 @@ Cuic.Element = function () {
     }, {
         key: 'parent',
         value: function parent() {
-            var parent = this.getParentElement();
+            var parent = this.parentNode();
             return parent ? Cuic.element(parent) : null;
+        }
+
+        /**
+         * Returns the parent of the element
+         * @return {HTMLElement}
+         */
+
+    }, {
+        key: 'parentNode',
+        value: function parentNode() {
+            return this.node().parentNode;
         }
 
         /**
@@ -4452,10 +4455,31 @@ Cuic.Set = function () {
             var elements = [];
 
             if (typeof selector === 'string') {
-                this.each(function (elm) {
-                    if (elm.node().matches(selector)) {
-                        elements.push(elm);
+                this.each(function (el) {
+                    if (el.node().matches(selector)) {
+                        elements.push(el);
                     }
+                });
+            }
+            return new Cuic.Set(elements, this.context, selector);
+        }
+
+        /**
+         * Returns elements matching the selector
+         * @param selector
+         * @return {Cuic.Set}
+         */
+
+    }, {
+        key: 'find',
+        value: function find(selector) {
+            var elements = [];
+
+            if (typeof selector === 'string') {
+                this.each(function (el) {
+                    el.find(selector).each(function (el2) {
+                        elements.push(el2);
+                    });
                 });
             }
             return new Cuic.Set(elements, this.context, selector);
@@ -4470,6 +4494,35 @@ Cuic.Set = function () {
         key: 'first',
         value: function first() {
             return this.length ? this[0] : null;
+        }
+
+        /**
+         * Returns the HTML element at the specified index
+         * @param index
+         * @return {HTMLElement}
+         */
+
+    }, {
+        key: 'get',
+        value: function get(index) {
+            return this[index].node();
+        }
+
+        /**
+         * Returns the index of the element
+         * @param element
+         * @return {number}
+         */
+
+    }, {
+        key: 'index',
+        value: function index(element) {
+            for (var i = 0; i < this.length; i += 1) {
+                if (this.eq(i) === element || this.get(i) === element) {
+                    return i;
+                }
+            }
+            return -1;
         }
 
         /**
@@ -4800,8 +4853,7 @@ Cuic.Dialog = function (_Cuic$Component2) {
             var buttons = self.buttons.children();
 
             if (buttons.length > 0) {
-                buttons[buttons.length - 1].focus();
-                // buttons.last().node().focus();
+                buttons.last().node().focus();
             }
         });
 
@@ -6096,11 +6148,11 @@ Cuic.Panel = function (_Cuic$Component5) {
         self.addClass('panel');
 
         if (options.element) {
-            self.header = self.find('.panel-header');
-            self.title = self.find('.panel-title');
-            self.content = self.find('.panel-content');
-            self.footer = self.find('.panel-footer');
-            self.closeButton = self.find('.panel-header .btn-close');
+            self.header = self.find('.panel-header').eq(0);
+            self.title = self.find('.panel-title').eq(0);
+            self.content = self.find('.panel-content').eq(0);
+            self.footer = self.find('.panel-footer').eq(0);
+            self.closeButton = self.find('.panel-header .btn-close').eq(0);
         } else {
             // Add the header
             self.header = new Cuic.Element('header', {
@@ -6648,7 +6700,7 @@ Cuic.Switcher = function (_Cuic$Component7) {
 
         /**
          * Returns the active element
-         * @return {HTMLElement}
+         * @return {Cuic.Element}
          */
 
     }, {
@@ -6660,13 +6712,13 @@ Cuic.Switcher = function (_Cuic$Component7) {
         /**
          * Returns the element at the specified index
          * @param index
-         * @return {HTMLElement}
+         * @return {Cuic.Element}
          */
 
     }, {
         key: 'getElementAt',
         value: function getElementAt(index) {
-            return this.children()[index];
+            return this.children().eq(index);
         }
 
         /**
@@ -6677,7 +6729,7 @@ Cuic.Switcher = function (_Cuic$Component7) {
     }, {
         key: 'getIndex',
         value: function getIndex() {
-            return this.children().indexOf(this.activeElement);
+            return this.children().index(this.activeElement);
         }
 
         /**
@@ -6704,9 +6756,6 @@ Cuic.Switcher = function (_Cuic$Component7) {
                 var started = this.isStarted();
                 this.stop();
 
-                // Get the visible element
-                this.activeElement = children[this.index];
-
                 // Hide visible elements
                 for (var i = 0; i < children.length; i += 1) {
                     var child = Cuic.element(children[i]);
@@ -6719,6 +6768,11 @@ Cuic.Switcher = function (_Cuic$Component7) {
                         child.removeClass('visible');
                     }
                 }
+
+                // Get the visible element
+                this.activeElement = children.eq(this.index);
+                this.activeElement.addClass('visible');
+                this.activeElement.removeClass('hidden');
 
                 // Show the active element
                 if (started) {
