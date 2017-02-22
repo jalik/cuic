@@ -114,35 +114,35 @@
   margin: 0;
   padding: 0;
 }
-.dialog.dialog-bottom {
+.dialog.aligned-bottom {
   -webkit-transform-origin: bottom center;
           transform-origin: bottom center;
 }
-.dialog.dialog-bottom.dialog-left {
+.dialog.aligned-bottom.aligned-left {
   -webkit-transform-origin: bottom left;
           transform-origin: bottom left;
 }
-.dialog.dialog-bottom.dialog-right {
+.dialog.aligned-bottom.aligned-right {
   -webkit-transform-origin: bottom right;
           transform-origin: bottom right;
 }
-.dialog.dialog-left {
+.dialog.aligned-left {
   -webkit-transform-origin: left center;
           transform-origin: left center;
 }
-.dialog.dialog-right {
+.dialog.aligned-right {
   -webkit-transform-origin: right center;
           transform-origin: right center;
 }
-.dialog.dialog-top {
+.dialog.aligned-top {
   -webkit-transform-origin: top center;
           transform-origin: top center;
 }
-.dialog.dialog-top.dialog-left {
+.dialog.aligned-top.aligned-left {
   -webkit-transform-origin: top left;
           transform-origin: top left;
 }
-.dialog.dialog-top.dialog-right {
+.dialog.aligned-top.aligned-right {
   -webkit-transform-origin: top right;
           transform-origin: top right;
 }
@@ -267,35 +267,35 @@
 .notification .btn-close:hover {
   color: rgba(255, 255, 255, 0.7);
 }
-.notification.notification-bottom {
+.notification.aligned-bottom {
   -webkit-transform-origin: bottom center;
           transform-origin: bottom center;
 }
-.notification.notification-bottom.notification-left {
+.notification.aligned-bottom.aligned-left {
   -webkit-transform-origin: bottom left;
           transform-origin: bottom left;
 }
-.notification.notification-bottom.notification-right {
+.notification.aligned-bottom.aligned-right {
   -webkit-transform-origin: bottom right;
           transform-origin: bottom right;
 }
-.notification.notification-left {
+.notification.aligned-left {
   -webkit-transform-origin: left center;
           transform-origin: left center;
 }
-.notification.notification-right {
+.notification.aligned-right {
   -webkit-transform-origin: right center;
           transform-origin: right center;
 }
-.notification.notification-top {
+.notification.aligned-top {
   -webkit-transform-origin: top center;
           transform-origin: top center;
 }
-.notification.notification-top.notification-left {
+.notification.aligned-top.aligned-left {
   -webkit-transform-origin: top left;
           transform-origin: top left;
 }
-.notification.notification-top.notification-right {
+.notification.aligned-top.aligned-right {
   -webkit-transform-origin: top right;
           transform-origin: top right;
 }
@@ -306,67 +306,67 @@
 .notification-stack .notification {
   display: block !important;
 }
-.notification-stack.notification-stack-bottom {
+.notification-stack.aligned-bottom {
   -webkit-transform-origin: bottom center;
           transform-origin: bottom center;
 }
-.notification-stack.notification-stack-bottom.notification-stack-left {
+.notification-stack.aligned-bottom.aligned-left {
   -webkit-transform-origin: bottom left;
           transform-origin: bottom left;
 }
-.notification-stack.notification-stack-bottom.notification-stack-right {
+.notification-stack.aligned-bottom.aligned-right {
   -webkit-transform-origin: bottom right;
           transform-origin: bottom right;
 }
-.notification-stack.notification-stack-left {
+.notification-stack.aligned-left {
   -webkit-transform-origin: left center;
           transform-origin: left center;
 }
-.notification-stack.notification-stack-right {
+.notification-stack.aligned-right {
   -webkit-transform-origin: right center;
           transform-origin: right center;
 }
-.notification-stack.notification-stack-top {
+.notification-stack.aligned-top {
   -webkit-transform-origin: top center;
           transform-origin: top center;
 }
-.notification-stack.notification-stack-top.notification-stack-left {
+.notification-stack.aligned-top.aligned-left {
   -webkit-transform-origin: top left;
           transform-origin: top left;
 }
-.notification-stack.notification-stack-top.notification-stack-right {
+.notification-stack.aligned-top.aligned-right {
   -webkit-transform-origin: top right;
           transform-origin: top right;
 }
-.notification-stack.notification-stack-bottom .notification {
+.notification-stack.aligned-bottom .notification {
   -webkit-transform-origin: bottom center;
           transform-origin: bottom center;
 }
-.notification-stack.notification-stack-bottom.notification-stack-left .notification {
+.notification-stack.aligned-bottom.aligned-left .notification {
   -webkit-transform-origin: bottom left;
           transform-origin: bottom left;
 }
-.notification-stack.notification-stack-bottom.notification-stack-right .notification {
+.notification-stack.aligned-bottom.aligned-right .notification {
   -webkit-transform-origin: bottom right;
           transform-origin: bottom right;
 }
-.notification-stack.notification-stack-left .notification {
+.notification-stack.aligned-left .notification {
   -webkit-transform-origin: left center;
           transform-origin: left center;
 }
-.notification-stack.notification-stack-right .notification {
+.notification-stack.aligned-right .notification {
   -webkit-transform-origin: right center;
           transform-origin: right center;
 }
-.notification-stack.notification-stack-top .notification {
+.notification-stack.aligned-top .notification {
   -webkit-transform-origin: top center;
           transform-origin: top center;
 }
-.notification-stack.notification-stack-top.notification-stack-left .notification {
+.notification-stack.aligned-top.aligned-left .notification {
   -webkit-transform-origin: top left;
           transform-origin: top left;
 }
-.notification-stack.notification-stack-top.notification-stack-right .notification {
+.notification-stack.aligned-top.aligned-right .notification {
   -webkit-transform-origin: top right;
           transform-origin: top right;
 }
@@ -417,6 +417,42 @@
   font-weight: bold;
   margin: 0;
 }
+.panel.aligned-bottom {
+  bottom: 0;
+  -webkit-transform-origin: bottom center;
+          transform-origin: bottom center;
+}
+.panel.aligned-bottom.aligned-left {
+  -webkit-transform-origin: bottom left;
+          transform-origin: bottom left;
+}
+.panel.aligned-bottom.aligned-right {
+  -webkit-transform-origin: bottom right;
+          transform-origin: bottom right;
+}
+.panel.aligned-left {
+  left: 0;
+  -webkit-transform-origin: left center;
+          transform-origin: left center;
+}
+.panel.aligned-right {
+  right: 0;
+  -webkit-transform-origin: right center;
+          transform-origin: right center;
+}
+.panel.aligned-top {
+  top: 0;
+  -webkit-transform-origin: top center;
+          transform-origin: top center;
+}
+.panel.aligned-top.aligned-left {
+  -webkit-transform-origin: top left;
+          transform-origin: top left;
+}
+.panel.aligned-top.aligned-right {
+  -webkit-transform-origin: top right;
+          transform-origin: top right;
+}
 .popup {
   background: rgba(0, 0, 0, 0.7);
   border-radius: 5px;
@@ -463,35 +499,35 @@
 .popup .btn-close:hover {
   color: rgba(255, 255, 255, 0.7);
 }
-.popup.popup-bottom {
+.popup.anchored-bottom {
   -webkit-transform-origin: top center;
           transform-origin: top center;
 }
-.popup.popup-bottom.popup-left {
+.popup.anchored-bottom.anchored-left {
   -webkit-transform-origin: top right;
           transform-origin: top right;
 }
-.popup.popup-bottom.popup-right {
+.popup.anchored-bottom.anchored-right {
   -webkit-transform-origin: top left;
           transform-origin: top left;
 }
-.popup.popup-left {
+.popup.anchored-left {
   -webkit-transform-origin: right center;
           transform-origin: right center;
 }
-.popup.popup-right {
+.popup.anchored-right {
   -webkit-transform-origin: left center;
           transform-origin: left center;
 }
-.popup.popup-top {
+.popup.anchored-top {
   -webkit-transform-origin: bottom center;
           transform-origin: bottom center;
 }
-.popup.popup-top.popup-left {
+.popup.anchored-top.anchored-left {
   -webkit-transform-origin: bottom right;
           transform-origin: bottom right;
 }
-.popup.popup-top.popup-right {
+.popup.anchored-top.anchored-right {
   -webkit-transform-origin: bottom left;
           transform-origin: bottom left;
 }
@@ -661,35 +697,35 @@ tr.selected {
 .tooltip-content {
   line-height: 1.5rem;
 }
-.tooltip.tooltip-bottom {
+.tooltip.anchored-bottom {
   -webkit-transform-origin: top center;
           transform-origin: top center;
 }
-.tooltip.tooltip-bottom.tooltip-left {
+.tooltip.anchored-bottom.anchored-left {
   -webkit-transform-origin: top right;
           transform-origin: top right;
 }
-.tooltip.tooltip-bottom.tooltip-right {
+.tooltip.anchored-bottom.anchored-right {
   -webkit-transform-origin: top left;
           transform-origin: top left;
 }
-.tooltip.tooltip-left {
+.tooltip.anchored-left {
   -webkit-transform-origin: right center;
           transform-origin: right center;
 }
-.tooltip.tooltip-right {
+.tooltip.anchored-right {
   -webkit-transform-origin: left center;
           transform-origin: left center;
 }
-.tooltip.tooltip-top {
+.tooltip.anchored-top {
   -webkit-transform-origin: bottom center;
           transform-origin: bottom center;
 }
-.tooltip.tooltip-top.tooltip-left {
+.tooltip.anchored-top.anchored-left {
   -webkit-transform-origin: bottom right;
           transform-origin: bottom right;
 }
-.tooltip.tooltip-top.tooltip-right {
+.tooltip.anchored-top.anchored-right {
   -webkit-transform-origin: bottom left;
           transform-origin: bottom left;
 }

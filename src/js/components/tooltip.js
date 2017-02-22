@@ -210,7 +210,6 @@ Cuic.Tooltip = class extends Cuic.Component {
 Cuic.Tooltip.prototype.options = {
     anchor: 'right',
     attribute: 'title',
-    className: 'tooltip',
     followPointer: true,
     namespace: 'tooltip',
     selector: '[title]',

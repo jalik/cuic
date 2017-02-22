@@ -23,7 +23,7 @@
  *
  */
 
-Cuic.Group = class extends Cuic.Element {
+Cuic.Group = class extends Cuic.Component {
 
     constructor(node, attributes, options) {
         // Set default options
@@ -93,6 +93,5 @@ Cuic.Group = class extends Cuic.Element {
 };
 
 Cuic.Group.prototype.options = {
-    className: 'group',
     namespace: 'group'
 };

@@ -148,7 +148,6 @@ Cuic.Movable = class extends Cuic.Element {
 };
 
 Cuic.Movable.prototype.options = {
-    className: 'movable',
     handle: null,
     handleClassName: 'movable-handle',
     horizontal: true,

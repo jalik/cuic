@@ -52,7 +52,7 @@ Cuic.Component = class extends Cuic.Element {
         }
 
         // Maximize the panel
-        if (this.options.maximized) {
+        if (this.options.maximized && this.hasParent()) {
             this.maximize();
         }
     }
@@ -63,11 +63,13 @@ Cuic.Component = class extends Cuic.Element {
      * @return {Cuic.Component}
      */
     close(callback) {
+        this.debug('close');
         this.events.trigger('close');
         this.removeClass('opened');
         this.addClass('closed');
         this.once('transitionend', (ev) => {
             if (!this.isOpened()) {
+                this.debug('closed');
                 this.events.trigger('closed', ev);
                 this.hide();
 
@@ -109,12 +111,14 @@ Cuic.Component = class extends Cuic.Element {
      * @return {Cuic.Element}
      */
     maximize(callback) {
+        this.debug('maximize');
         this.events.trigger('maximize');
         this.removeClass('minimized');
         this.addClass('maximized');
         this.css(Cuic.calculateMaximize(this));
         this.once('transitionend', (ev) => {
             if (this.isMaximized()) {
+                this.debug('maximized');
                 this.events.trigger('maximized', ev);
 
                 if (typeof callback === 'function') {
@@ -131,12 +135,14 @@ Cuic.Component = class extends Cuic.Element {
      * @return {Cuic.Element}
      */
     minimize(callback) {
+        this.debug('minimize');
         this.events.trigger('minimize');
         this.removeClass('maximized');
         this.addClass('minimized');
         this.css(Cuic.calculateMinimize(this, this.options.position));
         this.once('transitionend', (ev) => {
             if (this.isMinimized()) {
+                this.debug('minimized');
                 this.events.trigger('minimized', ev);
 
                 if (typeof callback === 'function') {
@@ -217,12 +223,14 @@ Cuic.Component = class extends Cuic.Element {
      * @return {Cuic.Component}
      */
     open(callback) {
+        this.debug('open');
         this.show();
         this.events.trigger('open');
         this.removeClass('closed');
         this.addClass('opened');
         this.once('transitionend', (ev) => {
             if (this.isOpened()) {
+                this.debug('opened');
                 this.events.trigger('opened', ev);
 
                 if (typeof callback === 'function') {
@@ -248,8 +256,4 @@ Cuic.Component = class extends Cuic.Element {
     }
 };
 
-Cuic.Component.prototype.options = {
-    className: null,
-    css: null,
-    parent: null
-};
+Cuic.Component.prototype.options = {};

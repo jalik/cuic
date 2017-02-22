@@ -203,7 +203,6 @@ Cuic.Resizable = class extends Cuic.Element {
 };
 
 Cuic.Resizable.prototype.options = {
-    className: 'resizable',
     handleSize: 10,
     horizontal: true,
     keepRatio: false,

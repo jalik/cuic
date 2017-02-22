@@ -129,7 +129,6 @@ Cuic.Notification = class extends Cuic.Component {
 Cuic.Notification.prototype.options = {
     autoClose: true,
     autoRemove: true,
-    className: 'notification',
     closable: true,
     closeButton: '',
     content: null,

@@ -41,8 +41,6 @@
 
     <script type="application/javascript">
         Cuic.ready(function (event) {
-            Cuic.DEBUG = true;
-
             window.onresize = function () {
                 var windowHeight = window.innerHeight;
                 var sidebar = Cuic.find('#sidebar').eq(0);
@@ -522,6 +520,7 @@
 
                             sandbox.find('.btn-run').on('click', function () {
                                 window.panel = new Cuic.Panel({
+                                    debug: true,
                                     autoClose: autoClose.is(':checked'),
                                     element: document.getElementById('panel'),
                                     css: css.val(),

@@ -111,7 +111,6 @@ Cuic.Popup.prototype.options = {
     anchor: 'top',
     autoClose: true,
     autoRemove: false,
-    className: 'popup',
     closable: true,
     closeButton: '',
     content: null,

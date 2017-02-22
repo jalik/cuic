@@ -55,7 +55,7 @@ Cuic.Button = class extends Cuic.Component {
 };
 
 Cuic.Button.prototype.options = {
-    className: 'btn btn-default',
+    className: 'btn-default',
     disabled: false,
     shortcut: null,
     title: null,

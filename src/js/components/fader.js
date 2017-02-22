@@ -61,7 +61,6 @@ Cuic.Fader = class extends Cuic.Component {
 Cuic.Fader.prototype.options = {
     autoClose: false,
     autoRemove: false,
-    className: 'fader',
     namespace: 'fader',
     zIndex: 1
 };

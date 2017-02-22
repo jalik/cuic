@@ -1952,8 +1952,6 @@ Cuic.keys = {
 
 Cuic.Element = function () {
     function _class5(node, attributes, options) {
-        var _this4 = this;
-
         _classCallCheck(this, _class5);
 
         // Set default attributes
@@ -2036,16 +2034,6 @@ Cuic.Element = function () {
         // Add default events
         this.events = new Cuic.Events(this);
 
-        // Called when element is aligned
-        this.events.on('aligned', function () {
-            _this4.addPositionClass(_this4.options.position, _this4.options.namespace);
-        });
-
-        // Called when element is anchored
-        this.events.on('anchored', function () {
-            _this4.addPositionClass(_this4.options.anchor, _this4.options.namespace);
-        });
-
         // Get parent element
         if (this.options.parent) {
             var parent = null;
@@ -2068,7 +2056,7 @@ Cuic.Element = function () {
         }
 
         // Position the element
-        if (this.options.position && this.element.parentNode) {
+        if (this.options.position && this.hasParent()) {
             this.align(this.options.position);
         }
     }
@@ -2083,6 +2071,7 @@ Cuic.Element = function () {
     _createClass(_class5, [{
         key: 'addClass',
         value: function addClass(className) {
+            this.debug('addClass', className);
             var classes = this.getClasses();
             var target = (className || '').split(' ');
 
@@ -2106,23 +2095,30 @@ Cuic.Element = function () {
     }, {
         key: 'addPositionClass',
         value: function addPositionClass(position, prefix) {
+            this.debug('addPositionClass', position, prefix);
             var pfx = function pfx(str) {
                 return prefix ? prefix + '-' + str : str;
             };
 
             // Remove previous classes
-            this.removeClass([pfx('bottom'), pfx('left'), pfx('right'), pfx('top')].join(' '));
+            this.removeClass([pfx('bottom'), pfx('center'), pfx('left'), pfx('right'), pfx('top')].join(' '));
 
-            // Add dialog position class
+            // Vertical position
             if (position.indexOf('bottom') !== -1) {
                 this.addClass(pfx('bottom'));
             } else if (position.indexOf('top') !== -1) {
                 this.addClass(pfx('top'));
+            } else {
+                this.addClass(pfx('center'));
             }
+
+            // Horizontal position
             if (position.indexOf('left') !== -1) {
                 this.addClass(pfx('left'));
             } else if (position.indexOf('right') !== -1) {
                 this.addClass(pfx('right'));
+            } else {
+                this.addClass(pfx('center'));
             }
             return this;
         }
@@ -2136,7 +2132,9 @@ Cuic.Element = function () {
     }, {
         key: 'align',
         value: function align(position) {
+            this.debug('align', position);
             this.css(Cuic.calculateAlign(this, position));
+            this.addPositionClass(position, 'aligned');
             this.options.position = position;
             this.events.trigger('aligned', position);
             return this;
@@ -2152,8 +2150,10 @@ Cuic.Element = function () {
     }, {
         key: 'anchor',
         value: function anchor(position, target) {
+            this.debug('anchor', position, target);
             target = Cuic.element(target || this.options.target);
             this.css(Cuic.calculateAnchor(this, position, target));
+            this.addPositionClass(position, 'anchored');
             this.options.anchor = position;
             this.options.target = target;
             this.events.trigger('anchored', position);
@@ -2169,6 +2169,7 @@ Cuic.Element = function () {
     }, {
         key: 'append',
         value: function append(element) {
+            this.debug('append', element);
             this.node().append(Cuic.node(element));
             return this;
         }
@@ -2182,6 +2183,7 @@ Cuic.Element = function () {
     }, {
         key: 'appendTo',
         value: function appendTo(element) {
+            this.debug('appendTo', element);
             Cuic.node(element).append(this.node());
             return this;
         }
@@ -2216,6 +2218,7 @@ Cuic.Element = function () {
     }, {
         key: 'autoAlign',
         value: function autoAlign() {
+            this.debug('autoAlign');
             var available = Cuic.calculateAvailablePosition(this, this.parent());
             var alignments = ['bottom', 'left', 'right', 'top'];
             var prop = this.position();
@@ -2286,6 +2289,7 @@ Cuic.Element = function () {
     }, {
         key: 'autoResize',
         value: function autoResize() {
+            this.debug('autoResize');
             var available = Cuic.calculateAvailableSpace(this, this.parent());
 
             var prop = {
@@ -2359,6 +2363,7 @@ Cuic.Element = function () {
     }, {
         key: 'clone',
         value: function clone() {
+            this.debug('clone');
             return Cuic.element(this.node().cloneNode(true));
         }
 
@@ -2389,6 +2394,7 @@ Cuic.Element = function () {
             // Writing styles
             if (styles) {
                 if ((typeof styles === 'undefined' ? 'undefined' : _typeof(styles)) === 'object') {
+                    this.debug('css', styles);
                     var mergedStyles = '';
 
                     // Add pixel unit where needed
@@ -2427,6 +2433,7 @@ Cuic.Element = function () {
                 } else if (typeof styles === 'string') {
                     // Set styles
                     if (styles.indexOf(':') !== -1) {
+                        this.debug('css', styles);
                         node.style = styles;
                         return this;
                     } else {
@@ -2455,6 +2462,7 @@ Cuic.Element = function () {
     }, {
         key: 'data',
         value: function data(key, value) {
+            this.debug('data', key, value);
             var dataSet = this.node().dataset;
 
             if (value !== undefined) {
@@ -2468,6 +2476,19 @@ Cuic.Element = function () {
         }
 
         /**
+         * Displays debug message if debug mode is active
+         */
+
+    }, {
+        key: 'debug',
+        value: function debug() {
+            if (Cuic.DEBUG || this.options.debug) {
+                var args = Array.prototype.slice.call(arguments);
+                console.log.apply(this, args);
+            }
+        }
+
+        /**
          * Disables the element
          * @return {Cuic.Element}
          */
@@ -2475,6 +2496,7 @@ Cuic.Element = function () {
     }, {
         key: 'disable',
         value: function disable() {
+            this.debug('disable');
             this.node().disabled = true;
             this.addClass('disabled');
             this.events.trigger('disabled');
@@ -2489,7 +2511,8 @@ Cuic.Element = function () {
     }, {
         key: 'empty',
         value: function empty() {
-            this.node().innerHTML = '';
+            this.debug('empty');
+            this.text('');
             return this;
         }
 
@@ -2501,6 +2524,7 @@ Cuic.Element = function () {
     }, {
         key: 'enable',
         value: function enable() {
+            this.debug('enable');
             this.node().disabled = false;
             this.removeClass('disabled');
             this.events.trigger('enabled');
@@ -2606,6 +2630,7 @@ Cuic.Element = function () {
     }, {
         key: 'hide',
         value: function hide() {
+            this.debug('hide');
             // this.css({display: 'none'});
             this.addClass('hidden');
             this.events.trigger('hidden');
@@ -2632,7 +2657,7 @@ Cuic.Element = function () {
                         this.empty();
                         this.append(_html.get(0));
                     }
-                } else if (typeof _html === 'string' || _html === null) {
+                } else {
                     this.node().innerHTML = _html;
                 }
                 return this;
@@ -2674,6 +2699,7 @@ Cuic.Element = function () {
     }, {
         key: 'insertAfter',
         value: function insertAfter(element) {
+            this.debug('insertAfter', element);
             element = Cuic.node(element);
             var parent = this.node().parentNode;
             parent.insertBefore(element, this.node().nextSibling);
@@ -2689,10 +2715,36 @@ Cuic.Element = function () {
     }, {
         key: 'insertBefore',
         value: function insertBefore(element) {
+            this.debug('insertBefore', element);
             element = Cuic.node(element);
             var parent = this.node().parentNode;
             parent.insertBefore(element, this.node());
             return this;
+        }
+
+        /**
+         * Checks if the element is aligned at the position
+         * @param position
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isAligned',
+        value: function isAligned(position) {
+            var result = false;
+
+            if (this.options.position) {
+                var pos = (position || '').split(' ');
+                result = true;
+
+                for (var i = 0; i < pos.length; i += 1) {
+                    if (this.options.position.indexOf(pos[i]) === -1) {
+                        result = false;
+                        break;
+                    }
+                }
+            }
+            return result;
         }
 
         /**
@@ -2749,31 +2801,6 @@ Cuic.Element = function () {
         key: 'isHidden',
         value: function isHidden() {
             return this.hasClass('hidden') || this.css('display') === 'none';
-        }
-
-        /**
-         * Checks if the element is aligned at the position
-         * @param position
-         * @return {boolean}
-         */
-
-    }, {
-        key: 'isAligned',
-        value: function isAligned(position) {
-            var result = false;
-
-            if (this.options.position) {
-                var pos = (position || '').split(' ');
-                result = true;
-
-                for (var i = 0; i < pos.length; i += 1) {
-                    if (this.options.position.indexOf(pos[i]) === -1) {
-                        result = false;
-                        break;
-                    }
-                }
-            }
-            return result;
         }
 
         /**
@@ -3078,6 +3105,7 @@ Cuic.Element = function () {
     }, {
         key: 'prepend',
         value: function prepend(element) {
+            this.debug('prepend', element);
             this.node().prepend(Cuic.node(element));
             return this;
         }
@@ -3091,6 +3119,7 @@ Cuic.Element = function () {
     }, {
         key: 'prependTo',
         value: function prependTo(element) {
+            this.debug('prependTo', element);
             Cuic.node(element).prepend(this.node());
             return this;
         }
@@ -3103,6 +3132,7 @@ Cuic.Element = function () {
     }, {
         key: 'remove',
         value: function remove() {
+            this.debug('remove');
             this.node().remove();
             this.events.trigger('removed');
             return this;
@@ -3117,6 +3147,7 @@ Cuic.Element = function () {
     }, {
         key: 'removeClass',
         value: function removeClass(className) {
+            this.debug('removeClass', className);
             var classes = this.getClasses();
             var classNames = (className || '').split(' ');
 
@@ -3139,6 +3170,7 @@ Cuic.Element = function () {
     }, {
         key: 'show',
         value: function show() {
+            this.debug('show');
             // this.css({display: ''});
             this.removeClass('hidden');
             this.events.trigger('shown');
@@ -3154,6 +3186,8 @@ Cuic.Element = function () {
     }, {
         key: 'text',
         value: function text(_text) {
+            this.debug('text', _text);
+
             if (_text !== undefined) {
                 this.node().innerText = _text;
                 return this;
@@ -3171,6 +3205,8 @@ Cuic.Element = function () {
     }, {
         key: 'val',
         value: function val(value) {
+            this.debug('val', value);
+
             if (value !== undefined) {
                 this.node().value = value;
                 return this;
@@ -3196,6 +3232,7 @@ Cuic.Element = function () {
 
 Cuic.Element.prototype.options = {
     className: null,
+    css: null,
     namespace: null,
     parent: null
 };
@@ -3235,32 +3272,32 @@ Cuic.Component = function (_Cuic$Element) {
         options = Cuic.extend({}, Cuic.Component.prototype.options, options);
 
         // Add component classes
-        var _this5 = _possibleConstructorReturn(this, (_class6.__proto__ || Object.getPrototypeOf(_class6)).call(this, node, attributes, options));
+        var _this4 = _possibleConstructorReturn(this, (_class6.__proto__ || Object.getPrototypeOf(_class6)).call(this, node, attributes, options));
 
-        _this5.addClass('component');
+        _this4.addClass('component');
 
         // Add closable class
-        if (_this5.options.closable) {
-            _this5.addClass('closable');
+        if (_this4.options.closable) {
+            _this4.addClass('closable');
         }
 
         // Set the panel visibility
         // Since the visible option is used to check if the panel is visible
         // we force the panel to show or hide by setting visible to the inverse value.
-        if (typeof _this5.options.opened === 'boolean') {
-            if (_this5.options.opened) {
-                _this5.open();
+        if (typeof _this4.options.opened === 'boolean') {
+            if (_this4.options.opened) {
+                _this4.open();
             } else {
-                _this5.hide(); // Hide to avoid animations
-                _this5.close();
+                _this4.hide(); // Hide to avoid animations
+                _this4.close();
             }
         }
 
         // Maximize the panel
-        if (_this5.options.maximized) {
-            _this5.maximize();
+        if (_this4.options.maximized && _this4.hasParent()) {
+            _this4.maximize();
         }
-        return _this5;
+        return _this4;
     }
 
     /**
@@ -3273,18 +3310,20 @@ Cuic.Component = function (_Cuic$Element) {
     _createClass(_class6, [{
         key: 'close',
         value: function close(callback) {
-            var _this6 = this;
+            var _this5 = this;
 
+            this.debug('close');
             this.events.trigger('close');
             this.removeClass('opened');
             this.addClass('closed');
             this.once('transitionend', function (ev) {
-                if (!_this6.isOpened()) {
-                    _this6.events.trigger('closed', ev);
-                    _this6.hide();
+                if (!_this5.isOpened()) {
+                    _this5.debug('closed');
+                    _this5.events.trigger('closed', ev);
+                    _this5.hide();
 
                     if (typeof callback === 'function') {
-                        callback.call(_this6, ev);
+                        callback.call(_this5, ev);
                     }
                 }
             });
@@ -3333,18 +3372,20 @@ Cuic.Component = function (_Cuic$Element) {
     }, {
         key: 'maximize',
         value: function maximize(callback) {
-            var _this7 = this;
+            var _this6 = this;
 
+            this.debug('maximize');
             this.events.trigger('maximize');
             this.removeClass('minimized');
             this.addClass('maximized');
             this.css(Cuic.calculateMaximize(this));
             this.once('transitionend', function (ev) {
-                if (_this7.isMaximized()) {
-                    _this7.events.trigger('maximized', ev);
+                if (_this6.isMaximized()) {
+                    _this6.debug('maximized');
+                    _this6.events.trigger('maximized', ev);
 
                     if (typeof callback === 'function') {
-                        callback.call(_this7, ev);
+                        callback.call(_this6, ev);
                     }
                 }
             });
@@ -3360,18 +3401,20 @@ Cuic.Component = function (_Cuic$Element) {
     }, {
         key: 'minimize',
         value: function minimize(callback) {
-            var _this8 = this;
+            var _this7 = this;
 
+            this.debug('minimize');
             this.events.trigger('minimize');
             this.removeClass('maximized');
             this.addClass('minimized');
             this.css(Cuic.calculateMinimize(this, this.options.position));
             this.once('transitionend', function (ev) {
-                if (_this8.isMinimized()) {
-                    _this8.events.trigger('minimized', ev);
+                if (_this7.isMinimized()) {
+                    _this7.debug('minimized');
+                    _this7.events.trigger('minimized', ev);
 
                     if (typeof callback === 'function') {
-                        callback.call(_this8, ev);
+                        callback.call(_this7, ev);
                     }
                 }
             });
@@ -3475,18 +3518,20 @@ Cuic.Component = function (_Cuic$Element) {
     }, {
         key: 'open',
         value: function open(callback) {
-            var _this9 = this;
+            var _this8 = this;
 
+            this.debug('open');
             this.show();
             this.events.trigger('open');
             this.removeClass('closed');
             this.addClass('opened');
             this.once('transitionend', function (ev) {
-                if (_this9.isOpened()) {
-                    _this9.events.trigger('opened', ev);
+                if (_this8.isOpened()) {
+                    _this8.debug('opened');
+                    _this8.events.trigger('opened', ev);
 
                     if (typeof callback === 'function') {
-                        callback.call(_this9, ev);
+                        callback.call(_this8, ev);
                     }
                 }
             });
@@ -3514,11 +3559,7 @@ Cuic.Component = function (_Cuic$Element) {
     return _class6;
 }(Cuic.Element);
 
-Cuic.Component.prototype.options = {
-    className: null,
-    css: null,
-    parent: null
-};
+Cuic.Component.prototype.options = {};
 
 /*
  * The MIT License (MIT)
@@ -3545,8 +3586,8 @@ Cuic.Component.prototype.options = {
  *
  */
 
-Cuic.Group = function (_Cuic$Element2) {
-    _inherits(_class7, _Cuic$Element2);
+Cuic.Group = function (_Cuic$Component) {
+    _inherits(_class7, _Cuic$Component);
 
     function _class7(node, attributes, options) {
         _classCallCheck(this, _class7);
@@ -3557,16 +3598,16 @@ Cuic.Group = function (_Cuic$Element2) {
         // Create element
 
         // Add component classes
-        var _this10 = _possibleConstructorReturn(this, (_class7.__proto__ || Object.getPrototypeOf(_class7)).call(this, node, Cuic.extend({
+        var _this9 = _possibleConstructorReturn(this, (_class7.__proto__ || Object.getPrototypeOf(_class7)).call(this, node, Cuic.extend({
             className: options.className,
             role: 'group'
         }, attributes), options));
 
-        _this10.addClass('component-group');
+        _this9.addClass('component-group');
 
         // Prepare components collection
-        _this10.components = new Cuic.Collection();
-        return _this10;
+        _this9.components = new Cuic.Collection();
+        return _this9;
     }
 
     /**
@@ -3633,10 +3674,9 @@ Cuic.Group = function (_Cuic$Element2) {
     }]);
 
     return _class7;
-}(Cuic.Element);
+}(Cuic.Component);
 
 Cuic.Group.prototype.options = {
-    className: 'group',
     namespace: 'group'
 };
 
@@ -3977,8 +4017,8 @@ Cuic.Elements = function () {
  *
  */
 
-Cuic.Hook = function (_Cuic$Element3) {
-    _inherits(_class9, _Cuic$Element3);
+Cuic.Hook = function (_Cuic$Element2) {
+    _inherits(_class9, _Cuic$Element2);
 
     function _class9(options) {
         _classCallCheck(this, _class9);
@@ -3989,12 +4029,12 @@ Cuic.Hook = function (_Cuic$Element3) {
         // Create element
 
         // Add component classes
-        var _this11 = _possibleConstructorReturn(this, (_class9.__proto__ || Object.getPrototypeOf(_class9)).call(this, 'div', { className: options.className }, options));
+        var _this10 = _possibleConstructorReturn(this, (_class9.__proto__ || Object.getPrototypeOf(_class9)).call(this, 'div', { className: options.className }, options));
 
-        _this11.addClass('hook');
+        _this10.addClass('hook');
 
         // This is a fix to avoid offsetTop > 0
-        _this11.css({
+        _this10.css({
             position: 'relative',
             top: '',
             width: ''
@@ -4002,30 +4042,30 @@ Cuic.Hook = function (_Cuic$Element3) {
 
         // Create the spacer item that will replace
         // the bar when it is scrolled
-        _this11.space = new Cuic.Element('div', {
+        _this10.space = new Cuic.Element('div', {
             className: 'hook-space'
         });
 
         // Get the element's offset
-        var offset = _this11.offset();
+        var offset = _this10.offset();
 
         var onScroll = function onScroll() {
-            var fitsInScreen = _this11.outerHeight(true) <= window.screen.availHeight;
+            var fitsInScreen = _this10.outerHeight(true) <= window.screen.availHeight;
 
             if (fitsInScreen) {
-                if (_this11.options.fixed) {
-                    _this11.hook();
+                if (_this10.options.fixed) {
+                    _this10.hook();
                 } else {
-                    var margin = _this11.margin();
+                    var margin = _this10.margin();
 
                     if (window.scrollY > offset.top - margin.top) {
-                        _this11.hook();
+                        _this10.hook();
                     } else {
-                        _this11.unhook();
+                        _this10.unhook();
                     }
                 }
             } else {
-                _this11.unhook();
+                _this10.unhook();
             }
         };
 
@@ -4039,7 +4079,7 @@ Cuic.Hook = function (_Cuic$Element3) {
         window.onresize = function () {
             onScroll();
         };
-        return _this11;
+        return _this10;
     }
 
     /**
@@ -4179,8 +4219,8 @@ Cuic.Hook.prototype.options = {
  *
  */
 
-Cuic.Movable = function (_Cuic$Element4) {
-    _inherits(_class10, _Cuic$Element4);
+Cuic.Movable = function (_Cuic$Element3) {
+    _inherits(_class10, _Cuic$Element3);
 
     function _class10(options) {
         _classCallCheck(this, _class10);
@@ -4191,21 +4231,21 @@ Cuic.Movable = function (_Cuic$Element4) {
         // Create element
 
         // Add component class
-        var _this12 = _possibleConstructorReturn(this, (_class10.__proto__ || Object.getPrototypeOf(_class10)).call(this, 'div', { className: options.className }, options));
+        var _this11 = _possibleConstructorReturn(this, (_class10.__proto__ || Object.getPrototypeOf(_class10)).call(this, 'div', { className: options.className }, options));
 
-        _this12.addClass('movable');
+        _this11.addClass('movable');
 
         // Force the target to be the relative parent
-        if (_this12.css('position') === 'static') {
-            _this12.css({ position: 'relative' });
+        if (_this11.css('position') === 'static') {
+            _this11.css({ position: 'relative' });
         }
 
         // Group handles
-        _this12.handles = new Cuic.Collection();
+        _this11.handles = new Cuic.Collection();
 
         // Set the moving area
-        _this12.addMoveHandle(options.handle || _this12.node());
-        return _this12;
+        _this11.addMoveHandle(options.handle || _this11.node());
+        return _this11;
     }
 
     /**
@@ -4218,7 +4258,7 @@ Cuic.Movable = function (_Cuic$Element4) {
     _createClass(_class10, [{
         key: 'addMoveHandle',
         value: function addMoveHandle(handle) {
-            var _this13 = this;
+            var _this12 = this;
 
             handle = Cuic.element(handle);
 
@@ -4230,44 +4270,44 @@ Cuic.Movable = function (_Cuic$Element4) {
             // Start moving
             Cuic.on('mousedown', handle, function (ev) {
                 // Ignore moving if the target is not the root
-                if (_this13.options.rootOnly && ev.target !== ev.currentTarget) return;
+                if (_this12.options.rootOnly && ev.target !== ev.currentTarget) return;
 
                 // Execute callback
-                if (_this13.events.trigger('moveStart', ev) === false) return;
+                if (_this12.events.trigger('moveStart', ev) === false) return;
 
                 // Prevent text selection
                 ev.preventDefault();
 
                 // Add moving class
-                _this13.addClass('moving');
+                _this12.addClass('moving');
 
-                var startPosition = _this13.position();
+                var startPosition = _this12.position();
                 var startX = ev.clientX;
                 var startY = ev.clientY;
 
                 var onMouseMove = function onMouseMove(ev) {
                     // Execute callback
-                    if (_this13.events.trigger('move', ev) === false) return;
+                    if (_this12.events.trigger('move', ev) === false) return;
 
                     var prop = {};
 
                     // Move horizontally
-                    if (_this13.options.horizontal) {
+                    if (_this12.options.horizontal) {
                         var diffX = ev.clientX - startX;
                         prop.left = startPosition.left + diffX;
                         prop.right = '';
                     }
 
                     // Move vertically
-                    if (_this13.options.vertical) {
+                    if (_this12.options.vertical) {
                         var diffY = ev.clientY - startY;
                         prop.top = startPosition.top + diffY;
                         prop.bottom = '';
                     }
 
                     // Move element
-                    _this13.css(prop);
-                    _this13.autoAlign();
+                    _this12.css(prop);
+                    _this12.autoAlign();
                 };
 
                 // Moving
@@ -4276,8 +4316,8 @@ Cuic.Movable = function (_Cuic$Element4) {
                 // Stop moving
                 Cuic.once('mouseup', document, function (ev) {
                     Cuic.off('mousemove', document, onMouseMove);
-                    _this13.removeClass('moving');
-                    _this13.events.trigger('moveEnd', ev);
+                    _this12.removeClass('moving');
+                    _this12.events.trigger('moveEnd', ev);
                 });
             });
             return this;
@@ -4327,7 +4367,6 @@ Cuic.Movable = function (_Cuic$Element4) {
 }(Cuic.Element);
 
 Cuic.Movable.prototype.options = {
-    className: 'movable',
     handle: null,
     handleClassName: 'movable-handle',
     horizontal: true,
@@ -4361,8 +4400,8 @@ Cuic.Movable.prototype.options = {
  *
  */
 
-Cuic.Resizable = function (_Cuic$Element5) {
-    _inherits(_class11, _Cuic$Element5);
+Cuic.Resizable = function (_Cuic$Element4) {
+    _inherits(_class11, _Cuic$Element4);
 
     function _class11(options) {
         _classCallCheck(this, _class11);
@@ -4373,61 +4412,61 @@ Cuic.Resizable = function (_Cuic$Element5) {
         // Create element
 
         // Add component classes
-        var _this14 = _possibleConstructorReturn(this, (_class11.__proto__ || Object.getPrototypeOf(_class11)).call(this, 'div', { className: options.className }, options));
+        var _this13 = _possibleConstructorReturn(this, (_class11.__proto__ || Object.getPrototypeOf(_class11)).call(this, 'div', { className: options.className }, options));
 
-        _this14.addClass('resizable');
+        _this13.addClass('resizable');
 
         // Force the target to be the relative parent
-        if (_this14.css('position') === 'static') {
-            _this14.css('position', 'relative');
+        if (_this13.css('position') === 'static') {
+            _this13.css('position', 'relative');
         }
 
         // Add Bottom handle
-        _this14.bottomHandle = new Cuic.Element('div', {
+        _this13.bottomHandle = new Cuic.Element('div', {
             className: 'resize-handle resize-handle-s',
             css: { height: options.handleSize }
-        }).appendTo(_this14);
+        }).appendTo(_this13);
 
         // Add Right handler
-        _this14.rightHandle = new Cuic.Element('div', {
+        _this13.rightHandle = new Cuic.Element('div', {
             className: 'resize-handle resize-handle-e',
             css: { width: options.handleSize }
-        }).appendTo(_this14);
+        }).appendTo(_this13);
 
         // Add Bottom-Right handler
-        _this14.bottomRightHandle = new Cuic.Element('div', {
+        _this13.bottomRightHandle = new Cuic.Element('div', {
             className: 'resize-handle resize-handle-se',
             css: {
                 height: options.handleSize,
                 width: options.handleSize
             }
-        }).appendTo(_this14);
+        }).appendTo(_this13);
 
         // Group handles
-        _this14.handles = new Cuic.Collection([_this14.rightHandle, _this14.bottomHandle, _this14.bottomRightHandle]);
+        _this13.handles = new Cuic.Collection([_this13.rightHandle, _this13.bottomHandle, _this13.bottomRightHandle]);
 
         // Group horizontal handles
-        _this14.horizontalHandles = new Cuic.Collection([_this14.rightHandle, _this14.bottomRightHandle]);
+        _this13.horizontalHandles = new Cuic.Collection([_this13.rightHandle, _this13.bottomRightHandle]);
 
         // Group vertical handles
-        _this14.verticalHandles = new Cuic.Collection([_this14.bottomHandle, _this14.bottomRightHandle]);
+        _this13.verticalHandles = new Cuic.Collection([_this13.bottomHandle, _this13.bottomRightHandle]);
 
-        _this14.handles.each(function (handle) {
+        _this13.handles.each(function (handle) {
             // Start resizing
             handle.on('mousedown', function (ev) {
                 // Execute callback
-                if (_this14.events.trigger('resizeStart', ev) === false) return;
+                if (_this13.events.trigger('resizeStart', ev) === false) return;
 
                 // Prevent text selection
                 ev.preventDefault();
 
                 // Add resizing class
-                _this14.addClass('resizing');
+                _this13.addClass('resizing');
 
                 var startX = ev.clientX;
                 var startY = ev.clientY;
-                var initialHeight = _this14.outerHeight();
-                var initialWidth = _this14.outerWidth();
+                var initialHeight = _this13.outerHeight();
+                var initialWidth = _this13.outerWidth();
                 var handleTarget = ev.currentTarget;
 
                 // Calculate initial ratio
@@ -4435,19 +4474,19 @@ Cuic.Resizable = function (_Cuic$Element5) {
 
                 var onMouseMove = function onMouseMove(ev) {
                     // Execute callback
-                    if (_this14.events.trigger('resize', ev) === false) return;
+                    if (_this13.events.trigger('resize', ev) === false) return;
 
                     var prop = {};
 
                     // Resize horizontally
-                    if (_this14.options.horizontal) {
-                        for (var _i3 = 0; _i3 < _this14.horizontalHandles.length; _i3 += 1) {
-                            if (_this14.horizontalHandles.get(_i3).node() === handleTarget) {
+                    if (_this13.options.horizontal) {
+                        for (var _i3 = 0; _i3 < _this13.horizontalHandles.length; _i3 += 1) {
+                            if (_this13.horizontalHandles.get(_i3).node() === handleTarget) {
                                 var diffX = ev.clientX - startX;
                                 var width = initialWidth + diffX;
 
                                 // Width is between min and max
-                                if ((!Number(_this14.options.maxWidth) || width <= _this14.options.maxWidth) && (!Number(_this14.options.minWidth) || width >= _this14.options.minWidth)) {
+                                if ((!Number(_this13.options.maxWidth) || width <= _this13.options.maxWidth) && (!Number(_this13.options.minWidth) || width >= _this13.options.minWidth)) {
                                     prop.width = width;
                                 }
                                 break;
@@ -4456,14 +4495,14 @@ Cuic.Resizable = function (_Cuic$Element5) {
                     }
 
                     // Resize vertically
-                    if (_this14.options.vertical) {
-                        for (var _i4 = 0; _i4 < _this14.verticalHandles.length; _i4 += 1) {
-                            if (_this14.verticalHandles.get(_i4).node() === handleTarget) {
+                    if (_this13.options.vertical) {
+                        for (var _i4 = 0; _i4 < _this13.verticalHandles.length; _i4 += 1) {
+                            if (_this13.verticalHandles.get(_i4).node() === handleTarget) {
                                 var diffY = ev.clientY - startY;
                                 var height = initialHeight + diffY;
 
                                 // Height is between min and max
-                                if ((!Number(_this14.options.maxHeight) || height <= _this14.options.maxHeight) && (!Number(_this14.options.minHeight) || height >= _this14.options.minHeight)) {
+                                if ((!Number(_this13.options.maxHeight) || height <= _this13.options.maxHeight) && (!Number(_this13.options.minHeight) || height >= _this13.options.minHeight)) {
                                     prop.height = height;
                                 }
                                 break;
@@ -4474,7 +4513,7 @@ Cuic.Resizable = function (_Cuic$Element5) {
                     // fixme element can be resized more than parent size if keep ratio is active
 
                     // Keep ratio
-                    if (_this14.options.keepRatio) {
+                    if (_this13.options.keepRatio) {
                         if (prop.height) {
                             prop.width = prop.height / ratio;
                         } else if (prop.width) {
@@ -4483,8 +4522,8 @@ Cuic.Resizable = function (_Cuic$Element5) {
                     }
 
                     // Apply new size
-                    _this14.css(prop);
-                    _this14.autoResize();
+                    _this13.css(prop);
+                    _this13.autoResize();
                 };
 
                 // Resizing
@@ -4493,12 +4532,12 @@ Cuic.Resizable = function (_Cuic$Element5) {
                 // Stop resizing
                 Cuic.once('mouseup', document, function (ev) {
                     Cuic.off('mousemove', document, onMouseMove);
-                    _this14.removeClass('resizing');
-                    _this14.events.trigger('resizeEnd', ev);
+                    _this13.removeClass('resizing');
+                    _this13.events.trigger('resizeEnd', ev);
                 });
             });
         });
-        return _this14;
+        return _this13;
     }
 
     /**
@@ -4546,7 +4585,6 @@ Cuic.Resizable = function (_Cuic$Element5) {
 }(Cuic.Element);
 
 Cuic.Resizable.prototype.options = {
-    className: 'resizable',
     handleSize: 10,
     horizontal: true,
     keepRatio: false,
@@ -4583,8 +4621,8 @@ Cuic.Resizable.prototype.options = {
  *
  */
 
-Cuic.Selectable = function (_Cuic$Element6) {
-    _inherits(_class12, _Cuic$Element6);
+Cuic.Selectable = function (_Cuic$Element5) {
+    _inherits(_class12, _Cuic$Element5);
 
     function _class12(options) {
         _classCallCheck(this, _class12);
@@ -4595,24 +4633,24 @@ Cuic.Selectable = function (_Cuic$Element6) {
         // Create element
 
         // Add component class
-        var _this15 = _possibleConstructorReturn(this, (_class12.__proto__ || Object.getPrototypeOf(_class12)).call(this, 'div', { className: options.className }, options));
+        var _this14 = _possibleConstructorReturn(this, (_class12.__proto__ || Object.getPrototypeOf(_class12)).call(this, 'div', { className: options.className }, options));
 
-        _this15.addClass('selectable');
+        _this14.addClass('selectable');
 
         // Add selected class
-        if (_this15.options.selected) {
-            _this15.addClass('selected');
+        if (_this14.options.selected) {
+            _this14.addClass('selected');
         }
 
         // Add or remove selected class
-        _this15.on('click', function () {
-            if (_this15.hasClass('selected')) {
-                _this15.deselect();
+        _this14.on('click', function () {
+            if (_this14.hasClass('selected')) {
+                _this14.deselect();
             } else {
-                _this15.select();
+                _this14.select();
             }
         });
-        return _this15;
+        return _this14;
     }
 
     /**
@@ -4625,15 +4663,15 @@ Cuic.Selectable = function (_Cuic$Element6) {
     _createClass(_class12, [{
         key: 'deselect',
         value: function deselect(callback) {
-            var _this16 = this;
+            var _this15 = this;
 
             this.removeClass('selected');
             this.once('transitionend', function (ev) {
-                if (!_this16.isSelected()) {
-                    _this16.events.trigger('deselected', ev);
+                if (!_this15.isSelected()) {
+                    _this15.events.trigger('deselected', ev);
 
                     if (typeof callback === 'function') {
-                        callback.call(_this16, ev);
+                        callback.call(_this15, ev);
                     }
                 }
             });
@@ -4686,15 +4724,15 @@ Cuic.Selectable = function (_Cuic$Element6) {
     }, {
         key: 'select',
         value: function select(callback) {
-            var _this17 = this;
+            var _this16 = this;
 
             this.addClass('selected');
             this.once('transitionend', function (ev) {
-                if (_this17.isSelected()) {
-                    _this17.events.trigger('selected', ev);
+                if (_this16.isSelected()) {
+                    _this16.events.trigger('selected', ev);
 
                     if (typeof callback === 'function') {
-                        callback.call(_this17, ev);
+                        callback.call(_this16, ev);
                     }
                 }
             });
@@ -4706,7 +4744,6 @@ Cuic.Selectable = function (_Cuic$Element6) {
 }(Cuic.Element);
 
 Cuic.Selectable.prototype.options = {
-    className: 'selectable',
     namespace: 'selectable'
 };
 
@@ -4735,8 +4772,8 @@ Cuic.Selectable.prototype.options = {
  *
  */
 
-Cuic.Button = function (_Cuic$Component) {
-    _inherits(_class13, _Cuic$Component);
+Cuic.Button = function (_Cuic$Component2) {
+    _inherits(_class13, _Cuic$Component2);
 
     function _class13(options) {
         _classCallCheck(this, _class13);
@@ -4747,7 +4784,7 @@ Cuic.Button = function (_Cuic$Component) {
         // Create element
 
         // Add component classes
-        var _this18 = _possibleConstructorReturn(this, (_class13.__proto__ || Object.getPrototypeOf(_class13)).call(this, 'button', {
+        var _this17 = _possibleConstructorReturn(this, (_class13.__proto__ || Object.getPrototypeOf(_class13)).call(this, 'button', {
             className: options.className,
             disabled: false,
             html: options.label,
@@ -4755,26 +4792,26 @@ Cuic.Button = function (_Cuic$Component) {
             type: options.type
         }, options));
 
-        _this18.addClass('btn');
+        _this17.addClass('btn');
 
         // Create shortcut
         if (typeof options.shortcut === 'number') {
-            _this18.shortcut = new Cuic.Shortcut({
+            _this17.shortcut = new Cuic.Shortcut({
                 keyCode: options.shortcut,
-                target: _this18.element,
+                target: _this17.element,
                 callback: function callback() {
                     this.node().click();
                 }
             });
         }
-        return _this18;
+        return _this17;
     }
 
     return _class13;
 }(Cuic.Component);
 
 Cuic.Button.prototype.options = {
-    className: 'btn btn-default',
+    className: 'btn-default',
     disabled: false,
     shortcut: null,
     title: null,
@@ -4818,8 +4855,8 @@ Cuic.dialogs.onRemoved(function () {
     dialogZIndex -= 1;
 });
 
-Cuic.Dialog = function (_Cuic$Component2) {
-    _inherits(_class14, _Cuic$Component2);
+Cuic.Dialog = function (_Cuic$Component3) {
+    _inherits(_class14, _Cuic$Component3);
 
     function _class14(options) {
         _classCallCheck(this, _class14);
@@ -4830,104 +4867,104 @@ Cuic.Dialog = function (_Cuic$Component2) {
         // Create element
 
         // Add component classes
-        var _this19 = _possibleConstructorReturn(this, (_class14.__proto__ || Object.getPrototypeOf(_class14)).call(this, 'div', {
+        var _this18 = _possibleConstructorReturn(this, (_class14.__proto__ || Object.getPrototypeOf(_class14)).call(this, 'div', {
             className: options.className,
             role: 'dialog'
         }, options));
 
-        _this19.addClass('dialog');
+        _this18.addClass('dialog');
 
         // Set dialog position
-        if (_this19.parentNode() === document.body) {
-            _this19.css({ position: 'absolute' });
+        if (_this18.parentNode() === document.body) {
+            _this18.css({ position: 'absolute' });
         }
 
         // Create the fader
-        _this19.fader = new Cuic.Fader({
+        _this18.fader = new Cuic.Fader({
             className: 'fader dialog-fader',
             autoClose: false,
             autoRemove: false
-        }).appendTo(_this19.options.parent);
+        }).appendTo(_this18.options.parent);
 
         // Add header
-        _this19.header = new Cuic.Element('header', {
+        _this18.header = new Cuic.Element('header', {
             className: 'dialog-header',
-            css: { display: _this19.options.title != null ? 'block' : 'none' }
-        }).appendTo(_this19);
+            css: { display: _this18.options.title != null ? 'block' : 'none' }
+        }).appendTo(_this18);
 
         // Add title
-        _this19.title = new Cuic.Element('h3', {
+        _this18.title = new Cuic.Element('h3', {
             className: 'dialog-title',
-            html: _this19.options.title
-        }).appendTo(_this19.header);
+            html: _this18.options.title
+        }).appendTo(_this18.header);
 
         // Add content
-        _this19.content = new Cuic.Element('section', {
+        _this18.content = new Cuic.Element('section', {
             className: 'dialog-content',
-            html: _this19.options.content
-        }).appendTo(_this19);
+            html: _this18.options.content
+        }).appendTo(_this18);
 
         // Add footer
-        _this19.footer = new Cuic.Element('footer', {
+        _this18.footer = new Cuic.Element('footer', {
             className: 'dialog-footer',
-            css: { display: _this19.options.buttons != null ? 'block' : 'none' }
-        }).appendTo(_this19);
+            css: { display: _this18.options.buttons != null ? 'block' : 'none' }
+        }).appendTo(_this18);
 
         // Add buttons group
-        _this19.buttons = new Cuic.Group('div', {
+        _this18.buttons = new Cuic.Group('div', {
             className: 'btn-group'
-        }).appendTo(_this19.footer);
+        }).appendTo(_this18.footer);
 
         // Add close button
-        _this19.closeButton = new Cuic.Element('span', {
+        _this18.closeButton = new Cuic.Element('span', {
             className: 'btn-close glyphicon glyphicon-remove-sign',
-            html: _this19.options.closeButton,
+            html: _this18.options.closeButton,
             role: 'button'
-        }).appendTo(_this19.header);
+        }).appendTo(_this18.header);
 
         // Show footer if not empty
-        _this19.buttons.onComponentAdded(function () {
-            if (_this19.buttons.components.length > 0) {
-                _this19.footer.show();
+        _this18.buttons.onComponentAdded(function () {
+            if (_this18.buttons.components.length > 0) {
+                _this18.footer.show();
             }
         });
 
         // Hide footer if empty
-        _this19.buttons.onComponentRemoved(function () {
-            if (_this19.buttons.components.length < 1) {
-                _this19.footer.hide();
+        _this18.buttons.onComponentRemoved(function () {
+            if (_this18.buttons.components.length < 1) {
+                _this18.footer.hide();
             }
         });
 
         // Add buttons
-        if (_this19.options.buttons instanceof Array) {
-            for (var _i5 = 0; _i5 < _this19.options.buttons.length; _i5 += 1) {
-                _this19.addButton(_this19.options.buttons[_i5]);
+        if (_this18.options.buttons instanceof Array) {
+            for (var _i5 = 0; _i5 < _this18.options.buttons.length; _i5 += 1) {
+                _this18.addButton(_this18.options.buttons[_i5]);
             }
         }
 
         // Set content height
         if (parseFloat(options.contentHeight) > 0) {
-            _this19.content.css({ height: options.contentHeight });
+            _this18.content.css({ height: options.contentHeight });
         }
 
         // Set content width
         if (parseFloat(options.contentWidth) > 0) {
-            _this19.content.css({ width: options.contentWidth });
+            _this18.content.css({ width: options.contentWidth });
         }
 
         // Close dialog when fader is clicked
-        _this19.fader.on('click', function () {
-            if (_this19.options.autoClose) {
-                _this19.close();
+        _this18.fader.on('click', function () {
+            if (_this18.options.autoClose) {
+                _this18.close();
             }
         });
 
-        _this19.on('click', function (ev) {
+        _this18.on('click', function (ev) {
             // Close button
             if (Cuic.element(ev.target).hasClass('btn-close')) {
                 ev.preventDefault();
-                _this19.close();
+                _this18.close();
             }
         });
 
@@ -4935,11 +4972,11 @@ Cuic.Dialog = function (_Cuic$Component2) {
          * Movable interface
          * @type {Cuic.Movable}
          */
-        if (_this19.options.movable) {
-            _this19.movable = new Cuic.Movable({
-                enabled: _this19.options.movable,
-                element: _this19.node(),
-                handle: _this19.title,
+        if (_this18.options.movable) {
+            _this18.movable = new Cuic.Movable({
+                enabled: _this18.options.movable,
+                element: _this18.node(),
+                handle: _this18.title,
                 rootOnly: false
             });
         }
@@ -4948,10 +4985,10 @@ Cuic.Dialog = function (_Cuic$Component2) {
          * Resizable interface
          * @type {Cuic.Resizable}
          */
-        if (_this19.options.resizable) {
-            _this19.resizable = new Cuic.Resizable({
-                enabled: _this19.options.resizable,
-                element: _this19.node()
+        if (_this18.options.resizable) {
+            _this18.resizable = new Cuic.Resizable({
+                enabled: _this18.options.resizable,
+                element: _this18.node()
             });
         }
 
@@ -4959,57 +4996,57 @@ Cuic.Dialog = function (_Cuic$Component2) {
          * Dialog shortcuts
          * @type {{close: *}}
          */
-        _this19.shortcuts = {
+        _this18.shortcuts = {
             close: new Cuic.Shortcut({
-                element: _this19,
+                element: _this18,
                 keyCode: Cuic.keys.ESC,
                 callback: function callback() {
-                    _this19.close();
+                    _this18.close();
                 }
             })
         };
 
         // Add dialog to collection
-        Cuic.dialogs.add(_this19);
+        Cuic.dialogs.add(_this18);
 
         // Called when dialog is closing
-        _this19.onClose(function () {
-            _this19.fader.options.autoRemove = _this19.options.autoRemove;
-            _this19.fader.close();
+        _this18.onClose(function () {
+            _this18.fader.options.autoRemove = _this18.options.autoRemove;
+            _this18.fader.close();
         });
 
         // Called when dialog is closed
-        _this19.onClosed(function () {
-            if (_this19.options.autoRemove) {
-                _this19.remove();
-                _this19.fader.remove();
+        _this18.onClosed(function () {
+            if (_this18.options.autoRemove) {
+                _this18.remove();
+                _this18.fader.remove();
             }
         });
 
         // Called when dialog is opening
-        _this19.onOpen(function () {
+        _this18.onOpen(function () {
             // Calculate z-index
-            var zIndex = _this19.options.zIndex + dialogZIndex;
-            _this19.css({ 'z-index': zIndex });
+            var zIndex = _this18.options.zIndex + dialogZIndex;
+            _this18.css({ 'z-index': zIndex });
 
-            _this19.resizeContent();
+            _this18.resizeContent();
 
             // Open fader
-            if (_this19.options.modal) {
-                _this19.css({ 'z-index': zIndex + 1 });
-                _this19.fader.css({ 'z-index': zIndex });
-                _this19.fader.open();
+            if (_this18.options.modal) {
+                _this18.css({ 'z-index': zIndex + 1 });
+                _this18.fader.css({ 'z-index': zIndex });
+                _this18.fader.open();
             }
 
             // Maximize or position the dialog
-            if (_this19.options.maximized) {
-                _this19.maximize();
+            if (_this18.options.maximized) {
+                _this18.maximize();
             } else {
-                _this19.align(_this19.options.position);
+                _this18.align(_this18.options.position);
             }
 
             // Focus the last button
-            var buttons = _this19.buttons.children();
+            var buttons = _this18.buttons.children();
 
             if (buttons.length > 0) {
                 buttons.last().node().focus();
@@ -5017,7 +5054,7 @@ Cuic.Dialog = function (_Cuic$Component2) {
         });
 
         // Called when dialog is opened
-        _this19.onOpened(function (ev) {
+        _this18.onOpened(function (ev) {
             // // todo wait images to be loaded to resize content
             // let images = this.find('img');
             //
@@ -5033,14 +5070,14 @@ Cuic.Dialog = function (_Cuic$Component2) {
         });
 
         // Remove dialog from list
-        _this19.onRemoved(function () {
-            Cuic.dialogs.remove(_this19);
+        _this18.onRemoved(function () {
+            Cuic.dialogs.remove(_this18);
         });
 
         Cuic.on('resize', window, function () {
-            _this19.resizeContent();
+            _this18.resizeContent();
         });
-        return _this19;
+        return _this18;
     }
 
     /**
@@ -5053,7 +5090,7 @@ Cuic.Dialog = function (_Cuic$Component2) {
     _createClass(_class14, [{
         key: 'addButton',
         value: function addButton(button) {
-            var _this20 = this;
+            var _this19 = this;
 
             if (!(button instanceof Cuic.Button)) {
                 (function () {
@@ -5068,11 +5105,11 @@ Cuic.Dialog = function (_Cuic$Component2) {
                     // Set button callback
                     if (typeof callback === 'function') {
                         button.on('click', function (ev) {
-                            callback.call(_this20, ev);
+                            callback.call(_this19, ev);
                         });
                     } else if (callback === 'close') {
                         button.on('click', function () {
-                            _this20.close();
+                            _this19.close();
                         });
                     }
                 })();
@@ -5219,7 +5256,6 @@ Cuic.Dialog.prototype.options = {
     autoRemove: true,
     autoResize: true,
     buttons: [],
-    className: 'dialog',
     closable: true,
     closeButton: null,
     content: null,
@@ -5261,8 +5297,8 @@ Cuic.Dialog.prototype.options = {
  *
  */
 
-Cuic.Fader = function (_Cuic$Component3) {
-    _inherits(_class15, _Cuic$Component3);
+Cuic.Fader = function (_Cuic$Component4) {
+    _inherits(_class15, _Cuic$Component4);
 
     function _class15(options) {
         _classCallCheck(this, _class15);
@@ -5273,31 +5309,31 @@ Cuic.Fader = function (_Cuic$Component3) {
         // Create element
 
         // Add component classes
-        var _this21 = _possibleConstructorReturn(this, (_class15.__proto__ || Object.getPrototypeOf(_class15)).call(this, 'div', { className: options.className }, options));
+        var _this20 = _possibleConstructorReturn(this, (_class15.__proto__ || Object.getPrototypeOf(_class15)).call(this, 'div', { className: options.className }, options));
 
-        _this21.addClass('fader');
+        _this20.addClass('fader');
 
-        var fixed = _this21.parentNode() === document.body;
+        var fixed = _this20.parentNode() === document.body;
 
         // Set position
         if (fixed) {
-            _this21.css({ position: 'fixed' });
+            _this20.css({ position: 'fixed' });
         }
 
         // Auto close when fader is clicked
-        _this21.on('click', function () {
-            if (_this21.options.autoClose) {
-                _this21.close();
+        _this20.on('click', function () {
+            if (_this20.options.autoClose) {
+                _this20.close();
             }
         });
 
         // Called when fader is closed
-        _this21.onClosed(function () {
-            if (_this21.options.autoRemove) {
-                _this21.remove();
+        _this20.onClosed(function () {
+            if (_this20.options.autoRemove) {
+                _this20.remove();
             }
         });
-        return _this21;
+        return _this20;
     }
 
     return _class15;
@@ -5306,7 +5342,6 @@ Cuic.Fader = function (_Cuic$Component3) {
 Cuic.Fader.prototype.options = {
     autoClose: false,
     autoRemove: false,
-    className: 'fader',
     namespace: 'fader',
     zIndex: 1
 };
@@ -6042,8 +6077,8 @@ Cuic.Fader.prototype.options = {
 
 Cuic.notifications = new Cuic.Collection();
 
-Cuic.Notification = function (_Cuic$Component4) {
-    _inherits(_class16, _Cuic$Component4);
+Cuic.Notification = function (_Cuic$Component5) {
+    _inherits(_class16, _Cuic$Component5);
 
     function _class16(options) {
         _classCallCheck(this, _class16);
@@ -6054,75 +6089,75 @@ Cuic.Notification = function (_Cuic$Component4) {
         // Create element
 
         // Add component classes
-        var _this22 = _possibleConstructorReturn(this, (_class16.__proto__ || Object.getPrototypeOf(_class16)).call(this, 'div', { className: options.className }, options));
+        var _this21 = _possibleConstructorReturn(this, (_class16.__proto__ || Object.getPrototypeOf(_class16)).call(this, 'div', { className: options.className }, options));
 
-        _this22.addClass('notification');
+        _this21.addClass('notification');
 
         // Public attributes
-        _this22.closeTimer = null;
+        _this21.closeTimer = null;
 
         // Add content
-        _this22.content = new Cuic.Element('div', {
+        _this21.content = new Cuic.Element('div', {
             className: 'notification-content',
             html: options.content
-        }).appendTo(_this22);
+        }).appendTo(_this21);
 
         // Add close button
-        _this22.closeButton = new Cuic.Element('span', {
+        _this21.closeButton = new Cuic.Element('span', {
             className: 'btn-close glyphicon glyphicon-remove-sign',
-            html: _this22.options.closeButton,
+            html: _this21.options.closeButton,
             role: 'button'
-        }).appendTo(_this22);
+        }).appendTo(_this21);
 
         // Avoid closing notification when mouse is over
-        _this22.on('mouseenter', function (ev) {
-            clearTimeout(_this22.closeTimer);
+        _this21.on('mouseenter', function (ev) {
+            clearTimeout(_this21.closeTimer);
         });
 
         // Close notification when mouse is out
-        _this22.on('mouseleave', function (ev) {
-            if (ev.currentTarget === _this22.node()) {
-                _this22.autoClose();
+        _this21.on('mouseleave', function (ev) {
+            if (ev.currentTarget === _this21.node()) {
+                _this21.autoClose();
             }
         });
 
-        _this22.on('click', function (ev) {
+        _this21.on('click', function (ev) {
             // Close button
             if (Cuic.element(ev.target).hasClass('btn-close')) {
                 ev.preventDefault();
-                _this22.close();
+                _this21.close();
             }
         });
 
         // Add dialog to collection
-        Cuic.notifications.add(_this22);
+        Cuic.notifications.add(_this21);
 
         // Called when the notification is closed
-        _this22.onClosed(function () {
-            if (_this22.options.autoRemove) {
-                _this22.remove();
+        _this21.onClosed(function () {
+            if (_this21.options.autoRemove) {
+                _this21.remove();
             }
         });
 
         // Called when the notification is opening
-        _this22.onOpen(function () {
-            if (_this22.options.position) {
-                var isFixed = _this22.parentNode() === document.body;
-                _this22.css({ position: isFixed ? 'fixed' : 'absolute' });
-                _this22.align(_this22.options.position);
+        _this21.onOpen(function () {
+            if (_this21.options.position) {
+                var isFixed = _this21.parentNode() === document.body;
+                _this21.css({ position: isFixed ? 'fixed' : 'absolute' });
+                _this21.align(_this21.options.position);
             }
         });
 
         // Called when the notification is opened
-        _this22.onOpened(function () {
-            _this22.autoClose();
+        _this21.onOpened(function () {
+            _this21.autoClose();
         });
 
         // Remove dialog from list
-        _this22.onRemoved(function () {
-            Cuic.notifications.remove(_this22);
+        _this21.onRemoved(function () {
+            Cuic.notifications.remove(_this21);
         });
-        return _this22;
+        return _this21;
     }
 
     /**
@@ -6133,12 +6168,12 @@ Cuic.Notification = function (_Cuic$Component4) {
     _createClass(_class16, [{
         key: 'autoClose',
         value: function autoClose() {
-            var _this23 = this;
+            var _this22 = this;
 
             clearTimeout(this.closeTimer);
             this.closeTimer = setTimeout(function () {
-                if (_this23.options.autoClose) {
-                    _this23.close();
+                if (_this22.options.autoClose) {
+                    _this22.close();
                 }
             }, this.options.duration);
         }
@@ -6163,7 +6198,6 @@ Cuic.Notification = function (_Cuic$Component4) {
 Cuic.Notification.prototype.options = {
     autoClose: true,
     autoRemove: true,
-    className: 'notification',
     closable: true,
     closeButton: '',
     content: null,
@@ -6211,19 +6245,19 @@ Cuic.NotificationStack = function (_Cuic$Group) {
         // Create element
 
         // Add component classes
-        var _this24 = _possibleConstructorReturn(this, (_class17.__proto__ || Object.getPrototypeOf(_class17)).call(this, 'div', { className: options.className }, options));
+        var _this23 = _possibleConstructorReturn(this, (_class17.__proto__ || Object.getPrototypeOf(_class17)).call(this, 'div', { className: options.className }, options));
 
-        _this24.addClass('notification-stack');
+        _this23.addClass('notification-stack');
 
         // Set position
-        if (_this24.options.position) {
-            var isFixed = _this24.parentNode() === document.body;
-            _this24.css({ position: isFixed ? 'fixed' : 'absolute' });
-            _this24.align(_this24.options.position);
+        if (_this23.options.position) {
+            var isFixed = _this23.parentNode() === document.body;
+            _this23.css({ position: isFixed ? 'fixed' : 'absolute' });
+            _this23.align(_this23.options.position);
         }
 
         // Display the notification when it's added to the stack
-        _this24.onComponentAdded(function (component) {
+        _this23.onComponentAdded(function (component) {
             if (component instanceof Cuic.Notification) {
                 // fixme Not using a timeout to open blocks the animation
                 setTimeout(function () {
@@ -6233,19 +6267,18 @@ Cuic.NotificationStack = function (_Cuic$Group) {
         });
 
         // Display the notification when it's added to the stack
-        _this24.onComponentRemoved(function (component) {
+        _this23.onComponentRemoved(function (component) {
             if (component instanceof Cuic.Notification) {
                 component.close();
             }
         });
-        return _this24;
+        return _this23;
     }
 
     return _class17;
 }(Cuic.Group);
 
 Cuic.NotificationStack.prototype.options = {
-    className: 'notification-stack',
     namespace: 'notification-stack',
     position: 'right top',
     zIndex: 10
@@ -6276,8 +6309,8 @@ Cuic.NotificationStack.prototype.options = {
  *
  */
 
-Cuic.Panel = function (_Cuic$Component5) {
-    _inherits(_class18, _Cuic$Component5);
+Cuic.Panel = function (_Cuic$Component6) {
+    _inherits(_class18, _Cuic$Component6);
 
     function _class18(options) {
         _classCallCheck(this, _class18);
@@ -6288,155 +6321,159 @@ Cuic.Panel = function (_Cuic$Component5) {
         // Create element
 
         // Add component classes
-        var _this25 = _possibleConstructorReturn(this, (_class18.__proto__ || Object.getPrototypeOf(_class18)).call(this, 'div', { className: options.className }, options));
+        var _this24 = _possibleConstructorReturn(this, (_class18.__proto__ || Object.getPrototypeOf(_class18)).call(this, 'div', { className: options.className }, options));
 
-        _this25.addClass('panel');
+        _this24.addClass('panel');
 
         if (options.element) {
-            _this25.header = _this25.find('.panel-header').eq(0);
-            _this25.title = _this25.find('.panel-title').eq(0);
-            _this25.content = _this25.find('.panel-content').eq(0);
-            _this25.footer = _this25.find('.panel-footer').eq(0);
-            _this25.closeButton = _this25.find('.panel-header .btn-close').eq(0);
+            _this24.header = _this24.find('.panel-header').eq(0);
+            _this24.title = _this24.find('.panel-title').eq(0);
+            _this24.content = _this24.find('.panel-content').eq(0);
+            _this24.footer = _this24.find('.panel-footer').eq(0);
+            _this24.closeButton = _this24.find('.panel-header .btn-close').eq(0);
         } else {
             // Add the header
-            _this25.header = new Cuic.Element('header', {
+            _this24.header = new Cuic.Element('header', {
                 className: 'panel-header'
-            }).prependTo(_this25);
+            }).prependTo(_this24);
 
             // Add the title
-            _this25.title = new Cuic.Element('h5', {
+            _this24.title = new Cuic.Element('h5', {
                 className: 'panel-title',
                 html: options.title
-            }).appendTo(_this25.header);
+            }).appendTo(_this24.header);
 
             // Add close button
-            _this25.closeButton = new Cuic.Element('span', {
+            _this24.closeButton = new Cuic.Element('span', {
                 className: 'btn-close glyphicon glyphicon-remove-sign',
-                html: _this25.options.closeButton,
+                html: _this24.options.closeButton,
                 role: 'button'
-            }).appendTo(_this25.header);
+            }).appendTo(_this24.header);
 
             // Add the body
-            _this25.content = new Cuic.Element('section', {
+            _this24.content = new Cuic.Element('section', {
                 className: 'panel-content',
                 html: options.content
-            }).appendTo(_this25);
+            }).appendTo(_this24);
 
             // Add the footer
-            _this25.footer = new Cuic.Element('footer', {
+            _this24.footer = new Cuic.Element('footer', {
                 className: 'panel-footer',
                 html: options.footer
-            }).appendTo(_this25);
+            }).appendTo(_this24);
 
             // Hide the header if not used
             if (!options.title) {
-                _this25.header.hide();
+                _this24.header.hide();
             }
 
             // Hide the footer if not used
             if (!options.footer) {
-                _this25.footer.hide();
+                _this24.footer.hide();
             }
         }
 
         // Set panel position
-        var fixed = _this25.parentNode() === document.body;
-        _this25.css({ position: fixed ? 'fixed' : 'absolute' });
+        var fixed = _this24.parentNode() === document.body;
+        _this24.css({ position: fixed ? 'fixed' : 'absolute' });
 
-        if (_this25.isOpened()) {
-            _this25.align(_this25.options.position);
-            _this25.resizeContent();
+        if (_this24.isOpened()) {
+            _this24.align(_this24.options.position);
+            _this24.resizeContent();
         }
 
         // To hide the panel in the container,
         // the container must have a hidden overflow
-        if (_this25.hasParent()) {
-            _this25.parent().css({ overflow: 'hidden' });
+        if (_this24.hasParent()) {
+            _this24.parent().css({ overflow: 'hidden' });
         }
 
-        _this25.on('click', function (ev) {
+        // todo avoid closing panel if button is from another component
+        _this24.on('click', function (ev) {
             // Close button
             if (Cuic.element(ev.target).hasClass('btn-close')) {
                 ev.preventDefault();
-                _this25.close();
+                _this24.close();
             }
             // Toggle button
             if (Cuic.element(ev.target).hasClass('btn-toggle')) {
                 ev.preventDefault();
-                _this25.toggle();
+                _this24.toggle();
             }
         });
 
         // Close the panel when the user clicks outside of it
         Cuic.on('click', document, function (ev) {
-            var el = _this25.node();
+            var el = _this24.node();
 
-            if (_this25.isOpened() && _this25.options.autoClose) {
-                if (ev.target !== el && !_this25.isChildOf(ev.target)) {
+            if (_this24.isOpened() && _this24.options.autoClose) {
+                if (ev.target !== el && !_this24.isChildOf(ev.target)) {
                     // this.close(); // todo find how to avoid closing when opening from exterior (eg: button)
                 }
             }
         });
 
         // Called when the panel is closing
-        _this25.onClose(function () {
-            var height = _this25.outerHeight(true);
-            var width = _this25.outerWidth(true);
+        _this24.onClose(function () {
+            var height = _this24.outerHeight(true);
+            var width = _this24.outerWidth(true);
             var prop = {};
 
             // Horizontal position
-            if (_this25.isPosition('left')) {
+            if (_this24.isAligned('left')) {
                 prop.left = -width;
                 prop.right = '';
-            } else if (_this25.isPosition('right')) {
+            } else if (_this24.isAligned('right')) {
                 prop.right = -width;
                 prop.left = '';
-            } else {}
-            // todo center
-
+            }
 
             // Vertical position
-            if (_this25.isPosition('bottom')) {
+            if (_this24.isAligned('bottom')) {
                 prop.bottom = -height;
                 prop.top = '';
-            } else if (_this25.isPosition('top')) {
+            } else if (_this24.isAligned('top')) {
                 prop.top = -height;
                 prop.bottom = '';
-            } else {}
-            // todo center
+            }
 
-            // Hide panel
-            _this25.css(prop);
+            // Centered
+            if (prop.left === undefined && prop.right === undefined && prop.bottom === undefined && prop.top === undefined) {
+                // prop.
+                console.log('center');
+            }
+
+            // Animate panel
+            _this24.css(prop);
         });
 
         // Called when the panel is minimized
-        _this25.onMinimize(function () {
-            var clone = _this25.clone();
+        _this24.onMinimize(function () {
+            var clone = _this24.clone();
             clone.css({ height: 'auto', width: 'auto' });
-            clone.appendTo(_this25.parent());
+            clone.appendTo(_this24.parent());
 
             // Calculate minimized size
-            var prop = Cuic.calculateAlign(clone, _this25.options.position);
+            var prop = Cuic.calculateAlign(clone, _this24.options.position);
             prop.height = clone.height();
             prop.width = clone.width();
             clone.remove();
 
-            if (!_this25.isOpened()) {
+            if (!_this24.isOpened()) {
                 // Horizontal position
-                if (_this25.isPosition('left')) {
-                    prop.left = -_this25.outerWidth(true);
+                if (_this24.isPosition('left')) {
+                    prop.left = -_this24.outerWidth(true);
                     prop.right = '';
-                } else if (_this25.isPosition('right')) {
-                    prop.right = -_this25.outerWidth(true);
+                } else if (_this24.isPosition('right')) {
+                    prop.right = -_this24.outerWidth(true);
                     prop.left = '';
                 }
                 // Vertical position
-                if (_this25.isPosition('bottom')) {
-                    prop.bottom = -_this25.outerHeight(true);
+                if (_this24.isPosition('bottom')) {
+                    prop.bottom = -_this24.outerHeight(true);
                     prop.top = '';
-                } else if (_this25.isPosition('top')) {
-                    prop.top = -_this25.outerHeight(true);
+                } else if (_this24.isPosition('top')) {
+                    prop.top = -_this24.outerHeight(true);
                     prop.bottom = '';
                 }
             }
@@ -6444,21 +6481,22 @@ Cuic.Panel = function (_Cuic$Component5) {
             // this.resizeContent();// todo is it useful ?
 
             // Minimize panel
-            _this25.css(prop);
+            _this24.css(prop);
         });
 
         // Called when the panel is opening
-        _this25.onOpen(function () {
+        _this24.onOpen(function () {
             // Resize content
-            _this25.resizeContent();
+            _this24.resizeContent();
             // Recalculate position
-            _this25.align(_this25.options.position);
+            _this24.align(_this24.options.position);
+            // fixme when panel is opened first, it can be mispositioned (right, center, left, maximized)
         });
 
         Cuic.on('resize', window, function () {
-            _this25.resizeContent();
+            _this24.resizeContent();
         });
-        return _this25;
+        return _this24;
     }
 
     /**
@@ -6596,7 +6634,6 @@ Cuic.Panel = function (_Cuic$Component5) {
 
 Cuic.Panel.prototype.options = {
     autoClose: false,
-    className: 'panel',
     closable: true,
     closeButton: '',
     content: null,
@@ -6635,8 +6672,8 @@ Cuic.Panel.prototype.options = {
  *
  */
 
-Cuic.Popup = function (_Cuic$Component6) {
-    _inherits(_class19, _Cuic$Component6);
+Cuic.Popup = function (_Cuic$Component7) {
+    _inherits(_class19, _Cuic$Component7);
 
     function _class19(options) {
         _classCallCheck(this, _class19);
@@ -6647,38 +6684,38 @@ Cuic.Popup = function (_Cuic$Component6) {
         // Create element
 
         // Add component classes
-        var _this26 = _possibleConstructorReturn(this, (_class19.__proto__ || Object.getPrototypeOf(_class19)).call(this, 'div', { className: options.className }, options));
+        var _this25 = _possibleConstructorReturn(this, (_class19.__proto__ || Object.getPrototypeOf(_class19)).call(this, 'div', { className: options.className }, options));
 
-        _this26.addClass('popup');
+        _this25.addClass('popup');
 
         // Add content
-        _this26.content = new Cuic.Element('div', {
+        _this25.content = new Cuic.Element('div', {
             className: 'popup-content',
             html: options.content
-        }).appendTo(_this26);
+        }).appendTo(_this25);
 
         // Add close button
-        _this26.closeButton = new Cuic.Element('span', {
+        _this25.closeButton = new Cuic.Element('span', {
             className: 'btn-close glyphicon glyphicon-remove-sign',
-            html: _this26.options.closeButton,
+            html: _this25.options.closeButton,
             role: 'button'
-        }).appendTo(_this26);
+        }).appendTo(_this25);
 
-        _this26.on('click', function (ev) {
+        _this25.on('click', function (ev) {
             // Close button
             if (Cuic.element(ev.target).hasClass('btn-close')) {
                 ev.preventDefault();
-                _this26.close();
+                _this25.close();
             }
         });
 
         // Close the popup when the user clicks outside of it
         Cuic.on('click', document, function (ev) {
-            var el = _this26.node();
+            var el = _this25.node();
 
-            if (ev.target !== el && !_this26.isChildOf(ev.target)) {
-                if (_this26.options.autoClose && _this26.isOpened()) {
-                    _this26.close();
+            if (ev.target !== el && !_this25.isChildOf(ev.target)) {
+                if (_this25.options.autoClose && _this25.isOpened()) {
+                    _this25.close();
                 }
             }
         });
@@ -6687,30 +6724,30 @@ Cuic.Popup = function (_Cuic$Component6) {
          * Popup shortcuts
          * @type {{close: *}}
          */
-        _this26.shortcuts = {
+        _this25.shortcuts = {
             close: new Cuic.Shortcut({
-                element: _this26,
+                element: _this25,
                 keyCode: Cuic.keys.ESC,
                 callback: function callback() {
-                    _this26.close();
+                    _this25.close();
                 }
             })
         };
 
         // Called when the popup is closed
-        _this26.onClosed(function () {
-            if (_this26.options.autoRemove) {
-                _this26.remove();
+        _this25.onClosed(function () {
+            if (_this25.options.autoRemove) {
+                _this25.remove();
             }
         });
 
         // Called when the popup is opening
-        _this26.onOpen(function () {
-            var targetParent = Cuic.node(_this26.options.target).parentNode;
-            _this26.appendTo(targetParent);
-            _this26.anchor(_this26.options.anchor, _this26.options.target);
+        _this25.onOpen(function () {
+            var targetParent = Cuic.node(_this25.options.target).parentNode;
+            _this25.appendTo(targetParent);
+            _this25.anchor(_this25.options.anchor, _this25.options.target);
         });
-        return _this26;
+        return _this25;
     }
 
     /**
@@ -6769,8 +6806,8 @@ Cuic.Popup.prototype.options = {
  *
  */
 
-Cuic.Switcher = function (_Cuic$Component7) {
-    _inherits(_class20, _Cuic$Component7);
+Cuic.Switcher = function (_Cuic$Component8) {
+    _inherits(_class20, _Cuic$Component8);
 
     function _class20(options) {
         _classCallCheck(this, _class20);
@@ -6781,26 +6818,26 @@ Cuic.Switcher = function (_Cuic$Component7) {
         // Create element
 
         // Add component classes
-        var _this27 = _possibleConstructorReturn(this, (_class20.__proto__ || Object.getPrototypeOf(_class20)).call(this, 'div', {
+        var _this26 = _possibleConstructorReturn(this, (_class20.__proto__ || Object.getPrototypeOf(_class20)).call(this, 'div', {
             className: options.className,
             html: options.content
         }, options));
 
-        _this27.addClass('switcher');
+        _this26.addClass('switcher');
 
         // Public attributes
-        _this27.activeElement = null;
-        _this27.index = 0;
-        _this27.timer = null;
+        _this26.activeElement = null;
+        _this26.index = 0;
+        _this26.timer = null;
 
         // Display first element
-        _this27.goTo(0);
+        _this26.goTo(0);
 
         // Auto start timer
-        if (_this27.options.autoStart) {
-            _this27.start();
+        if (_this26.options.autoStart) {
+            _this26.start();
         }
-        return _this27;
+        return _this26;
     }
 
     /**
@@ -6945,11 +6982,11 @@ Cuic.Switcher = function (_Cuic$Component7) {
     }, {
         key: 'start',
         value: function start() {
-            var _this28 = this;
+            var _this27 = this;
 
             if (!this.isStarted()) {
                 this.timer = setInterval(function () {
-                    _this28.next();
+                    _this27.next();
                 }, this.options.delay);
             }
         }
@@ -7362,8 +7399,8 @@ Cuic.Switcher.prototype.options = {
 
 Cuic.tooltips = new Cuic.Collection();
 
-Cuic.Tooltip = function (_Cuic$Component8) {
-    _inherits(_class21, _Cuic$Component8);
+Cuic.Tooltip = function (_Cuic$Component9) {
+    _inherits(_class21, _Cuic$Component9);
 
     function _class21(options) {
         _classCallCheck(this, _class21);
@@ -7374,25 +7411,25 @@ Cuic.Tooltip = function (_Cuic$Component8) {
         // Create element
 
         // Public attributes
-        var _this29 = _possibleConstructorReturn(this, (_class21.__proto__ || Object.getPrototypeOf(_class21)).call(this, 'div', { className: options.className }, options));
+        var _this28 = _possibleConstructorReturn(this, (_class21.__proto__ || Object.getPrototypeOf(_class21)).call(this, 'div', { className: options.className }, options));
 
-        _this29.currentTarget = null;
+        _this28.currentTarget = null;
 
         // Add component classes
-        _this29.addClass('tooltip');
+        _this28.addClass('tooltip');
 
         // Add content
-        _this29.content = new Cuic.Element('div', {
+        _this28.content = new Cuic.Element('div', {
             className: 'tooltip-content'
-        }).appendTo(_this29);
+        }).appendTo(_this28);
 
         // Add tooltip tail
-        _this29.tail = new Cuic.Element('span', {
+        _this28.tail = new Cuic.Element('span', {
             className: 'tooltip-tail'
-        }).appendTo(_this29);
+        }).appendTo(_this28);
 
         // Find tooltip targets
-        var targets = Cuic.find(_this29.options.selector);
+        var targets = Cuic.find(_this28.options.selector);
 
         targets.each(function (target) {
             // Open tooltip when mouse enter area
@@ -7402,65 +7439,65 @@ Cuic.Tooltip = function (_Cuic$Component8) {
 
                 if (!content || !content.length) {
                     // Get tooltip content from attribute
-                    content = target.attr(_this29.options.attribute);
+                    content = target.attr(_this28.options.attribute);
                     // Avoid tooltip conflict
-                    target.attr(_this29.options.attribute, '');
+                    target.attr(_this28.options.attribute, '');
                     // Store tooltip content
                     target.data('tooltip', content);
                 }
 
                 // Update tooltip content
                 if (content && content.length) {
-                    _this29.content.html(content);
+                    _this28.content.html(content);
                 }
 
                 // Keep reference to current target
-                _this29.currentTarget = ev.currentTarget;
+                _this28.currentTarget = ev.currentTarget;
 
                 // Position tooltip
-                _this29.update();
-                _this29.open();
+                _this28.update();
+                _this28.open();
             });
 
             // Close tooltip when mouse leaves area
             target.on('mouseleave', function () {
-                _this29.close();
+                _this28.close();
                 // Clear reference to current target
-                _this29.currentTarget = null;
+                _this28.currentTarget = null;
             });
         });
 
         // Move tooltip when mouse moves and tooltip is opened
         Cuic.on('mousemove', document, function (ev) {
-            if (_this29.options.followPointer && !_this29.isHidden()) {
-                _this29.update(ev);
+            if (_this28.options.followPointer && !_this28.isHidden()) {
+                _this28.update(ev);
             }
         });
 
         // Close the panel when the user clicks outside of it
         Cuic.on('click', document, function (ev) {
-            var el = _this29.node();
+            var el = _this28.node();
 
-            if (ev.target !== el && !_this29.isChildOf(ev.target)) {
-                _this29.close();
+            if (ev.target !== el && !_this28.isChildOf(ev.target)) {
+                _this28.close();
             }
         });
 
         // Add the tooltip to the list
-        Cuic.tooltips.add(_this29);
+        Cuic.tooltips.add(_this28);
 
         // Reposition tail when tooltip position change
-        _this29.onAnchored(function () {
-            _this29.updateTail();
+        _this28.onAnchored(function () {
+            _this28.updateTail();
         });
 
         // Called when the tooltip is closed
-        _this29.onClosed(function () {
-            if (_this29.options.autoRemove) {
-                _this29.remove();
+        _this28.onClosed(function () {
+            if (_this28.options.autoRemove) {
+                _this28.remove();
             }
         });
-        return _this29;
+        return _this28;
     }
 
     /**
@@ -7564,7 +7601,6 @@ Cuic.Tooltip = function (_Cuic$Component8) {
 Cuic.Tooltip.prototype.options = {
     anchor: 'right',
     attribute: 'title',
-    className: 'tooltip',
     followPointer: true,
     namespace: 'tooltip',
     selector: '[title]',

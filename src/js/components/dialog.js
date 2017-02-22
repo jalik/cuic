@@ -396,7 +396,6 @@ Cuic.Dialog.prototype.options = {
     autoRemove: true,
     autoResize: true,
     buttons: [],
-    className: 'dialog',
     closable: true,
     closeButton: null,
     content: null,

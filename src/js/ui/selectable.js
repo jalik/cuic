@@ -118,6 +118,5 @@ Cuic.Selectable = class extends Cuic.Element {
 };
 
 Cuic.Selectable.prototype.options = {
-    className: 'selectable',
     namespace: 'selectable'
 };
