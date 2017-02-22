@@ -23,23 +23,9 @@
  *
  */
 
-(function ($, window) {
+(function (window) {
     'use strict';
 
-    // Check if the namespace is not used
-    if (typeof Cuic !== 'undefined') {
-        throw 'Cuic already exists';
-    }
-
-    // Check if jQuery is loaded
-    if (typeof jQuery === 'undefined') {
-        throw 'jQuery not found';
-    }
-
-    /**
-     * The Common User Interface Components
-     * @type {*}
-     */
     const Cuic = {
 
         /**
@@ -677,7 +663,7 @@
          */
         isSafari() {
             return /constructor/i.test(window.HTMLElement)
-                || (function (p) {
+                || ((p) => {
                     return p.toString() === "[object SafariRemoteNotification]";
                 })(!window['safari']
                     || safari.pushNotification);
@@ -926,7 +912,7 @@
                 .replace(/[^\w\s]/g, '')
                 // Uppercases the first character in each group immediately following a space
                 // (delimited by spaces)
-                .replace(/ (.)/g, function ($1) {
+                .replace(/ (.)/g, ($1) => {
                     return $1.toUpperCase();
                 })
                 // Removes spaces
@@ -991,9 +977,9 @@
         window.Cuic = Cuic;
     }
 
-    $(document).ready(function () {
+    Cuic.ready(() => {
         // Save mouse position on move
-        Cuic.on('mousemove', document, (ev) => {
+        Cuic.element(document).on('mousemove', (ev) => {
             Cuic.mouseX = ev.clientX;
             Cuic.mouseY = ev.clientY;
         });
@@ -1001,7 +987,7 @@
         // Make root nodes fit screen,
         // that allow dialogs and other floating elements
         // to be positioned on all the screen.
-        $('html,body').css({height: '100%', minHeight: '100%'});
+        Cuic.find('html,body').css({height: '100%', minHeight: '100%'});
     });
 
-})(jQuery, window);
+})(window);

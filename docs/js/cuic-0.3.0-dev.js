@@ -94,24 +94,9 @@ if (!Element.prototype.matches) {
  *
  */
 
-(function ($, window) {
+(function (window) {
     'use strict';
 
-    // Check if the namespace is not used
-
-    if (typeof Cuic !== 'undefined') {
-        throw 'Cuic already exists';
-    }
-
-    // Check if jQuery is loaded
-    if (typeof jQuery === 'undefined') {
-        throw 'jQuery not found';
-    }
-
-    /**
-     * The Common User Interface Components
-     * @type {*}
-     */
     var Cuic = {
 
         /**
@@ -1054,9 +1039,9 @@ if (!Element.prototype.matches) {
         window.Cuic = Cuic;
     }
 
-    $(document).ready(function () {
+    Cuic.ready(function () {
         // Save mouse position on move
-        Cuic.on('mousemove', document, function (ev) {
+        Cuic.element(document).on('mousemove', function (ev) {
             Cuic.mouseX = ev.clientX;
             Cuic.mouseY = ev.clientY;
         });
@@ -1064,9 +1049,9 @@ if (!Element.prototype.matches) {
         // Make root nodes fit screen,
         // that allow dialogs and other floating elements
         // to be positioned on all the screen.
-        $('html,body').css({ height: '100%', minHeight: '100%' });
+        Cuic.find('html,body').css({ height: '100%', minHeight: '100%' });
     });
-})(jQuery, window);
+})(window);
 
 /*
  * The MIT License (MIT)
