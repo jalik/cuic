@@ -89,6 +89,10 @@ Cuic.Notification = class extends Cuic.Component {
             }
         });
 
+        this.onOpened(() => {
+            this.autoClose();
+        });
+
         // Remove dialog from list
         this.onRemoved(() => {
             Cuic.notifications.remove(this);
