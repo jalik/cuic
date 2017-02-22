@@ -554,6 +554,15 @@ Cuic.Element = class {
     }
 
     /**
+     * Checks if the element is disabled
+     * @return {boolean}
+     */
+    isDisabled() {
+        return this.node().disabled
+            || this.hasClass('disabled');
+    }
+
+    /**
      * Checks if the element is enabled
      * @return {boolean}
      */
@@ -563,12 +572,30 @@ Cuic.Element = class {
     }
 
     /**
+     * Checks if the element is hidden
+     * @return {boolean}
+     */
+    isHidden() {
+        return this.hasClass('hidden')
+            || this.css('display') === 'none';
+    }
+
+    /**
      * Checks if the element is removed from the DOM
      * @return {boolean}
      */
     isRemoved() {
         const parent = this.node().parentNode;
         return parent === null || parent === undefined;
+    }
+
+    /**
+     * Checks if the element is shown
+     * @return {boolean}
+     */
+    isShown() {
+        return !this.hasClass('hidden')
+            && this.css('display') !== 'none';
     }
 
     /**
@@ -772,7 +799,7 @@ Cuic.Element = class {
      */
     show() {
         this.css({display: ''});
-        this.events.trigger('showed');
+        this.events.trigger('shown');
         return this;
     }
 

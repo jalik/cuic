@@ -1,3 +1,28 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2017 Karl STEIN
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -2964,6 +2989,17 @@ Cuic.Element = function () {
         }
 
         /**
+         * Checks if the element is disabled
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isDisabled',
+        value: function isDisabled() {
+            return this.node().disabled || this.hasClass('disabled');
+        }
+
+        /**
          * Checks if the element is enabled
          * @return {boolean}
          */
@@ -2972,6 +3008,17 @@ Cuic.Element = function () {
         key: 'isEnabled',
         value: function isEnabled() {
             return this.node().disabled !== true || !this.hasClass('disabled');
+        }
+
+        /**
+         * Checks if the element is hidden
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isHidden',
+        value: function isHidden() {
+            return this.hasClass('hidden') || this.css('display') === 'none';
         }
 
         /**
@@ -2984,6 +3031,17 @@ Cuic.Element = function () {
         value: function isRemoved() {
             var parent = this.node().parentNode;
             return parent === null || parent === undefined;
+        }
+
+        /**
+         * Checks if the element is shown
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isShown',
+        value: function isShown() {
+            return !this.hasClass('hidden') && this.css('display') !== 'none';
         }
 
         /**
@@ -3253,7 +3311,7 @@ Cuic.Element = function () {
         key: 'show',
         value: function show() {
             this.css({ display: '' });
-            this.events.trigger('showed');
+            this.events.trigger('shown');
             return this;
         }
 
@@ -7551,18 +7609,20 @@ Cuic.Tooltip = function (_Cuic$Component8) {
                 self.open();
             });
 
-            // Move tooltip when mouse moves over area
-            target.on('mousemove', function (ev) {
-                self.update(ev);
-            });
-
             // Close tooltip when mouse leaves area
             target.on('mouseleave', function (ev) {
                 self.close();
             });
         });
 
-        // Move tooltip if mouse is over
+        // Move tooltip when mouse moves and tooltip is opened
+        Cuic.on('mousemove', document, function (ev) {
+            if (self.options.followPointer && !self.isHidden()) {
+                self.update(ev);
+            }
+        });
+
+        // Move tooltip when mouse is over
         self.on('mousemove', function (ev) {
             self.update(ev);
         });
@@ -7634,6 +7694,7 @@ Cuic.Tooltip = function (_Cuic$Component8) {
 
         /**
          * Position the tooltip tail
+         * fixme sometimes tail is not positioned well
          * @return {Cuic.Tooltip}
          */
 
