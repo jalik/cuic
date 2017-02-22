@@ -108,12 +108,13 @@ Cuic.Component = class extends Cuic.Element {
     /**
      * Maximizes the component in its container
      * @param callback
+     * @return {Cuic.Element}
      */
     maximize(callback) {
         this.events.trigger('maximize');
         this.removeClass('minimized');
         this.addClass('maximized');
-        Cuic.maximize(this);
+        this.css(Cuic.calculateMaximize(this));
         this.once('transitionend', (ev) => {
             if (this.isMaximized()) {
                 this.events.trigger('maximized', ev);
@@ -123,17 +124,19 @@ Cuic.Component = class extends Cuic.Element {
                 }
             }
         });
+        return this;
     }
 
     /**
      * Minimizes the component in its container
      * @param callback
+     * @return {Cuic.Element}
      */
     minimize(callback) {
         this.events.trigger('minimize');
         this.removeClass('maximized');
         this.addClass('minimized');
-        Cuic.minimize(this, this.options.position);
+        this.css(Cuic.calculateMinimize(this, this.options.position));
         this.once('transitionend', (ev) => {
             if (this.isMinimized()) {
                 this.events.trigger('minimized', ev);
@@ -143,6 +146,7 @@ Cuic.Component = class extends Cuic.Element {
                 }
             }
         });
+        return this;
     }
 
     /**

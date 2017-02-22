@@ -60,28 +60,6 @@
         mouseY: 0,
 
         /**
-         * Adds CSS class to the element
-         * @param element
-         * @param className
-         * @return {Array|*}
-         */
-        addClass(element, className) {
-            element = this.node(element);
-
-            let classes = this.getClasses(element);
-            const target = (className || '').split(' ');
-
-            for (let i = 0; i < target.length; i += 1) {
-                // Check if class is already assigned
-                if (classes.indexOf(target[i]) === -1) {
-                    classes.push(target[i]);
-                }
-            }
-            element.className = classes.join(' ');
-            return classes;
-        },
-
-        /**
          * Adds an event listener
          * @param element
          * @param event
@@ -95,32 +73,6 @@
             else if (typeof element.attachEvent === 'function') {
                 return element.attachEvent(event, listener);
             }
-        },
-
-        /**
-         * Place the element inside a target
-         * @param element
-         * @param position
-         * @param parent
-         * @return {HTMLElement}
-         */
-        align(element, position, parent) {
-            element = this.node(element);
-            this.css(element, this.calculateAlign(element, position, parent));
-            return element;
-        },
-
-        /**
-         * Place an object toward a target
-         * @param element
-         * @param position
-         * @param target
-         * @return {HTMLElement}
-         */
-        anchor(element, position, target) {
-            element = this.node(element);
-            this.css(element, this.calculateAnchor(element, position, target));
-            return element;
         },
 
         /**
@@ -180,26 +132,6 @@
         },
 
         /**
-         * Returns element border widths
-         * @param element
-         * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
-         */
-        border(element) {
-            const bottom = parseFloat(this.getComputedStyle(element, 'border-bottom-width'));
-            const left = parseFloat(this.getComputedStyle(element, 'border-left-width'));
-            const right = parseFloat(this.getComputedStyle(element, 'border-right-width'));
-            const top = parseFloat(this.getComputedStyle(element, 'border-top-width'));
-            return {
-                bottom: bottom,
-                horizontal: left + right,
-                left: left,
-                right: right,
-                top: top,
-                vertical: bottom + top
-            };
-        },
-
-        /**
          * Position an object inside another
          * @param element
          * @param position
@@ -207,32 +139,32 @@
          * @return {*}
          */
         calculateAlign(element, position, parent) {
-            element = this.node(element);
+            element = this.element(element);
             position = position || '';
 
             if (parent) {
-                parent = this.node(parent);
+                parent = this.element(parent);
 
                 // Use body as parent
-                if (parent.nodeName === 'HTML') {
-                    parent = document.body;
-                }
-                // Append element to parent if needed
-                if (parent !== element.parentNode) {
-                    parent.append(element);
-                }
+                // if (parent.nodeName === 'HTML') {
+                //     parent = document.body;
+                // }
+                // // Append element to parent if needed
+                // if (parent !== element.parent()) {
+                //     parent.append(element);
+                // }
             }
             else {
                 // Use parent node if no parent defined
-                parent = element.parentNode
+                parent = element.parent();
             }
 
-            let elHeight = this.outerHeight(element, true);
-            let elWidth = this.outerWidth(element, true);
-            let parentHeight = this.height(parent);
-            let parentWidth = this.width(parent);
-            let relativeLeft = parent.scrollLeft;
-            let relativeTop = parent.scrollTop;
+            let elHeight = element.outerHeight(true);
+            let elWidth = element.outerWidth(true);
+            let parentHeight = parent.height();
+            let parentWidth = parent.width();
+            let relativeLeft = parent.node().scrollLeft;
+            let relativeTop = parent.node().scrollTop;
             let relativeBottom = -relativeTop;
             let relativeRight = -relativeLeft;
             let prop = {
@@ -243,11 +175,11 @@
             };
 
             // If the target is fixed, we use the window as parent
-            switch (this.css(element, 'position')) {
+            switch (element.css('position')) {
                 case 'fixed':
-                    parent = window;
-                    parentHeight = this.innerHeight(parent);
-                    parentWidth = this.innerWidth(parent);
+                    parent = this.element(window);
+                    parentHeight = parent.innerHeight();
+                    parentWidth = parent.innerWidth();
                     relativeLeft = 0;
                     relativeTop = 0;
                     relativeBottom = 0;
@@ -255,8 +187,8 @@
                     break;
             }
 
-            const centerX = relativeLeft + (this.innerWidth(parent) / 2 - elWidth / 2);
-            const centerY = relativeTop + (this.innerHeight(parent) / 2 - elHeight / 2);
+            const centerX = relativeLeft + (parent.innerWidth() / 2 - elWidth / 2);
+            const centerY = relativeTop + (parent.innerHeight() / 2 - elHeight / 2);
 
             // Vertical position
             if (position.indexOf('top') !== -1) {
@@ -473,21 +405,21 @@
          * @return {*}
          */
         calculateMaximize(element) {
-            element = this.node(element);
-            const parent = element.parentNode;
-            const parentPadding = this.padding(parent);
-            const elMargin = this.margin(element);
+            element = this.element(element);
+            const parent = element.parent();
+            const parentPadding = parent.padding();
+            const elMargin = element.margin();
             let prop = {
                 bottom: '',
-                height: this.innerHeight(parent) - parentPadding.vertical,
+                height: parent.innerHeight() - parentPadding.vertical,
                 left: '',
                 right: '',
                 top: '',
-                width: this.innerWidth(parent) - parentPadding.horizontal
+                width: parent.innerWidth() - parentPadding.horizontal
             };
 
             // Adjust dimensions
-            switch (this.css(element, 'position')) {
+            switch (element.css('position')) {
                 case 'absolute':
                     prop.height += parentPadding.vertical;
                     prop.height -= elMargin.vertical;
@@ -501,13 +433,13 @@
             }
 
             // Horizontal position
-            if (this.isPosition('right', element)) {
+            if (element.isPosition('right')) {
                 prop.right = 0;
             } else {
                 prop.left = 0;
             }
             // Vertical position
-            if (this.isPosition('bottom', element)) {
+            if (element.isPosition('bottom')) {
                 prop.bottom = 0;
             } else {
                 prop.top = 0;
@@ -522,17 +454,18 @@
          * @return {*}
          */
         calculateMinimize(element, position) {
-            element = this.node(element);
+            element = this.element(element);
             position = position || '';
 
             // Create a clone with minimal size
-            const clone = element.cloneNode(true);
-            this.css(clone, {height: 'auto', width: 'auto'});
+            const clone = element.clone();
+            clone.css({height: 'auto', width: 'auto'});
+            clone.appendTo(element.parent());
 
             // Calculate minimized size
-            let prop = this.calculateAlign(clone, position, element.parentNode);
-            prop.height = this.outerHeight(clone);
-            prop.width = this.outerWidth(clone);
+            let prop = this.calculateAlign(clone, position);
+            prop.height = clone.outerHeight();
+            prop.width = clone.outerWidth();
             clone.remove();
 
             return prop;
@@ -555,85 +488,6 @@
                 fn = args.shift();
             }
             return this.apply(fn, context, args);
-        },
-
-        /**
-         * Returns the closest parent element matching the selector
-         * @param element
-         * @param selector
-         * @return {Cuic.Element}
-         */
-        closest(element, selector) {
-            element = this.node(element);
-            return this.element(element.closest(selector));
-        },
-
-        /**
-         * Applies the styles to the target.
-         * Styles can be a string or an object.
-         * @param element
-         * @param styles
-         * @return {*}
-         */
-        css(element, styles) {
-            element = this.node(element);
-
-            // Writing styles
-            if (styles) {
-                if (typeof styles === 'object') {
-                    let mergedStyles = '';
-
-                    // Add pixel unit where needed
-                    this.autoPixel(styles);
-
-                    // Get current styles
-                    for (let i = 0; i < element.style.length; i += 1) {
-                        const property = element.style[i];
-
-                        // Ignore properties that are overwritten
-                        if (!(property in styles)) {
-                            let value = element.style[property];
-                            if (typeof value === 'string' && value === '') {
-                                value = '""';
-                            }
-                            mergedStyles += `${property}: ${value};`;
-                        }
-                    }
-                    // Add new styles
-                    for (let style in styles) {
-                        if (styles.hasOwnProperty(style)) {
-                            let value = styles[style];
-
-                            // Check if style is supported
-                            if (!(style in element.style)) {
-                                console.warn(`Style "${style}" is not supported by element.`, element);
-                            }
-                            if (typeof value === 'string' && value === '') {
-                                value = '""';
-                            }
-                            mergedStyles += `${style}: ${value};`;
-                        }
-                    }
-                    element.style = mergedStyles;
-                }
-                else if (typeof styles === 'string') {
-                    // Set styles
-                    if (styles.indexOf(':') !== -1) {
-                        element.style = styles;
-                    } else {
-                        // Return computed version for some properties
-                        // that would return nothing.
-                        switch (styles) {
-                            case 'position':
-                                return this.getComputedStyle(element, styles);
-                        }
-                        // Return specific style
-                        return element.style[styles];
-                    }
-                }
-            }
-            // Return all styles
-            return element.style;
         },
 
         /**
@@ -660,6 +514,9 @@
             if (element instanceof HTMLElement) {
                 return new this.Element(element);
             }
+            if (element === window) {
+                return new this.Element(element);
+            }
             if (element instanceof jQuery) {
                 return new this.Element(element.get(0));
             }
@@ -667,24 +524,6 @@
                 return new this.Element(document.querySelector(element));
             }
             return element;
-        },
-
-        /**
-         * Enters full screen
-         * @param element
-         */
-        enterFullScreen(element) {
-            element = this.node(element);
-
-            if (element.requestFullscreen) {
-                element.requestFullscreen();
-            } else if (element.webkitRequestFullscreen) {
-                element.webkitRequestFullscreen();
-            } else if (element.mozRequestFullScreen) {
-                element.mozRequestFullScreen();
-            } else if (element.msRequestFullscreen) {
-                element.msRequestFullscreen();
-            }
         },
 
         /**
@@ -745,18 +584,7 @@
          */
         find(selector, context) {
             context = this.node(context || document);
-            const elements = context.querySelectorAll(selector);
-            return new this.Elements(elements, context, selector);
-        },
-
-        /**
-         * Returns CSS classes
-         * @param element
-         * @return {Array}
-         */
-        getClasses(element) {
-            element = this.node(element);
-            return element.className.split(' ');
+            return this.element(context).find(selector);
         },
 
         /**
@@ -788,60 +616,6 @@
             if (element.OTransition == '') return '-o-';
 
             return '';
-        },
-
-        /**
-         * Checks if the element has the CSS class
-         * @param element
-         * @param className
-         * @return {boolean}
-         */
-        hasClass(element, className) {
-            element = this.node(element);
-            const classes = this.getClasses(element);
-            const classNames = (className || '').split(' ');
-            let result = classNames.length > 0;
-
-            for (let i = 0; i < classNames.length; i += 1) {
-                if (classes.indexOf(classNames[i]) === -1) {
-                    result = false;
-                    break;
-                }
-            }
-            return result;
-        },
-
-        /**
-         * Returns the element height
-         * @param element
-         * @return {number}
-         */
-        height(element) {
-            element = this.node(element);
-            const padding = this.padding(element);
-            return element.clientHeight - padding.vertical;
-        },
-
-        /**
-         * Returns the element width including padding
-         * @param element
-         * @return {number}
-         */
-        innerHeight(element) {
-            element = this.node(element);
-            // todo subtract vertical scrollbar width
-            return element.clientHeight;
-        },
-
-        /**
-         * Returns the element width including padding
-         * @param element
-         * @return {number}
-         */
-        innerWidth(element) {
-            element = this.node(element);
-            // todo subtract horizontal scrollbar width
-            return element.clientWidth;
         },
 
         /**
@@ -898,56 +672,6 @@
         },
 
         /**
-         * Checks if the element is a parent node
-         * @param parent
-         * @param element
-         * @return {boolean}
-         */
-        isParent(parent, element) {
-            parent = this.node(parent);
-            element = this.node(element);
-            let el = element;
-
-            do {
-                el = el.parentNode;
-
-                if (el === parent) {
-                    return true;
-                }
-            } while (el);
-
-            return false;
-        },
-
-        /**
-         * Checks if the element is at the position
-         * @param position
-         * @param element
-         * @return {boolean}
-         */
-        isPosition(position, element) {
-            element = this.node(element);
-            const pos = this.position(element);
-
-            if (position.indexOf('center') !== -1) {
-                return pos.top == pos.bottom || pos.left == pos.right;
-            }
-            if (position.indexOf('bottom') !== -1) {
-                return pos.bottom < pos.top;
-            }
-            if (position.indexOf('top') !== -1) {
-                return pos.top < pos.bottom;
-            }
-            if (position.indexOf('left') !== -1) {
-                return pos.left < pos.right;
-            }
-            if (position.indexOf('right') !== -1) {
-                return pos.right < pos.left;
-            }
-            return false;
-        },
-
-        /**
          * Checks if the browser is Safari 3.0+
          * @return {boolean}
          */
@@ -957,53 +681,6 @@
                     return p.toString() === "[object SafariRemoteNotification]";
                 })(!window['safari']
                     || safari.pushNotification);
-        },
-
-        /**
-         * Returns the element margins
-         * @param element
-         * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
-         */
-        margin(element) {
-            const bottom = parseFloat(this.getComputedStyle(element, 'margin-bottom'));
-            const left = parseFloat(this.getComputedStyle(element, 'margin-left'));
-            const right = parseFloat(this.getComputedStyle(element, 'margin-right'));
-            const top = parseFloat(this.getComputedStyle(element, 'margin-top'));
-            return {
-                bottom: bottom,
-                horizontal: left + right,
-                left: left,
-                right: right,
-                top: top,
-                vertical: bottom + top
-            };
-        },
-
-        /**
-         * Maximizes the element
-         * @param element
-         * @return {HTMLElement}
-         */
-        maximize(element) {
-            element = this.node(element);
-            this.removeClass(element, 'minimized');
-            this.addClass(element, 'maximized');
-            this.css(element, this.calculateMaximize(element));
-            return element;
-        },
-
-        /**
-         * Minimizes the element
-         * @param element
-         * @param position
-         * @return {HTMLElement}
-         */
-        minimize(element, position) {
-            element = this.node(element);
-            this.removeClass(element, 'maximized');
-            this.addClass(element, 'minimized');
-            this.css(element, this.calculateMinimize(element, position));
-            return element;
         },
 
         /**
@@ -1086,19 +763,6 @@
                 }
             }
             return this.removeEventListener(element, browserEvent, callback);
-        },
-
-        /**
-         * Returns the element offset
-         * @param element
-         * @return {{left: Number, top: Number}}
-         */
-        offset(element) {
-            element = this.node(element);
-            return {
-                left: element.offsetLeft,
-                top: element.offsetTop
-            };
         },
 
         /**
@@ -1202,68 +866,6 @@
         },
 
         /**
-         * Returns the element height including padding, border and margin
-         * @param element
-         * @param includeMargin
-         * @return {number}
-         */
-        outerHeight(element, includeMargin) {
-            element = this.node(element);
-            const margin = this.margin(element);
-            return element.offsetHeight + (includeMargin ? margin.vertical : 0);
-        },
-
-        /**
-         * Returns the element width including padding, border and margin
-         * @param element
-         * @param includeMargin
-         * @return {number}
-         */
-        outerWidth(element, includeMargin) {
-            element = this.node(element);
-            const margin = this.margin(element);
-            return element.offsetWidth + (includeMargin ? margin.horizontal : 0);
-        },
-
-        /**
-         * Returns the element padding
-         * @param element
-         * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
-         */
-        padding(element) {
-            const bottom = parseFloat(this.getComputedStyle(element, 'padding-bottom'));
-            const left = parseFloat(this.getComputedStyle(element, 'padding-left'));
-            const right = parseFloat(this.getComputedStyle(element, 'padding-right'));
-            const top = parseFloat(this.getComputedStyle(element, 'padding-top'));
-            return {
-                bottom: bottom,
-                horizontal: left + right,
-                left: left,
-                right: right,
-                top: top,
-                vertical: bottom + top
-            };
-        },
-
-        /**
-         * Returns the element position
-         * @param element
-         * @return {{bottom: Number, left: Number, right: Number, top: Number}}
-         */
-        position(element) {
-            const bottom = parseFloat(this.getComputedStyle(element, 'bottom'));
-            const left = parseFloat(this.getComputedStyle(element, 'left'));
-            const right = parseFloat(this.getComputedStyle(element, 'right'));
-            const top = parseFloat(this.getComputedStyle(element, 'top'));
-            return {
-                bottom: bottom,
-                left: left,
-                right: right,
-                top: top
-            };
-        },
-
-        /**
          * Returns the prefixed style
          * @param style
          * @return {string}
@@ -1279,28 +881,6 @@
          */
         ready(callback) {
             document.addEventListener('DOMContentLoaded', callback);
-        },
-
-        /**
-         * Removes CSS class from the element
-         * @param element
-         * @param className
-         * @return {*|Array}
-         */
-        removeClass(element, className) {
-            element = this.node(element);
-            let classes = this.getClasses(element);
-            const classNames = (className || '').split(' ');
-
-            for (let i = 0; i < classNames.length; i += 1) {
-                let index = classes.indexOf(classNames[i]);
-
-                if (index !== -1) {
-                    classes.splice(index, 1);
-                }
-            }
-            element.className = classes.join(' ');
-            return classes;
         },
 
         /**
@@ -1405,17 +985,6 @@
                 return event;
             }
         },
-
-        /**
-         * Returns the element width
-         * @param element
-         * @return {number}
-         */
-        width(element) {
-            element = this.node(element);
-            const padding = this.padding(element);
-            return element.clientWidth - padding.horizontal;
-        }
     };
 
     if (window) {

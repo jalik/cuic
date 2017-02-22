@@ -43,7 +43,7 @@ Cuic.Element = class {
             self.element = document.createElement(node);
         }
         // Use HTML node
-        else if (node instanceof HTMLElement || node instanceof HTMLDocument) {
+        else if (node instanceof HTMLElement || node instanceof HTMLDocument || node === window) {
             self.element = node;
         }
         // Use node from Cuic.Element
@@ -154,7 +154,16 @@ Cuic.Element = class {
      * @return {Cuic.Element}
      */
     addClass(className) {
-        Cuic.addClass(this.node(), className);
+        let classes = this.getClasses();
+        const target = (className || '').split(' ');
+
+        for (let i = 0; i < target.length; i += 1) {
+            // Check if class is already assigned
+            if (classes.indexOf(target[i]) === -1) {
+                classes.push(target[i]);
+            }
+        }
+        this.node().className = classes.join(' ');
         return this;
     }
 
@@ -199,7 +208,7 @@ Cuic.Element = class {
      * @return {Cuic.Element}
      */
     align(position) {
-        Cuic.align(this.node(), position);
+        this.css(Cuic.calculateAlign(this, position));
         this.options.position = position;
         this.events.trigger('aligned', position);
         return this;
@@ -212,8 +221,8 @@ Cuic.Element = class {
      * @return {Cuic.Element}
      */
     anchor(position, target) {
-        target = target || this.options.target;
-        Cuic.anchor(this.node(), position, target);
+        target = Cuic.element(target || this.options.target);
+        this.css(Cuic.calculateAnchor(this, position, target));
         this.options.anchor = position;
         this.options.target = target;
         this.events.trigger('anchored', position);
@@ -358,7 +367,18 @@ Cuic.Element = class {
      * @return {*|{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
      */
     border() {
-        return Cuic.border(this);
+        const bottom = parseFloat(Cuic.getComputedStyle(this, 'border-bottom-width'));
+        const left = parseFloat(Cuic.getComputedStyle(this, 'border-left-width'));
+        const right = parseFloat(Cuic.getComputedStyle(this, 'border-right-width'));
+        const top = parseFloat(Cuic.getComputedStyle(this, 'border-top-width'));
+        return {
+            bottom: bottom,
+            horizontal: left + right,
+            left: left,
+            right: right,
+            top: top,
+            vertical: bottom + top
+        };
     }
 
     /**
@@ -381,12 +401,89 @@ Cuic.Element = class {
     }
 
     /**
+     * Returns a clone of the element
+     * @return {*|Cuic.Element}
+     */
+    clone() {
+        return Cuic.element(this.node().cloneNode(true));
+    }
+
+    /**
+     * Returns the closest parent element matching the selector
+     * @param selector
+     * @return {Cuic.Element|null}
+     */
+    closest(selector) {
+        const node = this.node().closest(selector);
+        return node ? Cuic.element(node) : null;
+    }
+
+    /**
      * Set styles
      * @param styles
      * @return {Cuic.Element|*}
      */
     css(styles) {
-        return Cuic.css(this.node(), styles);
+        const node = this.node();
+
+        // Writing styles
+        if (styles) {
+            if (typeof styles === 'object') {
+                let mergedStyles = '';
+
+                // Add pixel unit where needed
+                Cuic.autoPixel(styles);
+
+                // Get current styles
+                for (let i = 0; i < node.style.length; i += 1) {
+                    const property = node.style[i];
+
+                    // Ignore properties that are overwritten
+                    if (!(property in styles)) {
+                        let value = node.style[property];
+                        if (typeof value === 'string' && value === '') {
+                            value = '""';
+                        }
+                        mergedStyles += `${property}: ${value};`;
+                    }
+                }
+                // Add new styles
+                for (let style in styles) {
+                    if (styles.hasOwnProperty(style)) {
+                        let value = styles[style];
+
+                        // Check if style is supported
+                        if (!(style in node.style)) {
+                            console.warn(`Style "${style}" is not supported by element.`, node);
+                        }
+                        if (typeof value === 'string' && value === '') {
+                            value = '""';
+                        }
+                        mergedStyles += `${style}: ${value};`;
+                    }
+                }
+                node.style = mergedStyles;
+                return this;
+            }
+            else if (typeof styles === 'string') {
+                // Set styles
+                if (styles.indexOf(':') !== -1) {
+                    node.style = styles;
+                    return this;
+                } else {
+                    // Return computed version for some properties
+                    // that would return nothing.
+                    switch (styles) {
+                        case 'position':
+                            return Cuic.getComputedStyle(node, styles);
+                    }
+                    // Return specific style
+                    return node.style[styles];
+                }
+            }
+        }
+        // Return all styles
+        return node.style;
     }
 
     /**
@@ -442,12 +539,33 @@ Cuic.Element = class {
     }
 
     /**
+     * Enters full screen
+     * @return {Cuic.Element}
+     */
+    enterFullScreen() {
+        const node = this.node();
+
+        if (node.requestFullscreen) {
+            node.requestFullscreen();
+        } else if (node.webkitRequestFullscreen) {
+            node.webkitRequestFullscreen();
+        } else if (node.mozRequestFullScreen) {
+            node.mozRequestFullScreen();
+        } else if (node.msRequestFullscreen) {
+            node.msRequestFullscreen();
+        }
+        return this;
+    }
+
+    /**
      * Returns the first element that matches the selector
      * @param selector
      * @return {Cuic.Elements}
      */
     find(selector) {
-        return Cuic.find(selector, this.node());
+        const context = this.node();
+        const elements = context.querySelectorAll(selector);
+        return new Cuic.Elements(elements, context, selector);
     }
 
     /**
@@ -455,7 +573,7 @@ Cuic.Element = class {
      * @return {Array}
      */
     getClasses() {
-        return Cuic.getClasses(this.node());
+        return this.node().className.split(' ');
     }
 
     /**
@@ -464,7 +582,25 @@ Cuic.Element = class {
      * @return {boolean}
      */
     hasClass(className) {
-        return Cuic.hasClass(this.node(), className);
+        const classes = this.getClasses();
+        const classNames = (className || '').split(' ');
+        let result = classNames.length > 0;
+
+        for (let i = 0; i < classNames.length; i += 1) {
+            if (classes.indexOf(classNames[i]) === -1) {
+                result = false;
+                break;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Checks if the element has a parent
+     * @return {boolean}
+     */
+    hasParent() {
+        return !!this.parentNode();
     }
 
     /**
@@ -472,7 +608,7 @@ Cuic.Element = class {
      * @return {number}
      */
     height() {
-        return Cuic.height(this);
+        return this.node().clientHeight - this.padding().vertical;
     }
 
     /**
@@ -519,7 +655,8 @@ Cuic.Element = class {
      * @return {number}
      */
     innerHeight() {
-        return Cuic.innerHeight(this);
+        // todo subtract vertical scrollbar width
+        return this.node().clientHeight;
     }
 
     /**
@@ -527,7 +664,8 @@ Cuic.Element = class {
      * @return {number}
      */
     innerWidth() {
-        return Cuic.innerWidth(this);
+        // todo subtract horizontal scrollbar width
+        return this.node().clientWidth;
     }
 
     /**
@@ -552,6 +690,26 @@ Cuic.Element = class {
         const parent = this.node().parentNode;
         parent.insertBefore(element, this.node());
         return this;
+    }
+
+    /**
+     * Checks if the element is parent of the current element
+     * @param parent
+     * @return {boolean}
+     */
+    isChildOf(parent) {
+        parent = Cuic.element(parent).node();
+        let node = this.node();
+
+        do {
+            node = node.parentNode;
+
+            if (node === parent) {
+                return true;
+            }
+        } while (node);
+
+        return false;
     }
 
     /**
@@ -582,6 +740,32 @@ Cuic.Element = class {
     }
 
     /**
+     * Checks if the element is at the position
+     * @param position
+     * @return {boolean}
+     */
+    isPosition(position) {
+        const pos = this.position();
+
+        if (position.indexOf('center') !== -1) {
+            return pos.top == pos.bottom || pos.left == pos.right;
+        }
+        if (position.indexOf('bottom') !== -1) {
+            return pos.bottom < pos.top;
+        }
+        if (position.indexOf('top') !== -1) {
+            return pos.top < pos.bottom;
+        }
+        if (position.indexOf('left') !== -1) {
+            return pos.left < pos.right;
+        }
+        if (position.indexOf('right') !== -1) {
+            return pos.right < pos.left;
+        }
+        return false;
+    }
+
+    /**
      * Checks if the element is removed from the DOM
      * @return {boolean}
      */
@@ -600,11 +784,22 @@ Cuic.Element = class {
     }
 
     /**
-     * Returns element margin
-     * @return {*|{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
+     * Returns the element margins
+     * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
      */
     margin() {
-        return Cuic.margin(this);
+        const bottom = parseFloat(Cuic.getComputedStyle(this, 'margin-bottom'));
+        const left = parseFloat(Cuic.getComputedStyle(this, 'margin-left'));
+        const right = parseFloat(Cuic.getComputedStyle(this, 'margin-right'));
+        const top = parseFloat(Cuic.getComputedStyle(this, 'margin-top'));
+        return {
+            bottom: bottom,
+            horizontal: left + right,
+            left: left,
+            right: right,
+            top: top,
+            vertical: bottom + top
+        };
     }
 
     /**
@@ -628,10 +823,14 @@ Cuic.Element = class {
 
     /**
      * Returns the element offset
-     * @return {*|{left: Number, top: Number}}
+     * @return {{left: *, top: *}}
      */
     offset() {
-        return Cuic.offset(this.node());
+        const node = this.node();
+        return {
+            left: node.offsetLeft,
+            top: node.offsetTop
+        };
     }
 
     /**
@@ -709,7 +908,7 @@ Cuic.Element = class {
      * @return {number}
      */
     outerHeight(includeMargin) {
-        return Cuic.outerHeight(this, includeMargin);
+        return this.node().offsetHeight + (includeMargin ? this.margin().vertical : 0);
     }
 
     /**
@@ -718,15 +917,26 @@ Cuic.Element = class {
      * @return {number}
      */
     outerWidth(includeMargin) {
-        return Cuic.outerWidth(this, includeMargin);
+        return this.node().offsetWidth + (includeMargin ? this.margin().horizontal : 0);
     }
 
     /**
      * Returns element padding
-     * @return {*|{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
+     * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
      */
     padding() {
-        return Cuic.padding(this);
+        const bottom = parseFloat(Cuic.getComputedStyle(this, 'padding-bottom'));
+        const left = parseFloat(Cuic.getComputedStyle(this, 'padding-left'));
+        const right = parseFloat(Cuic.getComputedStyle(this, 'padding-right'));
+        const top = parseFloat(Cuic.getComputedStyle(this, 'padding-top'));
+        return {
+            bottom: bottom,
+            horizontal: left + right,
+            left: left,
+            right: right,
+            top: top,
+            vertical: bottom + top
+        };
     }
 
     /**
@@ -748,10 +958,19 @@ Cuic.Element = class {
 
     /**
      * Returns the element position
-     * @return {*|{bottom: Number, left: Number, right: Number, top: Number}}
+     * @return {{bottom: Number, left: Number, right: Number, top: Number}}
      */
     position() {
-        return Cuic.position(this.node());
+        const bottom = parseFloat(Cuic.getComputedStyle(this, 'bottom'));
+        const left = parseFloat(Cuic.getComputedStyle(this, 'left'));
+        const right = parseFloat(Cuic.getComputedStyle(this, 'right'));
+        const top = parseFloat(Cuic.getComputedStyle(this, 'top'));
+        return {
+            bottom: bottom,
+            left: left,
+            right: right,
+            top: top
+        };
     }
 
     /**
@@ -790,7 +1009,17 @@ Cuic.Element = class {
      * @return {Cuic.Element}
      */
     removeClass(className) {
-        Cuic.removeClass(this.node(), className);
+        let classes = this.getClasses();
+        const classNames = (className || '').split(' ');
+
+        for (let i = 0; i < classNames.length; i += 1) {
+            let index = classes.indexOf(classNames[i]);
+
+            if (index !== -1) {
+                classes.splice(index, 1);
+            }
+        }
+        this.node().className = classes.join(' ');
         return this;
     }
 
@@ -838,7 +1067,7 @@ Cuic.Element = class {
      * @return {number}
      */
     width() {
-        return Cuic.width(this);
+        return this.node().clientWidth - this.padding().horizontal;
     }
 };
 

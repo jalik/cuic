@@ -52,7 +52,7 @@ Cuic.Popup = class extends Cuic.Component {
 
         self.on('click', (ev) => {
             // Close button
-            if (Cuic.hasClass(ev.target, 'btn-close')) {
+            if (Cuic.element(ev.target).hasClass('btn-close')) {
                 ev.preventDefault();
                 self.close();
             }
@@ -62,7 +62,7 @@ Cuic.Popup = class extends Cuic.Component {
         Cuic.on('click', document, (ev) => {
             const el = self.node();
 
-            if (ev.target !== el && !Cuic.isParent(el, ev.target)) {
+            if (ev.target !== el && !self.isChildOf(ev.target)) {
                 if (self.options.autoClose && self.isOpened()) {
                     self.close();
                 }

@@ -102,7 +102,7 @@ Cuic.Tooltip = class extends Cuic.Component {
         Cuic.on('click', document, (ev) => {
             const el = self.node();
 
-            if (ev.target !== el && !Cuic.isParent(el, ev.target)) {
+            if (ev.target !== el && !self.isChildOf(ev.target)) {
                 self.close();
             }
         });

@@ -69,7 +69,7 @@ Cuic.Notification = class extends Cuic.Component {
 
         self.on('click', (ev) => {
             // Close button
-            if (Cuic.hasClass(ev.target, 'btn-close')) {
+            if (Cuic.element(ev.target).hasClass('btn-close')) {
                 ev.preventDefault();
                 self.close();
             }

@@ -95,16 +95,18 @@ Cuic.Panel = class extends Cuic.Component {
 
         // To hide the panel in the container,
         // the container must have a hidden overflow
-        Cuic.css(self.parentNode(), {overflow: 'hidden'});
+        if (self.hasParent()) {
+            self.parent().css({overflow: 'hidden'});
+        }
 
         self.on('click', (ev) => {
             // Close button
-            if (Cuic.hasClass(ev.target, 'btn-close')) {
+            if (Cuic.element(ev.target).hasClass('btn-close')) {
                 ev.preventDefault();
                 self.close();
             }
             // Toggle button
-            if (Cuic.hasClass(ev.target, 'btn-toggle')) {
+            if (Cuic.element(ev.target).hasClass('btn-toggle')) {
                 ev.preventDefault();
                 self.toggle();
             }
@@ -115,7 +117,7 @@ Cuic.Panel = class extends Cuic.Component {
             const el = self.node();
 
             if (self.isOpened() && self.options.autoClose) {
-                if (ev.target !== el && !Cuic.isParent(el, ev.target)) {
+                if (ev.target !== el && !self.isChildOf(ev.target)) {
                     // self.close(); // todo find how to avoid closing when opening from exterior (eg: button)
                 }
             }
@@ -128,11 +130,11 @@ Cuic.Panel = class extends Cuic.Component {
             let prop = {};
 
             // Horizontal position
-            if (Cuic.isPosition('left', self)) {
+            if (self.isPosition('left')) {
                 prop.left = -width;
                 prop.right = '';
             }
-            else if (Cuic.isPosition('right', self)) {
+            else if (self.isPosition('right')) {
                 prop.right = -width;
                 prop.left = '';
             }
@@ -141,11 +143,11 @@ Cuic.Panel = class extends Cuic.Component {
             }
 
             // Vertical position
-            if (Cuic.isPosition('bottom', self)) {
+            if (self.isPosition('bottom')) {
                 prop.bottom = -height;
                 prop.top = '';
             }
-            else if (Cuic.isPosition('top', self)) {
+            else if (self.isPosition('top')) {
                 prop.top = -height;
                 prop.bottom = '';
             }
@@ -158,33 +160,32 @@ Cuic.Panel = class extends Cuic.Component {
 
         // Called when the panel is minimized
         self.onMinimize(() => {
-            const el = self.node();
-            const parent = el.parentNode;
-            const clone = el.cloneNode(true);
-            Cuic.css(clone, {height: 'auto', width: 'auto'});
+            const clone = self.clone();
+            clone.css({height: 'auto', width: 'auto'});
+            clone.appendTo(self.parent());
 
             // Calculate minimized size
-            let prop = Cuic.calculateAlign(clone, self.options.position, parent);
-            prop.height = Cuic.height(clone);
-            prop.width = Cuic.width(clone);
+            let prop = Cuic.calculateAlign(clone, self.options.position);
+            prop.height = clone.height();
+            prop.width = clone.width();
             clone.remove();
 
             if (!self.isOpened()) {
                 // Horizontal position
-                if (Cuic.isPosition('left', self)) {
+                if (self.isPosition('left')) {
                     prop.left = -self.outerWidth(true);
                     prop.right = '';
                 }
-                else if (Cuic.isPosition('right', self)) {
+                else if (self.isPosition('right')) {
                     prop.right = -self.outerWidth(true);
                     prop.left = '';
                 }
                 // Vertical position
-                if (Cuic.isPosition('bottom', self)) {
+                if (self.isPosition('bottom')) {
                     prop.bottom = -self.outerHeight(true);
                     prop.top = '';
                 }
-                else if (Cuic.isPosition('top', self)) {
+                else if (self.isPosition('top')) {
                     prop.top = -self.outerHeight(true);
                     prop.bottom = '';
                 }

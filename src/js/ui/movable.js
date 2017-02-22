@@ -56,11 +56,12 @@ Cuic.Movable = class extends Cuic.Element {
      */
     addMoveHandle(handle) {
         const self = this;
+        handle = Cuic.element(handle);
 
         self.handles.add(handle);
 
         // Add the handle class
-        Cuic.addClass(handle, 'movable-handle');
+        handle.addClass('movable-handle');
 
         // Start moving
         Cuic.on('mousedown', handle, (ev) => {

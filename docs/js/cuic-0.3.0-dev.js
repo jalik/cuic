@@ -132,29 +132,6 @@ if (!Element.prototype.matches) {
         mouseY: 0,
 
         /**
-         * Adds CSS class to the element
-         * @param element
-         * @param className
-         * @return {Array|*}
-         */
-        addClass: function addClass(element, className) {
-            element = this.node(element);
-
-            var classes = this.getClasses(element);
-            var target = (className || '').split(' ');
-
-            for (var i = 0; i < target.length; i += 1) {
-                // Check if class is already assigned
-                if (classes.indexOf(target[i]) === -1) {
-                    classes.push(target[i]);
-                }
-            }
-            element.className = classes.join(' ');
-            return classes;
-        },
-
-
-        /**
          * Adds an event listener
          * @param element
          * @param event
@@ -167,34 +144,6 @@ if (!Element.prototype.matches) {
             } else if (typeof element.attachEvent === 'function') {
                 return element.attachEvent(event, listener);
             }
-        },
-
-
-        /**
-         * Place the element inside a target
-         * @param element
-         * @param position
-         * @param parent
-         * @return {HTMLElement}
-         */
-        align: function align(element, position, parent) {
-            element = this.node(element);
-            this.css(element, this.calculateAlign(element, position, parent));
-            return element;
-        },
-
-
-        /**
-         * Place an object toward a target
-         * @param element
-         * @param position
-         * @param target
-         * @return {HTMLElement}
-         */
-        anchor: function anchor(element, position, target) {
-            element = this.node(element);
-            this.css(element, this.calculateAnchor(element, position, target));
-            return element;
         },
 
 
@@ -241,27 +190,6 @@ if (!Element.prototype.matches) {
 
 
         /**
-         * Returns element border widths
-         * @param element
-         * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
-         */
-        border: function border(element) {
-            var bottom = parseFloat(this.getComputedStyle(element, 'border-bottom-width'));
-            var left = parseFloat(this.getComputedStyle(element, 'border-left-width'));
-            var right = parseFloat(this.getComputedStyle(element, 'border-right-width'));
-            var top = parseFloat(this.getComputedStyle(element, 'border-top-width'));
-            return {
-                bottom: bottom,
-                horizontal: left + right,
-                left: left,
-                right: right,
-                top: top,
-                vertical: bottom + top
-            };
-        },
-
-
-        /**
          * Position an object inside another
          * @param element
          * @param position
@@ -269,31 +197,31 @@ if (!Element.prototype.matches) {
          * @return {*}
          */
         calculateAlign: function calculateAlign(element, position, parent) {
-            element = this.node(element);
+            element = this.element(element);
             position = position || '';
 
             if (parent) {
-                parent = this.node(parent);
+                parent = this.element(parent);
 
                 // Use body as parent
-                if (parent.nodeName === 'HTML') {
-                    parent = document.body;
-                }
-                // Append element to parent if needed
-                if (parent !== element.parentNode) {
-                    parent.append(element);
-                }
+                // if (parent.nodeName === 'HTML') {
+                //     parent = document.body;
+                // }
+                // // Append element to parent if needed
+                // if (parent !== element.parent()) {
+                //     parent.append(element);
+                // }
             } else {
                 // Use parent node if no parent defined
-                parent = element.parentNode;
+                parent = element.parent();
             }
 
-            var elHeight = this.outerHeight(element, true);
-            var elWidth = this.outerWidth(element, true);
-            var parentHeight = this.height(parent);
-            var parentWidth = this.width(parent);
-            var relativeLeft = parent.scrollLeft;
-            var relativeTop = parent.scrollTop;
+            var elHeight = element.outerHeight(true);
+            var elWidth = element.outerWidth(true);
+            var parentHeight = parent.height();
+            var parentWidth = parent.width();
+            var relativeLeft = parent.node().scrollLeft;
+            var relativeTop = parent.node().scrollTop;
             var relativeBottom = -relativeTop;
             var relativeRight = -relativeLeft;
             var prop = {
@@ -304,11 +232,11 @@ if (!Element.prototype.matches) {
             };
 
             // If the target is fixed, we use the window as parent
-            switch (this.css(element, 'position')) {
+            switch (element.css('position')) {
                 case 'fixed':
-                    parent = window;
-                    parentHeight = this.innerHeight(parent);
-                    parentWidth = this.innerWidth(parent);
+                    parent = this.element(window);
+                    parentHeight = parent.innerHeight();
+                    parentWidth = parent.innerWidth();
                     relativeLeft = 0;
                     relativeTop = 0;
                     relativeBottom = 0;
@@ -316,8 +244,8 @@ if (!Element.prototype.matches) {
                     break;
             }
 
-            var centerX = relativeLeft + (this.innerWidth(parent) / 2 - elWidth / 2);
-            var centerY = relativeTop + (this.innerHeight(parent) / 2 - elHeight / 2);
+            var centerX = relativeLeft + (parent.innerWidth() / 2 - elWidth / 2);
+            var centerY = relativeTop + (parent.innerHeight() / 2 - elHeight / 2);
 
             // Vertical position
             if (position.indexOf('top') !== -1) {
@@ -529,21 +457,21 @@ if (!Element.prototype.matches) {
          * @return {*}
          */
         calculateMaximize: function calculateMaximize(element) {
-            element = this.node(element);
-            var parent = element.parentNode;
-            var parentPadding = this.padding(parent);
-            var elMargin = this.margin(element);
+            element = this.element(element);
+            var parent = element.parent();
+            var parentPadding = parent.padding();
+            var elMargin = element.margin();
             var prop = {
                 bottom: '',
-                height: this.innerHeight(parent) - parentPadding.vertical,
+                height: parent.innerHeight() - parentPadding.vertical,
                 left: '',
                 right: '',
                 top: '',
-                width: this.innerWidth(parent) - parentPadding.horizontal
+                width: parent.innerWidth() - parentPadding.horizontal
             };
 
             // Adjust dimensions
-            switch (this.css(element, 'position')) {
+            switch (element.css('position')) {
                 case 'absolute':
                     prop.height += parentPadding.vertical;
                     prop.height -= elMargin.vertical;
@@ -557,13 +485,13 @@ if (!Element.prototype.matches) {
             }
 
             // Horizontal position
-            if (this.isPosition('right', element)) {
+            if (element.isPosition('right')) {
                 prop.right = 0;
             } else {
                 prop.left = 0;
             }
             // Vertical position
-            if (this.isPosition('bottom', element)) {
+            if (element.isPosition('bottom')) {
                 prop.bottom = 0;
             } else {
                 prop.top = 0;
@@ -579,17 +507,18 @@ if (!Element.prototype.matches) {
          * @return {*}
          */
         calculateMinimize: function calculateMinimize(element, position) {
-            element = this.node(element);
+            element = this.element(element);
             position = position || '';
 
             // Create a clone with minimal size
-            var clone = element.cloneNode(true);
-            this.css(clone, { height: 'auto', width: 'auto' });
+            var clone = element.clone();
+            clone.css({ height: 'auto', width: 'auto' });
+            clone.appendTo(element.parent());
 
             // Calculate minimized size
-            var prop = this.calculateAlign(clone, position, element.parentNode);
-            prop.height = this.outerHeight(clone);
-            prop.width = this.outerWidth(clone);
+            var prop = this.calculateAlign(clone, position);
+            prop.height = clone.outerHeight();
+            prop.width = clone.outerWidth();
             clone.remove();
 
             return prop;
@@ -612,86 +541,6 @@ if (!Element.prototype.matches) {
                 fn = args.shift();
             }
             return this.apply(fn, context, args);
-        },
-
-
-        /**
-         * Returns the closest parent element matching the selector
-         * @param element
-         * @param selector
-         * @return {Cuic.Element}
-         */
-        closest: function closest(element, selector) {
-            element = this.node(element);
-            return this.element(element.closest(selector));
-        },
-
-
-        /**
-         * Applies the styles to the target.
-         * Styles can be a string or an object.
-         * @param element
-         * @param styles
-         * @return {*}
-         */
-        css: function css(element, styles) {
-            element = this.node(element);
-
-            // Writing styles
-            if (styles) {
-                if ((typeof styles === 'undefined' ? 'undefined' : _typeof(styles)) === 'object') {
-                    var mergedStyles = '';
-
-                    // Add pixel unit where needed
-                    this.autoPixel(styles);
-
-                    // Get current styles
-                    for (var i = 0; i < element.style.length; i += 1) {
-                        var property = element.style[i];
-
-                        // Ignore properties that are overwritten
-                        if (!(property in styles)) {
-                            var value = element.style[property];
-                            if (typeof value === 'string' && value === '') {
-                                value = '""';
-                            }
-                            mergedStyles += property + ': ' + value + ';';
-                        }
-                    }
-                    // Add new styles
-                    for (var style in styles) {
-                        if (styles.hasOwnProperty(style)) {
-                            var _value = styles[style];
-
-                            // Check if style is supported
-                            if (!(style in element.style)) {
-                                console.warn('Style "' + style + '" is not supported by element.', element);
-                            }
-                            if (typeof _value === 'string' && _value === '') {
-                                _value = '""';
-                            }
-                            mergedStyles += style + ': ' + _value + ';';
-                        }
-                    }
-                    element.style = mergedStyles;
-                } else if (typeof styles === 'string') {
-                    // Set styles
-                    if (styles.indexOf(':') !== -1) {
-                        element.style = styles;
-                    } else {
-                        // Return computed version for some properties
-                        // that would return nothing.
-                        switch (styles) {
-                            case 'position':
-                                return this.getComputedStyle(element, styles);
-                        }
-                        // Return specific style
-                        return element.style[styles];
-                    }
-                }
-            }
-            // Return all styles
-            return element.style;
         },
 
 
@@ -720,6 +569,9 @@ if (!Element.prototype.matches) {
             if (_element instanceof HTMLElement) {
                 return new this.Element(_element);
             }
+            if (_element === window) {
+                return new this.Element(_element);
+            }
             if (_element instanceof jQuery) {
                 return new this.Element(_element.get(0));
             }
@@ -727,25 +579,6 @@ if (!Element.prototype.matches) {
                 return new this.Element(document.querySelector(_element));
             }
             return _element;
-        },
-
-
-        /**
-         * Enters full screen
-         * @param element
-         */
-        enterFullScreen: function enterFullScreen(element) {
-            element = this.node(element);
-
-            if (element.requestFullscreen) {
-                element.requestFullscreen();
-            } else if (element.webkitRequestFullscreen) {
-                element.webkitRequestFullscreen();
-            } else if (element.mozRequestFullScreen) {
-                element.mozRequestFullScreen();
-            } else if (element.msRequestFullscreen) {
-                element.msRequestFullscreen();
-            }
         },
 
 
@@ -808,19 +641,7 @@ if (!Element.prototype.matches) {
          */
         find: function find(selector, context) {
             context = this.node(context || document);
-            var elements = context.querySelectorAll(selector);
-            return new this.Elements(elements, context, selector);
-        },
-
-
-        /**
-         * Returns CSS classes
-         * @param element
-         * @return {Array}
-         */
-        getClasses: function getClasses(element) {
-            element = this.node(element);
-            return element.className.split(' ');
+            return this.element(context).find(selector);
         },
 
 
@@ -854,64 +675,6 @@ if (!Element.prototype.matches) {
             if (element.OTransition == '') return '-o-';
 
             return '';
-        },
-
-
-        /**
-         * Checks if the element has the CSS class
-         * @param element
-         * @param className
-         * @return {boolean}
-         */
-        hasClass: function hasClass(element, className) {
-            element = this.node(element);
-            var classes = this.getClasses(element);
-            var classNames = (className || '').split(' ');
-            var result = classNames.length > 0;
-
-            for (var i = 0; i < classNames.length; i += 1) {
-                if (classes.indexOf(classNames[i]) === -1) {
-                    result = false;
-                    break;
-                }
-            }
-            return result;
-        },
-
-
-        /**
-         * Returns the element height
-         * @param element
-         * @return {number}
-         */
-        height: function height(element) {
-            element = this.node(element);
-            var padding = this.padding(element);
-            return element.clientHeight - padding.vertical;
-        },
-
-
-        /**
-         * Returns the element width including padding
-         * @param element
-         * @return {number}
-         */
-        innerHeight: function innerHeight(element) {
-            element = this.node(element);
-            // todo subtract vertical scrollbar width
-            return element.clientHeight;
-        },
-
-
-        /**
-         * Returns the element width including padding
-         * @param element
-         * @return {number}
-         */
-        innerWidth: function innerWidth(element) {
-            element = this.node(element);
-            // todo subtract horizontal scrollbar width
-            return element.clientWidth;
         },
 
 
@@ -971,58 +734,6 @@ if (!Element.prototype.matches) {
 
 
         /**
-         * Checks if the element is a parent node
-         * @param parent
-         * @param element
-         * @return {boolean}
-         */
-        isParent: function isParent(parent, element) {
-            parent = this.node(parent);
-            element = this.node(element);
-            var el = element;
-
-            do {
-                el = el.parentNode;
-
-                if (el === parent) {
-                    return true;
-                }
-            } while (el);
-
-            return false;
-        },
-
-
-        /**
-         * Checks if the element is at the position
-         * @param position
-         * @param element
-         * @return {boolean}
-         */
-        isPosition: function isPosition(position, element) {
-            element = this.node(element);
-            var pos = this.position(element);
-
-            if (position.indexOf('center') !== -1) {
-                return pos.top == pos.bottom || pos.left == pos.right;
-            }
-            if (position.indexOf('bottom') !== -1) {
-                return pos.bottom < pos.top;
-            }
-            if (position.indexOf('top') !== -1) {
-                return pos.top < pos.bottom;
-            }
-            if (position.indexOf('left') !== -1) {
-                return pos.left < pos.right;
-            }
-            if (position.indexOf('right') !== -1) {
-                return pos.right < pos.left;
-            }
-            return false;
-        },
-
-
-        /**
          * Checks if the browser is Safari 3.0+
          * @return {boolean}
          */
@@ -1031,56 +742,6 @@ if (!Element.prototype.matches) {
                     return p.toString() === "[object SafariRemoteNotification]";
                 }(!window['safari'] || safari.pushNotification)
             );
-        },
-
-
-        /**
-         * Returns the element margins
-         * @param element
-         * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
-         */
-        margin: function margin(element) {
-            var bottom = parseFloat(this.getComputedStyle(element, 'margin-bottom'));
-            var left = parseFloat(this.getComputedStyle(element, 'margin-left'));
-            var right = parseFloat(this.getComputedStyle(element, 'margin-right'));
-            var top = parseFloat(this.getComputedStyle(element, 'margin-top'));
-            return {
-                bottom: bottom,
-                horizontal: left + right,
-                left: left,
-                right: right,
-                top: top,
-                vertical: bottom + top
-            };
-        },
-
-
-        /**
-         * Maximizes the element
-         * @param element
-         * @return {HTMLElement}
-         */
-        maximize: function maximize(element) {
-            element = this.node(element);
-            this.removeClass(element, 'minimized');
-            this.addClass(element, 'maximized');
-            this.css(element, this.calculateMaximize(element));
-            return element;
-        },
-
-
-        /**
-         * Minimizes the element
-         * @param element
-         * @param position
-         * @return {HTMLElement}
-         */
-        minimize: function minimize(element, position) {
-            element = this.node(element);
-            this.removeClass(element, 'maximized');
-            this.addClass(element, 'minimized');
-            this.css(element, this.calculateMinimize(element, position));
-            return element;
         },
 
 
@@ -1162,20 +823,6 @@ if (!Element.prototype.matches) {
                     }
                 }
             return this.removeEventListener(element, browserEvent, callback);
-        },
-
-
-        /**
-         * Returns the element offset
-         * @param element
-         * @return {{left: Number, top: Number}}
-         */
-        offset: function offset(element) {
-            element = this.node(element);
-            return {
-                left: element.offsetLeft,
-                top: element.offsetTop
-            };
         },
 
 
@@ -1277,72 +924,6 @@ if (!Element.prototype.matches) {
 
 
         /**
-         * Returns the element height including padding, border and margin
-         * @param element
-         * @param includeMargin
-         * @return {number}
-         */
-        outerHeight: function outerHeight(element, includeMargin) {
-            element = this.node(element);
-            var margin = this.margin(element);
-            return element.offsetHeight + (includeMargin ? margin.vertical : 0);
-        },
-
-
-        /**
-         * Returns the element width including padding, border and margin
-         * @param element
-         * @param includeMargin
-         * @return {number}
-         */
-        outerWidth: function outerWidth(element, includeMargin) {
-            element = this.node(element);
-            var margin = this.margin(element);
-            return element.offsetWidth + (includeMargin ? margin.horizontal : 0);
-        },
-
-
-        /**
-         * Returns the element padding
-         * @param element
-         * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
-         */
-        padding: function padding(element) {
-            var bottom = parseFloat(this.getComputedStyle(element, 'padding-bottom'));
-            var left = parseFloat(this.getComputedStyle(element, 'padding-left'));
-            var right = parseFloat(this.getComputedStyle(element, 'padding-right'));
-            var top = parseFloat(this.getComputedStyle(element, 'padding-top'));
-            return {
-                bottom: bottom,
-                horizontal: left + right,
-                left: left,
-                right: right,
-                top: top,
-                vertical: bottom + top
-            };
-        },
-
-
-        /**
-         * Returns the element position
-         * @param element
-         * @return {{bottom: Number, left: Number, right: Number, top: Number}}
-         */
-        position: function position(element) {
-            var bottom = parseFloat(this.getComputedStyle(element, 'bottom'));
-            var left = parseFloat(this.getComputedStyle(element, 'left'));
-            var right = parseFloat(this.getComputedStyle(element, 'right'));
-            var top = parseFloat(this.getComputedStyle(element, 'top'));
-            return {
-                bottom: bottom,
-                left: left,
-                right: right,
-                top: top
-            };
-        },
-
-
-        /**
          * Returns the prefixed style
          * @param style
          * @return {string}
@@ -1359,29 +940,6 @@ if (!Element.prototype.matches) {
          */
         ready: function ready(callback) {
             document.addEventListener('DOMContentLoaded', callback);
-        },
-
-
-        /**
-         * Removes CSS class from the element
-         * @param element
-         * @param className
-         * @return {*|Array}
-         */
-        removeClass: function removeClass(element, className) {
-            element = this.node(element);
-            var classes = this.getClasses(element);
-            var classNames = (className || '').split(' ');
-
-            for (var i = 0; i < classNames.length; i += 1) {
-                var index = classes.indexOf(classNames[i]);
-
-                if (index !== -1) {
-                    classes.splice(index, 1);
-                }
-            }
-            element.className = classes.join(' ');
-            return classes;
         },
 
 
@@ -1489,18 +1047,6 @@ if (!Element.prototype.matches) {
             if (window[event] !== undefined || window['on' + event] !== undefined) {
                 return event;
             }
-        },
-
-
-        /**
-         * Returns the element width
-         * @param element
-         * @return {number}
-         */
-        width: function width(element) {
-            element = this.node(element);
-            var padding = this.padding(element);
-            return element.clientWidth - padding.horizontal;
         }
     };
 
@@ -2444,7 +1990,7 @@ Cuic.Element = function () {
                 self.element = document.createElement(node);
             }
             // Use HTML node
-            else if (node instanceof HTMLElement || node instanceof HTMLDocument) {
+            else if (node instanceof HTMLElement || node instanceof HTMLDocument || node === window) {
                     self.element = node;
                 }
                 // Use node from Cuic.Element
@@ -2556,7 +2102,16 @@ Cuic.Element = function () {
     _createClass(_class5, [{
         key: 'addClass',
         value: function addClass(className) {
-            Cuic.addClass(this.node(), className);
+            var classes = this.getClasses();
+            var target = (className || '').split(' ');
+
+            for (var i = 0; i < target.length; i += 1) {
+                // Check if class is already assigned
+                if (classes.indexOf(target[i]) === -1) {
+                    classes.push(target[i]);
+                }
+            }
+            this.node().className = classes.join(' ');
             return this;
         }
 
@@ -2600,7 +2155,7 @@ Cuic.Element = function () {
     }, {
         key: 'align',
         value: function align(position) {
-            Cuic.align(this.node(), position);
+            this.css(Cuic.calculateAlign(this, position));
             this.options.position = position;
             this.events.trigger('aligned', position);
             return this;
@@ -2616,8 +2171,8 @@ Cuic.Element = function () {
     }, {
         key: 'anchor',
         value: function anchor(position, target) {
-            target = target || this.options.target;
-            Cuic.anchor(this.node(), position, target);
+            target = Cuic.element(target || this.options.target);
+            this.css(Cuic.calculateAnchor(this, position, target));
             this.options.anchor = position;
             this.options.target = target;
             this.events.trigger('anchored', position);
@@ -2779,7 +2334,18 @@ Cuic.Element = function () {
     }, {
         key: 'border',
         value: function border() {
-            return Cuic.border(this);
+            var bottom = parseFloat(Cuic.getComputedStyle(this, 'border-bottom-width'));
+            var left = parseFloat(Cuic.getComputedStyle(this, 'border-left-width'));
+            var right = parseFloat(Cuic.getComputedStyle(this, 'border-right-width'));
+            var top = parseFloat(Cuic.getComputedStyle(this, 'border-top-width'));
+            return {
+                bottom: bottom,
+                horizontal: left + right,
+                left: left,
+                right: right,
+                top: top,
+                vertical: bottom + top
+            };
         }
 
         /**
@@ -2805,6 +2371,30 @@ Cuic.Element = function () {
         }
 
         /**
+         * Returns a clone of the element
+         * @return {*|Cuic.Element}
+         */
+
+    }, {
+        key: 'clone',
+        value: function clone() {
+            return Cuic.element(this.node().cloneNode(true));
+        }
+
+        /**
+         * Returns the closest parent element matching the selector
+         * @param selector
+         * @return {Cuic.Element|null}
+         */
+
+    }, {
+        key: 'closest',
+        value: function closest(selector) {
+            var node = this.node().closest(selector);
+            return node ? Cuic.element(node) : null;
+        }
+
+        /**
          * Set styles
          * @param styles
          * @return {Cuic.Element|*}
@@ -2813,7 +2403,65 @@ Cuic.Element = function () {
     }, {
         key: 'css',
         value: function css(styles) {
-            return Cuic.css(this.node(), styles);
+            var node = this.node();
+
+            // Writing styles
+            if (styles) {
+                if ((typeof styles === 'undefined' ? 'undefined' : _typeof(styles)) === 'object') {
+                    var mergedStyles = '';
+
+                    // Add pixel unit where needed
+                    Cuic.autoPixel(styles);
+
+                    // Get current styles
+                    for (var i = 0; i < node.style.length; i += 1) {
+                        var property = node.style[i];
+
+                        // Ignore properties that are overwritten
+                        if (!(property in styles)) {
+                            var value = node.style[property];
+                            if (typeof value === 'string' && value === '') {
+                                value = '""';
+                            }
+                            mergedStyles += property + ': ' + value + ';';
+                        }
+                    }
+                    // Add new styles
+                    for (var style in styles) {
+                        if (styles.hasOwnProperty(style)) {
+                            var _value = styles[style];
+
+                            // Check if style is supported
+                            if (!(style in node.style)) {
+                                console.warn('Style "' + style + '" is not supported by element.', node);
+                            }
+                            if (typeof _value === 'string' && _value === '') {
+                                _value = '""';
+                            }
+                            mergedStyles += style + ': ' + _value + ';';
+                        }
+                    }
+                    node.style = mergedStyles;
+                    return this;
+                } else if (typeof styles === 'string') {
+                    // Set styles
+                    if (styles.indexOf(':') !== -1) {
+                        node.style = styles;
+                        return this;
+                    } else {
+                        // Return computed version for some properties
+                        // that would return nothing.
+                        switch (styles) {
+                            case 'position':
+                                return Cuic.getComputedStyle(node, styles);
+                        }
+                        // Return specific style
+                        return node.style[styles];
+                    }
+                }
+            }
+            // Return all styles
+            return node.style;
         }
 
         /**
@@ -2879,6 +2527,28 @@ Cuic.Element = function () {
         }
 
         /**
+         * Enters full screen
+         * @return {Cuic.Element}
+         */
+
+    }, {
+        key: 'enterFullScreen',
+        value: function enterFullScreen() {
+            var node = this.node();
+
+            if (node.requestFullscreen) {
+                node.requestFullscreen();
+            } else if (node.webkitRequestFullscreen) {
+                node.webkitRequestFullscreen();
+            } else if (node.mozRequestFullScreen) {
+                node.mozRequestFullScreen();
+            } else if (node.msRequestFullscreen) {
+                node.msRequestFullscreen();
+            }
+            return this;
+        }
+
+        /**
          * Returns the first element that matches the selector
          * @param selector
          * @return {Cuic.Elements}
@@ -2887,7 +2557,9 @@ Cuic.Element = function () {
     }, {
         key: 'find',
         value: function find(selector) {
-            return Cuic.find(selector, this.node());
+            var context = this.node();
+            var elements = context.querySelectorAll(selector);
+            return new Cuic.Elements(elements, context, selector);
         }
 
         /**
@@ -2898,7 +2570,7 @@ Cuic.Element = function () {
     }, {
         key: 'getClasses',
         value: function getClasses() {
-            return Cuic.getClasses(this.node());
+            return this.node().className.split(' ');
         }
 
         /**
@@ -2910,7 +2582,28 @@ Cuic.Element = function () {
     }, {
         key: 'hasClass',
         value: function hasClass(className) {
-            return Cuic.hasClass(this.node(), className);
+            var classes = this.getClasses();
+            var classNames = (className || '').split(' ');
+            var result = classNames.length > 0;
+
+            for (var i = 0; i < classNames.length; i += 1) {
+                if (classes.indexOf(classNames[i]) === -1) {
+                    result = false;
+                    break;
+                }
+            }
+            return result;
+        }
+
+        /**
+         * Checks if the element has a parent
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'hasParent',
+        value: function hasParent() {
+            return !!this.parentNode();
         }
 
         /**
@@ -2921,7 +2614,7 @@ Cuic.Element = function () {
     }, {
         key: 'height',
         value: function height() {
-            return Cuic.height(this);
+            return this.node().clientHeight - this.padding().vertical;
         }
 
         /**
@@ -2975,7 +2668,8 @@ Cuic.Element = function () {
     }, {
         key: 'innerHeight',
         value: function innerHeight() {
-            return Cuic.innerHeight(this);
+            // todo subtract vertical scrollbar width
+            return this.node().clientHeight;
         }
 
         /**
@@ -2986,7 +2680,8 @@ Cuic.Element = function () {
     }, {
         key: 'innerWidth',
         value: function innerWidth() {
-            return Cuic.innerWidth(this);
+            // todo subtract horizontal scrollbar width
+            return this.node().clientWidth;
         }
 
         /**
@@ -3017,6 +2712,29 @@ Cuic.Element = function () {
             var parent = this.node().parentNode;
             parent.insertBefore(element, this.node());
             return this;
+        }
+
+        /**
+         * Checks if the element is parent of the current element
+         * @param parent
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isChildOf',
+        value: function isChildOf(parent) {
+            parent = Cuic.element(parent).node();
+            var node = this.node();
+
+            do {
+                node = node.parentNode;
+
+                if (node === parent) {
+                    return true;
+                }
+            } while (node);
+
+            return false;
         }
 
         /**
@@ -3053,6 +2771,35 @@ Cuic.Element = function () {
         }
 
         /**
+         * Checks if the element is at the position
+         * @param position
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isPosition',
+        value: function isPosition(position) {
+            var pos = this.position();
+
+            if (position.indexOf('center') !== -1) {
+                return pos.top == pos.bottom || pos.left == pos.right;
+            }
+            if (position.indexOf('bottom') !== -1) {
+                return pos.bottom < pos.top;
+            }
+            if (position.indexOf('top') !== -1) {
+                return pos.top < pos.bottom;
+            }
+            if (position.indexOf('left') !== -1) {
+                return pos.left < pos.right;
+            }
+            if (position.indexOf('right') !== -1) {
+                return pos.right < pos.left;
+            }
+            return false;
+        }
+
+        /**
          * Checks if the element is removed from the DOM
          * @return {boolean}
          */
@@ -3076,14 +2823,25 @@ Cuic.Element = function () {
         }
 
         /**
-         * Returns element margin
-         * @return {*|{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
+         * Returns the element margins
+         * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
          */
 
     }, {
         key: 'margin',
         value: function margin() {
-            return Cuic.margin(this);
+            var bottom = parseFloat(Cuic.getComputedStyle(this, 'margin-bottom'));
+            var left = parseFloat(Cuic.getComputedStyle(this, 'margin-left'));
+            var right = parseFloat(Cuic.getComputedStyle(this, 'margin-right'));
+            var top = parseFloat(Cuic.getComputedStyle(this, 'margin-top'));
+            return {
+                bottom: bottom,
+                horizontal: left + right,
+                left: left,
+                right: right,
+                top: top,
+                vertical: bottom + top
+            };
         }
 
         /**
@@ -3113,13 +2871,17 @@ Cuic.Element = function () {
 
         /**
          * Returns the element offset
-         * @return {*|{left: Number, top: Number}}
+         * @return {{left: *, top: *}}
          */
 
     }, {
         key: 'offset',
         value: function offset() {
-            return Cuic.offset(this.node());
+            var node = this.node();
+            return {
+                left: node.offsetLeft,
+                top: node.offsetTop
+            };
         }
 
         /**
@@ -3221,7 +2983,7 @@ Cuic.Element = function () {
     }, {
         key: 'outerHeight',
         value: function outerHeight(includeMargin) {
-            return Cuic.outerHeight(this, includeMargin);
+            return this.node().offsetHeight + (includeMargin ? this.margin().vertical : 0);
         }
 
         /**
@@ -3233,18 +2995,29 @@ Cuic.Element = function () {
     }, {
         key: 'outerWidth',
         value: function outerWidth(includeMargin) {
-            return Cuic.outerWidth(this, includeMargin);
+            return this.node().offsetWidth + (includeMargin ? this.margin().horizontal : 0);
         }
 
         /**
          * Returns element padding
-         * @return {*|{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
+         * @return {{bottom: Number, horizontal: number, left: Number, right: Number, top: Number, vertical: number}}
          */
 
     }, {
         key: 'padding',
         value: function padding() {
-            return Cuic.padding(this);
+            var bottom = parseFloat(Cuic.getComputedStyle(this, 'padding-bottom'));
+            var left = parseFloat(Cuic.getComputedStyle(this, 'padding-left'));
+            var right = parseFloat(Cuic.getComputedStyle(this, 'padding-right'));
+            var top = parseFloat(Cuic.getComputedStyle(this, 'padding-top'));
+            return {
+                bottom: bottom,
+                horizontal: left + right,
+                left: left,
+                right: right,
+                top: top,
+                vertical: bottom + top
+            };
         }
 
         /**
@@ -3272,13 +3045,22 @@ Cuic.Element = function () {
 
         /**
          * Returns the element position
-         * @return {*|{bottom: Number, left: Number, right: Number, top: Number}}
+         * @return {{bottom: Number, left: Number, right: Number, top: Number}}
          */
 
     }, {
         key: 'position',
         value: function position() {
-            return Cuic.position(this.node());
+            var bottom = parseFloat(Cuic.getComputedStyle(this, 'bottom'));
+            var left = parseFloat(Cuic.getComputedStyle(this, 'left'));
+            var right = parseFloat(Cuic.getComputedStyle(this, 'right'));
+            var top = parseFloat(Cuic.getComputedStyle(this, 'top'));
+            return {
+                bottom: bottom,
+                left: left,
+                right: right,
+                top: top
+            };
         }
 
         /**
@@ -3329,7 +3111,17 @@ Cuic.Element = function () {
     }, {
         key: 'removeClass',
         value: function removeClass(className) {
-            Cuic.removeClass(this.node(), className);
+            var classes = this.getClasses();
+            var classNames = (className || '').split(' ');
+
+            for (var i = 0; i < classNames.length; i += 1) {
+                var index = classes.indexOf(classNames[i]);
+
+                if (index !== -1) {
+                    classes.splice(index, 1);
+                }
+            }
+            this.node().className = classes.join(' ');
             return this;
         }
 
@@ -3389,7 +3181,7 @@ Cuic.Element = function () {
     }, {
         key: 'width',
         value: function width() {
-            return Cuic.width(this);
+            return this.node().clientWidth - this.padding().horizontal;
         }
     }]);
 
@@ -3531,6 +3323,7 @@ Cuic.Component = function (_Cuic$Element) {
         /**
          * Maximizes the component in its container
          * @param callback
+         * @return {Cuic.Element}
          */
 
     }, {
@@ -3541,7 +3334,7 @@ Cuic.Component = function (_Cuic$Element) {
             this.events.trigger('maximize');
             this.removeClass('minimized');
             this.addClass('maximized');
-            Cuic.maximize(this);
+            this.css(Cuic.calculateMaximize(this));
             this.once('transitionend', function (ev) {
                 if (_this6.isMaximized()) {
                     _this6.events.trigger('maximized', ev);
@@ -3551,11 +3344,13 @@ Cuic.Component = function (_Cuic$Element) {
                     }
                 }
             });
+            return this;
         }
 
         /**
          * Minimizes the component in its container
          * @param callback
+         * @return {Cuic.Element}
          */
 
     }, {
@@ -3566,7 +3361,7 @@ Cuic.Component = function (_Cuic$Element) {
             this.events.trigger('minimize');
             this.removeClass('maximized');
             this.addClass('minimized');
-            Cuic.minimize(this, this.options.position);
+            this.css(Cuic.calculateMinimize(this, this.options.position));
             this.once('transitionend', function (ev) {
                 if (_this7.isMinimized()) {
                     _this7.events.trigger('minimized', ev);
@@ -3576,6 +3371,7 @@ Cuic.Component = function (_Cuic$Element) {
                     }
                 }
             });
+            return this;
         }
 
         /**
@@ -3785,7 +3581,7 @@ Cuic.Group = function (_Cuic$Element2) {
                 throw new TypeError('Cannot add non component to a Group.');
             }
             // fixme check position with this.options.position
-            if (Cuic.isPosition('top', this.node())) {
+            if (this.isPosition('top')) {
                 component.prependTo(this);
             } else {
                 component.appendTo(this);
@@ -4427,11 +4223,12 @@ Cuic.Movable = function (_Cuic$Element4) {
         key: 'addMoveHandle',
         value: function addMoveHandle(handle) {
             var self = this;
+            handle = Cuic.element(handle);
 
             self.handles.add(handle);
 
             // Add the handle class
-            Cuic.addClass(handle, 'movable-handle');
+            handle.addClass('movable-handle');
 
             // Start moving
             Cuic.on('mousedown', handle, function (ev) {
@@ -5139,7 +4936,7 @@ Cuic.Dialog = function (_Cuic$Component2) {
 
         self.on('click', function (ev) {
             // Close button
-            if (Cuic.hasClass(ev.target, 'btn-close')) {
+            if (Cuic.element(ev.target).hasClass('btn-close')) {
                 ev.preventDefault();
                 self.close();
             }
@@ -6306,7 +6103,7 @@ Cuic.Notification = function (_Cuic$Component4) {
 
         self.on('click', function (ev) {
             // Close button
-            if (Cuic.hasClass(ev.target, 'btn-close')) {
+            if (Cuic.element(ev.target).hasClass('btn-close')) {
                 ev.preventDefault();
                 self.close();
             }
@@ -6571,16 +6368,18 @@ Cuic.Panel = function (_Cuic$Component5) {
 
         // To hide the panel in the container,
         // the container must have a hidden overflow
-        Cuic.css(self.parentNode(), { overflow: 'hidden' });
+        if (self.hasParent()) {
+            self.parent().css({ overflow: 'hidden' });
+        }
 
         self.on('click', function (ev) {
             // Close button
-            if (Cuic.hasClass(ev.target, 'btn-close')) {
+            if (Cuic.element(ev.target).hasClass('btn-close')) {
                 ev.preventDefault();
                 self.close();
             }
             // Toggle button
-            if (Cuic.hasClass(ev.target, 'btn-toggle')) {
+            if (Cuic.element(ev.target).hasClass('btn-toggle')) {
                 ev.preventDefault();
                 self.toggle();
             }
@@ -6591,7 +6390,7 @@ Cuic.Panel = function (_Cuic$Component5) {
             var el = self.node();
 
             if (self.isOpened() && self.options.autoClose) {
-                if (ev.target !== el && !Cuic.isParent(el, ev.target)) {
+                if (ev.target !== el && !self.isChildOf(ev.target)) {
                     // self.close(); // todo find how to avoid closing when opening from exterior (eg: button)
                 }
             }
@@ -6604,10 +6403,10 @@ Cuic.Panel = function (_Cuic$Component5) {
             var prop = {};
 
             // Horizontal position
-            if (Cuic.isPosition('left', self)) {
+            if (self.isPosition('left')) {
                 prop.left = -width;
                 prop.right = '';
-            } else if (Cuic.isPosition('right', self)) {
+            } else if (self.isPosition('right')) {
                 prop.right = -width;
                 prop.left = '';
             } else {}
@@ -6615,10 +6414,10 @@ Cuic.Panel = function (_Cuic$Component5) {
 
 
             // Vertical position
-            if (Cuic.isPosition('bottom', self)) {
+            if (self.isPosition('bottom')) {
                 prop.bottom = -height;
                 prop.top = '';
-            } else if (Cuic.isPosition('top', self)) {
+            } else if (self.isPosition('top')) {
                 prop.top = -height;
                 prop.bottom = '';
             } else {}
@@ -6631,30 +6430,30 @@ Cuic.Panel = function (_Cuic$Component5) {
         // Called when the panel is minimized
         self.onMinimize(function () {
             var el = self.node();
-            var parent = el.parentNode;
-            var clone = el.cloneNode(true);
-            Cuic.css(clone, { height: 'auto', width: 'auto' });
+            var clone = self.clone();
+            clone.css({ height: 'auto', width: 'auto' });
+            clone.appendTo(self.parent());
 
             // Calculate minimized size
-            var prop = Cuic.calculateAlign(clone, self.options.position, parent);
-            prop.height = Cuic.height(clone);
-            prop.width = Cuic.width(clone);
+            var prop = Cuic.calculateAlign(clone, self.options.position);
+            prop.height = clone.height();
+            prop.width = clone.width();
             clone.remove();
 
             if (!self.isOpened()) {
                 // Horizontal position
-                if (Cuic.isPosition('left', self)) {
+                if (self.isPosition('left')) {
                     prop.left = -self.outerWidth(true);
                     prop.right = '';
-                } else if (Cuic.isPosition('right', self)) {
+                } else if (self.isPosition('right')) {
                     prop.right = -self.outerWidth(true);
                     prop.left = '';
                 }
                 // Vertical position
-                if (Cuic.isPosition('bottom', self)) {
+                if (self.isPosition('bottom')) {
                     prop.bottom = -self.outerHeight(true);
                     prop.top = '';
-                } else if (Cuic.isPosition('top', self)) {
+                } else if (self.isPosition('top')) {
                     prop.top = -self.outerHeight(true);
                     prop.bottom = '';
                 }
@@ -6887,7 +6686,7 @@ Cuic.Popup = function (_Cuic$Component6) {
 
         self.on('click', function (ev) {
             // Close button
-            if (Cuic.hasClass(ev.target, 'btn-close')) {
+            if (Cuic.element(ev.target).hasClass('btn-close')) {
                 ev.preventDefault();
                 self.close();
             }
@@ -6897,7 +6696,7 @@ Cuic.Popup = function (_Cuic$Component6) {
         Cuic.on('click', document, function (ev) {
             var el = self.node();
 
-            if (ev.target !== el && !Cuic.isParent(el, ev.target)) {
+            if (ev.target !== el && !self.isChildOf(ev.target)) {
                 if (self.options.autoClose && self.isOpened()) {
                     self.close();
                 }
@@ -7666,7 +7465,7 @@ Cuic.Tooltip = function (_Cuic$Component8) {
         Cuic.on('click', document, function (ev) {
             var el = self.node();
 
-            if (ev.target !== el && !Cuic.isParent(el, ev.target)) {
+            if (ev.target !== el && !self.isChildOf(ev.target)) {
                 self.close();
             }
         });
