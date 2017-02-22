@@ -362,16 +362,26 @@ if (!Element.prototype.matches) {
             position = position || '';
             element = this.element(element);
 
-            var targetHeight = 1;
-            var targetWidth = 1;
-            var targetOffset = { left: target[0], top: target[1] };
+            var targetHeight = void 0;
+            var targetWidth = void 0;
+            var targetOffset = void 0;
 
-            if (!(target instanceof Array && target.length === 2)) {
-                target = this.element(target);
-                targetHeight = target.outerHeight();
-                targetWidth = target.outerWidth();
-                targetOffset = target.offset();
+            // Target is a coordinate (x, y)
+            if (target instanceof Array && target.length === 2) {
+                targetHeight = 1;
+                targetWidth = 1;
+                targetOffset = {
+                    left: target[0],
+                    top: target[1]
+                };
             }
+            // Target is an element
+            else {
+                    target = this.element(target);
+                    targetHeight = target.outerHeight();
+                    targetWidth = target.outerWidth();
+                    targetOffset = target.offset();
+                }
 
             var elWidth = element.outerWidth(true);
             var elHeight = element.outerHeight(true);
@@ -379,6 +389,26 @@ if (!Element.prototype.matches) {
             var elCenterY = elHeight / 2;
             var targetCenterX = targetWidth / 2;
             var targetCenterY = targetHeight / 2;
+
+            // fixme elHeight can be less if animated (resized), which leads to wrong elCenterY
+            // fixme the problem is with element with scale(0) or display:none
+
+            // const disp = element.css('display');
+            // const cls = element.getClasses().join(' ');
+            // // element.css('display', '');
+            // element.removeClass(cls);
+            // let compHeight = this.getComputedStyle(element, 'height');
+            // let compBorder = element.border();
+            // let compPadding = element.padding();
+            // let compMargin = element.margin();
+            // let total = compPadding.vertical + compBorder.vertical + compMargin.vertical;
+            // console.log('elCenterY', elCenterY, 'outerHeight:', elHeight, 'compHeight:', compHeight, 'compTotal:', total);
+            // console.log('height', element.height())
+            // console.log('innerHeight', element.innerHeight())
+            // console.log('outerHeight', element.outerHeight())
+            // element.addClass(cls);
+            // // element.css(disp);
+            // element.hide();
 
             var prop = {
                 bottom: '',
@@ -2902,7 +2932,8 @@ Cuic.Element = function () {
     }, {
         key: 'hide',
         value: function hide() {
-            this.css({ display: 'none' });
+            // this.css({display: 'none'});
+            this.addClass('hidden');
             this.events.trigger('hidden');
             return this;
         }
@@ -3310,7 +3341,8 @@ Cuic.Element = function () {
     }, {
         key: 'show',
         value: function show() {
-            this.css({ display: '' });
+            // this.css({display: ''});
+            this.removeClass('hidden');
             this.events.trigger('shown');
             return this;
         }
@@ -7568,6 +7600,9 @@ Cuic.Tooltip = function (_Cuic$Component8) {
 
         var self = _this27;
 
+        // Public attributes
+        self.currentTarget = null;
+
         // Add component classes
         self.addClass('tooltip');
 
@@ -7604,14 +7639,19 @@ Cuic.Tooltip = function (_Cuic$Component8) {
                     self.content.html(content);
                 }
 
+                // Keep reference to current target
+                self.currentTarget = ev.currentTarget;
+
                 // Position tooltip
-                self.update(ev);
+                self.update();
                 self.open();
             });
 
             // Close tooltip when mouse leaves area
-            target.on('mouseleave', function (ev) {
+            target.on('mouseleave', function () {
                 self.close();
+                // Clear reference to current target
+                self.currentTarget = null;
             });
         });
 
@@ -7620,11 +7660,6 @@ Cuic.Tooltip = function (_Cuic$Component8) {
             if (self.options.followPointer && !self.isHidden()) {
                 self.update(ev);
             }
-        });
-
-        // Move tooltip when mouse is over
-        self.on('mousemove', function (ev) {
-            self.update(ev);
         });
 
         // Close the panel when the user clicks outside of it
@@ -7639,16 +7674,16 @@ Cuic.Tooltip = function (_Cuic$Component8) {
         // Add the tooltip to the list
         Cuic.tooltips.add(self);
 
+        // Reposition tail when tooltip position change
+        self.onAnchored(function () {
+            self.updateTail();
+        });
+
         // Called when the tooltip is closed
         self.onClosed(function () {
             if (self.options.autoRemove) {
                 self.remove();
             }
-        });
-
-        // Reposition tail when tooltip position change
-        self.onAnchored(function () {
-            self.updateTail();
         });
         return _this27;
     }
@@ -7676,25 +7711,22 @@ Cuic.Tooltip = function (_Cuic$Component8) {
     }, {
         key: 'update',
         value: function update(ev) {
-            // Position tooltip
-            if (this.options.followPointer) {
+            if (this.options.followPointer && ev) {
                 if (this.parentNode() !== document.body) {
                     this.appendTo(document.body);
                 }
                 this.anchor(this.options.anchor, [ev.pageX, ev.pageY]);
-            } else {
-                if (this.parentNode() !== ev.currentTarget.parentNode) {
-                    this.appendTo(ev.currentTarget.parentNode);
+            } else if (this.currentTarget) {
+                if (this.parentNode() !== this.currentTarget.parentNode) {
+                    this.appendTo(this.currentTarget.parentNode);
                 }
-                this.anchor(this.options.anchor, ev.currentTarget);
-                this.updateTail();
+                this.anchor(this.options.anchor, this.currentTarget);
             }
             return this;
         }
 
         /**
          * Position the tooltip tail
-         * fixme sometimes tail is not positioned well
          * @return {Cuic.Tooltip}
          */
 
@@ -7742,6 +7774,7 @@ Cuic.Tooltip = function (_Cuic$Component8) {
                 prop.left = -this.tail.outerWidth();
                 prop['margin-top'] = -this.tail.outerHeight() / 2;
             }
+            // todo position tail in diagonal (top left, top right...)
 
             // Apply CSS
             this.tail.css(prop);

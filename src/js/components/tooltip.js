@@ -36,6 +36,9 @@ Cuic.Tooltip = class extends Cuic.Component {
 
         const self = this;
 
+        // Public attributes
+        self.currentTarget = null;
+
         // Add component classes
         self.addClass('tooltip');
 
@@ -72,25 +75,27 @@ Cuic.Tooltip = class extends Cuic.Component {
                     self.content.html(content);
                 }
 
+                // Keep reference to current target
+                self.currentTarget = ev.currentTarget;
+
                 // Position tooltip
-                self.update(ev);
+                self.update();
                 self.open();
             });
 
-            // Move tooltip when mouse moves over area
-            target.on('mousemove', (ev) => {
-                self.update(ev);
-            });
-
             // Close tooltip when mouse leaves area
-            target.on('mouseleave', (ev) => {
+            target.on('mouseleave', () => {
                 self.close();
+                // Clear reference to current target
+                self.currentTarget = null;
             });
         });
 
-        // Move tooltip if mouse is over
-        self.on('mousemove', (ev) => {
-            self.update(ev);
+        // Move tooltip when mouse moves and tooltip is opened
+        Cuic.on('mousemove', document, (ev) => {
+            if (self.options.followPointer && !self.isHidden()) {
+                self.update(ev);
+            }
         });
 
         // Close the panel when the user clicks outside of it
@@ -105,16 +110,16 @@ Cuic.Tooltip = class extends Cuic.Component {
         // Add the tooltip to the list
         Cuic.tooltips.add(self);
 
+        // Reposition tail when tooltip position change
+        self.onAnchored(() => {
+            self.updateTail();
+        });
+
         // Called when the tooltip is closed
         self.onClosed(() => {
             if (self.options.autoRemove) {
                 self.remove();
             }
-        });
-
-        // Reposition tail when tooltip position change
-        self.onAnchored(() => {
-            self.updateTail();
         });
     }
 
@@ -134,19 +139,17 @@ Cuic.Tooltip = class extends Cuic.Component {
      * @return {Cuic.Tooltip}
      */
     update(ev) {
-        // Position tooltip
-        if (this.options.followPointer) {
+        if (this.options.followPointer && ev) {
             if (this.parentNode() !== document.body) {
                 this.appendTo(document.body);
             }
             this.anchor(this.options.anchor, [ev.pageX, ev.pageY]);
         }
-        else {
-            if (this.parentNode() !== ev.currentTarget.parentNode) {
-                this.appendTo(ev.currentTarget.parentNode);
+        else if (this.currentTarget) {
+            if (this.parentNode() !== this.currentTarget.parentNode) {
+                this.appendTo(this.currentTarget.parentNode);
             }
-            this.anchor(this.options.anchor, ev.currentTarget);
-            this.updateTail();
+            this.anchor(this.options.anchor, this.currentTarget);
         }
         return this;
     }
@@ -197,6 +200,7 @@ Cuic.Tooltip = class extends Cuic.Component {
             prop.left = -this.tail.outerWidth();
             prop['margin-top'] = -this.tail.outerHeight() / 2;
         }
+        // todo position tail in diagonal (top left, top right...)
 
         // Apply CSS
         this.tail.css(prop);

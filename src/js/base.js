@@ -305,11 +305,21 @@
             position = position || '';
             element = this.element(element);
 
-            let targetHeight = 1;
-            let targetWidth = 1;
-            let targetOffset = {left: target[0], top: target[1]};
+            let targetHeight;
+            let targetWidth;
+            let targetOffset;
 
-            if (!(target instanceof Array && target.length === 2)) {
+            // Target is a coordinate (x, y)
+            if (target instanceof Array && target.length === 2) {
+                targetHeight = 1;
+                targetWidth = 1;
+                targetOffset = {
+                    left: target[0],
+                    top: target[1]
+                };
+            }
+            // Target is an element
+            else {
                 target = this.element(target);
                 targetHeight = target.outerHeight();
                 targetWidth = target.outerWidth();
@@ -322,6 +332,26 @@
             let elCenterY = (elHeight / 2);
             let targetCenterX = (targetWidth / 2);
             let targetCenterY = (targetHeight / 2);
+
+            // fixme elHeight can be less if animated (resized), which leads to wrong elCenterY
+            // fixme the problem is with element with scale(0) or display:none
+
+            // const disp = element.css('display');
+            // const cls = element.getClasses().join(' ');
+            // // element.css('display', '');
+            // element.removeClass(cls);
+            // let compHeight = this.getComputedStyle(element, 'height');
+            // let compBorder = element.border();
+            // let compPadding = element.padding();
+            // let compMargin = element.margin();
+            // let total = compPadding.vertical + compBorder.vertical + compMargin.vertical;
+            // console.log('elCenterY', elCenterY, 'outerHeight:', elHeight, 'compHeight:', compHeight, 'compTotal:', total);
+            // console.log('height', element.height())
+            // console.log('innerHeight', element.innerHeight())
+            // console.log('outerHeight', element.outerHeight())
+            // element.addClass(cls);
+            // // element.css(disp);
+            // element.hide();
 
             let prop = {
                 bottom: '',

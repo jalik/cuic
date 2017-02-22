@@ -480,7 +480,8 @@ Cuic.Element = class {
      * @return {Cuic.Element}
      */
     hide() {
-        this.css({display: 'none'});
+        // this.css({display: 'none'});
+        this.addClass('hidden');
         this.events.trigger('hidden');
         return this;
     }
@@ -798,7 +799,8 @@ Cuic.Element = class {
      * @return {Cuic.Element}
      */
     show() {
-        this.css({display: ''});
+        // this.css({display: ''});
+        this.removeClass('hidden');
         this.events.trigger('shown');
         return this;
     }
