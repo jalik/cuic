@@ -2651,14 +2651,18 @@ Cuic.Element = function () {
             if (_html !== undefined) {
                 // Get HTML from object
                 if (_html && (typeof _html === 'undefined' ? 'undefined' : _typeof(_html)) === 'object') {
-                    // Replace content keeping attached events on nodes
-                    if (_html instanceof Cuic.Element) {
+                    if (_html instanceof HTMLElement) {
                         this.empty();
-                        this.append(_html.node());
-                    } else if (_html instanceof jQuery) {
-                        this.empty();
-                        this.append(_html.get(0));
+                        this.append(_html);
                     }
+                    // Replace content keeping attached events on nodes
+                    else if (_html instanceof Cuic.Element) {
+                            this.empty();
+                            this.append(_html.node());
+                        } else if (_html instanceof jQuery) {
+                            this.empty();
+                            this.append(_html.get(0));
+                        }
                 } else {
                     this.node().innerHTML = _html;
                 }

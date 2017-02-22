@@ -665,8 +665,12 @@ Cuic.Element = class {
         if (html !== undefined) {
             // Get HTML from object
             if (html && typeof html === 'object') {
+                if (html instanceof HTMLElement) {
+                    this.empty();
+                    this.append(html);
+                }
                 // Replace content keeping attached events on nodes
-                if (html instanceof Cuic.Element) {
+                else if (html instanceof Cuic.Element) {
                     this.empty();
                     this.append(html.node());
                 }
