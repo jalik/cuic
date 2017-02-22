@@ -138,7 +138,7 @@
             }
             else {
                 // Use parent node if no parent defined
-                parent = element.parent();
+                parent = element.offsetParent();
             }
 
             let elHeight = element.outerHeight(true);
@@ -195,14 +195,14 @@
             }
 
             // Calculate available position
-            const availablePosition = this.calculateAvailablePosition(element, parent);
+            const available = this.calculateAvailablePosition(element, parent);
 
             // Constraint position
-            if (prop.left < availablePosition.minX) {
-                prop.left = availablePosition.minX;
+            if (prop.left < available.minX) {
+                prop.left = available.minX;
             }
-            else if (prop.left > availablePosition.maxX) {
-                prop.left = availablePosition.maxX;
+            else if (prop.left > available.maxX) {
+                prop.left = available.maxX;
             }
             return prop;
         },
@@ -326,9 +326,14 @@
             // Adjust limits depending of element position
             switch (element.css('position')) {
                 case 'absolute':
+                case 'fixed':
                     const prPadding = parent.padding();
+                    // const elMargin = element.margin();
                     prop.maxX += prPadding.horizontal;
                     prop.maxY += prPadding.vertical;
+                    // prop.maxX -= elMargin.horizontal;
+                    // prop.maxY -= elMargin.vertical;
+                    // fixme max is wrong sometimes
                     break;
             }
             return prop;
@@ -354,13 +359,13 @@
             // Adjust limits depending of element position
             switch (element.css('position')) {
                 case 'absolute':
+                case 'fixed':
                     const prPadding = parent.padding();
                     prop.height += prPadding.vertical;
                     prop.width += prPadding.horizontal;
                     prop.height -= elMargin.vertical;
                     prop.width -= elMargin.horizontal;
                     break;
-
                 case 'relative':
                     prop.height -= elMargin.vertical;
                     prop.width -= elMargin.horizontal;
@@ -376,7 +381,7 @@
          */
         calculateMaximize(element) {
             element = this.element(element);
-            const parent = element.parent();
+            const parent = element.offsetParent();
             const parentPadding = parent.padding();
             const elMargin = element.margin();
             let prop = {
@@ -391,11 +396,13 @@
             // Adjust dimensions
             switch (element.css('position')) {
                 case 'absolute':
+                case 'fixed':
                     prop.height += parentPadding.vertical;
                     prop.height -= elMargin.vertical;
                     prop.width += parentPadding.horizontal;
                     prop.width -= elMargin.horizontal;
                     break;
+
                 case 'relative':
                     prop.height -= elMargin.vertical;
                     prop.width -= elMargin.horizontal;
@@ -484,7 +491,7 @@
             if (element instanceof HTMLElement) {
                 return new this.Element(element);
             }
-            if (element === window) {
+            if (element instanceof Window) {
                 return new this.Element(element);
             }
             if (element instanceof jQuery) {
@@ -703,7 +710,7 @@
             }
             else if (!(element instanceof HTMLElement)
                 && !(element instanceof HTMLDocument)
-                && element !== window) {
+                && !(element instanceof Window)) {
                 console.log(event, element);
                 throw new TypeError(`Cannot add event listener on unsupported element.`);
             }
@@ -751,7 +758,7 @@
             }
             else if (!(element instanceof HTMLElement)
                 && !(element instanceof HTMLDocument)
-                && element !== window) {
+                && !(element instanceof Window)) {
                 console.log(event, element);
                 throw new TypeError(`Cannot add event listener on unsupported element.`);
             }
@@ -799,7 +806,7 @@
             }
             else if (!(element instanceof HTMLElement)
                 && !(element instanceof HTMLDocument)
-                && element !== window) {
+                && !(element instanceof Window)) {
                 console.log(event, element);
                 throw new TypeError(`Cannot add event listener on unsupported element.`);
             }
@@ -972,6 +979,8 @@
         // that allow dialogs and other floating elements
         // to be positioned on all the screen.
         Cuic.find('html,body').css({height: '100%', minHeight: '100%'});
+        // Make body the reference for positioning
+        Cuic.find('body').css({position: 'relative'});
     });
 
 })(window);

@@ -51,9 +51,17 @@ Cuic.Component = class extends Cuic.Element {
             }
         }
 
-        // Maximize the panel
-        if (this.options.maximized && this.hasParent()) {
-            this.maximize();
+        if (this.hasParent()) {
+            // Maximize the panel
+            if (this.options.maximized) {
+                this.maximize();
+            }
+            if (this.options.maximizedX) {
+                this.maximizeX();
+            }
+            if (this.options.maximizedY) {
+                this.maximizeY();
+            }
         }
     }
 
@@ -87,6 +95,7 @@ Cuic.Component = class extends Cuic.Element {
      */
     isMaximized() {
         return this.hasClass('maximized')
+            || this.hasClass('maximized-x maximized-y')
             || (this.css('width') === '100%' && this.css('height') === '100%' );
     }
 
@@ -135,6 +144,7 @@ Cuic.Component = class extends Cuic.Element {
         this.removeClass('minimized');
         this.addClass('maximized');
         this.css(Cuic.calculateMaximize(this));
+        // this.autoAlign();
         this.once('transitionend', (ev) => {
             if (this.isMaximized()) {
                 this.debug('maximized');
@@ -159,6 +169,7 @@ Cuic.Component = class extends Cuic.Element {
         this.removeClass('minimized');
         this.addClass('maximized-x');
         this.css({width: Cuic.calculateMaximize(this).width});
+        this.autoAlign();
         this.once('transitionend', (ev) => {
             if (this.isMaximizedX()) {
                 this.debug('maximizedX');
@@ -183,6 +194,7 @@ Cuic.Component = class extends Cuic.Element {
         this.removeClass('minimized');
         this.addClass('maximized-y');
         this.css({height: Cuic.calculateMaximize(this).height});
+        this.autoAlign();
         this.once('transitionend', (ev) => {
             if (this.isMaximizedY()) {
                 this.debug('maximizedY');
@@ -204,7 +216,7 @@ Cuic.Component = class extends Cuic.Element {
     minimize(callback) {
         this.debug('minimize');
         this.events.trigger('minimize');
-        this.removeClass('maximized');
+        this.removeClass('maximized maximized-x maximized-y');
         this.addClass('minimized');
         this.css(Cuic.calculateMinimize(this, this.options.position));
         this.once('transitionend', (ev) => {
@@ -324,5 +336,8 @@ Cuic.Component = class extends Cuic.Element {
 };
 
 Cuic.Component.prototype.options = {
-    opened: true
+    opened: true,
+    maximized: false,
+    maximizedX: false,
+    maximizedY: false
 };

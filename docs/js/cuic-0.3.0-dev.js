@@ -194,7 +194,7 @@ if (!Element.prototype.matches) {
                 }
             } else {
                 // Use parent node if no parent defined
-                parent = element.parent();
+                parent = element.offsetParent();
             }
 
             var elHeight = element.outerHeight(true);
@@ -247,13 +247,13 @@ if (!Element.prototype.matches) {
             }
 
             // Calculate available position
-            var availablePosition = this.calculateAvailablePosition(element, parent);
+            var available = this.calculateAvailablePosition(element, parent);
 
             // Constraint position
-            if (prop.left < availablePosition.minX) {
-                prop.left = availablePosition.minX;
-            } else if (prop.left > availablePosition.maxX) {
-                prop.left = availablePosition.maxX;
+            if (prop.left < available.minX) {
+                prop.left = available.minX;
+            } else if (prop.left > available.maxX) {
+                prop.left = available.maxX;
             }
             return prop;
         },
@@ -375,9 +375,14 @@ if (!Element.prototype.matches) {
             // Adjust limits depending of element position
             switch (element.css('position')) {
                 case 'absolute':
+                case 'fixed':
                     var prPadding = parent.padding();
+                    // const elMargin = element.margin();
                     prop.maxX += prPadding.horizontal;
                     prop.maxY += prPadding.vertical;
+                    // prop.maxX -= elMargin.horizontal;
+                    // prop.maxY -= elMargin.vertical;
+                    // fixme max is wrong sometimes
                     break;
             }
             return prop;
@@ -404,13 +409,13 @@ if (!Element.prototype.matches) {
             // Adjust limits depending of element position
             switch (element.css('position')) {
                 case 'absolute':
+                case 'fixed':
                     var prPadding = parent.padding();
                     prop.height += prPadding.vertical;
                     prop.width += prPadding.horizontal;
                     prop.height -= elMargin.vertical;
                     prop.width -= elMargin.horizontal;
                     break;
-
                 case 'relative':
                     prop.height -= elMargin.vertical;
                     prop.width -= elMargin.horizontal;
@@ -427,7 +432,7 @@ if (!Element.prototype.matches) {
          */
         calculateMaximize: function calculateMaximize(element) {
             element = this.element(element);
-            var parent = element.parent();
+            var parent = element.offsetParent();
             var parentPadding = parent.padding();
             var elMargin = element.margin();
             var prop = {
@@ -442,11 +447,13 @@ if (!Element.prototype.matches) {
             // Adjust dimensions
             switch (element.css('position')) {
                 case 'absolute':
+                case 'fixed':
                     prop.height += parentPadding.vertical;
                     prop.height -= elMargin.vertical;
                     prop.width += parentPadding.horizontal;
                     prop.width -= elMargin.horizontal;
                     break;
+
                 case 'relative':
                     prop.height -= elMargin.vertical;
                     prop.width -= elMargin.horizontal;
@@ -538,7 +545,7 @@ if (!Element.prototype.matches) {
             if (_element instanceof HTMLElement) {
                 return new this.Element(_element);
             }
-            if (_element === window) {
+            if (_element instanceof Window) {
                 return new this.Element(_element);
             }
             if (_element instanceof jQuery) {
@@ -762,7 +769,7 @@ if (!Element.prototype.matches) {
                 element = element.node();
             } else if (element instanceof jQuery) {
                 element = element.get(0);
-            } else if (!(element instanceof HTMLElement) && !(element instanceof HTMLDocument) && element !== window) {
+            } else if (!(element instanceof HTMLElement) && !(element instanceof HTMLDocument) && !(element instanceof Window)) {
                 console.log(event, element);
                 throw new TypeError('Cannot add event listener on unsupported element.');
             }
@@ -807,7 +814,7 @@ if (!Element.prototype.matches) {
                 element = element.node();
             } else if (element instanceof jQuery) {
                 element = element.get(0);
-            } else if (!(element instanceof HTMLElement) && !(element instanceof HTMLDocument) && element !== window) {
+            } else if (!(element instanceof HTMLElement) && !(element instanceof HTMLDocument) && !(element instanceof Window)) {
                 console.log(event, element);
                 throw new TypeError('Cannot add event listener on unsupported element.');
             }
@@ -855,7 +862,7 @@ if (!Element.prototype.matches) {
                 element = element.node();
             } else if (element instanceof jQuery) {
                 element = element.get(0);
-            } else if (!(element instanceof HTMLElement) && !(element instanceof HTMLDocument) && element !== window) {
+            } else if (!(element instanceof HTMLElement) && !(element instanceof HTMLDocument) && !(element instanceof Window)) {
                 console.log(event, element);
                 throw new TypeError('Cannot add event listener on unsupported element.');
             }
@@ -1034,6 +1041,8 @@ if (!Element.prototype.matches) {
         // that allow dialogs and other floating elements
         // to be positioned on all the screen.
         Cuic.find('html,body').css({ height: '100%', minHeight: '100%' });
+        // Make body the reference for positioning
+        Cuic.find('body').css({ position: 'relative' });
     });
 })(window);
 
@@ -1953,7 +1962,7 @@ Cuic.Element = function () {
                 this.element = document.createElement(node);
             }
             // Use HTML node
-            else if (node instanceof HTMLElement || node instanceof HTMLDocument || node === window) {
+            else if (node instanceof HTMLElement || node instanceof HTMLDocument || node instanceof Window) {
                     this.element = node;
                 }
                 // Use node from Cuic.Element
@@ -2606,7 +2615,13 @@ Cuic.Element = function () {
     }, {
         key: 'height',
         value: function height() {
-            return this.node().clientHeight - this.padding().vertical;
+            var node = this.node();
+
+            if (node instanceof Window) {
+                return node.screen.height;
+            } else {
+                return node.clientHeight - this.padding().vertical;
+            }
         }
 
         /**
@@ -2661,8 +2676,14 @@ Cuic.Element = function () {
     }, {
         key: 'innerHeight',
         value: function innerHeight() {
-            // todo subtract vertical scrollbar width
-            return this.node().clientHeight;
+            var node = this.node();
+
+            if (node instanceof Window) {
+                return node.screen.height;
+            } else {
+                // todo subtract vertical scrollbar width
+                return node.clientHeight;
+            }
         }
 
         /**
@@ -2673,8 +2694,14 @@ Cuic.Element = function () {
     }, {
         key: 'innerWidth',
         value: function innerWidth() {
-            // todo subtract horizontal scrollbar width
-            return this.node().clientWidth;
+            var node = this.node();
+
+            if (node instanceof Window) {
+                return node.screen.width;
+            } else {
+                // todo subtract horizontal scrollbar width
+                return node.clientWidth;
+            }
         }
 
         /**
@@ -2850,10 +2877,17 @@ Cuic.Element = function () {
     }, {
         key: 'margin',
         value: function margin() {
-            var bottom = parseFloat(Cuic.getComputedStyle(this, 'margin-bottom'));
-            var left = parseFloat(Cuic.getComputedStyle(this, 'margin-left'));
-            var right = parseFloat(Cuic.getComputedStyle(this, 'margin-right'));
-            var top = parseFloat(Cuic.getComputedStyle(this, 'margin-top'));
+            var bottom = 0;
+            var left = 0;
+            var right = 0;
+            var top = 0;
+
+            if (!(this.node() instanceof Window)) {
+                bottom = parseFloat(Cuic.getComputedStyle(this, 'margin-bottom'));
+                left = parseFloat(Cuic.getComputedStyle(this, 'margin-left'));
+                right = parseFloat(Cuic.getComputedStyle(this, 'margin-right'));
+                top = parseFloat(Cuic.getComputedStyle(this, 'margin-top'));
+            }
             return {
                 bottom: bottom,
                 horizontal: left + right,
@@ -3003,7 +3037,13 @@ Cuic.Element = function () {
     }, {
         key: 'outerHeight',
         value: function outerHeight(includeMargin) {
-            return this.node().offsetHeight + (includeMargin ? this.margin().vertical : 0);
+            var node = this.node();
+
+            if (node instanceof Window) {
+                return node.screen.height;
+            } else {
+                return this.node().offsetHeight + (includeMargin ? this.margin().vertical : 0);
+            }
         }
 
         /**
@@ -3015,7 +3055,13 @@ Cuic.Element = function () {
     }, {
         key: 'outerWidth',
         value: function outerWidth(includeMargin) {
-            return this.node().offsetWidth + (includeMargin ? this.margin().horizontal : 0);
+            var node = this.node();
+
+            if (node instanceof Window) {
+                return node.screen.width;
+            } else {
+                return this.node().offsetWidth + (includeMargin ? this.margin().horizontal : 0);
+            }
         }
 
         /**
@@ -3026,10 +3072,17 @@ Cuic.Element = function () {
     }, {
         key: 'padding',
         value: function padding() {
-            var bottom = parseFloat(Cuic.getComputedStyle(this, 'padding-bottom'));
-            var left = parseFloat(Cuic.getComputedStyle(this, 'padding-left'));
-            var right = parseFloat(Cuic.getComputedStyle(this, 'padding-right'));
-            var top = parseFloat(Cuic.getComputedStyle(this, 'padding-top'));
+            var bottom = 0;
+            var left = 0;
+            var right = 0;
+            var top = 0;
+
+            if (!(this.node() instanceof Window)) {
+                bottom = parseFloat(Cuic.getComputedStyle(this, 'padding-bottom'));
+                left = parseFloat(Cuic.getComputedStyle(this, 'padding-left'));
+                right = parseFloat(Cuic.getComputedStyle(this, 'padding-right'));
+                top = parseFloat(Cuic.getComputedStyle(this, 'padding-top'));
+            }
             return {
                 bottom: bottom,
                 horizontal: left + right,
@@ -3210,7 +3263,13 @@ Cuic.Element = function () {
     }, {
         key: 'width',
         value: function width() {
-            return this.node().clientWidth - this.padding().horizontal;
+            var node = this.node();
+
+            if (node instanceof Window) {
+                return node.screen.width;
+            } else {
+                return node.clientWidth - this.padding().horizontal;
+            }
         }
     }]);
 
@@ -3281,9 +3340,17 @@ Cuic.Component = function (_Cuic$Element) {
             }
         }
 
-        // Maximize the panel
-        if (_this4.options.maximized && _this4.hasParent()) {
-            _this4.maximize();
+        if (_this4.hasParent()) {
+            // Maximize the panel
+            if (_this4.options.maximized) {
+                _this4.maximize();
+            }
+            if (_this4.options.maximizedX) {
+                _this4.maximizeX();
+            }
+            if (_this4.options.maximizedY) {
+                _this4.maximizeY();
+            }
         }
         return _this4;
     }
@@ -3326,7 +3393,7 @@ Cuic.Component = function (_Cuic$Element) {
     }, {
         key: 'isMaximized',
         value: function isMaximized() {
-            return this.hasClass('maximized') || this.css('width') === '100%' && this.css('height') === '100%';
+            return this.hasClass('maximized') || this.hasClass('maximized-x maximized-y') || this.css('width') === '100%' && this.css('height') === '100%';
         }
 
         /**
@@ -3389,6 +3456,7 @@ Cuic.Component = function (_Cuic$Element) {
             this.removeClass('minimized');
             this.addClass('maximized');
             this.css(Cuic.calculateMaximize(this));
+            // this.autoAlign();
             this.once('transitionend', function (ev) {
                 if (_this6.isMaximized()) {
                     _this6.debug('maximized');
@@ -3418,6 +3486,7 @@ Cuic.Component = function (_Cuic$Element) {
             this.removeClass('minimized');
             this.addClass('maximized-x');
             this.css({ width: Cuic.calculateMaximize(this).width });
+            this.autoAlign();
             this.once('transitionend', function (ev) {
                 if (_this7.isMaximizedX()) {
                     _this7.debug('maximizedX');
@@ -3447,6 +3516,7 @@ Cuic.Component = function (_Cuic$Element) {
             this.removeClass('minimized');
             this.addClass('maximized-y');
             this.css({ height: Cuic.calculateMaximize(this).height });
+            this.autoAlign();
             this.once('transitionend', function (ev) {
                 if (_this8.isMaximizedY()) {
                     _this8.debug('maximizedY');
@@ -3473,7 +3543,7 @@ Cuic.Component = function (_Cuic$Element) {
 
             this.debug('minimize');
             this.events.trigger('minimize');
-            this.removeClass('maximized');
+            this.removeClass('maximized maximized-x maximized-y');
             this.addClass('minimized');
             this.css(Cuic.calculateMinimize(this, this.options.position));
             this.once('transitionend', function (ev) {
@@ -3628,7 +3698,10 @@ Cuic.Component = function (_Cuic$Element) {
 }(Cuic.Element);
 
 Cuic.Component.prototype.options = {
-    opened: true
+    opened: true,
+    maximized: false,
+    maximizedX: false,
+    maximizedY: false
 };
 
 /*
@@ -6205,6 +6278,10 @@ Cuic.Notification = function (_Cuic$Component5) {
                 _this23.css({ position: isFixed ? 'fixed' : 'absolute' });
                 _this23.align(_this23.options.position);
             }
+        });
+
+        _this23.onOpened(function () {
+            _this23.autoClose();
         });
 
         // Remove dialog from list
