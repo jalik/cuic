@@ -34,74 +34,72 @@ Cuic.Notification = class extends Cuic.Component {
         // Create element
         super('div', {className: options.className}, options);
 
-        const self = this;
-
         // Add component classes
-        self.addClass('notification');
+        this.addClass('notification');
 
         // Public attributes
-        self.closeTimer = null;
+        this.closeTimer = null;
 
         // Add content
-        self.content = new Cuic.Element('div', {
+        this.content = new Cuic.Element('div', {
             className: 'notification-content',
             html: options.content
-        }).appendTo(self);
+        }).appendTo(this);
 
         // Add close button
-        self.closeButton = new Cuic.Element('span', {
+        this.closeButton = new Cuic.Element('span', {
             className: 'btn-close glyphicon glyphicon-remove-sign',
-            html: self.options.closeButton,
+            html: this.options.closeButton,
             role: 'button'
-        }).appendTo(self);
+        }).appendTo(this);
 
         // Avoid closing notification when mouse is over
-        self.on('mouseenter', (ev) => {
-            clearTimeout(self.closeTimer);
+        this.on('mouseenter', (ev) => {
+            clearTimeout(this.closeTimer);
         });
 
         // Close notification when mouse is out
-        self.on('mouseleave', (ev) => {
-            if (ev.currentTarget === self.node()) {
-                self.autoClose();
+        this.on('mouseleave', (ev) => {
+            if (ev.currentTarget === this.node()) {
+                this.autoClose();
             }
         });
 
-        self.on('click', (ev) => {
+        this.on('click', (ev) => {
             // Close button
             if (Cuic.element(ev.target).hasClass('btn-close')) {
                 ev.preventDefault();
-                self.close();
+                this.close();
             }
         });
 
         // Add dialog to collection
-        Cuic.notifications.add(self);
+        Cuic.notifications.add(this);
 
         // Called when the notification is closed
-        self.onClosed(() => {
-            if (self.options.autoRemove) {
-                self.remove();
+        this.onClosed(() => {
+            if (this.options.autoRemove) {
+                this.remove();
             }
         });
 
         // Called when the notification is opening
-        self.onOpen(() => {
-            if (self.options.position) {
-                let isFixed = self.parentNode() === document.body;
-                self.css({position: isFixed ? 'fixed' : 'absolute'});
-                self.align(self.options.position);
+        this.onOpen(() => {
+            if (this.options.position) {
+                let isFixed = this.parentNode() === document.body;
+                this.css({position: isFixed ? 'fixed' : 'absolute'});
+                this.align(this.options.position);
             }
         });
 
         // Called when the notification is opened
-        self.onOpened(() => {
-            self.autoClose();
+        this.onOpened(() => {
+            this.autoClose();
         });
 
         // Remove dialog from list
-        self.onRemoved(() => {
-            Cuic.notifications.remove(self);
+        this.onRemoved(() => {
+            Cuic.notifications.remove(this);
         });
     }
 

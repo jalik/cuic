@@ -32,21 +32,19 @@ Cuic.Movable = class extends Cuic.Element {
         // Create element
         super('div', {className: options.className}, options);
 
-        const self = this;
-
         // Add component class
-        self.addClass('movable');
+        this.addClass('movable');
 
         // Force the target to be the relative parent
-        if (self.css('position') === 'static') {
-            self.css({position: 'relative'});
+        if (this.css('position') === 'static') {
+            this.css({position: 'relative'});
         }
 
         // Group handles
-        self.handles = new Cuic.Collection();
+        this.handles = new Cuic.Collection();
 
         // Set the moving area
-        self.addMoveHandle(options.handle || self.node());
+        this.addMoveHandle(options.handle || this.node());
     }
 
     /**
@@ -55,10 +53,9 @@ Cuic.Movable = class extends Cuic.Element {
      * @return {Cuic.Component}
      */
     addMoveHandle(handle) {
-        const self = this;
         handle = Cuic.element(handle);
 
-        self.handles.add(handle);
+        this.handles.add(handle);
 
         // Add the handle class
         handle.addClass('movable-handle');
@@ -66,44 +63,44 @@ Cuic.Movable = class extends Cuic.Element {
         // Start moving
         Cuic.on('mousedown', handle, (ev) => {
             // Ignore moving if the target is not the root
-            if (self.options.rootOnly && ev.target !== ev.currentTarget) return;
+            if (this.options.rootOnly && ev.target !== ev.currentTarget) return;
 
             // Execute callback
-            if (self.events.trigger('moveStart', ev) === false) return;
+            if (this.events.trigger('moveStart', ev) === false) return;
 
             // Prevent text selection
             ev.preventDefault();
 
             // Add moving class
-            self.addClass('moving');
+            this.addClass('moving');
 
-            const startPosition = self.position();
+            const startPosition = this.position();
             const startX = ev.clientX;
             const startY = ev.clientY;
 
             const onMouseMove = (ev) => {
                 // Execute callback
-                if (self.events.trigger('move', ev) === false)  return;
+                if (this.events.trigger('move', ev) === false)  return;
 
                 let prop = {};
 
                 // Move horizontally
-                if (self.options.horizontal) {
+                if (this.options.horizontal) {
                     const diffX = ev.clientX - startX;
                     prop.left = startPosition.left + diffX;
                     prop.right = '';
                 }
 
                 // Move vertically
-                if (self.options.vertical) {
+                if (this.options.vertical) {
                     const diffY = ev.clientY - startY;
                     prop.top = startPosition.top + diffY;
                     prop.bottom = '';
                 }
 
                 // Move element
-                self.css(prop);
-                self.autoAlign();
+                this.css(prop);
+                this.autoAlign();
             };
 
             // Moving
@@ -112,11 +109,11 @@ Cuic.Movable = class extends Cuic.Element {
             // Stop moving
             Cuic.once('mouseup', document, (ev) => {
                 Cuic.off('mousemove', document, onMouseMove);
-                self.removeClass('moving');
-                self.events.trigger('moveEnd', ev);
+                this.removeClass('moving');
+                this.events.trigger('moveEnd', ev);
             });
         });
-        return self;
+        return this;
     }
 
     /**

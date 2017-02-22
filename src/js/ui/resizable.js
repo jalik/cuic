@@ -32,72 +32,70 @@ Cuic.Resizable = class extends Cuic.Element {
         // Create element
         super('div', {className: options.className}, options);
 
-        const self = this;
-
         // Add component classes
-        self.addClass('resizable');
+        this.addClass('resizable');
 
         // Force the target to be the relative parent
-        if (self.css('position') === 'static') {
-            self.css('position', 'relative');
+        if (this.css('position') === 'static') {
+            this.css('position', 'relative');
         }
 
         // Add Bottom handle
-        self.bottomHandle = new Cuic.Element('div', {
+        this.bottomHandle = new Cuic.Element('div', {
             className: 'resize-handle resize-handle-s',
             css: {height: options.handleSize}
-        }).appendTo(self);
+        }).appendTo(this);
 
         // Add Right handler
-        self.rightHandle = new Cuic.Element('div', {
+        this.rightHandle = new Cuic.Element('div', {
             className: 'resize-handle resize-handle-e',
             css: {width: options.handleSize}
-        }).appendTo(self);
+        }).appendTo(this);
 
         // Add Bottom-Right handler
-        self.bottomRightHandle = new Cuic.Element('div', {
+        this.bottomRightHandle = new Cuic.Element('div', {
             className: 'resize-handle resize-handle-se',
             css: {
                 height: options.handleSize,
                 width: options.handleSize
             }
-        }).appendTo(self);
+        }).appendTo(this);
 
         // Group handles
-        self.handles = new Cuic.Collection([
-            self.rightHandle,
-            self.bottomHandle,
-            self.bottomRightHandle
+        this.handles = new Cuic.Collection([
+            this.rightHandle,
+            this.bottomHandle,
+            this.bottomRightHandle
         ]);
 
         // Group horizontal handles
-        self.horizontalHandles = new Cuic.Collection([
-            self.rightHandle,
-            self.bottomRightHandle
+        this.horizontalHandles = new Cuic.Collection([
+            this.rightHandle,
+            this.bottomRightHandle
         ]);
 
         // Group vertical handles
-        self.verticalHandles = new Cuic.Collection([
-            self.bottomHandle,
-            self.bottomRightHandle
+        this.verticalHandles = new Cuic.Collection([
+            this.bottomHandle,
+            this.bottomRightHandle
         ]);
 
-        self.handles.each((handle) => {
+        this.handles.each((handle) => {
             // Start resizing
             handle.on('mousedown', (ev) => {
                 // Execute callback
-                if (self.events.trigger('resizeStart', ev) === false) return;
+                if (this.events.trigger('resizeStart', ev) === false) return;
 
                 // Prevent text selection
                 ev.preventDefault();
 
                 // Add resizing class
-                self.addClass('resizing');
+                this.addClass('resizing');
 
                 const startX = ev.clientX;
                 const startY = ev.clientY;
-                const initialHeight = self.outerHeight();
-                const initialWidth = self.outerWidth();
+                const initialHeight = this.outerHeight();
+                const initialWidth = this.outerWidth();
                 const handleTarget = ev.currentTarget;
 
                 // Calculate initial ratio
@@ -105,14 +103,14 @@ Cuic.Resizable = class extends Cuic.Element {
 
                 const onMouseMove = (ev) => {
                     // Execute callback
-                    if (self.events.trigger('resize', ev) === false) return;
+                    if (this.events.trigger('resize', ev) === false) return;
 
                     let prop = {};
 
                     // Resize horizontally
-                    if (self.options.horizontal) {
-                        for (let i = 0; i < self.horizontalHandles.length; i += 1) {
-                            if (self.horizontalHandles.get(i).node() === handleTarget) {
+                    if (this.options.horizontal) {
+                        for (let i = 0; i < this.horizontalHandles.length; i += 1) {
+                            if (this.horizontalHandles.get(i).node() === handleTarget) {
                                 const diffX = ev.clientX - startX;
                                 const width = initialWidth + diffX;
 
@@ -127,9 +125,9 @@ Cuic.Resizable = class extends Cuic.Element {
                     }
 
                     // Resize vertically
-                    if (self.options.vertical) {
-                        for (let i = 0; i < self.verticalHandles.length; i += 1) {
-                            if (self.verticalHandles.get(i).node() === handleTarget) {
+                    if (this.options.vertical) {
+                        for (let i = 0; i < this.verticalHandles.length; i += 1) {
+                            if (this.verticalHandles.get(i).node() === handleTarget) {
                                 const diffY = ev.clientY - startY;
                                 const height = initialHeight + diffY;
 
@@ -146,7 +144,7 @@ Cuic.Resizable = class extends Cuic.Element {
                     // fixme element can be resized more than parent size if keep ratio is active
 
                     // Keep ratio
-                    if (self.options.keepRatio) {
+                    if (this.options.keepRatio) {
                         if (prop.height) {
                             prop.width = prop.height / ratio;
                         }
@@ -156,8 +154,8 @@ Cuic.Resizable = class extends Cuic.Element {
                     }
 
                     // Apply new size
-                    self.css(prop);
-                    self.autoResize();
+                    this.css(prop);
+                    this.autoResize();
                 };
 
                 // Resizing
@@ -166,8 +164,8 @@ Cuic.Resizable = class extends Cuic.Element {
                 // Stop resizing
                 Cuic.once('mouseup', document, (ev) => {
                     Cuic.off('mousemove', document, onMouseMove);
-                    self.removeClass('resizing');
-                    self.events.trigger('resizeEnd', ev);
+                    this.removeClass('resizing');
+                    this.events.trigger('resizeEnd', ev);
                 });
             });
         });

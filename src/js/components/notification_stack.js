@@ -32,20 +32,18 @@ Cuic.NotificationStack = class extends Cuic.Group {
         // Create element
         super('div', {className: options.className}, options);
 
-        const self = this;
-
         // Add component classes
-        self.addClass('notification-stack');
+        this.addClass('notification-stack');
 
         // Set position
-        if (self.options.position) {
-            let isFixed = self.parentNode() === document.body;
-            self.css({position: isFixed ? 'fixed' : 'absolute'});
-            self.align(self.options.position);
+        if (this.options.position) {
+            let isFixed = this.parentNode() === document.body;
+            this.css({position: isFixed ? 'fixed' : 'absolute'});
+            this.align(this.options.position);
         }
 
         // Display the notification when it's added to the stack
-        self.onComponentAdded((component) => {
+        this.onComponentAdded((component) => {
             if (component instanceof Cuic.Notification) {
                 // fixme Not using a timeout to open blocks the animation
                 setTimeout(function () {
@@ -55,7 +53,7 @@ Cuic.NotificationStack = class extends Cuic.Group {
         });
 
         // Display the notification when it's added to the stack
-        self.onComponentRemoved((component) => {
+        this.onComponentRemoved((component) => {
             if (component instanceof Cuic.Notification) {
                 component.close();
             }

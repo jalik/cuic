@@ -26,7 +26,6 @@
 Cuic.Benchmark = class {
 
     constructor() {
-        const self = this;
         let startTime = null;
         let stopTime = null;
         let time = 0;
@@ -35,7 +34,7 @@ Cuic.Benchmark = class {
          * Returns benchmark time
          * @returns {number}
          */
-        self.getTime = () => {
+        this.getTime = () => {
             if (startTime && stopTime) {
                 return stopTime - startTime;
             }
@@ -51,14 +50,14 @@ Cuic.Benchmark = class {
          * Checks if benchmark is started
          * @returns {boolean}
          */
-        self.isStarted = () => {
+        this.isStarted = () => {
             return typeof startTime === 'number';
         };
 
         /**
          * Resets the benchmark
          */
-        self.reset = () => {
+        this.reset = () => {
             time = 0;
             startTime = null;
             stopTime = null;
@@ -68,7 +67,7 @@ Cuic.Benchmark = class {
          * Starts the benchmark
          * @returns {*}
          */
-        self.start = () => {
+        this.start = () => {
             startTime = Date.now();
             stopTime = null;
         };
@@ -77,7 +76,7 @@ Cuic.Benchmark = class {
          * Stops the benchmark
          * @returns {*}
          */
-        self.stop = () => {
+        this.stop = () => {
             startTime = null;
             stopTime = Date.now();
         };

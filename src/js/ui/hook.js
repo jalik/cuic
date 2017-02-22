@@ -32,13 +32,11 @@ Cuic.Hook = class extends Cuic.Element {
         // Create element
         super('div', {className: options.className}, options);
 
-        const self = this;
-
         // Add component classes
-        self.addClass('hook');
+        this.addClass('hook');
 
         // This is a fix to avoid offsetTop > 0
-        self.css({
+        this.css({
             position: 'relative',
             top: '',
             width: ''
@@ -46,31 +44,31 @@ Cuic.Hook = class extends Cuic.Element {
 
         // Create the spacer item that will replace
         // the bar when it is scrolled
-        self.space = new Cuic.Element('div', {
+        this.space = new Cuic.Element('div', {
             className: 'hook-space'
         });
 
         // Get the element's offset
-        let offset = self.offset();
+        let offset = this.offset();
 
         const onScroll = () => {
-            let fitsInScreen = self.outerHeight(true) <= window.screen.availHeight;
+            let fitsInScreen = this.outerHeight(true) <= window.screen.availHeight;
 
             if (fitsInScreen) {
-                if (self.options.fixed) {
-                    self.hook();
+                if (this.options.fixed) {
+                    this.hook();
                 }
                 else {
-                    let margin = self.margin();
+                    let margin = this.margin();
 
                     if (window.scrollY > offset.top - margin.top) {
-                        self.hook();
+                        this.hook();
                     } else {
-                        self.unhook();
+                        this.unhook();
                     }
                 }
             } else {
-                self.unhook();
+                this.unhook();
             }
         };
 
@@ -90,50 +88,49 @@ Cuic.Hook = class extends Cuic.Element {
      * Hooks the element
      */
     hook() {
-        const self = this;
         console.log('hook')
 
-        if (self.css('position') !== 'fixed') {
-            const offset = self.offset();
-            const margin = self.margin();
+        if (this.css('position') !== 'fixed') {
+            const offset = this.offset();
+            const margin = this.margin();
 
-            if (self.options.fixed) {
-                self.options.offsetTop = offset.top;
+            if (this.options.fixed) {
+                this.options.offsetTop = offset.top;
             }
 
             // Replace element with invisible space
-            self.space.css({
-                display: self.css('display'),
-                float: self.css('float'),
-                height: self.outerHeight(),
-                width: self.outerWidth(),
+            this.space.css({
+                display: this.css('display'),
+                float: this.css('float'),
+                height: this.outerHeight(),
+                width: this.outerWidth(),
                 'margin-bottom': margin.bottom,
                 'margin-left': margin.left,
                 'margin-right': margin.right,
                 'margin-top': margin.top
             });
-            self.insertBefore(self.space);
-            self.space.show();
+            this.insertBefore(this.space);
+            this.space.show();
 
             // Make element scroll
-            self.css({
+            this.css({
                 position: 'fixed',
                 left: offset.left,
-                top: self.options.offsetTop,
-                height: self.space.height(),
-                width: self.space.width(),
-                zIndex: self.options.zIndex
+                top: this.options.offsetTop,
+                height: this.space.height(),
+                width: this.space.width(),
+                zIndex: this.options.zIndex
             });
-            self.addClass('hooked');
+            this.addClass('hooked');
 
             // Execute the hooked listener
-            self.onHook(self);
+            this.onHook(this);
         }
-        // else if (self.space) {
-        //     const offset = self.space.offset();
-        //     self.css({
+        // else if (this.space) {
+        //     const offset = this.space.offset();
+        //     this.css({
         //         left: offset.left,
-        //         width: self.space.width()
+        //         width: this.space.width()
         //     });
         // }
     }
@@ -156,12 +153,11 @@ Cuic.Hook = class extends Cuic.Element {
      * Unhooks the element
      */
     unhook() {
-        const self = this;
         console.log('unhook')
 
-        if (self.css('position') !== 'relative') {
-            self.space.hide();
-            self.css({
+        if (this.css('position') !== 'relative') {
+            this.space.hide();
+            this.css({
                 position: 'relative',
                 bottom: '',
                 left: '',
@@ -169,10 +165,10 @@ Cuic.Hook = class extends Cuic.Element {
                 top: '',
                 width: ''
             });
-            self.removeClass('hooked');
+            this.removeClass('hooked');
 
             // Execute the unhooked listener
-            self.onUnhook(self);
+            this.onUnhook(this);
         }
     }
 };

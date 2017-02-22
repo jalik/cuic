@@ -32,39 +32,37 @@ Cuic.Popup = class extends Cuic.Component {
         // Create element
         super('div', {className: options.className}, options);
 
-        const self = this;
-
         // Add component classes
-        self.addClass('popup');
+        this.addClass('popup');
 
         // Add content
-        self.content = new Cuic.Element('div', {
+        this.content = new Cuic.Element('div', {
             className: 'popup-content',
             html: options.content
-        }).appendTo(self);
+        }).appendTo(this);
 
         // Add close button
-        self.closeButton = new Cuic.Element('span', {
+        this.closeButton = new Cuic.Element('span', {
             className: 'btn-close glyphicon glyphicon-remove-sign',
-            html: self.options.closeButton,
+            html: this.options.closeButton,
             role: 'button'
-        }).appendTo(self);
+        }).appendTo(this);
 
-        self.on('click', (ev) => {
+        this.on('click', (ev) => {
             // Close button
             if (Cuic.element(ev.target).hasClass('btn-close')) {
                 ev.preventDefault();
-                self.close();
+                this.close();
             }
         });
 
         // Close the popup when the user clicks outside of it
         Cuic.on('click', document, (ev) => {
-            const el = self.node();
+            const el = this.node();
 
-            if (ev.target !== el && !self.isChildOf(ev.target)) {
-                if (self.options.autoClose && self.isOpened()) {
-                    self.close();
+            if (ev.target !== el && !this.isChildOf(ev.target)) {
+                if (this.options.autoClose && this.isOpened()) {
+                    this.close();
                 }
             }
         });
@@ -73,28 +71,28 @@ Cuic.Popup = class extends Cuic.Component {
          * Popup shortcuts
          * @type {{close: *}}
          */
-        self.shortcuts = {
+        this.shortcuts = {
             close: new Cuic.Shortcut({
-                element: self,
+                element: this,
                 keyCode: Cuic.keys.ESC,
-                callback() {
-                    self.close();
+                callback: () => {
+                    this.close();
                 }
             })
         };
 
         // Called when the popup is closed
-        self.onClosed(() => {
-            if (self.options.autoRemove) {
-                self.remove();
+        this.onClosed(() => {
+            if (this.options.autoRemove) {
+                this.remove();
             }
         });
 
         // Called when the popup is opening
-        self.onOpen(() => {
-            const targetParent = Cuic.node(self.options.target).parentNode;
-            self.appendTo(targetParent);
-            self.anchor(self.options.anchor, self.options.target);
+        this.onOpen(() => {
+            const targetParent = Cuic.node(this.options.target).parentNode;
+            this.appendTo(targetParent);
+            this.anchor(this.options.anchor, this.options.target);
         });
     }
 

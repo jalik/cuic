@@ -47,102 +47,100 @@ Cuic.Dialog = class extends Cuic.Component {
             role: 'dialog'
         }, options);
 
-        const self = this;
-
         // Add component classes
-        self.addClass('dialog');
+        this.addClass('dialog');
 
         // Set dialog position
-        if (self.parentNode() === document.body) {
-            self.css({position: 'absolute'});
+        if (this.parentNode() === document.body) {
+            this.css({position: 'absolute'});
         }
 
         // Create the fader
-        self.fader = new Cuic.Fader({
+        this.fader = new Cuic.Fader({
             className: 'fader dialog-fader',
             autoClose: false,
             autoRemove: false
-        }).appendTo(self.options.parent);
+        }).appendTo(this.options.parent);
 
         // Add header
-        self.header = new Cuic.Element('header', {
+        this.header = new Cuic.Element('header', {
             className: 'dialog-header',
-            css: {display: self.options.title != null ? 'block' : 'none'}
-        }).appendTo(self);
+            css: {display: this.options.title != null ? 'block' : 'none'}
+        }).appendTo(this);
 
         // Add title
-        self.title = new Cuic.Element('h3', {
+        this.title = new Cuic.Element('h3', {
             className: 'dialog-title',
-            html: self.options.title
-        }).appendTo(self.header);
+            html: this.options.title
+        }).appendTo(this.header);
 
         // Add content
-        self.content = new Cuic.Element('section', {
+        this.content = new Cuic.Element('section', {
             className: 'dialog-content',
-            html: self.options.content
-        }).appendTo(self);
+            html: this.options.content
+        }).appendTo(this);
 
         // Add footer
-        self.footer = new Cuic.Element('footer', {
+        this.footer = new Cuic.Element('footer', {
             className: 'dialog-footer',
-            css: {display: self.options.buttons != null ? 'block' : 'none'}
-        }).appendTo(self);
+            css: {display: this.options.buttons != null ? 'block' : 'none'}
+        }).appendTo(this);
 
         // Add buttons group
-        self.buttons = new Cuic.Group('div', {
+        this.buttons = new Cuic.Group('div', {
             className: 'btn-group'
-        }).appendTo(self.footer);
+        }).appendTo(this.footer);
 
         // Add close button
-        self.closeButton = new Cuic.Element('span', {
+        this.closeButton = new Cuic.Element('span', {
             className: 'btn-close glyphicon glyphicon-remove-sign',
-            html: self.options.closeButton,
+            html: this.options.closeButton,
             role: 'button'
-        }).appendTo(self.header);
+        }).appendTo(this.header);
 
         // Show footer if not empty
-        self.buttons.onComponentAdded(() => {
-            if (self.buttons.components.length > 0) {
-                self.footer.show();
+        this.buttons.onComponentAdded(() => {
+            if (this.buttons.components.length > 0) {
+                this.footer.show();
             }
         });
 
         // Hide footer if empty
-        self.buttons.onComponentRemoved(() => {
-            if (self.buttons.components.length < 1) {
-                self.footer.hide();
+        this.buttons.onComponentRemoved(() => {
+            if (this.buttons.components.length < 1) {
+                this.footer.hide();
             }
         });
 
         // Add buttons
-        if (self.options.buttons instanceof Array) {
-            for (let i = 0; i < self.options.buttons.length; i += 1) {
-                self.addButton(self.options.buttons[i]);
+        if (this.options.buttons instanceof Array) {
+            for (let i = 0; i < this.options.buttons.length; i += 1) {
+                this.addButton(this.options.buttons[i]);
             }
         }
 
         // Set content height
         if (parseFloat(options.contentHeight) > 0) {
-            self.content.css({height: options.contentHeight});
+            this.content.css({height: options.contentHeight});
         }
 
         // Set content width
         if (parseFloat(options.contentWidth) > 0) {
-            self.content.css({width: options.contentWidth});
+            this.content.css({width: options.contentWidth});
         }
 
         // Close dialog when fader is clicked
-        self.fader.on('click', () => {
-            if (self.options.autoClose) {
-                self.close();
+        this.fader.on('click', () => {
+            if (this.options.autoClose) {
+                this.close();
             }
         });
 
-        self.on('click', (ev) => {
+        this.on('click', (ev) => {
             // Close button
             if (Cuic.element(ev.target).hasClass('btn-close')) {
                 ev.preventDefault();
-                self.close();
+                this.close();
             }
         });
 
@@ -150,11 +148,11 @@ Cuic.Dialog = class extends Cuic.Component {
          * Movable interface
          * @type {Cuic.Movable}
          */
-        if (self.options.movable) {
-            self.movable = new Cuic.Movable({
-                enabled: self.options.movable,
-                element: self.node(),
-                handle: self.title,
+        if (this.options.movable) {
+            this.movable = new Cuic.Movable({
+                enabled: this.options.movable,
+                element: this.node(),
+                handle: this.title,
                 rootOnly: false
             });
         }
@@ -163,10 +161,10 @@ Cuic.Dialog = class extends Cuic.Component {
          * Resizable interface
          * @type {Cuic.Resizable}
          */
-        if (self.options.resizable) {
-            self.resizable = new Cuic.Resizable({
-                enabled: self.options.resizable,
-                element: self.node()
+        if (this.options.resizable) {
+            this.resizable = new Cuic.Resizable({
+                enabled: this.options.resizable,
+                element: this.node()
             });
         }
 
@@ -174,57 +172,57 @@ Cuic.Dialog = class extends Cuic.Component {
          * Dialog shortcuts
          * @type {{close: *}}
          */
-        self.shortcuts = {
+        this.shortcuts = {
             close: new Cuic.Shortcut({
-                element: self,
+                element: this,
                 keyCode: Cuic.keys.ESC,
-                callback() {
-                    self.close();
+                callback: () => {
+                    this.close();
                 }
             })
         };
 
         // Add dialog to collection
-        Cuic.dialogs.add(self);
+        Cuic.dialogs.add(this);
 
         // Called when dialog is closing
-        self.onClose(() => {
-            self.fader.options.autoRemove = self.options.autoRemove;
-            self.fader.close();
+        this.onClose(() => {
+            this.fader.options.autoRemove = this.options.autoRemove;
+            this.fader.close();
         });
 
         // Called when dialog is closed
-        self.onClosed(() => {
-            if (self.options.autoRemove) {
-                self.remove();
-                self.fader.remove();
+        this.onClosed(() => {
+            if (this.options.autoRemove) {
+                this.remove();
+                this.fader.remove();
             }
         });
 
         // Called when dialog is opening
-        self.onOpen(() => {
+        this.onOpen(() => {
             // Calculate z-index
-            let zIndex = self.options.zIndex + dialogZIndex;
-            self.css({'z-index': zIndex});
+            let zIndex = this.options.zIndex + dialogZIndex;
+            this.css({'z-index': zIndex});
 
-            self.resizeContent();
+            this.resizeContent();
 
             // Open fader
-            if (self.options.modal) {
-                self.css({'z-index': zIndex + 1});
-                self.fader.css({'z-index': zIndex});
-                self.fader.open();
+            if (this.options.modal) {
+                this.css({'z-index': zIndex + 1});
+                this.fader.css({'z-index': zIndex});
+                this.fader.open();
             }
 
             // Maximize or position the dialog
-            if (self.options.maximized) {
-                self.maximize();
+            if (this.options.maximized) {
+                this.maximize();
             } else {
-                self.align(self.options.position);
+                this.align(this.options.position);
             }
 
             // Focus the last button
-            const buttons = self.buttons.children();
+            const buttons = this.buttons.children();
 
             if (buttons.length > 0) {
                 buttons.last().node().focus();
@@ -232,7 +230,7 @@ Cuic.Dialog = class extends Cuic.Component {
         });
 
         // Called when dialog is opened
-        self.onOpened((ev) => {
+        this.onOpened((ev) => {
             // // todo wait images to be loaded to resize content
             // let images = this.find('img');
             //
@@ -248,12 +246,12 @@ Cuic.Dialog = class extends Cuic.Component {
         });
 
         // Remove dialog from list
-        self.onRemoved(() => {
-            Cuic.dialogs.remove(self);
+        this.onRemoved(() => {
+            Cuic.dialogs.remove(this);
         });
 
         Cuic.on('resize', window, () => {
-            self.resizeContent();
+            this.resizeContent();
         });
     }
 

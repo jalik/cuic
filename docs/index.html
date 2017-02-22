@@ -1270,8 +1270,8 @@
                             var button = ev.currentTarget;
                             var value = null;
 
-                            if (typeof Cuic[button.value] === 'function') {
-                                value = Cuic[button.value](target);
+                            if (typeof Cuic.Element.prototype[button.value] === 'function') {
+                                value = Cuic.element(target)[button.value]();
                             }
                             console.log(button.value, value);
                         });

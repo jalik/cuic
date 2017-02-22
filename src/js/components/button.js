@@ -38,18 +38,16 @@ Cuic.Button = class extends Cuic.Component {
             type: options.type
         }, options);
 
-        const self = this;
-
         // Add component classes
-        self.addClass('btn');
+        this.addClass('btn');
 
         // Create shortcut
         if (typeof options.shortcut === 'number') {
-            self.shortcut = new Cuic.Shortcut({
+            this.shortcut = new Cuic.Shortcut({
                 keyCode: options.shortcut,
-                target: self.element,
+                target: this.element,
                 callback() {
-                    self.node().click();
+                    this.node().click();
                 }
             });
         }

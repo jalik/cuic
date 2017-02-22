@@ -34,26 +34,24 @@ Cuic.Tooltip = class extends Cuic.Component {
         // Create element
         super('div', {className: options.className}, options);
 
-        const self = this;
-
         // Public attributes
-        self.currentTarget = null;
+        this.currentTarget = null;
 
         // Add component classes
-        self.addClass('tooltip');
+        this.addClass('tooltip');
 
         // Add content
-        self.content = new Cuic.Element('div', {
+        this.content = new Cuic.Element('div', {
             className: 'tooltip-content'
-        }).appendTo(self);
+        }).appendTo(this);
 
         // Add tooltip tail
-        self.tail = new Cuic.Element('span', {
+        this.tail = new Cuic.Element('span', {
             className: 'tooltip-tail'
-        }).appendTo(self);
+        }).appendTo(this);
 
         // Find tooltip targets
-        const targets = Cuic.find(self.options.selector);
+        const targets = Cuic.find(this.options.selector);
 
         targets.each((target) => {
             // Open tooltip when mouse enter area
@@ -63,62 +61,62 @@ Cuic.Tooltip = class extends Cuic.Component {
 
                 if (!content || !content.length) {
                     // Get tooltip content from attribute
-                    content = target.attr(self.options.attribute);
+                    content = target.attr(this.options.attribute);
                     // Avoid tooltip conflict
-                    target.attr(self.options.attribute, '');
+                    target.attr(this.options.attribute, '');
                     // Store tooltip content
                     target.data('tooltip', content);
                 }
 
                 // Update tooltip content
                 if (content && content.length) {
-                    self.content.html(content);
+                    this.content.html(content);
                 }
 
                 // Keep reference to current target
-                self.currentTarget = ev.currentTarget;
+                this.currentTarget = ev.currentTarget;
 
                 // Position tooltip
-                self.update();
-                self.open();
+                this.update();
+                this.open();
             });
 
             // Close tooltip when mouse leaves area
             target.on('mouseleave', () => {
-                self.close();
+                this.close();
                 // Clear reference to current target
-                self.currentTarget = null;
+                this.currentTarget = null;
             });
         });
 
         // Move tooltip when mouse moves and tooltip is opened
         Cuic.on('mousemove', document, (ev) => {
-            if (self.options.followPointer && !self.isHidden()) {
-                self.update(ev);
+            if (this.options.followPointer && !this.isHidden()) {
+                this.update(ev);
             }
         });
 
         // Close the panel when the user clicks outside of it
         Cuic.on('click', document, (ev) => {
-            const el = self.node();
+            const el = this.node();
 
-            if (ev.target !== el && !self.isChildOf(ev.target)) {
-                self.close();
+            if (ev.target !== el && !this.isChildOf(ev.target)) {
+                this.close();
             }
         });
 
         // Add the tooltip to the list
-        Cuic.tooltips.add(self);
+        Cuic.tooltips.add(this);
 
         // Reposition tail when tooltip position change
-        self.onAnchored(() => {
-            self.updateTail();
+        this.onAnchored(() => {
+            this.updateTail();
         });
 
         // Called when the tooltip is closed
-        self.onClosed(() => {
-            if (self.options.autoRemove) {
-                self.remove();
+        this.onClosed(() => {
+            if (this.options.autoRemove) {
+                this.remove();
             }
         });
     }

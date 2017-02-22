@@ -26,37 +26,35 @@
 Cuic.Element = class {
 
     constructor(node, attributes, options) {
-        const self = this;
-
         // Set default attributes
         attributes = Cuic.extend({}, attributes);
 
         // Set default options
-        self.options = Cuic.extend({}, Cuic.Element.prototype.options, options);
+        this.options = Cuic.extend({}, Cuic.Element.prototype.options, options);
 
         // Use existing node
-        if (self.options.element) {
-            self.element = Cuic.node(self.options.element);
+        if (this.options.element) {
+            this.element = Cuic.node(this.options.element);
         }
         // Create node
         else if (typeof node === 'string') {
-            self.element = document.createElement(node);
+            this.element = document.createElement(node);
         }
         // Use HTML node
         else if (node instanceof HTMLElement || node instanceof HTMLDocument || node === window) {
-            self.element = node;
+            this.element = node;
         }
         // Use node from Cuic.Element
         else if (node instanceof Cuic.Element) {
-            self.element = node.node();
+            this.element = node.node();
         }
         // Use the first node of a Cuic.Elements object
         else if (node instanceof Cuic.Elements) {
-            self.element = node.get(0);
+            this.element = node.get(0);
         }
         // Use the first node of a jQuery object
         else if (node instanceof jQuery) {
-            self.element = node.get(0);
+            this.element = node.get(0);
         }
         else {
             console.log(node);
@@ -70,81 +68,81 @@ Cuic.Element = class {
 
                 // Do not override classes
                 if (attr === 'className') {
-                    self.addClass(value);
+                    this.addClass(value);
                     continue;
                 }
                 // Apply CSS styles
                 if (attr === 'css') {
-                    self.css(value);
+                    this.css(value);
                     continue;
                 }
 
                 if (value !== null && value !== undefined) {
-                    if (self.element[attr] !== undefined) {
-                        self.element[attr] = value;
+                    if (this.element[attr] !== undefined) {
+                        this.element[attr] = value;
                     }
                     else if (attr === 'html') {
-                        self.html(value);
+                        this.html(value);
                     }
                     else if (attr === 'text') {
-                        self.text(value);
+                        this.text(value);
                     }
                 }
             }
         }
 
         // Define Z-Index
-        if (typeof self.options.zIndex === 'number') {
-            self.css({'z-index': parseInt(self.options.zIndex)});
+        if (typeof this.options.zIndex === 'number') {
+            this.css({'z-index': parseInt(this.options.zIndex)});
         }
 
         // Set element styles
-        if (self.options.css) {
-            self.css(self.options.css);
+        if (this.options.css) {
+            this.css(this.options.css);
         }
 
         // Add debug class
-        if (self.options.debug) {
-            self.addClass('debug');
+        if (this.options.debug) {
+            this.addClass('debug');
         }
 
         // Add default events
-        self.events = new Cuic.Events(this);
+        this.events = new Cuic.Events(this);
 
         // Called when element is aligned
-        self.events.on('aligned', () => {
-            this.addPositionClass(this.options.position, self.options.namespace);
+        this.events.on('aligned', () => {
+            this.addPositionClass(this.options.position, this.options.namespace);
         });
 
         // Called when element is anchored
-        self.events.on('anchored', () => {
-            this.addPositionClass(this.options.anchor, self.options.namespace);
+        this.events.on('anchored', () => {
+            this.addPositionClass(this.options.anchor, this.options.namespace);
         });
 
         // Get parent element
-        if (self.options.parent) {
+        if (this.options.parent) {
             let parent = null;
 
             // Find element in DOM
-            if (typeof self.options.parent === 'string') {
-                const el = Cuic.find(self.options.parent);
+            if (typeof this.options.parent === 'string') {
+                const el = Cuic.find(this.options.parent);
 
                 if (el.length) {
                     parent = el[0];
                 }
             } else {
-                parent = Cuic.node(self.options.parent);
+                parent = Cuic.node(this.options.parent);
             }
 
             // Append element to parent node
             if (parent) {
-                self.appendTo(parent);
+                this.appendTo(parent);
             }
         }
 
         // Position the element
-        if (self.options.position && self.element.parentNode) {
-            self.align(self.options.position);
+        if (this.options.position && this.element.parentNode) {
+            this.align(this.options.position);
         }
     }
 
@@ -737,6 +735,28 @@ Cuic.Element = class {
     isHidden() {
         return this.hasClass('hidden')
             || this.css('display') === 'none';
+    }
+
+    /**
+     * Checks if the element is aligned at the position
+     * @param position
+     * @return {boolean}
+     */
+    isAligned(position) {
+        let result = false;
+
+        if (this.options.position) {
+            const pos = (position || '').split(' ');
+            result = true;
+
+            for (let i = 0; i < pos.length; i += 1) {
+                if (this.options.position.indexOf(pos[i]) === -1) {
+                    result = false;
+                    break;
+                }
+            }
+        }
+        return result;
     }
 
     /**

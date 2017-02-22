@@ -35,22 +35,20 @@ Cuic.Switcher = class extends Cuic.Component {
             html: options.content
         }, options);
 
-        const self = this;
-
         // Add component classes
-        self.addClass('switcher');
+        this.addClass('switcher');
 
         // Public attributes
-        self.activeElement = null;
-        self.index = 0;
-        self.timer = null;
+        this.activeElement = null;
+        this.index = 0;
+        this.timer = null;
 
         // Display first element
-        self.goTo(0);
+        this.goTo(0);
 
         // Auto start timer
-        if (self.options.autoStart) {
-            self.start();
+        if (this.options.autoStart) {
+            this.start();
         }
     }
 

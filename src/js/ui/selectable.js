@@ -32,22 +32,20 @@ Cuic.Selectable = class extends Cuic.Element {
         // Create element
         super('div', {className: options.className}, options);
 
-        const self = this;
-
         // Add component class
-        self.addClass('selectable');
+        this.addClass('selectable');
 
         // Add selected class
-        if (self.options.selected) {
-            self.addClass('selected');
+        if (this.options.selected) {
+            this.addClass('selected');
         }
 
         // Add or remove selected class
-        self.on('click', () => {
-            if (self.hasClass('selected')) {
-                self.deselect();
+        this.on('click', () => {
+            if (this.hasClass('selected')) {
+                this.deselect();
             } else {
-                self.select();
+                this.select();
             }
         });
     }

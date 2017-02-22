@@ -31,31 +31,29 @@ Cuic.Component = class extends Cuic.Element {
 
         super(node, attributes, options);
 
-        const self = this;
-
         // Add component classes
-        self.addClass('component');
+        this.addClass('component');
 
         // Add closable class
-        if (self.options.closable) {
-            self.addClass('closable');
+        if (this.options.closable) {
+            this.addClass('closable');
         }
 
         // Set the panel visibility
         // Since the visible option is used to check if the panel is visible
         // we force the panel to show or hide by setting visible to the inverse value.
-        if (typeof self.options.opened === 'boolean') {
-            if (self.options.opened) {
-                self.open();
+        if (typeof this.options.opened === 'boolean') {
+            if (this.options.opened) {
+                this.open();
             } else {
-                self.hide();// Hide to avoid animations
-                self.close();
+                this.hide();// Hide to avoid animations
+                this.close();
             }
         }
 
         // Maximize the panel
-        if (self.options.maximized) {
-            self.maximize();
+        if (this.options.maximized) {
+            this.maximize();
         }
     }
 
