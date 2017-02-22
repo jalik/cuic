@@ -2704,7 +2704,7 @@ Cuic.Element = function () {
     }, {
         key: 'isChildOf',
         value: function isChildOf(parent) {
-            parent = Cuic.element(parent).node();
+            parent = Cuic.node(parent);
             var node = this.node();
 
             do {
@@ -6344,8 +6344,10 @@ Cuic.Panel = function (_Cuic$Component5) {
         var fixed = _this25.parentNode() === document.body;
         _this25.css({ position: fixed ? 'fixed' : 'absolute' });
 
-        _this25.align(_this25.options.position);
-        _this25.resizeContent();
+        if (_this25.isOpened()) {
+            _this25.align(_this25.options.position);
+            _this25.resizeContent();
+        }
 
         // To hide the panel in the container,
         // the container must have a hidden overflow
@@ -6439,7 +6441,7 @@ Cuic.Panel = function (_Cuic$Component5) {
                 }
             }
 
-            _this25.resizeContent();
+            // this.resizeContent();// todo is it useful ?
 
             // Minimize panel
             _this25.css(prop);

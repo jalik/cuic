@@ -696,7 +696,7 @@ Cuic.Element = class {
      * @return {boolean}
      */
     isChildOf(parent) {
-        parent = Cuic.element(parent).node();
+        parent = Cuic.node(parent);
         let node = this.node();
 
         do {

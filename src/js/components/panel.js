@@ -88,8 +88,10 @@ Cuic.Panel = class extends Cuic.Component {
         let fixed = this.parentNode() === document.body;
         this.css({position: fixed ? 'fixed' : 'absolute'});
 
-        this.align(this.options.position);
-        this.resizeContent();
+        if (this.isOpened()) {
+            this.align(this.options.position);
+            this.resizeContent();
+        }
 
         // To hide the panel in the container,
         // the container must have a hidden overflow
@@ -189,7 +191,7 @@ Cuic.Panel = class extends Cuic.Component {
                 }
             }
 
-            this.resizeContent();
+            // this.resizeContent();// todo is it useful ?
 
             // Minimize panel
             this.css(prop);
