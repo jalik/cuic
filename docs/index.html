@@ -170,7 +170,8 @@
                             var css = sandbox.find('[name="css"]');
                             var position = sandbox.find('[name="position"]');
                             var autoClose = sandbox.find('[name="autoClose"]');
-                            var run = function () {
+
+                            sandbox.find('.btn-run').on('click', function () {
                                 window.dialog = new Cuic.Dialog({
                                     autoClose: autoClose.is(':checked'),
                                     css: css.val(),
@@ -191,10 +192,6 @@
                                         ] : null
                                 });
                                 dialog.open();
-                            };
-                            sandbox.find('.btn-run').on('click', function (ev) {
-                                ev.stopPropagation();
-                                run();
                             });
                         });
                     </script>
@@ -350,7 +347,7 @@
                             var duration = sandbox.find('[name=duration]');
                             var position = sandbox.find('[name=position]');
 
-                            var run = function () {
+                            sandbox.find('.btn-run').on('click', function () {
                                 window.notification = new Cuic.Notification({
                                     autoClose: autoClose.is(":checked"),
                                     autoRemove: true,
@@ -367,10 +364,6 @@
                                         notification.align(position.val(), parent.is(':checked') ? '#sb-notification .blueprint' : document.body);
                                     }
                                 });
-                            };
-                            sandbox.find('.btn-run').on('click', function (ev) {
-                                ev.stopPropagation();
-                                run();
                             });
                         });
                     </script>
@@ -526,7 +519,8 @@
                             var position = sandbox.find('[name=position]');
                             var maximized = sandbox.find('[name=maximized]');
                             var opened = sandbox.find('[name=opened]');
-                            var run = function () {
+
+                            sandbox.find('.btn-run').on('click', function () {
                                 window.panel = new Cuic.Panel({
                                     autoClose: autoClose.is(':checked'),
                                     element: document.getElementById('panel'),
@@ -536,29 +530,28 @@
                                     parent: parent.is(':checked') ? blueprint : document.body,
                                     position: position.val()
                                 });
-                            };
-                            sandbox.find('.btn-run').on('click', run);
-                            sandbox.find('.fn-close').on('click', function () {
-                                panel.close();
-                            });
-                            sandbox.find('.fn-open').on('click', function () {
-                                panel.open();
-                            });
-                            sandbox.find('.fn-toggle').on('click', function () {
-                                panel.toggle();
-                            });
-                            autoClose.on("change", function () {
-                                panel.autoClose = autoClose.is(":checked");
-                            });
-                            maximized.on("change", function () {
-                                if (maximized.is(":checked")) {
-                                    panel.maximize();
-                                } else {
-                                    panel.minimize();
-                                }
-                            });
-                            position.on("change", function () {
-                                panel.align(position.val());
+                                sandbox.find('.fn-close').on('click', function () {
+                                    panel.close();
+                                });
+                                sandbox.find('.fn-open').on('click', function () {
+                                    panel.open();
+                                });
+                                sandbox.find('.fn-toggle').on('click', function () {
+                                    panel.toggle();
+                                });
+                                autoClose.on("change", function () {
+                                    panel.autoClose = autoClose.is(":checked");
+                                });
+                                maximized.on("change", function () {
+                                    if (maximized.is(":checked")) {
+                                        panel.maximize();
+                                    } else {
+                                        panel.minimize();
+                                    }
+                                });
+                                position.on("change", function () {
+                                    panel.align(position.val());
+                                });
                             });
                         });
                     </script>
@@ -1125,7 +1118,8 @@
                             var sandbox = $('#sb-tooltip');
                             var anchor = sandbox.find("[name=anchor]");
                             var followPointer = sandbox.find("[name=followPointer]");
-                            var run = function () {
+
+                            sandbox.find('.btn-run').on('click', function () {
                                 var css = sandbox.find('[name=css]').val();
 
                                 window.tooltip = new Cuic.Tooltip({
@@ -1153,11 +1147,6 @@
                                     window.tooltip.followPointer = followPointer.is(":checked");
                                     window.tooltipBlue.followPointer = followPointer.is(":checked");
                                 });
-                            };
-
-                            sandbox.find('.btn-run').on('click', function (ev) {
-                                ev.stopPropagation();
-                                run();
                             });
                         });
                     </script>
