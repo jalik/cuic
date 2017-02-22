@@ -403,13 +403,13 @@
             }
 
             // Horizontal position
-            if (element.isPosition('right')) {
+            if (element.isAligned('right')) {
                 prop.right = 0;
             } else {
                 prop.left = 0;
             }
             // Vertical position
-            if (element.isPosition('bottom')) {
+            if (element.isAligned('bottom')) {
                 prop.bottom = 0;
             } else {
                 prop.top = 0;

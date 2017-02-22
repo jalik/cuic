@@ -359,6 +359,9 @@
                                 });
                                 notification.open();
 
+                                autoClose.on("change", function () {
+                                    notification.options.autoClose = autoClose.is(":checked");
+                                });
                                 position.off('change').on("change", function () {
                                     if (!notification.isRemoved()) {
                                         notification.align(position.val(), parent.is(':checked') ? '#sb-notification .blueprint' : document.body);
@@ -540,7 +543,7 @@
                                     panel.toggle();
                                 });
                                 autoClose.on("change", function () {
-                                    panel.autoClose = autoClose.is(":checked");
+                                    panel.options.autoClose = autoClose.is(":checked");
                                 });
                                 maximized.on("change", function () {
                                     if (maximized.is(":checked")) {
@@ -1143,8 +1146,8 @@
                                 });
 
                                 followPointer.on("change", function () {
-                                    window.tooltip.followPointer = followPointer.is(":checked");
-                                    window.tooltipBlue.followPointer = followPointer.is(":checked");
+                                    window.tooltip.options.followPointer = followPointer.is(":checked");
+                                    window.tooltipBlue.options.followPointer = followPointer.is(":checked");
                                 });
                             });
                         });

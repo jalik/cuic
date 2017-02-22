@@ -86,7 +86,26 @@ Cuic.Component = class extends Cuic.Element {
      * @return {boolean}
      */
     isMaximized() {
-        return this.hasClass('maximized');
+        return this.hasClass('maximized')
+            || (this.css('width') === '100%' && this.css('height') === '100%' );
+    }
+
+    /**
+     * Checks if the component width is maximized
+     * @return {boolean}
+     */
+    isMaximizedX() {
+        return this.hasClass('maximized-x')
+            || this.css('width') === '100%';
+    }
+
+    /**
+     * Checks if the component height is maximized
+     * @return {boolean}
+     */
+    isMaximizedY() {
+        return this.hasClass('maximized-y')
+            || this.css('height') === '100%';
     }
 
     /**
@@ -120,6 +139,54 @@ Cuic.Component = class extends Cuic.Element {
             if (this.isMaximized()) {
                 this.debug('maximized');
                 this.events.trigger('maximized', ev);
+
+                if (typeof callback === 'function') {
+                    callback.call(this, ev);
+                }
+            }
+        });
+        return this;
+    }
+
+    /**
+     * Maximizes element width
+     * @param callback
+     * @return {Cuic.Element}
+     */
+    maximizeX(callback) {
+        this.debug('maximizeX');
+        this.events.trigger('maximizeX');
+        this.removeClass('minimized');
+        this.addClass('maximized-x');
+        this.css({width: Cuic.calculateMaximize(this).width});
+        this.once('transitionend', (ev) => {
+            if (this.isMaximizedX()) {
+                this.debug('maximizedX');
+                this.events.trigger('maximizedX', ev);
+
+                if (typeof callback === 'function') {
+                    callback.call(this, ev);
+                }
+            }
+        });
+        return this;
+    }
+
+    /**
+     * Maximizes element height
+     * @param callback
+     * @return {Cuic.Element}
+     */
+    maximizeY(callback) {
+        this.debug('maximizeY');
+        this.events.trigger('maximizeY');
+        this.removeClass('minimized');
+        this.addClass('maximized-y');
+        this.css({height: Cuic.calculateMaximize(this).height});
+        this.once('transitionend', (ev) => {
+            if (this.isMaximizedY()) {
+                this.debug('maximizedY');
+                this.events.trigger('maximizedY', ev);
 
                 if (typeof callback === 'function') {
                     callback.call(this, ev);
