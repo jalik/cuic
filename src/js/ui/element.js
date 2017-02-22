@@ -66,18 +66,20 @@ Cuic.Element = class {
             if (attributes.hasOwnProperty(attr)) {
                 const value = attributes[attr];
 
-                // Do not override classes
-                if (attr === 'className') {
-                    this.addClass(value);
-                    continue;
-                }
-                // Apply CSS styles
-                if (attr === 'css') {
-                    this.css(value);
-                    continue;
-                }
-
                 if (value !== null && value !== undefined) {
+                    // Do not override classes
+                    if (attr === 'className') {
+                        this.addClass(value);
+                        continue;
+                    }
+
+                    // Apply CSS styles
+                    if (attr === 'css') {
+                        this.css(value);
+                        continue;
+                    }
+
+                    // Set attribute
                     if (this.element[attr] !== undefined) {
                         this.element[attr] = value;
                     }
