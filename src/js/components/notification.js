@@ -29,13 +29,12 @@ Cuic.Notification = class extends Cuic.Component {
 
     constructor(options) {
         // Set default options
-        options = Cuic.extend({}, Cuic.Notification.prototype.options, options);
+        options = Cuic.extend({}, Cuic.Notification.prototype.options, options, {
+            mainClass: 'notification'
+        });
 
         // Create element
         super('div', {className: options.className}, options);
-
-        // Add component classes
-        this.addClass('notification');
 
         // Public attributes
         this.closeTimer = null;
@@ -52,6 +51,9 @@ Cuic.Notification = class extends Cuic.Component {
             html: this.options.closeButton,
             role: 'button'
         }).appendTo(this);
+
+        // Add dialog to collection
+        Cuic.notifications.add(this);
 
         // Avoid closing notification when mouse is over
         this.on('mouseenter', (ev) => {
@@ -73,28 +75,18 @@ Cuic.Notification = class extends Cuic.Component {
             }
         });
 
-        // Add dialog to collection
-        Cuic.notifications.add(this);
-
-        // Called when the notification is closed
         this.onClosed(() => {
             if (this.options.autoRemove) {
                 this.remove();
             }
         });
 
-        // Called when the notification is opening
         this.onOpen(() => {
             if (this.options.position) {
                 let isFixed = this.parentNode() === document.body;
                 this.css({position: isFixed ? 'fixed' : 'absolute'});
                 this.align(this.options.position);
             }
-        });
-
-        // Called when the notification is opened
-        this.onOpened(() => {
-            this.autoClose();
         });
 
         // Remove dialog from list
@@ -134,6 +126,7 @@ Cuic.Notification.prototype.options = {
     content: null,
     duration: 2000,
     namespace: 'notification',
+    opened: false,
     parent: document.body,
     position: 'center',
     zIndex: 10

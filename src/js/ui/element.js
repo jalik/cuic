@@ -108,6 +108,11 @@ Cuic.Element = class {
             this.addClass('debug');
         }
 
+        // Add main class
+        if (this.options.mainClass) {
+            this.addClass(this.options.mainClass);
+        }
+
         // Add default events
         this.events = new Cuic.Events(this);
 
@@ -117,11 +122,7 @@ Cuic.Element = class {
 
             // Find element in DOM
             if (typeof this.options.parent === 'string') {
-                const el = Cuic.find(this.options.parent);
-
-                if (el.length) {
-                    parent = el[0];
-                }
+                parent = Cuic.find(this.options.parent).get(0);
             } else {
                 parent = Cuic.node(this.options.parent);
             }
@@ -1134,6 +1135,7 @@ Cuic.Element = class {
 Cuic.Element.prototype.options = {
     className: null,
     css: null,
+    debug: false,
     namespace: null,
     parent: null
 };

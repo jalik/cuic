@@ -39,16 +39,15 @@ Cuic.Dialog = class extends Cuic.Component {
 
     constructor(options) {
         // Set default options
-        options = Cuic.extend({}, Cuic.Dialog.prototype.options, options);
+        options = Cuic.extend({}, Cuic.Dialog.prototype.options, options, {
+            mainClass: 'dialog'
+        });
 
         // Create element
         super('div', {
             className: options.className,
             role: 'dialog'
         }, options);
-
-        // Add component classes
-        this.addClass('dialog');
 
         // Set dialog position
         if (this.parentNode() === document.body) {
@@ -59,7 +58,8 @@ Cuic.Dialog = class extends Cuic.Component {
         this.fader = new Cuic.Fader({
             className: 'fader dialog-fader',
             autoClose: false,
-            autoRemove: false
+            autoRemove: false,
+            opened: false
         }).appendTo(this.options.parent);
 
         // Add header
@@ -129,21 +129,6 @@ Cuic.Dialog = class extends Cuic.Component {
             this.content.css({width: options.contentWidth});
         }
 
-        // Close dialog when fader is clicked
-        this.fader.on('click', () => {
-            if (this.options.autoClose) {
-                this.close();
-            }
-        });
-
-        this.on('click', (ev) => {
-            // Close button
-            if (Cuic.element(ev.target).hasClass('btn-close')) {
-                ev.preventDefault();
-                this.close();
-            }
-        });
-
         /**
          * Movable interface
          * @type {Cuic.Movable}
@@ -185,6 +170,21 @@ Cuic.Dialog = class extends Cuic.Component {
         // Add dialog to collection
         Cuic.dialogs.add(this);
 
+        // Close dialog when fader is clicked
+        this.fader.on('click', () => {
+            if (this.options.autoClose) {
+                this.close();
+            }
+        });
+
+        this.on('click', (ev) => {
+            // Close button
+            if (Cuic.element(ev.target).hasClass('btn-close')) {
+                ev.preventDefault();
+                this.close();
+            }
+        });
+
         // Called when dialog is closing
         this.onClose(() => {
             this.fader.options.autoRemove = this.options.autoRemove;
@@ -202,7 +202,7 @@ Cuic.Dialog = class extends Cuic.Component {
         // Called when dialog is opening
         this.onOpen(() => {
             // Calculate z-index
-            let zIndex = this.options.zIndex + dialogZIndex;
+            let zIndex = this.options.zIndex + dialogZIndex; // todo calculate current z-index
             this.css({'z-index': zIndex});
 
             this.resizeContent();
@@ -325,11 +325,8 @@ Cuic.Dialog = class extends Cuic.Component {
      * @return {Cuic.Dialog}
      */
     resizeContent() {
-        const parent = this.parent();
-        const display = this.css('display');
-
         // Calculate available space
-        const availableSpace = Cuic.calculateAvailableSpace(this, parent);
+        const availableSpace = Cuic.calculateAvailableSpace(this);
 
         // Set panel max height
         this.css({'max-height': availableSpace.height});
@@ -353,10 +350,6 @@ Cuic.Dialog = class extends Cuic.Component {
             'max-height': maxHeight,
             overflow: 'auto'
         });
-
-        // Restore initial display state
-        this.css({display: display});
-
         return this;
     }
 
@@ -405,6 +398,7 @@ Cuic.Dialog.prototype.options = {
     maximized: false,
     modal: true,
     namespace: 'dialog',
+    opened: false,
     parent: document.body,
     position: 'center',
     resizable: false,

@@ -30,12 +30,16 @@
   color: #fff;
   display: inline-block;
   margin: @margin;
-  opacity: 0;
   overflow: auto;
   padding: @padding;
-  transform: scale(0);
   transition-property: background, opacity, height, width, transform;
   transition-duration: @anim-close-duration;
+}
+
+.notification,
+.notification.closed {
+  opacity: 0;
+  transform: scale(0);
 }
 
 .notification.opened {

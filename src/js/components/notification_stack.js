@@ -27,13 +27,12 @@ Cuic.NotificationStack = class extends Cuic.Group {
 
     constructor(options) {
         // Set default options
-        options = Cuic.extend({}, Cuic.NotificationStack.prototype.options, options);
+        options = Cuic.extend({}, Cuic.NotificationStack.prototype.options, options, {
+            mainClass: 'notification-stack'
+        });
 
         // Create element
         super('div', {className: options.className}, options);
-
-        // Add component classes
-        this.addClass('notification-stack');
 
         // Set position
         if (this.options.position) {

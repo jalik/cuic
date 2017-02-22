@@ -27,13 +27,12 @@ Cuic.Fader = class extends Cuic.Component {
 
     constructor(options) {
         // Set default options
-        options = Cuic.extend({}, Cuic.Fader.prototype.options, options);
+        options = Cuic.extend({}, Cuic.Fader.prototype.options, options, {
+            mainClass: 'fader'
+        });
 
         // Create element
         super('div', {className: options.className}, options);
-
-        // Add component classes
-        this.addClass('fader');
 
         let fixed = this.parentNode() === document.body;
 
@@ -62,5 +61,6 @@ Cuic.Fader.prototype.options = {
     autoClose: false,
     autoRemove: false,
     namespace: 'fader',
+    opened: false,
     zIndex: 1
 };

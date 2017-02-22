@@ -27,13 +27,12 @@ Cuic.Popup = class extends Cuic.Component {
 
     constructor(options) {
         // Set default options
-        options = Cuic.extend({}, Cuic.Popup.prototype.options, options);
+        options = Cuic.extend({}, Cuic.Popup.prototype.options, options, {
+            mainClass: 'popup'
+        });
 
         // Create element
         super('div', {className: options.className}, options);
-
-        // Add component classes
-        this.addClass('popup');
 
         // Add content
         this.content = new Cuic.Element('div', {
@@ -47,25 +46,6 @@ Cuic.Popup = class extends Cuic.Component {
             html: this.options.closeButton,
             role: 'button'
         }).appendTo(this);
-
-        this.on('click', (ev) => {
-            // Close button
-            if (Cuic.element(ev.target).hasClass('btn-close')) {
-                ev.preventDefault();
-                this.close();
-            }
-        });
-
-        // Close the popup when the user clicks outside of it
-        Cuic.on('click', document, (ev) => {
-            const el = this.node();
-
-            if (ev.target !== el && !this.isChildOf(ev.target)) {
-                if (this.options.autoClose && this.isOpened()) {
-                    this.close();
-                }
-            }
-        });
 
         /**
          * Popup shortcuts
@@ -81,18 +61,39 @@ Cuic.Popup = class extends Cuic.Component {
             })
         };
 
-        // Called when the popup is closed
+        const autoClose = (ev) => {
+            if (this.isOpened() && this.options.autoClose) {
+                if (ev.target !== this.node() && !Cuic.element(ev.target).isChildOf(this)) {
+                    this.close();
+                }
+            }
+        };
+
+        this.on('click', (ev) => {
+            // Close button
+            if (Cuic.element(ev.target).hasClass('btn-close')) {
+                ev.preventDefault();
+                this.close();
+            }
+        });
+
         this.onClosed(() => {
+            Cuic.off('click', document, autoClose);
+
             if (this.options.autoRemove) {
                 this.remove();
             }
         });
 
-        // Called when the popup is opening
         this.onOpen(() => {
             const targetParent = Cuic.node(this.options.target).parentNode;
             this.appendTo(targetParent);
             this.anchor(this.options.anchor, this.options.target);
+        });
+
+        this.onOpened(() => {
+            // Close the popup when the user clicks outside of it
+            Cuic.on('click', document, autoClose);
         });
     }
 
@@ -115,6 +116,7 @@ Cuic.Popup.prototype.options = {
     closeButton: '',
     content: null,
     namespace: 'popup',
+    opened: false,
     target: null,
     zIndex: 9
 };

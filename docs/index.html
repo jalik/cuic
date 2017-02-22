@@ -171,7 +171,9 @@
 
                             sandbox.find('.btn-run').on('click', function () {
                                 window.dialog = new Cuic.Dialog({
+//                                    debug: true,
                                     autoClose: autoClose.is(':checked'),
+                                    autoRemove: false,
                                     css: css.val(),
                                     modal: modal.is(':checked'),
                                     parent: parent.is(':checked') ? blueprint : document.body,
@@ -520,7 +522,6 @@
 
                             sandbox.find('.btn-run').on('click', function () {
                                 window.panel = new Cuic.Panel({
-                                    debug: true,
                                     autoClose: autoClose.is(':checked'),
                                     element: document.getElementById('panel'),
                                     css: css.val(),
@@ -606,7 +607,6 @@
                             });
 
                             popupButton.on("click", function (ev) {
-                                ev.stopPropagation();
                                 popup.setContent("Clicked on " + new Date());
                                 popup.toggle();
                             });

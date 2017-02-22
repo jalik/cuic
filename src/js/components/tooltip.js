@@ -29,16 +29,15 @@ Cuic.Tooltip = class extends Cuic.Component {
 
     constructor(options) {
         // Set default options
-        options = Cuic.extend({}, Cuic.Tooltip.prototype.options, options);
+        options = Cuic.extend({}, Cuic.Tooltip.prototype.options, options, {
+            mainClass: 'tooltip'
+        });
 
         // Create element
         super('div', {className: options.className}, options);
 
         // Public attributes
         this.currentTarget = null;
-
-        // Add component classes
-        this.addClass('tooltip');
 
         // Add content
         this.content = new Cuic.Element('div', {
@@ -89,6 +88,9 @@ Cuic.Tooltip = class extends Cuic.Component {
             });
         });
 
+        // Add the tooltip to the list
+        Cuic.tooltips.add(this);
+
         // Move tooltip when mouse moves and tooltip is opened
         Cuic.on('mousemove', document, (ev) => {
             if (this.options.followPointer && !this.isHidden()) {
@@ -96,28 +98,30 @@ Cuic.Tooltip = class extends Cuic.Component {
             }
         });
 
-        // Close the panel when the user clicks outside of it
-        Cuic.on('click', document, (ev) => {
-            const el = this.node();
-
-            if (ev.target !== el && !this.isChildOf(ev.target)) {
-                this.close();
+        const autoClose = (ev) => {
+            if (this.isOpened() && this.options.autoClose) {
+                if (ev.target !== this.node() && !Cuic.element(ev.target).isChildOf(this)) {
+                    this.close();
+                }
             }
-        });
-
-        // Add the tooltip to the list
-        Cuic.tooltips.add(this);
+        };
 
         // Reposition tail when tooltip position change
         this.onAnchored(() => {
             this.updateTail();
         });
 
-        // Called when the tooltip is closed
         this.onClosed(() => {
+            Cuic.off('click', document, autoClose);
+
             if (this.options.autoRemove) {
                 this.remove();
             }
+        });
+
+        this.onOpened(() => {
+            // Close the popup when the user clicks outside of it
+            Cuic.on('click', document, autoClose);
         });
     }
 
@@ -212,6 +216,7 @@ Cuic.Tooltip.prototype.options = {
     attribute: 'title',
     followPointer: true,
     namespace: 'tooltip',
+    opened: false,
     selector: '[title]',
     zIndex: 10
 };

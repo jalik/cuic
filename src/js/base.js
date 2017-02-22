@@ -132,13 +132,9 @@
                 parent = this.element(parent);
 
                 // Use body as parent
-                // if (parent.nodeName === 'HTML') {
-                //     parent = document.body;
-                // }
-                // // Append element to parent if needed
-                // if (parent !== element.parent()) {
-                //     parent.append(element);
-                // }
+                if (parent.node().nodeName === 'HTML') {
+                    parent = this.element(document.body);
+                }
             }
             else {
                 // Use parent node if no parent defined
@@ -173,8 +169,8 @@
                     break;
             }
 
-            const centerX = relativeLeft + (parent.innerWidth() / 2 - elWidth / 2);
-            const centerY = relativeTop + (parent.innerHeight() / 2 - elHeight / 2);
+            const centerX = relativeLeft + Math.max(0, parent.innerWidth() / 2 - elWidth / 2);
+            const centerY = relativeTop + Math.max(0, parent.innerHeight() / 2 - elHeight / 2);
 
             // Vertical position
             if (position.indexOf('top') !== -1) {
@@ -198,7 +194,7 @@
                 prop.left = centerX;
             }
 
-            // todo call a method to Calculate available position
+            // Calculate available position
             const availablePosition = this.calculateAvailablePosition(element, parent);
 
             // Constraint position
@@ -208,7 +204,6 @@
             else if (prop.left > availablePosition.maxX) {
                 prop.left = availablePosition.maxX;
             }
-
             return prop;
         },
 
@@ -306,19 +301,8 @@
                 prop.top -= window.scrollY;
             }
 
-            // todo check that the element is not positioned outside of the screen
-            // if (prop.bottom != null && prop.bottom < 0) {
-            //     prop.bottom = 0;
-            // }
-            // if (prop.left != null && prop.left < 0) {
-            //     prop.left = 0;
-            // }
-            // if (prop.right != null && prop.right < 0) {
-            //     prop.right = 0;
-            // }
-            // if (prop.top != null && prop.top < 0) {
-            //     prop.top = 0;
-            // }
+            // todo constraint element to be inside visible area of the screen
+
             return prop;
         },
 
@@ -335,8 +319,8 @@
             let prop = {
                 minX: 0,
                 minY: 0,
-                maxX: parent.width() - element.outerWidth(true),
-                maxY: parent.height() - element.outerHeight(true)
+                maxX: Math.max(0, parent.width() - element.outerWidth(true)),
+                maxY: Math.max(0, parent.height() - element.outerHeight(true))
             };
 
             // Adjust limits depending of element position

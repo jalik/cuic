@@ -42,7 +42,7 @@ Cuic.Component = class extends Cuic.Element {
         // Set the panel visibility
         // Since the visible option is used to check if the panel is visible
         // we force the panel to show or hide by setting visible to the inverse value.
-        if (typeof this.options.opened === 'boolean') {
+        if (this.options.opened !== undefined) {
             if (this.options.opened) {
                 this.open();
             } else {
@@ -256,4 +256,6 @@ Cuic.Component = class extends Cuic.Element {
     }
 };
 
-Cuic.Component.prototype.options = {};
+Cuic.Component.prototype.options = {
+    opened: true
+};

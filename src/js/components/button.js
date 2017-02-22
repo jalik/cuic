@@ -27,7 +27,9 @@ Cuic.Button = class extends Cuic.Component {
 
     constructor(options) {
         // Set default options
-        options = Cuic.extend({}, Cuic.Button.prototype.options, options);
+        options = Cuic.extend({}, Cuic.Button.prototype.options, options, {
+            mainClass: 'btn'
+        });
 
         // Create element
         super('button', {
@@ -37,9 +39,6 @@ Cuic.Button = class extends Cuic.Component {
             title: options.title,
             type: options.type
         }, options);
-
-        // Add component classes
-        this.addClass('btn');
 
         // Create shortcut
         if (typeof options.shortcut === 'number') {

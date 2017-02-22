@@ -27,16 +27,15 @@ Cuic.Switcher = class extends Cuic.Component {
 
     constructor(options) {
         // Set default options
-        options = Cuic.extend({}, Cuic.Switcher.prototype.options, options);
+        options = Cuic.extend({}, Cuic.Switcher.prototype.options, options, {
+            mainClass: 'switcher'
+        });
 
         // Create element
         super('div', {
             className: options.className,
             html: options.content
         }, options);
-
-        // Add component classes
-        this.addClass('switcher');
 
         // Public attributes
         this.activeElement = null;
