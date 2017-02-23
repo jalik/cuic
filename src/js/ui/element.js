@@ -529,9 +529,9 @@ Cuic.Element = class {
      * Displays debug message if debug mode is active
      */
     debug() {
-        if (Cuic.DEBUG || this.options.debug) {
+        if (Cuic.options.debug || this.options.debug) {
             const args = Array.prototype.slice.call(arguments);
-            console.info.apply(this, args);
+            (console.debug || console.log).apply(this, args);
         }
     }
 

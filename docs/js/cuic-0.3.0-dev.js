@@ -100,9 +100,11 @@ if (!Element.prototype.matches) {
     var Cuic = {
 
         /**
-         * Use debug mode
+         * Global options
          */
-        DEBUG: false,
+        options: {
+            debug: false
+        },
 
         /**
          * The mouse X position
@@ -524,8 +526,8 @@ if (!Element.prototype.matches) {
          * Displays a message in the console
          */
         debug: function debug() {
-            if (this.DEBUG && console !== undefined) {
-                console.info.apply(this, Array.prototype.slice.call(arguments));
+            if (this.options.debug && console !== undefined) {
+                (console.debug || console.log).apply(this, Array.prototype.slice.call(arguments));
             }
         },
 
@@ -2482,9 +2484,9 @@ Cuic.Element = function () {
     }, {
         key: 'debug',
         value: function debug() {
-            if (Cuic.DEBUG || this.options.debug) {
+            if (Cuic.options.debug || this.options.debug) {
                 var args = Array.prototype.slice.call(arguments);
-                console.info.apply(this, args);
+                (console.debug || console.log).apply(this, args);
             }
         }
 

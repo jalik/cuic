@@ -29,9 +29,11 @@
     const Cuic = {
 
         /**
-         * Use debug mode
+         * Global options
          */
-        DEBUG: false,
+        options: {
+            debug: false
+        },
 
         /**
          * The mouse X position
@@ -471,8 +473,8 @@
          * Displays a message in the console
          */
         debug() {
-            if (this.DEBUG && console !== undefined) {
-                console.info.apply(this, Array.prototype.slice.call(arguments));
+            if (this.options.debug && console !== undefined) {
+                (console.debug || console.log).apply(this, Array.prototype.slice.call(arguments));
             }
         },
 
