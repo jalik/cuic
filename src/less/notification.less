@@ -32,6 +32,7 @@
   margin: @margin;
   overflow: auto;
   padding: @padding;
+  position: absolute;
   transition-property: background, opacity, height, width, transform;
   transition-duration: @anim-close-duration;
 }
@@ -116,7 +117,12 @@
 }
 
 .notification-stack .notification {
-  display: block !important;
+  display: block;
+  position: relative;
+  bottom: auto;
+  left: auto;
+  right: auto;
+  top: auto;
 }
 
 .notification-stack.aligned-bottom {

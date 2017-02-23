@@ -205,5 +205,5 @@ Cuic.Tooltip.prototype.options = {
     namespace: 'tooltip',
     opened: false,
     selector: '[title]',
-    zIndex: 10
+    zIndex: 100
 };

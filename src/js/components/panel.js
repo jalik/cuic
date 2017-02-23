@@ -55,10 +55,10 @@ Cuic.Panel = class extends Cuic.Component {
 
             // Add close button
             this.closeButton = new Cuic.Element('span', {
-                className: 'btn-close glyphicon glyphicon-remove-sign',
+                className: this.options.closeButtonClass,
                 html: this.options.closeButton,
                 role: 'button'
-            }).appendTo(this.header);
+            }).addClass('btn-close').appendTo(this.header);
 
             // Add the body
             this.content = new Cuic.Element('section', {
@@ -313,7 +313,8 @@ Cuic.Panel = class extends Cuic.Component {
 Cuic.Panel.prototype.options = {
     autoClose: false,
     closable: true,
-    closeButton: '',
+    closeButton: null,
+    closeButtonClass: 'glyphicon glyphicon-remove-sign',
     content: null,
     footer: null,
     maximized: false,

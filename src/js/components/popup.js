@@ -42,10 +42,10 @@ Cuic.Popup = class extends Cuic.Component {
 
         // Add close button
         this.closeButton = new Cuic.Element('span', {
-            className: 'btn-close glyphicon glyphicon-remove-sign',
+            className: this.options.closeButtonClass,
             html: this.options.closeButton,
             role: 'button'
-        }).appendTo(this);
+        }).addClass('btn-close').appendTo(this);
 
         /**
          * Popup shortcuts
@@ -113,7 +113,8 @@ Cuic.Popup.prototype.options = {
     autoClose: true,
     autoRemove: false,
     closable: true,
-    closeButton: '',
+    closeButton: null,
+    closeButtonClass: 'glyphicon glyphicon-remove-sign',
     content: null,
     namespace: 'popup',
     opened: false,

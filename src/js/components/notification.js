@@ -47,10 +47,10 @@ Cuic.Notification = class extends Cuic.Component {
 
         // Add close button
         this.closeButton = new Cuic.Element('span', {
-            className: 'btn-close glyphicon glyphicon-remove-sign',
+            className: this.options.closeButtonClass,
             html: this.options.closeButton,
             role: 'button'
-        }).appendTo(this);
+        }).addClass('btn-close').appendTo(this);
 
         // Add dialog to collection
         Cuic.notifications.add(this);
@@ -83,9 +83,15 @@ Cuic.Notification = class extends Cuic.Component {
 
         this.onOpen(() => {
             if (this.options.position) {
-                let isFixed = this.parentNode() === document.body;
-                this.css({position: isFixed ? 'fixed' : 'absolute'});
-                this.align(this.options.position);
+                // Set fixed position if notification is in body
+                if (this.parentNode() === document.body) {
+                    this.css({position: 'fixed'});
+                }
+                // Align notification only if absolute or fixed position
+                if (this.css('position') === 'absolute'
+                    || this.css('position') === 'fixed') {
+                    this.align(this.options.position);
+                }
             }
         });
 
@@ -126,7 +132,8 @@ Cuic.Notification.prototype.options = {
     autoClose: true,
     autoRemove: true,
     closable: true,
-    closeButton: '',
+    closeButton: null,
+    closeButtonClass: 'glyphicon glyphicon-remove-sign',
     content: null,
     duration: 2000,
     namespace: 'notification',

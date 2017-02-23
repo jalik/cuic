@@ -93,10 +93,10 @@ Cuic.Dialog = class extends Cuic.Component {
 
         // Add close button
         this.closeButton = new Cuic.Element('span', {
-            className: 'btn-close glyphicon glyphicon-remove-sign',
+            className: this.options.closeButtonClass,
             html: this.options.closeButton,
             role: 'button'
-        }).appendTo(this.header);
+        }).addClass('btn-close').appendTo(this.header);
 
         // Show footer if not empty
         this.buttons.onComponentAdded(() => {
@@ -391,6 +391,7 @@ Cuic.Dialog.prototype.options = {
     buttons: [],
     closable: true,
     closeButton: null,
+    closeButtonClass: 'glyphicon glyphicon-remove-sign',
     content: null,
     contentHeight: null,
     contentWidth: null,
@@ -403,5 +404,5 @@ Cuic.Dialog.prototype.options = {
     position: 'center',
     resizable: false,
     title: null,
-    zIndex: 5
+    zIndex: 10
 };

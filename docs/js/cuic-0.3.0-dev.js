@@ -3768,8 +3768,10 @@ Cuic.Group = function (_Cuic$Component) {
         key: 'addComponent',
         value: function addComponent(component) {
             if (!(component instanceof Cuic.Element)) {
-                throw new TypeError('Cannot add non component to a Group.');
+                throw new TypeError('Cannot add object to the group.');
             }
+            this.events.trigger('addComponent', component);
+
             if (this.isAligned('top')) {
                 component.prependTo(this);
             } else {
@@ -3780,7 +3782,20 @@ Cuic.Group = function (_Cuic$Component) {
         }
 
         /**
-         * Called when component is added
+         * Called before adding a component
+         * @param callback
+         * @return {Cuic.Group}
+         */
+
+    }, {
+        key: 'onAddComponent',
+        value: function onAddComponent(callback) {
+            this.events.on('addComponent', callback);
+            return this;
+        }
+
+        /**
+         * Called when a component is added
          * @param callback
          * @return {Cuic.Group}
          */
@@ -3793,7 +3808,7 @@ Cuic.Group = function (_Cuic$Component) {
         }
 
         /**
-         * Called when component is removed
+         * Called when a component is removed
          * @param callback
          * @return {Cuic.Group}
          */
@@ -3806,6 +3821,19 @@ Cuic.Group = function (_Cuic$Component) {
         }
 
         /**
+         * Called before removing a component
+         * @param callback
+         * @return {Cuic.Group}
+         */
+
+    }, {
+        key: 'onRemoveComponent',
+        value: function onRemoveComponent(callback) {
+            this.events.on('removeComponent', callback);
+            return this;
+        }
+
+        /**
          * Removes the component from the group
          * @param component
          * @return {Cuic.Group}
@@ -3814,6 +3842,7 @@ Cuic.Group = function (_Cuic$Component) {
     }, {
         key: 'removeComponent',
         value: function removeComponent(component) {
+            this.events.trigger('removeComponent', component);
             this.components.remove(component);
             return this;
         }
@@ -5062,10 +5091,10 @@ Cuic.Dialog = function (_Cuic$Component3) {
 
         // Add close button
         _this20.closeButton = new Cuic.Element('span', {
-            className: 'btn-close glyphicon glyphicon-remove-sign',
+            className: _this20.options.closeButtonClass,
             html: _this20.options.closeButton,
             role: 'button'
-        }).appendTo(_this20.header);
+        }).addClass('btn-close').appendTo(_this20.header);
 
         // Show footer if not empty
         _this20.buttons.onComponentAdded(function () {
@@ -5396,6 +5425,7 @@ Cuic.Dialog.prototype.options = {
     buttons: [],
     closable: true,
     closeButton: null,
+    closeButtonClass: 'glyphicon glyphicon-remove-sign',
     content: null,
     contentHeight: null,
     contentWidth: null,
@@ -5408,7 +5438,7 @@ Cuic.Dialog.prototype.options = {
     position: 'center',
     resizable: false,
     title: null,
-    zIndex: 5
+    zIndex: 10
 };
 
 /*
@@ -6242,10 +6272,10 @@ Cuic.Notification = function (_Cuic$Component5) {
 
         // Add close button
         _this23.closeButton = new Cuic.Element('span', {
-            className: 'btn-close glyphicon glyphicon-remove-sign',
+            className: _this23.options.closeButtonClass,
             html: _this23.options.closeButton,
             role: 'button'
-        }).appendTo(_this23);
+        }).addClass('btn-close').appendTo(_this23);
 
         // Add dialog to collection
         Cuic.notifications.add(_this23);
@@ -6278,9 +6308,14 @@ Cuic.Notification = function (_Cuic$Component5) {
 
         _this23.onOpen(function () {
             if (_this23.options.position) {
-                var isFixed = _this23.parentNode() === document.body;
-                _this23.css({ position: isFixed ? 'fixed' : 'absolute' });
-                _this23.align(_this23.options.position);
+                // Set fixed position if notification is in body
+                if (_this23.parentNode() === document.body) {
+                    _this23.css({ position: 'fixed' });
+                }
+                // Align notification only if absolute or fixed position
+                if (_this23.css('position') === 'absolute' || _this23.css('position') === 'fixed') {
+                    _this23.align(_this23.options.position);
+                }
             }
         });
 
@@ -6334,7 +6369,8 @@ Cuic.Notification.prototype.options = {
     autoClose: true,
     autoRemove: true,
     closable: true,
-    closeButton: '',
+    closeButton: null,
+    closeButtonClass: 'glyphicon glyphicon-remove-sign',
     content: null,
     duration: 2000,
     namespace: 'notification',
@@ -6479,10 +6515,10 @@ Cuic.Panel = function (_Cuic$Component6) {
 
             // Add close button
             _this26.closeButton = new Cuic.Element('span', {
-                className: 'btn-close glyphicon glyphicon-remove-sign',
+                className: _this26.options.closeButtonClass,
                 html: _this26.options.closeButton,
                 role: 'button'
-            }).appendTo(_this26.header);
+            }).addClass('btn-close').appendTo(_this26.header);
 
             // Add the body
             _this26.content = new Cuic.Element('section', {
@@ -6761,7 +6797,8 @@ Cuic.Panel = function (_Cuic$Component6) {
 Cuic.Panel.prototype.options = {
     autoClose: false,
     closable: true,
-    closeButton: '',
+    closeButton: null,
+    closeButtonClass: 'glyphicon glyphicon-remove-sign',
     content: null,
     footer: null,
     maximized: false,
@@ -6821,10 +6858,10 @@ Cuic.Popup = function (_Cuic$Component7) {
 
         // Add close button
         _this27.closeButton = new Cuic.Element('span', {
-            className: 'btn-close glyphicon glyphicon-remove-sign',
+            className: _this27.options.closeButtonClass,
             html: _this27.options.closeButton,
             role: 'button'
-        }).appendTo(_this27);
+        }).addClass('btn-close').appendTo(_this27);
 
         /**
          * Popup shortcuts
@@ -6900,7 +6937,8 @@ Cuic.Popup.prototype.options = {
     autoClose: true,
     autoRemove: false,
     closable: true,
-    closeButton: '',
+    closeButton: null,
+    closeButtonClass: 'glyphicon glyphicon-remove-sign',
     content: null,
     namespace: 'popup',
     opened: false,
@@ -7722,7 +7760,7 @@ Cuic.Tooltip.prototype.options = {
     namespace: 'tooltip',
     opened: false,
     selector: '[title]',
-    zIndex: 10
+    zIndex: 100
 };
 
 /*

@@ -49,8 +49,10 @@ Cuic.Group = class extends Cuic.Component {
      */
     addComponent(component) {
         if (!(component instanceof Cuic.Element)) {
-            throw new TypeError(`Cannot add non component to a Group.`);
+            throw new TypeError(`Cannot add object to the group.`);
         }
+        this.events.trigger('addComponent', component);
+
         if (this.isAligned('top')) {
             component.prependTo(this);
         } else {
@@ -61,7 +63,17 @@ Cuic.Group = class extends Cuic.Component {
     }
 
     /**
-     * Called when component is added
+     * Called before adding a component
+     * @param callback
+     * @return {Cuic.Group}
+     */
+    onAddComponent(callback) {
+        this.events.on('addComponent', callback);
+        return this;
+    }
+
+    /**
+     * Called when a component is added
      * @param callback
      * @return {Cuic.Group}
      */
@@ -71,7 +83,7 @@ Cuic.Group = class extends Cuic.Component {
     }
 
     /**
-     * Called when component is removed
+     * Called when a component is removed
      * @param callback
      * @return {Cuic.Group}
      */
@@ -81,11 +93,22 @@ Cuic.Group = class extends Cuic.Component {
     }
 
     /**
+     * Called before removing a component
+     * @param callback
+     * @return {Cuic.Group}
+     */
+    onRemoveComponent(callback) {
+        this.events.on('removeComponent', callback);
+        return this;
+    }
+
+    /**
      * Removes the component from the group
      * @param component
      * @return {Cuic.Group}
      */
     removeComponent(component) {
+        this.events.trigger('removeComponent', component);
         this.components.remove(component);
         return this;
     }
