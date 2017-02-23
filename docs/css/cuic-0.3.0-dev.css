@@ -495,7 +495,6 @@ body > .panel {
   color: #fff;
   display: inline-block;
   margin: 10px;
-  overflow: auto;
   padding: 10px;
   position: absolute;
   -webkit-transition-property: background, opacity, height, width, bottom, left, right, top, -webkit-transform;
@@ -516,6 +515,7 @@ body > .panel {
 }
 .popup-content {
   line-height: 1.5rem;
+  overflow: auto;
 }
 .popup.closable .popup-content {
   margin-right: 20px;
@@ -564,6 +564,58 @@ body > .panel {
 .popup.anchored-top.anchored-right {
   -webkit-transform-origin: bottom left;
           transform-origin: bottom left;
+}
+.popup-tail {
+  display: inline-block;
+  height: 0;
+  width: 0;
+  position: absolute;
+}
+.popup-tail-bottom {
+  border-left: solid 6px transparent;
+  border-right: solid 6px transparent;
+  border-top: solid 6px rgba(0, 0, 0, 0.7);
+  margin: 0 0 -6px -6px;
+  bottom: 0;
+  left: 50%;
+  right: auto;
+  top: auto;
+}
+.popup-tail-left {
+  border-bottom: solid 6px transparent !important;
+  border-top: solid 6px transparent !important;
+  border-right: solid 6px rgba(0, 0, 0, 0.7);
+  margin: -6px 0 0 -6px;
+  bottom: auto;
+  left: 0;
+  right: auto;
+  top: 50%;
+}
+.popup-tail-right {
+  border-bottom: solid 6px transparent !important;
+  border-top: solid 6px transparent !important;
+  border-left: solid 6px rgba(0, 0, 0, 0.7);
+  margin: -6px -6px 0 0;
+  bottom: auto;
+  left: auto;
+  right: 0;
+  top: 50%;
+}
+.popup-tail-top {
+  border-left: solid 6px transparent !important;
+  border-right: solid 6px transparent !important;
+  border-bottom: solid 6px rgba(0, 0, 0, 0.7);
+  margin: -6px 0 0 -6px;
+  bottom: auto;
+  left: 50%;
+  right: auto;
+  top: 0;
+}
+.popup-tail-bottom.popup-tail-left,
+.popup-tail-bottom.popup-tail-right,
+.popup-tail-top.popup-tail-left,
+.popup-tail-top.popup-tail-right {
+  display: none;
 }
 .resizable {
   position: relative;

@@ -23,6 +23,9 @@
  *
  */
 
+@popup-background-color: rgba(0, 0, 0, 0.7);
+@popup-tail-size: 6px;
+
 .popup {
   background: rgba(0, 0, 0, 0.7);
   border-radius: @border-radius;
@@ -30,7 +33,6 @@
   color: #fff;
   display: inline-block;
   margin: @margin;
-  overflow: auto;
   padding: @padding;
   position: absolute;
   transition-property: background, opacity, height, width, bottom, left, right, top, transform;
@@ -49,6 +51,7 @@
 
 .popup-content {
   line-height: @content-line-height;
+  overflow: auto;
 }
 
 .popup.closable .popup-content {
@@ -102,4 +105,64 @@
 
 .popup.anchored-top.anchored-right {
   transform-origin: bottom left;
+}
+
+// POPUP TAIL
+
+.popup-tail {
+  display: inline-block;
+  height: 0;
+  width: 0;
+  position: absolute;
+}
+
+.popup-tail-bottom {
+  border-left: solid @popup-tail-size transparent;
+  border-right: solid @popup-tail-size transparent;
+  border-top: solid @popup-tail-size @popup-background-color;
+  margin: 0 0 -@popup-tail-size -@popup-tail-size;
+  bottom: 0;
+  left: 50%;
+  right: auto;
+  top: auto;
+}
+
+.popup-tail-left {
+  border-bottom: solid @popup-tail-size transparent !important;
+  border-top: solid @popup-tail-size transparent !important;
+  border-right: solid @popup-tail-size @popup-background-color;
+  margin: -@popup-tail-size 0 0 -@popup-tail-size;
+  bottom: auto;
+  left: 0;
+  right: auto;
+  top: 50%;
+}
+
+.popup-tail-right {
+  border-bottom: solid @popup-tail-size transparent !important;
+  border-top: solid @popup-tail-size transparent !important;
+  border-left: solid @popup-tail-size @popup-background-color;
+  margin: -@popup-tail-size -@popup-tail-size 0 0;
+  bottom: auto;
+  left: auto;
+  right: 0;
+  top: 50%;
+}
+
+.popup-tail-top {
+  border-left: solid @popup-tail-size transparent !important;
+  border-right: solid @popup-tail-size transparent !important;
+  border-bottom: solid @popup-tail-size @popup-background-color;
+  margin: -@popup-tail-size 0 0 -@popup-tail-size;
+  bottom: auto;
+  left: 50%;
+  right: auto;
+  top: 0;
+}
+
+.popup-tail-bottom.popup-tail-left,
+.popup-tail-bottom.popup-tail-right,
+.popup-tail-top.popup-tail-left,
+.popup-tail-top.popup-tail-right {
+  display: none;
 }

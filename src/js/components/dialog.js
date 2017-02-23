@@ -345,10 +345,7 @@ Cuic.Dialog = class extends Cuic.Component {
         maxHeight -= this.content.margin().vertical;
 
         // Set content max height
-        this.content.css({
-            'max-height': maxHeight,
-            overflow: 'auto'
-        });
+        this.content.css({'max-height': maxHeight});
         return this;
     }
 

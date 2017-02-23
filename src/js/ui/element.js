@@ -749,7 +749,7 @@ Cuic.Element = class {
     }
 
     /**
-     * Checks if the element is aligned at the position
+     * Checks the element alignment
      * @param position
      * @return {boolean}
      */
@@ -762,6 +762,28 @@ Cuic.Element = class {
 
             for (let i = 0; i < pos.length; i += 1) {
                 if (this.options.position.indexOf(pos[i]) === -1) {
+                    result = false;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Checks the element anchor
+     * @param position
+     * @return {boolean}
+     */
+    isAnchored(position) {
+        let result = false;
+
+        if (this.options.anchor) {
+            const pos = (position || '').split(' ');
+            result = true;
+
+            for (let i = 0; i < pos.length; i += 1) {
+                if (this.options.anchor.indexOf(pos[i]) === -1) {
                     result = false;
                     break;
                 }

@@ -44,7 +44,7 @@ Cuic.Tooltip = class extends Cuic.Component {
             className: 'tooltip-content'
         }).appendTo(this);
 
-        // Add tooltip tail
+        // Add tail
         this.tail = new Cuic.Element('span', {
             className: 'tooltip-tail'
         }).appendTo(this);
@@ -136,7 +136,7 @@ Cuic.Tooltip = class extends Cuic.Component {
     }
 
     /**
-     * Updates tooltip location
+     * Updates location
      * @param ev
      * @return {Cuic.Tooltip}
      */
@@ -157,7 +157,7 @@ Cuic.Tooltip = class extends Cuic.Component {
     }
 
     /**
-     * Position the tooltip tail
+     * Position the tail
      * @return {Cuic.Tooltip}
      */
     updateTail() {
@@ -175,19 +175,19 @@ Cuic.Tooltip = class extends Cuic.Component {
         this.tail.removeClass('tooltip-tail-bottom tooltip-tail-left tooltip-tail-right tooltip-tail-top');
 
         // Top tail
-        if (this.options.anchor.indexOf('bottom') !== -1) {
+        if (this.isAnchored('bottom')) {
             this.tail.addClass('tooltip-tail-top');
         }
         // Bottom tail
-        if (this.options.anchor.indexOf('top') !== -1) {
+        if (this.isAnchored('top')) {
             this.tail.addClass('tooltip-tail-bottom');
         }
         // Right tail
-        if (this.options.anchor.indexOf('left') !== -1) {
+        if (this.isAnchored('left')) {
             this.tail.addClass('tooltip-tail-right');
         }
         // Left tail
-        if (this.options.anchor.indexOf('right') !== -1) {
+        if (this.isAnchored('right')) {
             this.tail.addClass('tooltip-tail-left');
         }
 

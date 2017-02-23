@@ -591,8 +591,8 @@
                                 window.popup.anchor(anchor.val());
                             });
 
-                            popupButton.on("click", function (ev) {
-                                popup.setContent("Clicked on " + new Date());
+                            popupButton.on("click", function () {
+                                popup.setContent("Clicked at <em>" + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds() + "</em>");
                                 popup.toggle();
                             });
                         });

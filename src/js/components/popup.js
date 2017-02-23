@@ -40,6 +40,11 @@ Cuic.Popup = class extends Cuic.Component {
             html: options.content
         }).appendTo(this);
 
+        // Add tail
+        this.tail = new Cuic.Element('span', {
+            className: 'popup-tail'
+        }).appendTo(this);
+
         // Add close button
         this.closeButton = new Cuic.Element('span', {
             className: this.options.closeButtonClass,
@@ -77,6 +82,11 @@ Cuic.Popup = class extends Cuic.Component {
             }
         });
 
+        // Reposition tail when popup position change
+        this.onAnchored(() => {
+            this.updateTail();
+        });
+
         this.onClosed(() => {
             Cuic.off('click', document, autoClose);
 
@@ -104,6 +114,68 @@ Cuic.Popup = class extends Cuic.Component {
      */
     setContent(html) {
         this.content.html(html);
+        return this;
+    }
+
+    /**
+     * Updates location
+     * @param ev
+     * @return {Cuic.Popup}
+     */
+    update(ev) {
+        if (this.options.followPointer && ev) {
+            if (this.parentNode() !== document.body) {
+                this.appendTo(document.body);
+            }
+            this.anchor(this.options.anchor, [ev.pageX, ev.pageY]);
+        }
+        else if (this.currentTarget) {
+            if (this.parentNode() !== this.currentTarget.parentNode) {
+                this.appendTo(this.currentTarget.parentNode);
+            }
+            this.anchor(this.options.anchor, this.currentTarget);
+        }
+        return this;
+    }
+
+    /**
+     * Position the tail
+     * @return {Cuic.Popup}
+     */
+    updateTail() {
+        let prop = {
+            bottom: '',
+            left: '',
+            right: '',
+            top: '',
+        };
+
+        // todo copy popup background color
+        // prop['border-color'] = this.css('background-color');
+
+        // Remove previous classes
+        this.tail.removeClass('popup-tail-bottom popup-tail-left popup-tail-right popup-tail-top');
+
+        // Top tail
+        if (this.isAnchored('bottom')) {
+            this.tail.addClass('popup-tail-top');
+        }
+        // Bottom tail
+        if (this.isAnchored('top')) {
+            this.tail.addClass('popup-tail-bottom');
+        }
+        // Right tail
+        if (this.isAnchored('left')) {
+            this.tail.addClass('popup-tail-right');
+        }
+        // Left tail
+        if (this.isAnchored('right')) {
+            this.tail.addClass('popup-tail-left');
+        }
+
+        // Apply CSS
+        this.tail.css(prop);
+
         return this;
     }
 };
