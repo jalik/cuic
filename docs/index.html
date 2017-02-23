@@ -452,10 +452,10 @@
                                 <option selected>left</option>
                             </select>
                         </label>
-                        <label class="inline">
-                            <span class="help-block">css</span>
-                            <input class="form-control" type="text" name="css" value="min-width: 200px">
-                        </label>
+                        <!--<label class="inline">-->
+                        <!--<span class="help-block">css</span>-->
+                        <!--<input class="form-control" type="text" name="css" value="min-width: 200px">-->
+                        <!--</label>-->
                         <label class="inline">
                             <span class="help-block">autoClose</span>
                             <input type="checkbox" name="autoClose">
@@ -473,10 +473,11 @@
                             <input type="checkbox" name="opened" checked>
                         </label>
 
+                        <!--<button class="btn btn-primary btn-run" type="submit">-->
+                        <!--<span class="glyphicon glyphicon-console"></span> Run-->
+                        <!--</button>-->
+
                         <div>
-                            <button class="btn btn-primary btn-run" type="submit">
-                                <span class="glyphicon glyphicon-console"></span> Run
-                            </button>
                             <button class="btn btn-default fn-close" type="button">close()</button>
                             <button class="btn btn-default fn-open" type="button">open()</button>
                             <button class="btn btn-default fn-toggle" type="button">toggle()</button>
@@ -503,43 +504,40 @@
                             var blueprint = sandbox.find('.blueprint');
                             var autoClose = sandbox.find('[name=autoClose]');
                             var parent = sandbox.find('[name=parent]');
-                            var css = sandbox.find('[name=css]');
                             var position = sandbox.find('[name=position]');
                             var maximized = sandbox.find('[name=maximized]');
                             var opened = sandbox.find('[name=opened]');
 
-                            sandbox.find('.btn-run').on('click', function () {
-                                window.panel = new Cuic.Panel({
-                                    autoClose: autoClose.is(':checked'),
-                                    element: document.getElementById('panel'),
-                                    css: css.val(),
-                                    maximized: maximized.is(':checked'),
-                                    opened: opened.is(':checked'),
-                                    parent: parent.is(':checked') ? blueprint : document.body,
-                                    position: position.val()
-                                });
-                                sandbox.find('.fn-close').on('click', function () {
-                                    panel.close();
-                                });
-                                sandbox.find('.fn-open').on('click', function () {
-                                    panel.open();
-                                });
-                                sandbox.find('.fn-toggle').on('click', function () {
-                                    panel.toggle();
-                                });
-                                autoClose.on("change", function () {
-                                    panel.options.autoClose = autoClose.is(":checked");
-                                });
-                                maximized.on("change", function () {
-                                    if (maximized.is(":checked")) {
-                                        panel.maximize();
-                                    } else {
-                                        panel.minimize();
-                                    }
-                                });
-                                position.on("change", function () {
-                                    panel.align(position.val());
-                                });
+                            window.panel = new Cuic.Panel({
+                                css: {'min-width': '200px'},
+                                autoClose: autoClose.is(':checked'),
+                                element: document.getElementById('panel'),
+                                maximized: maximized.is(':checked'),
+                                opened: opened.is(':checked'),
+                                parent: parent.is(':checked') ? blueprint : document.body,
+                                position: position.val()
+                            });
+                            sandbox.find('.fn-close').on('click', function () {
+                                panel.close();
+                            });
+                            sandbox.find('.fn-open').on('click', function () {
+                                panel.open();
+                            });
+                            sandbox.find('.fn-toggle').on('click', function () {
+                                panel.toggle();
+                            });
+                            autoClose.on("change", function () {
+                                panel.options.autoClose = autoClose.is(":checked");
+                            });
+                            maximized.on("change", function () {
+                                if (maximized.is(":checked")) {
+                                    panel.maximize();
+                                } else {
+                                    panel.minimize();
+                                }
+                            });
+                            position.on("change", function () {
+                                panel.align(position.val());
                             });
                         });
                     </script>
@@ -1055,9 +1053,7 @@
                     <h2><a href="#ui-tooltip">Cuic.Tooltip</a></h2>
 
                     <p class="alert alert-info">Tooltips are used to display a short description (eg: help, tips, etc.)
-                        next
-                        to
-                        an element.</p>
+                        next to an element.</p>
 
                     <div class="sandbox" id="sb-tooltip">
                         <label class="inline">
@@ -1073,18 +1069,18 @@
                                 <option>left</option>
                             </select>
                         </label>
-                        <label class="inline">
-                            <span class="help-block">css</span>
-                            <input class="form-control" type="text" name="css" value="margin: 10px">
-                        </label>
+                        <!--<label class="inline">-->
+                        <!--<span class="help-block">css</span>-->
+                        <!--<input class="form-control" type="text" name="css" value="margin: 10px">-->
+                        <!--</label>-->
                         <label class="inline">
                             <span class="help-block">followPointer</span>
                             <input type="checkbox" name="followPointer" checked>
                         </label>
-                        <button class="btn btn-primary btn-run" type="submit">
-                            <span class="glyphicon glyphicon-console"></span>
-                            Run
-                        </button>
+                        <!--<button class="btn btn-primary btn-run" type="submit">-->
+                        <!--<span class="glyphicon glyphicon-console"></span>-->
+                        <!--<span>Run</span>-->
+                        <!--</button>-->
 
                         <div class="blueprint" style="height: 400px;margin-top: 1em">
                             <div class="group1">
@@ -1106,35 +1102,30 @@
                             var anchor = sandbox.find("[name=anchor]");
                             var followPointer = sandbox.find("[name=followPointer]");
 
-                            sandbox.find('.btn-run').on('click', function () {
-                                var css = sandbox.find('[name=css]').val();
+                            window.tooltip = new Cuic.Tooltip({
+                                anchor: anchor.val(),
+                                attribute: "title",
+                                followPointer: followPointer.is(":checked"),
+                                selector: '.group1 [title]'
+                            });
 
-                                window.tooltip = new Cuic.Tooltip({
-                                    anchor: anchor.val(),
-                                    attribute: "title",
-                                    css: css,
-                                    followPointer: followPointer.is(":checked"),
-                                    selector: '.group1 [title]'
-                                });
+                            window.tooltipBlue = new Cuic.Tooltip({
+                                anchor: anchor.val(),
+                                attribute: "title",
+                                css: {background: 'rgba(93,190,221,0.9)'},
+                                followPointer: followPointer.is(":checked"),
+                                selector: '.group2 [title]'
+                            });
 
-                                window.tooltipBlue = new Cuic.Tooltip({
-                                    anchor: anchor.val(),
-                                    attribute: "title",
-                                    css: css + ";background:rgba(93,190,221,0.9)",
-                                    followPointer: followPointer.is(":checked"),
-                                    selector: '.group2 [title]'
-                                });
+                            anchor.on("change", function () {
+                                window.tooltip.anchor(anchor.val());
+                                window.tooltipBlue.anchor(anchor.val());
+                            });
 
-                                anchor.on("change", function () {
-                                    window.tooltip.anchor(anchor.val());
-                                    window.tooltipBlue.anchor(anchor.val());
-                                });
-
-                                followPointer.on("change", function () {
-                                    window.tooltip.options.followPointer = followPointer.is(":checked");
-                                    window.tooltipBlue.options.followPointer = followPointer.is(":checked");
-                                });
-                            }).click();
+                            followPointer.on("change", function () {
+                                window.tooltip.options.followPointer = followPointer.is(":checked");
+                                window.tooltipBlue.options.followPointer = followPointer.is(":checked");
+                            });
                         });
                     </script>
                 </div>
