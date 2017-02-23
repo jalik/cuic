@@ -30,11 +30,19 @@
   top: 0;
   height: 100%;
   width: 100%;
-  opacity: 0;
   position: absolute;
   transition-property: opacity, height, width, transform;
   transition-duration: @anim-close-duration;
   z-index: 1;
+}
+
+body > .fader {
+  position: fixed;
+}
+
+.fader,
+.fader.closed {
+  opacity: 0;
 }
 
 .fader.opened {

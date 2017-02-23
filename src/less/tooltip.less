@@ -34,11 +34,16 @@
   display: inline-block;
   margin: @margin;
   max-width: 250px;
-  opacity: 0;
   padding: @padding;
-  transform: scale(0);
+  position: absolute;
   transition-property: background, opacity, height, width, transform;
   transition-duration: @anim-close-duration;
+}
+
+.tooltip,
+.tooltip.closed {
+  opacity: 0;
+  transform: scale(0);
 }
 
 .tooltip.opened {

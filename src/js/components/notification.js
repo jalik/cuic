@@ -83,15 +83,7 @@ Cuic.Notification = class extends Cuic.Component {
 
         this.onOpen(() => {
             if (this.options.position) {
-                // Set fixed position if notification is in body
-                if (this.parentNode() === document.body) {
-                    this.css({position: 'fixed'});
-                }
-                // Align notification only if absolute or fixed position
-                if (this.css('position') === 'absolute'
-                    || this.css('position') === 'fixed') {
-                    this.align(this.options.position);
-                }
+                this.align(this.options.position);
             }
         });
 

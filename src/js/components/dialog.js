@@ -204,7 +204,6 @@ Cuic.Dialog = class extends Cuic.Component {
             // Calculate z-index
             let zIndex = this.options.zIndex + dialogZIndex; // todo calculate current z-index
             this.css({'z-index': zIndex});
-
             this.resizeContent();
 
             // Open fader

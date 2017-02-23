@@ -34,13 +34,6 @@ Cuic.Fader = class extends Cuic.Component {
         // Create element
         super('div', {className: options.className}, options);
 
-        let fixed = this.parentNode() === document.body;
-
-        // Set position
-        if (fixed) {
-            this.css({position: 'fixed'});
-        }
-
         // Auto close when fader is clicked
         this.on('click', () => {
             if (this.options.autoClose) {

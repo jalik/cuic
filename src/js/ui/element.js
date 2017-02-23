@@ -57,7 +57,7 @@ Cuic.Element = class {
             this.element = node.get(0);
         }
         else {
-            console.log(node);
+            console.info(node);
             throw new TypeError(`Cannot create element using given node.`);
         }
 
@@ -210,11 +210,15 @@ Cuic.Element = class {
      * @return {Cuic.Element}
      */
     align(position) {
-        this.debug('align', position);
-        this.css(Cuic.calculateAlign(this, position));
-        this.addPositionClass(position, 'aligned');
-        this.options.position = position;
-        this.events.trigger('aligned', position);
+        const pos = this.css('position');
+
+        if (pos === 'absolute' || pos === 'fixed') {
+            this.debug('align', position);
+            this.css(Cuic.calculateAlign(this, position));
+            this.addPositionClass(position, 'aligned');
+            this.options.position = position;
+            this.events.trigger('aligned', position);
+        }
         return this;
     }
 
@@ -527,7 +531,7 @@ Cuic.Element = class {
     debug() {
         if (Cuic.DEBUG || this.options.debug) {
             const args = Array.prototype.slice.call(arguments);
-            console.log.apply(this, args);
+            console.info.apply(this, args);
         }
     }
 

@@ -525,7 +525,7 @@ if (!Element.prototype.matches) {
          */
         debug: function debug() {
             if (this.DEBUG && console !== undefined) {
-                console.log.apply(this, Array.prototype.slice.call(arguments));
+                console.info.apply(this, Array.prototype.slice.call(arguments));
             }
         },
 
@@ -752,7 +752,7 @@ if (!Element.prototype.matches) {
             if (element instanceof jQuery) {
                 return element.get(0);
             }
-            console.log(element);
+            console.info(element);
             throw new TypeError('cannot get HTMLElement from element.');
         },
 
@@ -770,7 +770,7 @@ if (!Element.prototype.matches) {
             } else if (element instanceof jQuery) {
                 element = element.get(0);
             } else if (!(element instanceof HTMLElement) && !(element instanceof HTMLDocument) && !(element instanceof Window)) {
-                console.log(event, element);
+                console.info(event, element);
                 throw new TypeError('Cannot add event listener on unsupported element.');
             }
             var browserEvent = this.whichEvent(event);
@@ -815,7 +815,7 @@ if (!Element.prototype.matches) {
             } else if (element instanceof jQuery) {
                 element = element.get(0);
             } else if (!(element instanceof HTMLElement) && !(element instanceof HTMLDocument) && !(element instanceof Window)) {
-                console.log(event, element);
+                console.info(event, element);
                 throw new TypeError('Cannot add event listener on unsupported element.');
             }
             var browserEvent = this.whichEvent(event);
@@ -863,7 +863,7 @@ if (!Element.prototype.matches) {
             } else if (element instanceof jQuery) {
                 element = element.get(0);
             } else if (!(element instanceof HTMLElement) && !(element instanceof HTMLDocument) && !(element instanceof Window)) {
-                console.log(event, element);
+                console.info(event, element);
                 throw new TypeError('Cannot add event listener on unsupported element.');
             }
             var browserEvent = this.whichEvent(event);
@@ -1977,7 +1977,7 @@ Cuic.Element = function () {
                         else if (node instanceof jQuery) {
                                 this.element = node.get(0);
                             } else {
-                                console.log(node);
+                                console.info(node);
                                 throw new TypeError('Cannot create element using given node.');
                             }
 
@@ -2128,11 +2128,15 @@ Cuic.Element = function () {
     }, {
         key: 'align',
         value: function align(position) {
-            this.debug('align', position);
-            this.css(Cuic.calculateAlign(this, position));
-            this.addPositionClass(position, 'aligned');
-            this.options.position = position;
-            this.events.trigger('aligned', position);
+            var pos = this.css('position');
+
+            if (pos === 'absolute' || pos === 'fixed') {
+                this.debug('align', position);
+                this.css(Cuic.calculateAlign(this, position));
+                this.addPositionClass(position, 'aligned');
+                this.options.position = position;
+                this.events.trigger('aligned', position);
+            }
             return this;
         }
 
@@ -2480,7 +2484,7 @@ Cuic.Element = function () {
         value: function debug() {
             if (Cuic.DEBUG || this.options.debug) {
                 var args = Array.prototype.slice.call(arguments);
-                console.log.apply(this, args);
+                console.info.apply(this, args);
             }
         }
 
@@ -5202,7 +5206,6 @@ Cuic.Dialog = function (_Cuic$Component3) {
             // Calculate z-index
             var zIndex = _this20.options.zIndex + dialogZIndex; // todo calculate current z-index
             _this20.css({ 'z-index': zIndex });
-
             _this20.resizeContent();
 
             // Open fader
@@ -5479,16 +5482,9 @@ Cuic.Fader = function (_Cuic$Component4) {
 
         // Create element
 
+        // Auto close when fader is clicked
         var _this22 = _possibleConstructorReturn(this, (_class15.__proto__ || Object.getPrototypeOf(_class15)).call(this, 'div', { className: options.className }, options));
 
-        var fixed = _this22.parentNode() === document.body;
-
-        // Set position
-        if (fixed) {
-            _this22.css({ position: 'fixed' });
-        }
-
-        // Auto close when fader is clicked
         _this22.on('click', function () {
             if (_this22.options.autoClose) {
                 _this22.close();
@@ -6308,14 +6304,7 @@ Cuic.Notification = function (_Cuic$Component5) {
 
         _this23.onOpen(function () {
             if (_this23.options.position) {
-                // Set fixed position if notification is in body
-                if (_this23.parentNode() === document.body) {
-                    _this23.css({ position: 'fixed' });
-                }
-                // Align notification only if absolute or fixed position
-                if (_this23.css('position') === 'absolute' || _this23.css('position') === 'fixed') {
-                    _this23.align(_this23.options.position);
-                }
+                _this23.align(_this23.options.position);
             }
         });
 
@@ -6422,8 +6411,6 @@ Cuic.NotificationStack = function (_Cuic$Group) {
         var _this25 = _possibleConstructorReturn(this, (_class17.__proto__ || Object.getPrototypeOf(_class17)).call(this, 'div', { className: options.className }, options));
 
         if (_this25.options.position) {
-            var isFixed = _this25.parentNode() === document.body;
-            _this25.css({ position: isFixed ? 'fixed' : 'absolute' });
             _this25.align(_this25.options.position);
         }
 
@@ -6543,10 +6530,6 @@ Cuic.Panel = function (_Cuic$Component6) {
             }
         }
 
-        // Set panel position
-        var fixed = _this26.parentNode() === document.body;
-        _this26.css({ position: fixed ? 'fixed' : 'absolute' });
-
         if (_this26.isOpened()) {
             _this26.align(_this26.options.position);
             _this26.resizeContent();
@@ -6596,10 +6579,9 @@ Cuic.Panel = function (_Cuic$Component6) {
             }
 
             // Centered
-            if (prop.left === undefined && prop.right === undefined && prop.bottom === undefined && prop.top === undefined) {
-                // prop.
-                console.log('center');
-            }
+            if (prop.left === undefined && prop.right === undefined && prop.bottom === undefined && prop.top === undefined) {}
+            // todo Handle centered panel opening/closing
+
 
             // Animate panel
             _this26.css(prop);
@@ -6651,9 +6633,7 @@ Cuic.Panel = function (_Cuic$Component6) {
         });
 
         _this26.onOpen(function () {
-            // Resize content
             _this26.resizeContent();
-            // Recalculate position
             _this26.align(_this26.options.position);
         });
 

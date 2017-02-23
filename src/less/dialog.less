@@ -29,11 +29,14 @@
   box-shadow: @shadow-x @shadow-y @shadow-size @shadow-color;
   display: block;
   margin: @margin;
-  padding: 0;
   position: absolute;
   transition-property: opacity, height, width, transform;
   transition-duration: @anim-close-duration;
   z-index: 5;
+}
+
+body > .dialog {
+  position: fixed;
 }
 
 .dialog,

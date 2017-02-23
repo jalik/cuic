@@ -83,10 +83,6 @@ Cuic.Panel = class extends Cuic.Component {
             }
         }
 
-        // Set panel position
-        let fixed = this.parentNode() === document.body;
-        this.css({position: fixed ? 'fixed' : 'absolute'});
-
         if (this.isOpened()) {
             this.align(this.options.position);
             this.resizeContent();
@@ -140,8 +136,7 @@ Cuic.Panel = class extends Cuic.Component {
             // Centered
             if (prop.left === undefined && prop.right === undefined
                 && prop.bottom === undefined && prop.top === undefined) {
-                // prop.
-                console.log('center');
+                // todo Handle centered panel opening/closing
             }
 
             // Animate panel
@@ -196,9 +191,7 @@ Cuic.Panel = class extends Cuic.Component {
         });
 
         this.onOpen(() => {
-            // Resize content
             this.resizeContent();
-            // Recalculate position
             this.align(this.options.position);
         });
 

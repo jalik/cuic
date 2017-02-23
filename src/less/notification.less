@@ -37,6 +37,10 @@
   transition-duration: @anim-close-duration;
 }
 
+body > .notification {
+  position: fixed;
+}
+
 .notification,
 .notification.closed {
   opacity: 0;
@@ -113,7 +117,12 @@
 // NOTIFICATION STACK
 
 .notification-stack {
+  position: absolute;
   transition: all @anim-open-duration;
+}
+
+body > .notification-stack {
+  position: fixed;
 }
 
 .notification-stack .notification {

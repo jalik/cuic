@@ -28,9 +28,18 @@
   border: solid 1px #ccc;
   box-shadow: @shadow-x @shadow-y @shadow-size @shadow-color;
   margin: @margin;
+  position: absolute;
   transition-property: background, opacity, height, width, bottom, left, right, top;
   transition-duration: @anim-close-duration;
   z-index: 5;
+}
+
+body > .panel {
+  position: fixed;
+}
+
+.panel,
+.panel.closed {
 }
 
 .panel.opened {

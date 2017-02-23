@@ -472,7 +472,7 @@
          */
         debug() {
             if (this.DEBUG && console !== undefined) {
-                console.log.apply(this, Array.prototype.slice.call(arguments));
+                console.info.apply(this, Array.prototype.slice.call(arguments));
             }
         },
 
@@ -690,7 +690,7 @@
             if (element instanceof jQuery) {
                 return element.get(0);
             }
-            console.log(element);
+            console.info(element);
             throw new TypeError(`cannot get HTMLElement from element.`);
         },
 
@@ -711,7 +711,7 @@
             else if (!(element instanceof HTMLElement)
                 && !(element instanceof HTMLDocument)
                 && !(element instanceof Window)) {
-                console.log(event, element);
+                console.info(event, element);
                 throw new TypeError(`Cannot add event listener on unsupported element.`);
             }
             const browserEvent = this.whichEvent(event);
@@ -759,7 +759,7 @@
             else if (!(element instanceof HTMLElement)
                 && !(element instanceof HTMLDocument)
                 && !(element instanceof Window)) {
-                console.log(event, element);
+                console.info(event, element);
                 throw new TypeError(`Cannot add event listener on unsupported element.`);
             }
             const browserEvent = this.whichEvent(event);
@@ -807,7 +807,7 @@
             else if (!(element instanceof HTMLElement)
                 && !(element instanceof HTMLDocument)
                 && !(element instanceof Window)) {
-                console.log(event, element);
+                console.info(event, element);
                 throw new TypeError(`Cannot add event listener on unsupported element.`);
             }
             const browserEvent = this.whichEvent(event);

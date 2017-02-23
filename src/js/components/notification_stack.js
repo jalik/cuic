@@ -36,8 +36,6 @@ Cuic.NotificationStack = class extends Cuic.Group {
 
         // Set position
         if (this.options.position) {
-            let isFixed = this.parentNode() === document.body;
-            this.css({position: isFixed ? 'fixed' : 'absolute'});
             this.align(this.options.position);
         }
 
