@@ -31,6 +31,14 @@
 .component.closable .btn-close {
   display: inline-block;
 }
+.component.closed {
+  -webkit-transition-duration: 0.25s;
+          transition-duration: 0.25s;
+}
+.component.opened {
+  -webkit-transition-duration: 0.5s;
+          transition-duration: 0.5s;
+}
 .component {
   display: inline-block;
   font-size: 1.3rem;
@@ -78,14 +86,11 @@
   transition-property: opacity, height, width, -webkit-transform;
   transition-property: opacity, height, width, transform;
   transition-property: opacity, height, width, transform, -webkit-transform;
-  -webkit-transition-duration: 0.25s;
-          transition-duration: 0.25s;
-  z-index: 5;
+  z-index: 10;
 }
 body > .dialog {
   position: fixed;
 }
-.dialog,
 .dialog.closed {
   opacity: 0;
   -webkit-transform: scale(0);
@@ -95,8 +100,6 @@ body > .dialog {
   opacity: 1;
   -webkit-transform: scale(1);
           transform: scale(1);
-  -webkit-transition-duration: 0.5s;
-          transition-duration: 0.5s;
 }
 .dialog.movable {
   position: absolute;
@@ -178,21 +181,16 @@ body > .dialog {
   transition-property: opacity, height, width, -webkit-transform;
   transition-property: opacity, height, width, transform;
   transition-property: opacity, height, width, transform, -webkit-transform;
-  -webkit-transition-duration: 0.25s;
-          transition-duration: 0.25s;
   z-index: 1;
 }
 body > .fader {
   position: fixed;
 }
-.fader,
 .fader.closed {
   opacity: 0;
 }
 .fader.opened {
   opacity: 1;
-  -webkit-transition-duration: 0.5s;
-          transition-duration: 0.5s;
 }
 .grid {
   background-color: #eee;
@@ -259,13 +257,11 @@ body > .fader {
   transition-property: background, opacity, height, width, -webkit-transform;
   transition-property: background, opacity, height, width, transform;
   transition-property: background, opacity, height, width, transform, -webkit-transform;
-  -webkit-transition-duration: 0.25s;
-          transition-duration: 0.25s;
+  z-index: 10;
 }
 body > .notification {
   position: fixed;
 }
-.notification,
 .notification.closed {
   opacity: 0;
   -webkit-transform: scale(0);
@@ -275,8 +271,6 @@ body > .notification {
   opacity: 1;
   -webkit-transform: scale(1);
           transform: scale(1);
-  -webkit-transition-duration: 0.5s;
-          transition-duration: 0.5s;
 }
 .notification.opened:hover {
   background: rgba(0, 0, 0, 0.8);
@@ -336,6 +330,7 @@ body > .notification {
   position: absolute;
   -webkit-transition: all 0.5s;
   transition: all 0.5s;
+  z-index: 10;
 }
 body > .notification-stack {
   position: fixed;
@@ -420,16 +415,10 @@ body > .notification-stack {
   position: absolute;
   -webkit-transition-property: background, opacity, height, width, bottom, left, right, top;
   transition-property: background, opacity, height, width, bottom, left, right, top;
-  -webkit-transition-duration: 0.25s;
-          transition-duration: 0.25s;
-  z-index: 5;
+  z-index: 1;
 }
 body > .panel {
   position: fixed;
-}
-.panel.opened {
-  -webkit-transition-duration: 0.5s;
-          transition-duration: 0.5s;
 }
 .panel-content {
   line-height: 1.5rem;
@@ -506,25 +495,24 @@ body > .panel {
   color: #fff;
   display: inline-block;
   margin: 10px;
-  opacity: 0;
   overflow: auto;
   padding: 10px;
   position: absolute;
-  -webkit-transform: scale(0);
-          transform: scale(0);
   -webkit-transition-property: background, opacity, height, width, bottom, left, right, top, -webkit-transform;
   transition-property: background, opacity, height, width, bottom, left, right, top, -webkit-transform;
   transition-property: background, opacity, height, width, bottom, left, right, top, transform;
   transition-property: background, opacity, height, width, bottom, left, right, top, transform, -webkit-transform;
-  -webkit-transition-duration: 0.25s;
-          transition-duration: 0.25s;
+  z-index: 9;
+}
+.popup.closed {
+  opacity: 0;
+  -webkit-transform: scale(0);
+          transform: scale(0);
 }
 .popup.opened {
   opacity: 1;
   -webkit-transform: scale(1);
           transform: scale(1);
-  -webkit-transition-duration: 0.5s;
-          transition-duration: 0.5s;
 }
 .popup-content {
   line-height: 1.5rem;
@@ -728,10 +716,8 @@ tr.selected {
   transition-property: background, opacity, height, width, -webkit-transform;
   transition-property: background, opacity, height, width, transform;
   transition-property: background, opacity, height, width, transform, -webkit-transform;
-  -webkit-transition-duration: 0.25s;
-          transition-duration: 0.25s;
+  z-index: 100;
 }
-.tooltip,
 .tooltip.closed {
   opacity: 0;
   -webkit-transform: scale(0);
@@ -741,8 +727,6 @@ tr.selected {
   opacity: 1;
   -webkit-transform: scale(1);
           transform: scale(1);
-  -webkit-transition-duration: 0.5s;
-          transition-duration: 0.5s;
 }
 .tooltip-content {
   line-height: 1.5rem;

@@ -30,19 +30,21 @@
   color: #fff;
   display: inline-block;
   margin: @margin;
-  opacity: 0;
   overflow: auto;
   padding: @padding;
   position: absolute;
-  transform: scale(0);
   transition-property: background, opacity, height, width, bottom, left, right, top, transform;
-  transition-duration: @anim-close-duration;
+  z-index: 9;
+}
+
+.popup.closed {
+  opacity: 0;
+  transform: scale(0);
 }
 
 .popup.opened {
   opacity: 1;
   transform: scale(1);
-  transition-duration: @anim-open-duration;
 }
 
 .popup-content {

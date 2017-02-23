@@ -31,15 +31,13 @@
   margin: @margin;
   position: absolute;
   transition-property: opacity, height, width, transform;
-  transition-duration: @anim-close-duration;
-  z-index: 5;
+  z-index: 10;
 }
 
 body > .dialog {
   position: fixed;
 }
 
-.dialog,
 .dialog.closed {
   opacity: 0;
   transform: scale(0);
@@ -48,7 +46,6 @@ body > .dialog {
 .dialog.opened {
   opacity: 1;
   transform: scale(1);
-  transition-duration: @anim-open-duration;
 }
 
 .dialog.movable {

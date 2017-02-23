@@ -30,20 +30,17 @@
   margin: @margin;
   position: absolute;
   transition-property: background, opacity, height, width, bottom, left, right, top;
-  transition-duration: @anim-close-duration;
-  z-index: 5;
+  z-index: 1;
 }
 
 body > .panel {
   position: fixed;
 }
 
-.panel,
 .panel.closed {
 }
 
 .panel.opened {
-  transition-duration: @anim-open-duration;
 }
 
 .panel-content {
