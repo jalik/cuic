@@ -57,14 +57,6 @@
   transform-origin: top center;
 }
 
-.tooltip.anchored-bottom.anchored-left {
-  transform-origin: top right;
-}
-
-.tooltip.anchored-bottom.anchored-right {
-  transform-origin: top left;
-}
-
 .tooltip.anchored-left {
   transform-origin: right center;
 }
@@ -77,12 +69,24 @@
   transform-origin: bottom center;
 }
 
+.tooltip.anchored-bottom.anchored-left {
+  transform-origin: top right;
+  border-radius: @border-radius 0 @border-radius @border-radius;
+}
+
+.tooltip.anchored-bottom.anchored-right {
+  transform-origin: top left;
+  border-radius: 0 @border-radius @border-radius @border-radius;
+}
+
 .tooltip.anchored-top.anchored-left {
   transform-origin: bottom right;
+  border-radius: @border-radius @border-radius 0 @border-radius;
 }
 
 .tooltip.anchored-top.anchored-right {
   transform-origin: bottom left;
+  border-radius: @border-radius @border-radius @border-radius 0;
 }
 
 // TOOLTIP TAIL
@@ -98,24 +102,20 @@
   border-left: solid @tooltip-tail-size transparent;
   border-right: solid @tooltip-tail-size transparent;
   border-top: solid @tooltip-tail-size @tooltip-background-color;
+  margin: 0 0 -@tooltip-tail-size -@tooltip-tail-size;
+  bottom: 0;
   left: 50%;
   right: auto;
   top: auto;
-}
-
-.tooltip-tail-bottom.tooltip-tail-left {
-  display: none;
-}
-
-.tooltip-tail-bottom.tooltip-tail-right {
-  display: none;
 }
 
 .tooltip-tail-left {
   border-bottom: solid @tooltip-tail-size transparent !important;
   border-top: solid @tooltip-tail-size transparent !important;
   border-right: solid @tooltip-tail-size @tooltip-background-color;
+  margin: -@tooltip-tail-size 0 0 -@tooltip-tail-size;
   bottom: auto;
+  left: 0;
   right: auto;
   top: 50%;
 }
@@ -124,8 +124,10 @@
   border-bottom: solid @tooltip-tail-size transparent !important;
   border-top: solid @tooltip-tail-size transparent !important;
   border-left: solid @tooltip-tail-size @tooltip-background-color;
+  margin: -@tooltip-tail-size -@tooltip-tail-size 0 0;
   bottom: auto;
   left: auto;
+  right: 0;
   top: 50%;
 }
 
@@ -133,15 +135,16 @@
   border-left: solid @tooltip-tail-size transparent !important;
   border-right: solid @tooltip-tail-size transparent !important;
   border-bottom: solid @tooltip-tail-size @tooltip-background-color;
+  margin: -@tooltip-tail-size 0 0 -@tooltip-tail-size;
   bottom: auto;
   left: 50%;
   right: auto;
+  top: 0;
 }
 
-.tooltip-tail-top.tooltip-tail-left {
-  display: none;
-}
-
+.tooltip-tail-bottom.tooltip-tail-left,
+.tooltip-tail-bottom.tooltip-tail-right,
+.tooltip-tail-top.tooltip-tail-left,
 .tooltip-tail-top.tooltip-tail-right {
   display: none;
 }

@@ -7586,9 +7586,9 @@ Cuic.Tooltip = function (_Cuic$Component9) {
 
             // Close tooltip when mouse leaves area
             target.on('mouseleave', function () {
-                _this30.close();
                 // Clear reference to current target
                 _this30.currentTarget = null;
+                _this30.close();
             });
         });
 
@@ -7676,10 +7676,6 @@ Cuic.Tooltip = function (_Cuic$Component9) {
         key: 'updateTail',
         value: function updateTail() {
             var prop = {
-                'margin-bottom': 0,
-                'margin-left': 0,
-                'margin-right': 0,
-                'margin-top': 0,
                 bottom: '',
                 left: '',
                 right: '',
@@ -7695,28 +7691,19 @@ Cuic.Tooltip = function (_Cuic$Component9) {
             // Top tail
             if (this.options.anchor.indexOf('bottom') !== -1) {
                 this.tail.addClass('tooltip-tail-top');
-                prop.top = -this.tail.outerHeight();
-                prop['margin-left'] = -this.tail.outerWidth() / 2;
             }
             // Bottom tail
             if (this.options.anchor.indexOf('top') !== -1) {
                 this.tail.addClass('tooltip-tail-bottom');
-                prop.bottom = -this.tail.outerHeight();
-                prop['margin-left'] = -this.tail.outerWidth() / 2;
             }
             // Right tail
             if (this.options.anchor.indexOf('left') !== -1) {
                 this.tail.addClass('tooltip-tail-right');
-                prop.right = -this.tail.outerWidth();
-                prop['margin-top'] = -this.tail.outerHeight() / 2;
             }
             // Left tail
             if (this.options.anchor.indexOf('right') !== -1) {
                 this.tail.addClass('tooltip-tail-left');
-                prop.left = -this.tail.outerWidth();
-                prop['margin-top'] = -this.tail.outerHeight() / 2;
             }
-            // todo position tail in diagonal (top left, top right...)
 
             // Apply CSS
             this.tail.css(prop);
