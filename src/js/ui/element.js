@@ -41,7 +41,7 @@ Cuic.Element = class {
             this.element = document.createElement(node);
         }
         // Use HTML node
-        else if (node instanceof HTMLElement || node instanceof HTMLDocument || node instanceof Window) {
+        else if (Cuic.isNode(node) || node instanceof Window) {
             this.element = node;
         }
         // Use node from Cuic.Element
@@ -240,14 +240,16 @@ Cuic.Element = class {
      * @return {Cuic.Element}
      */
     align(position) {
-        const pos = this.css('position');
+        if (this.isInDOM()) {
+            const pos = this.css('position');
 
-        if (pos === 'absolute' || pos === 'fixed') {
-            this.debug('align', position);
-            this.css(Cuic.calculateAlign(this, position));
-            this.addPositionClass(position, 'aligned');
-            this.options.position = position;
-            this.events.trigger('aligned', position);
+            if (['absolute', 'fixed'].indexOf(pos) !== -1) {
+                this.debug('align', position);
+                this.css(Cuic.calculateAlign(this, position));
+                this.addPositionClass(position, 'aligned');
+                this.options.position = position;
+                this.events.trigger('aligned', position);
+            }
         }
         return this;
     }
@@ -259,13 +261,15 @@ Cuic.Element = class {
      * @return {Cuic.Element}
      */
     anchor(position, target) {
-        this.debug('anchor', position, target);
-        target = Cuic.element(target || this.options.target);
-        this.css(Cuic.calculateAnchor(this, position, target));
-        this.addPositionClass(position, 'anchored');
-        this.options.anchor = position;
-        this.options.target = target;
-        this.events.trigger('anchored', position);
+        if (this.isInDOM()) {
+            this.debug('anchor', position, target);
+            target = Cuic.element(target || this.options.target);
+            this.css(Cuic.calculateAnchor(this, position, target));
+            this.addPositionClass(position, 'anchored');
+            this.options.anchor = position;
+            this.options.target = target;
+            this.events.trigger('anchored', position);
+        }
         return this;
     }
 
@@ -315,57 +319,57 @@ Cuic.Element = class {
      * @return {Cuic.Element}
      */
     autoAlign() {
-        this.debug('autoAlign');
-        const available = Cuic.calculateAvailablePosition(this, this.parent());
-        const alignments = ['bottom', 'left', 'right', 'top'];
-        let prop = this.position();
+        if (this.isInDOM()) {
+            this.debug('autoAlign');
+            const available = Cuic.calculateAvailablePosition(this, this.parent());
+            const alignments = ['bottom', 'left', 'right', 'top'];
+            let prop = this.position();
 
-        // Only keep properties that are styled
-        for (let i = 0; i < alignments.length; i += 1) {
-            if (!this.css(alignments[i])) {
-                prop[alignments[i]] = '';
+            // Only keep properties that are styled
+            for (let i = 0; i < alignments.length; i += 1) {
+                if (!this.css(alignments[i])) {
+                    prop[alignments[i]] = '';
+                }
             }
-        }
 
-        // Limit horizontal align
-        if (typeof prop.left === 'number') {
-            if (prop.left < available.minX) {
-                prop.left = available.minX;
+            // Limit horizontal align
+            if (typeof prop.left === 'number') {
+                if (prop.left < available.minX) {
+                    prop.left = available.minX;
+                }
+                else if (prop.left > available.maxX) {
+                    prop.left = available.maxX;
+                }
             }
-            else if (prop.left > available.maxX) {
-                prop.left = available.maxX;
+            if (typeof prop.right === 'number') {
+                if (prop.right < available.minX) {
+                    prop.right = available.minX;
+                }
+                else if (prop.right > available.maxX) {
+                    prop.right = available.maxX;
+                }
             }
-        }
-        if (typeof prop.right === 'number') {
-            if (prop.right < available.minX) {
-                prop.right = available.minX;
-            }
-            else if (prop.right > available.maxX) {
-                prop.right = available.maxX;
-            }
-        }
 
-        // Limit vertical align
-        if (typeof prop.top === 'number') {
-            if (prop.top < available.minY) {
-                prop.top = available.minY;
+            // Limit vertical align
+            if (typeof prop.top === 'number') {
+                if (prop.top < available.minY) {
+                    prop.top = available.minY;
+                }
+                else if (prop.top > available.maxY) {
+                    prop.top = available.maxY;
+                }
             }
-            else if (prop.top > available.maxY) {
-                prop.top = available.maxY;
+            if (typeof prop.bottom === 'number') {
+                if (prop.bottom < available.minY) {
+                    prop.bottom = available.minY;
+                }
+                else if (prop.bottom > available.maxY) {
+                    prop.bottom = available.maxY;
+                }
             }
+            // Apply alignment
+            this.css(prop);
         }
-        if (typeof prop.bottom === 'number') {
-            if (prop.bottom < available.minY) {
-                prop.bottom = available.minY;
-            }
-            else if (prop.bottom > available.maxY) {
-                prop.bottom = available.maxY;
-            }
-        }
-
-        // Apply alignment
-        this.css(prop);
-
         return this;
     }
 
@@ -384,25 +388,26 @@ Cuic.Element = class {
      * @return {Cuic.Element}
      */
     autoResize() {
-        this.debug('autoResize');
-        const available = Cuic.calculateAvailableSpace(this, this.parent());
+        if (this.isInDOM()) {
+            this.debug('autoResize');
+            const available = Cuic.calculateAvailableSpace(this, this.parent());
 
-        let prop = {
-            height: this.outerHeight(),
-            width: this.outerWidth()
-        };
+            let prop = {
+                height: this.outerHeight(),
+                width: this.outerWidth()
+            };
 
-        // Limit to max width
-        if (prop.width && prop.width > available.width) {
-            prop.width = available.width;
+            // Limit to max width
+            if (prop.width && prop.width > available.width) {
+                prop.width = available.width;
+            }
+            // Limit to max height
+            if (prop.height && prop.height > available.height) {
+                prop.height = available.height;
+            }
+            // Apply size
+            this.css(prop);
         }
-        // Limit to max height
-        if (prop.height && prop.height > available.height) {
-            prop.height = available.height;
-        }
-        // Apply size
-        this.css(prop);
-
         return this;
     }
 
@@ -435,7 +440,7 @@ Cuic.Element = class {
         let nodes = this.node().children || this.node().childNodes;
 
         for (let i = 0; i < nodes.length; i += 1) {
-            if (nodes[i] instanceof HTMLElement) {
+            if (Cuic.isNode(nodes[i])) {
                 if (!selector || nodes[i].matches(selector)) {
                     children.push(nodes[i]);
                 }
@@ -686,7 +691,7 @@ Cuic.Element = class {
         if (html !== undefined) {
             // Get HTML from object
             if (html && typeof html === 'object') {
-                if (html instanceof HTMLElement) {
+                if (Cuic.isNode(html)) {
                     this.empty();
                     this.append(html);
                 }
@@ -858,6 +863,14 @@ Cuic.Element = class {
     isHidden() {
         return this.hasClass('hidden')
             || this.css('display') === 'none';
+    }
+
+    /**
+     * Checks if the element is in the DOM
+     * @return {boolean}
+     */
+    isInDOM() {
+        return document.body.contains(this.node()) || !!this.offsetParent();
     }
 
     /**

@@ -541,10 +541,7 @@ if (!Element.prototype.matches) {
             if (_element instanceof this.Element) {
                 return _element;
             }
-            if (_element instanceof HTMLDocument) {
-                return new this.Element(_element);
-            }
-            if (_element instanceof HTMLElement) {
+            if (this.isNode(_element)) {
                 return new this.Element(_element);
             }
             if (_element instanceof Window) {
@@ -657,29 +654,13 @@ if (!Element.prototype.matches) {
 
 
         /**
-         * Checks if the browser is Chrome 1+
-         * @return {boolean}
+         * Checks if the element is an instance of Element
+         * @param o
+         * @return {*}
          */
-        isChrome: function isChrome() {
-            return !!window.chrome && !!window.chrome.webstore;
-        },
-
-
-        /**
-         * Checks if the browser is Edge 20+
-         * @return {boolean}
-         */
-        isEdge: function isEdge() {
-            return !isIE && !!window.StyleMedia;
-        },
-
-
-        /**
-         * Checks if the browser is Firefox 1.0+
-         * @return {boolean}
-         */
-        isFirefox: function isFirefox() {
-            return typeof InstallTrigger !== 'undefined';
+        isElement: function isElement(o) {
+            return (typeof HTMLElement === 'undefined' ? 'undefined' : _typeof(HTMLElement)) === 'object' ? o instanceof HTMLElement : //DOM2
+            o && (typeof o === 'undefined' ? 'undefined' : _typeof(o)) === 'object' && o !== null && o.nodeType === 1 && typeof o.nodeName === 'string';
         },
 
 
@@ -693,33 +674,12 @@ if (!Element.prototype.matches) {
 
 
         /**
-         * Checks if the browser is Internet Explorer 6-11
-         * @return {boolean}
+         * Checks if the element is an instance of Node
+         * @param o
+         * @return {*}
          */
-        isIE: function isIE() {
-            return (/*@cc_on!@*/!!document.documentMode
-            );
-        },
-
-
-        /**
-         * Checks if the browser is Opera 8.0+
-         * @return {boolean}
-         */
-        isOpera: function isOpera() {
-            return !!window.opr && !!opr.addons || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
-        },
-
-
-        /**
-         * Checks if the browser is Safari 3.0+
-         * @return {boolean}
-         */
-        isSafari: function isSafari() {
-            return (/constructor/i.test(window.HTMLElement) || function (p) {
-                    return p.toString() === "[object SafariRemoteNotification]";
-                }(!window['safari'] || safari.pushNotification)
-            );
+        isNode: function isNode(o) {
+            return (typeof Node === 'undefined' ? 'undefined' : _typeof(Node)) === 'object' ? o instanceof Node : o && (typeof o === 'undefined' ? 'undefined' : _typeof(o)) === 'object' && typeof o.nodeType === 'number' && typeof o.nodeName === 'string';
         },
 
 
@@ -742,10 +702,7 @@ if (!Element.prototype.matches) {
          * @return {null|HTMLDocument|HTMLElement|Window}
          */
         node: function node(element) {
-            if (element instanceof HTMLElement) {
-                return element;
-            }
-            if (element instanceof HTMLDocument) {
+            if (this.isNode(element)) {
                 return element;
             }
             if (element instanceof Window) {
@@ -777,7 +734,7 @@ if (!Element.prototype.matches) {
                 element = element.node();
             } else if (element instanceof jQuery) {
                 element = element.get(0);
-            } else if (!(element instanceof HTMLElement) && !(element instanceof HTMLDocument) && !(element instanceof Window)) {
+            } else if (!this.isNode(element) && !(element instanceof Window)) {
                 console.info(event, element);
                 throw new TypeError('Cannot add event listener on unsupported element.');
             }
@@ -822,7 +779,7 @@ if (!Element.prototype.matches) {
                 element = element.node();
             } else if (element instanceof jQuery) {
                 element = element.get(0);
-            } else if (!(element instanceof HTMLElement) && !(element instanceof HTMLDocument) && !(element instanceof Window)) {
+            } else if (!this.isNode(element) && !(element instanceof Window)) {
                 console.info(event, element);
                 throw new TypeError('Cannot add event listener on unsupported element.');
             }
@@ -870,7 +827,7 @@ if (!Element.prototype.matches) {
                 element = element.node();
             } else if (element instanceof jQuery) {
                 element = element.get(0);
-            } else if (!(element instanceof HTMLElement) && !(element instanceof HTMLDocument) && !(element instanceof Window)) {
+            } else if (!this.isNode(element) && !(element instanceof Window)) {
                 console.info(event, element);
                 throw new TypeError('Cannot add event listener on unsupported element.');
             }
@@ -1175,6 +1132,91 @@ Cuic.Benchmark = function () {
 
     return _class;
 }();
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2017 Karl STEIN
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
+Cuic.browser = {
+
+    /**
+     * Checks if the browser is Chrome 1+
+     * @return {boolean}
+     */
+    isChrome: function isChrome() {
+        return !!window.chrome && !!window.chrome.webstore;
+    },
+
+
+    /**
+     * Checks if the browser is Edge 20+
+     * @return {boolean}
+     */
+    isEdge: function isEdge() {
+        return !isIE && !!window.StyleMedia;
+    },
+
+
+    /**
+     * Checks if the browser is Firefox 1.0+
+     * @return {boolean}
+     */
+    isFirefox: function isFirefox() {
+        return typeof InstallTrigger !== 'undefined';
+    },
+
+
+    /**
+     * Checks if the browser is Internet Explorer 6-11
+     * @return {boolean}
+     */
+    isIE: function isIE() {
+        return (/*@cc_on!@*/!!document.documentMode
+        );
+    },
+
+
+    /**
+     * Checks if the browser is Opera 8.0+
+     * @return {boolean}
+     */
+    isOpera: function isOpera() {
+        return !!window.opr && !!opr.addons || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+    },
+
+
+    /**
+     * Checks if the browser is Safari 3.0+
+     * @return {boolean}
+     */
+    isSafari: function isSafari() {
+        return (/constructor/i.test(window.HTMLElement) || function (p) {
+                return p.toString() === "[object SafariRemoteNotification]";
+            }(!window['safari'] || safari.pushNotification)
+        );
+    }
+};
 
 /*
  * The MIT License (MIT)
@@ -1930,7 +1972,7 @@ Cuic.Element = function () {
                 this.element = document.createElement(node);
             }
             // Use HTML node
-            else if (node instanceof HTMLElement || node instanceof HTMLDocument || node instanceof Window) {
+            else if (Cuic.isNode(node) || node instanceof Window) {
                     this.element = node;
                 }
                 // Use node from Cuic.Element
@@ -2132,14 +2174,16 @@ Cuic.Element = function () {
     }, {
         key: 'align',
         value: function align(position) {
-            var pos = this.css('position');
+            if (this.isInDOM()) {
+                var pos = this.css('position');
 
-            if (pos === 'absolute' || pos === 'fixed') {
-                this.debug('align', position);
-                this.css(Cuic.calculateAlign(this, position));
-                this.addPositionClass(position, 'aligned');
-                this.options.position = position;
-                this.events.trigger('aligned', position);
+                if (['absolute', 'fixed'].indexOf(pos) !== -1) {
+                    this.debug('align', position);
+                    this.css(Cuic.calculateAlign(this, position));
+                    this.addPositionClass(position, 'aligned');
+                    this.options.position = position;
+                    this.events.trigger('aligned', position);
+                }
             }
             return this;
         }
@@ -2154,13 +2198,15 @@ Cuic.Element = function () {
     }, {
         key: 'anchor',
         value: function anchor(position, target) {
-            this.debug('anchor', position, target);
-            target = Cuic.element(target || this.options.target);
-            this.css(Cuic.calculateAnchor(this, position, target));
-            this.addPositionClass(position, 'anchored');
-            this.options.anchor = position;
-            this.options.target = target;
-            this.events.trigger('anchored', position);
+            if (this.isInDOM()) {
+                this.debug('anchor', position, target);
+                target = Cuic.element(target || this.options.target);
+                this.css(Cuic.calculateAnchor(this, position, target));
+                this.addPositionClass(position, 'anchored');
+                this.options.anchor = position;
+                this.options.target = target;
+                this.events.trigger('anchored', position);
+            }
             return this;
         }
 
@@ -2222,53 +2268,53 @@ Cuic.Element = function () {
     }, {
         key: 'autoAlign',
         value: function autoAlign() {
-            this.debug('autoAlign');
-            var available = Cuic.calculateAvailablePosition(this, this.parent());
-            var alignments = ['bottom', 'left', 'right', 'top'];
-            var prop = this.position();
+            if (this.isInDOM()) {
+                this.debug('autoAlign');
+                var available = Cuic.calculateAvailablePosition(this, this.parent());
+                var alignments = ['bottom', 'left', 'right', 'top'];
+                var prop = this.position();
 
-            // Only keep properties that are styled
-            for (var i = 0; i < alignments.length; i += 1) {
-                if (!this.css(alignments[i])) {
-                    prop[alignments[i]] = '';
+                // Only keep properties that are styled
+                for (var i = 0; i < alignments.length; i += 1) {
+                    if (!this.css(alignments[i])) {
+                        prop[alignments[i]] = '';
+                    }
                 }
-            }
 
-            // Limit horizontal align
-            if (typeof prop.left === 'number') {
-                if (prop.left < available.minX) {
-                    prop.left = available.minX;
-                } else if (prop.left > available.maxX) {
-                    prop.left = available.maxX;
+                // Limit horizontal align
+                if (typeof prop.left === 'number') {
+                    if (prop.left < available.minX) {
+                        prop.left = available.minX;
+                    } else if (prop.left > available.maxX) {
+                        prop.left = available.maxX;
+                    }
                 }
-            }
-            if (typeof prop.right === 'number') {
-                if (prop.right < available.minX) {
-                    prop.right = available.minX;
-                } else if (prop.right > available.maxX) {
-                    prop.right = available.maxX;
+                if (typeof prop.right === 'number') {
+                    if (prop.right < available.minX) {
+                        prop.right = available.minX;
+                    } else if (prop.right > available.maxX) {
+                        prop.right = available.maxX;
+                    }
                 }
-            }
 
-            // Limit vertical align
-            if (typeof prop.top === 'number') {
-                if (prop.top < available.minY) {
-                    prop.top = available.minY;
-                } else if (prop.top > available.maxY) {
-                    prop.top = available.maxY;
+                // Limit vertical align
+                if (typeof prop.top === 'number') {
+                    if (prop.top < available.minY) {
+                        prop.top = available.minY;
+                    } else if (prop.top > available.maxY) {
+                        prop.top = available.maxY;
+                    }
                 }
-            }
-            if (typeof prop.bottom === 'number') {
-                if (prop.bottom < available.minY) {
-                    prop.bottom = available.minY;
-                } else if (prop.bottom > available.maxY) {
-                    prop.bottom = available.maxY;
+                if (typeof prop.bottom === 'number') {
+                    if (prop.bottom < available.minY) {
+                        prop.bottom = available.minY;
+                    } else if (prop.bottom > available.maxY) {
+                        prop.bottom = available.maxY;
+                    }
                 }
+                // Apply alignment
+                this.css(prop);
             }
-
-            // Apply alignment
-            this.css(prop);
-
             return this;
         }
 
@@ -2293,25 +2339,26 @@ Cuic.Element = function () {
     }, {
         key: 'autoResize',
         value: function autoResize() {
-            this.debug('autoResize');
-            var available = Cuic.calculateAvailableSpace(this, this.parent());
+            if (this.isInDOM()) {
+                this.debug('autoResize');
+                var available = Cuic.calculateAvailableSpace(this, this.parent());
 
-            var prop = {
-                height: this.outerHeight(),
-                width: this.outerWidth()
-            };
+                var prop = {
+                    height: this.outerHeight(),
+                    width: this.outerWidth()
+                };
 
-            // Limit to max width
-            if (prop.width && prop.width > available.width) {
-                prop.width = available.width;
+                // Limit to max width
+                if (prop.width && prop.width > available.width) {
+                    prop.width = available.width;
+                }
+                // Limit to max height
+                if (prop.height && prop.height > available.height) {
+                    prop.height = available.height;
+                }
+                // Apply size
+                this.css(prop);
             }
-            // Limit to max height
-            if (prop.height && prop.height > available.height) {
-                prop.height = available.height;
-            }
-            // Apply size
-            this.css(prop);
-
             return this;
         }
 
@@ -2350,7 +2397,7 @@ Cuic.Element = function () {
             var nodes = this.node().children || this.node().childNodes;
 
             for (var i = 0; i < nodes.length; i += 1) {
-                if (nodes[i] instanceof HTMLElement) {
+                if (Cuic.isNode(nodes[i])) {
                     if (!selector || nodes[i].matches(selector)) {
                         children.push(nodes[i]);
                     }
@@ -2646,7 +2693,7 @@ Cuic.Element = function () {
             if (_html !== undefined) {
                 // Get HTML from object
                 if (_html && (typeof _html === 'undefined' ? 'undefined' : _typeof(_html)) === 'object') {
-                    if (_html instanceof HTMLElement) {
+                    if (Cuic.isNode(_html)) {
                         this.empty();
                         this.append(_html);
                     }
@@ -2843,6 +2890,17 @@ Cuic.Element = function () {
         key: 'isHidden',
         value: function isHidden() {
             return this.hasClass('hidden') || this.css('display') === 'none';
+        }
+
+        /**
+         * Checks if the element is in the DOM
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isInDOM',
+        value: function isInDOM() {
+            return document.body.contains(this.node()) || !!this.offsetParent();
         }
 
         /**

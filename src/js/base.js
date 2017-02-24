@@ -487,10 +487,7 @@
             if (element instanceof this.Element) {
                 return element;
             }
-            if (element instanceof HTMLDocument) {
-                return new this.Element(element);
-            }
-            if (element instanceof HTMLElement) {
+            if (this.isNode(element)) {
                 return new this.Element(element);
             }
             if (element instanceof Window) {
@@ -598,27 +595,19 @@
         },
 
         /**
-         * Checks if the browser is Chrome 1+
-         * @return {boolean}
+         * Checks if the element is an instance of Element
+         * @param o
+         * @return {*}
          */
-        isChrome() {
-            return !!window.chrome && !!window.chrome.webstore;
-        },
-
-        /**
-         * Checks if the browser is Edge 20+
-         * @return {boolean}
-         */
-        isEdge() {
-            return !isIE && !!window.StyleMedia;
-        },
-
-        /**
-         * Checks if the browser is Firefox 1.0+
-         * @return {boolean}
-         */
-        isFirefox() {
-            return typeof InstallTrigger !== 'undefined';
+        isElement(o) {
+            return (
+                typeof HTMLElement === 'object' ? o instanceof HTMLElement : //DOM2
+                    o
+                    && typeof o === 'object'
+                    && o !== null
+                    && o.nodeType === 1
+                    && typeof o.nodeName === 'string'
+            );
         },
 
         /**
@@ -633,33 +622,18 @@
         },
 
         /**
-         * Checks if the browser is Internet Explorer 6-11
-         * @return {boolean}
+         * Checks if the element is an instance of Node
+         * @param o
+         * @return {*}
          */
-        isIE() {
-            return /*@cc_on!@*/!!document.documentMode;
-        },
-
-        /**
-         * Checks if the browser is Opera 8.0+
-         * @return {boolean}
-         */
-        isOpera() {
-            return (!!window.opr && !!opr.addons)
-                || !!window.opera
-                || navigator.userAgent.indexOf(' OPR/') >= 0;
-        },
-
-        /**
-         * Checks if the browser is Safari 3.0+
-         * @return {boolean}
-         */
-        isSafari() {
-            return /constructor/i.test(window.HTMLElement)
-                || ((p) => {
-                    return p.toString() === "[object SafariRemoteNotification]";
-                })(!window['safari']
-                    || safari.pushNotification);
+        isNode(o) {
+            return (
+                typeof Node === 'object' ? o instanceof Node :
+                    o
+                    && typeof o === 'object'
+                    && typeof o.nodeType === 'number'
+                    && typeof o.nodeName === 'string'
+            );
         },
 
         /**
@@ -680,10 +654,7 @@
          * @return {null|HTMLDocument|HTMLElement|Window}
          */
         node(element) {
-            if (element instanceof HTMLElement) {
-                return element;
-            }
-            if (element instanceof HTMLDocument) {
+            if (this.isNode(element)) {
                 return element;
             }
             if (element instanceof Window) {
@@ -716,9 +687,7 @@
             else if (element instanceof jQuery) {
                 element = element.get(0);
             }
-            else if (!(element instanceof HTMLElement)
-                && !(element instanceof HTMLDocument)
-                && !(element instanceof Window)) {
+            else if (!this.isNode(element) && !(element instanceof Window)) {
                 console.info(event, element);
                 throw new TypeError(`Cannot add event listener on unsupported element.`);
             }
@@ -764,9 +733,7 @@
             else if (element instanceof jQuery) {
                 element = element.get(0);
             }
-            else if (!(element instanceof HTMLElement)
-                && !(element instanceof HTMLDocument)
-                && !(element instanceof Window)) {
+            else if (!this.isNode(element) && !(element instanceof Window)) {
                 console.info(event, element);
                 throw new TypeError(`Cannot add event listener on unsupported element.`);
             }
@@ -812,9 +779,7 @@
             else if (element instanceof jQuery) {
                 element = element.get(0);
             }
-            else if (!(element instanceof HTMLElement)
-                && !(element instanceof HTMLDocument)
-                && !(element instanceof Window)) {
+            else if (!this.isNode(element) && !(element instanceof Window)) {
                 console.info(event, element);
                 throw new TypeError(`Cannot add event listener on unsupported element.`);
             }
