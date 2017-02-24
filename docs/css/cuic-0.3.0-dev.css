@@ -44,6 +44,12 @@
   font-size: 1.3rem;
   position: relative;
 }
+.component.computing {
+  -webkit-transition-property: all;
+  transition-property: all;
+  -webkit-transition-duration: 0s;
+          transition-duration: 0s;
+}
 .component.hidden {
   display: none;
   -webkit-transition-property: all;
@@ -253,10 +259,10 @@ body > .fader {
   overflow: auto;
   padding: 10px;
   position: absolute;
-  -webkit-transition-property: background, opacity, height, width, -webkit-transform;
-  transition-property: background, opacity, height, width, -webkit-transform;
-  transition-property: background, opacity, height, width, transform;
-  transition-property: background, opacity, height, width, transform, -webkit-transform;
+  -webkit-transition-property: background, height, width, bottom, left, right, top, opacity, -webkit-transform;
+  transition-property: background, height, width, bottom, left, right, top, opacity, -webkit-transform;
+  transition-property: background, height, width, bottom, left, right, top, opacity, transform;
+  transition-property: background, height, width, bottom, left, right, top, opacity, transform, -webkit-transform;
   z-index: 10;
 }
 body > .notification {
@@ -328,12 +334,20 @@ body > .notification {
 }
 .notification-stack {
   position: absolute;
-  -webkit-transition: all 0.5s;
-  transition: all 0.5s;
+  -webkit-transition-property: height, width, bottom, left, right, top, opacity, -webkit-transform;
+  transition-property: height, width, bottom, left, right, top, opacity, -webkit-transform;
+  transition-property: height, width, bottom, left, right, top, opacity, transform;
+  transition-property: height, width, bottom, left, right, top, opacity, transform, -webkit-transform;
   z-index: 10;
 }
 body > .notification-stack {
   position: fixed;
+}
+.notification-stack.closed {
+  opacity: 0;
+}
+.notification-stack.opened {
+  opacity: 1;
 }
 .notification-stack .notification {
   display: block;
@@ -537,14 +551,6 @@ body > .panel {
   -webkit-transform-origin: top center;
           transform-origin: top center;
 }
-.popup.anchored-bottom.anchored-left {
-  -webkit-transform-origin: top right;
-          transform-origin: top right;
-}
-.popup.anchored-bottom.anchored-right {
-  -webkit-transform-origin: top left;
-          transform-origin: top left;
-}
 .popup.anchored-left {
   -webkit-transform-origin: right center;
           transform-origin: right center;
@@ -557,13 +563,25 @@ body > .panel {
   -webkit-transform-origin: bottom center;
           transform-origin: bottom center;
 }
+.popup.anchored-bottom.anchored-left {
+  -webkit-transform-origin: top right;
+          transform-origin: top right;
+  border-radius: 5px 0 5px 5px;
+}
+.popup.anchored-bottom.anchored-right {
+  -webkit-transform-origin: top left;
+          transform-origin: top left;
+  border-radius: 0 5px 5px 5px;
+}
 .popup.anchored-top.anchored-left {
   -webkit-transform-origin: bottom right;
           transform-origin: bottom right;
+  border-radius: 5px 5px 0 5px;
 }
 .popup.anchored-top.anchored-right {
   -webkit-transform-origin: bottom left;
           transform-origin: bottom left;
+  border-radius: 5px 5px 5px 0;
 }
 .popup-tail {
   display: inline-block;

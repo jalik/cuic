@@ -118,27 +118,6 @@ Cuic.Popup = class extends Cuic.Component {
     }
 
     /**
-     * Updates location
-     * @param ev
-     * @return {Cuic.Popup}
-     */
-    update(ev) {
-        if (this.options.followPointer && ev) {
-            if (this.parentNode() !== document.body) {
-                this.appendTo(document.body);
-            }
-            this.anchor(this.options.anchor, [ev.pageX, ev.pageY]);
-        }
-        else if (this.currentTarget) {
-            if (this.parentNode() !== this.currentTarget.parentNode) {
-                this.appendTo(this.currentTarget.parentNode);
-            }
-            this.anchor(this.options.anchor, this.currentTarget);
-        }
-        return this;
-    }
-
-    /**
      * Position the tail
      * @return {Cuic.Popup}
      */

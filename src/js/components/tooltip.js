@@ -72,18 +72,19 @@ Cuic.Tooltip = class extends Cuic.Component {
                     this.content.html(content);
                 }
 
-                // Keep reference to current target
                 this.currentTarget = ev.currentTarget;
 
                 // Position tooltip
-                this.update();
+                if (!this.options.followPointer) {
+                    if (this.parentNode() !== ev.currentTarget.parentNode) {
+                        this.appendTo(ev.currentTarget.parentNode);
+                    }
+                }
                 this.open();
             });
 
             // Close tooltip when mouse leaves area
             target.on('mouseleave', () => {
-                // Clear reference to current target
-                this.currentTarget = null;
                 this.close();
             });
         });
@@ -94,7 +95,10 @@ Cuic.Tooltip = class extends Cuic.Component {
         // Move tooltip when mouse moves and tooltip is opened
         Cuic.on('mousemove', document, (ev) => {
             if (this.options.followPointer && !this.isHidden()) {
-                this.update(ev);
+                if (this.parentNode() !== document.body) {
+                    this.appendTo(document.body);
+                }
+                this.anchor(this.options.anchor, [ev.pageX, ev.pageY]);
             }
         });
 
@@ -119,6 +123,12 @@ Cuic.Tooltip = class extends Cuic.Component {
             }
         });
 
+        this.onOpen(() => {
+            if (!this.options.followPointer) {
+                this.anchor(this.options.anchor, this.currentTarget);
+            }
+        });
+
         this.onOpened(() => {
             // Close the popup when the user clicks outside of it
             Cuic.on('click', document, autoClose);
@@ -132,27 +142,6 @@ Cuic.Tooltip = class extends Cuic.Component {
      */
     setContent(html) {
         this.content.html(html);
-        return this;
-    }
-
-    /**
-     * Updates location
-     * @param ev
-     * @return {Cuic.Tooltip}
-     */
-    update(ev) {
-        if (this.options.followPointer && ev) {
-            if (this.parentNode() !== document.body) {
-                this.appendTo(document.body);
-            }
-            this.anchor(this.options.anchor, [ev.pageX, ev.pageY]);
-        }
-        else if (this.currentTarget) {
-            if (this.parentNode() !== this.currentTarget.parentNode) {
-                this.appendTo(this.currentTarget.parentNode);
-            }
-            this.anchor(this.options.anchor, this.currentTarget);
-        }
         return this;
     }
 

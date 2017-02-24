@@ -116,27 +116,57 @@ Cuic.Element = class {
         // Add default events
         this.events = new Cuic.Events(this);
 
-        // Get parent element
+        // Append element to parent node
         if (this.options.parent) {
-            let parent = null;
-
-            // Find element in DOM
-            if (typeof this.options.parent === 'string') {
-                parent = Cuic.find(this.options.parent).get(0);
-            } else {
-                parent = Cuic.node(this.options.parent);
-            }
-
-            // Append element to parent node
-            if (parent) {
-                this.appendTo(parent);
-            }
+            this.appendTo(this.options.parent);
+            Cuic.element(this.options.parent).append(this);
         }
 
         // Position the element
         if (this.options.position && this.hasParent()) {
             this.align(this.options.position);
         }
+    }
+
+    /**
+     * Displays element for calculation (positioning, parenting...)
+     * @return {Cuic.Element}
+     * @private
+     */
+    _display() {
+        if (!this.hasClass('computing')) {
+            this._previousDisplay = this.css('display');
+
+            if (this._previousDisplay === 'none') {
+                this.addClass('computing');
+                this.css({display: ''});
+
+                if (this.hasClass('hidden')) {
+                    this.removeClass('hidden');
+                    this._previousClass = 'hidden';
+                }
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Restores element previous display state
+     * @return {Cuic.Element}
+     * @private
+     * @private
+     */
+    _restoreDisplay() {
+        if (this.hasClass('computing')) {
+            if (this._previousClass) {
+                this.addClass(this._previousClass);
+            }
+            this.removeClass('computing');
+            this.css({display: this._previousDisplay});
+            this._previousDisplay = null;
+            this._previousClass = null;
+        }
+        return this;
     }
 
     /**
@@ -429,7 +459,9 @@ Cuic.Element = class {
      * @return {Cuic.Element|null}
      */
     closest(selector) {
+        this._display();
         const node = this.node().closest(selector);
+        this._restoreDisplay();
         return node ? Cuic.element(node) : null;
     }
 
@@ -445,24 +477,10 @@ Cuic.Element = class {
         if (styles) {
             if (typeof styles === 'object') {
                 this.debug('css', styles);
-                let mergedStyles = '';
 
                 // Add pixel unit where needed
                 Cuic.autoPixel(styles);
 
-                // Get current styles
-                for (let i = 0; i < node.style.length; i += 1) {
-                    const property = node.style[i];
-
-                    // Ignore properties that are overwritten
-                    if (!(property in styles)) {
-                        let value = node.style[property];
-                        if (typeof value === 'string' && value === '') {
-                            value = '""';
-                        }
-                        mergedStyles += `${property}: ${value};`;
-                    }
-                }
                 // Add new styles
                 for (let style in styles) {
                     if (styles.hasOwnProperty(style)) {
@@ -472,13 +490,9 @@ Cuic.Element = class {
                         if (!(style in node.style)) {
                             console.warn(`Style "${style}" is not supported by element.`, node);
                         }
-                        if (typeof value === 'string' && value === '') {
-                            value = '""';
-                        }
-                        mergedStyles += `${style}: ${value};`;
+                        node.style[style] = value;
                     }
                 }
-                node.style = mergedStyles;
                 return this;
             }
             else if (typeof styles === 'string') {
@@ -491,6 +505,7 @@ Cuic.Element = class {
                     // Return computed version for some properties
                     // that would return nothing.
                     switch (styles) {
+                        case 'display':
                         case 'position':
                             return Cuic.getComputedStyle(node, styles);
                     }
@@ -640,12 +655,14 @@ Cuic.Element = class {
      */
     height() {
         const node = this.node();
+        let height;
 
         if (node instanceof Window) {
-            return node.screen.height;
+            height = node.screen.height;
         } else {
-            return node.clientHeight - this.padding().vertical;
+            height = node.clientHeight - this.padding().vertical;
         }
+        return height;
     }
 
     /**
@@ -698,13 +715,15 @@ Cuic.Element = class {
      */
     innerHeight() {
         const node = this.node();
+        let height;
 
         if (node instanceof Window) {
-            return node.screen.height;
+            height = node.screen.height;
         } else {
             // todo subtract vertical scrollbar width
-            return node.clientHeight;
+            height = node.clientHeight;
         }
+        return height;
     }
 
     /**
@@ -713,13 +732,15 @@ Cuic.Element = class {
      */
     innerWidth() {
         const node = this.node();
+        let width;
 
         if (node instanceof Window) {
-            return node.screen.width;
+            width = node.screen.width;
         } else {
             // todo subtract horizontal scrollbar width
-            return node.clientWidth;
+            width = node.clientWidth;
         }
+        return width;
     }
 
     /**
@@ -934,10 +955,10 @@ Cuic.Element = class {
      */
     offset() {
         const node = this.node();
-        return {
-            left: node.offsetLeft,
-            top: node.offsetTop
-        };
+        this._display();
+        const offset = {left: node.offsetLeft, top: node.offsetTop};
+        this._restoreDisplay();
+        return offset;
     }
 
     /**
@@ -954,7 +975,10 @@ Cuic.Element = class {
      * @return {HTMLDocument|HTMLElement|null}
      */
     offsetParentNode() {
-        return this.node().offsetParent;
+        this._display();
+        const parent = this.node().offsetParent;
+        this._restoreDisplay();
+        return parent;
     }
 
     /**
@@ -1014,14 +1038,16 @@ Cuic.Element = class {
      * @param includeMargin
      * @return {number}
      */
-    outerHeight(includeMargin) {
+    outerHeight(includeMargin = false) {
         const node = this.node();
+        let height;
 
         if (node instanceof Window) {
-            return node.screen.height;
+            height = node.screen.height;
         } else {
-            return this.node().offsetHeight + (includeMargin ? this.margin().vertical : 0);
+            height = node.offsetHeight + (includeMargin ? this.margin().vertical : 0);
         }
+        return height;
     }
 
     /**
@@ -1029,14 +1055,16 @@ Cuic.Element = class {
      * @param includeMargin
      * @return {number}
      */
-    outerWidth(includeMargin) {
+    outerWidth(includeMargin = false) {
         const node = this.node();
+        let width;
 
         if (node instanceof Window) {
-            return node.screen.width;
+            width = node.screen.width;
         } else {
-            return this.node().offsetWidth + (includeMargin ? this.margin().horizontal : 0);
+            width = node.offsetWidth + (includeMargin ? this.margin().horizontal : 0);
         }
+        return width;
     }
 
     /**
@@ -1087,10 +1115,12 @@ Cuic.Element = class {
      * @return {{bottom: Number, left: Number, right: Number, top: Number}}
      */
     position() {
+        this._display();
         const bottom = parseFloat(Cuic.getComputedStyle(this, 'bottom'));
         const left = parseFloat(Cuic.getComputedStyle(this, 'left'));
         const right = parseFloat(Cuic.getComputedStyle(this, 'right'));
         const top = parseFloat(Cuic.getComputedStyle(this, 'top'));
+        this._restoreDisplay();
         return {
             bottom: bottom,
             left: left,
@@ -1159,7 +1189,7 @@ Cuic.Element = class {
      */
     show() {
         this.debug('show');
-        // this.css({display: ''});
+        this.css({display: ''});
         this.removeClass('hidden');
         this.events.trigger('shown');
         return this;
@@ -1203,12 +1233,14 @@ Cuic.Element = class {
      */
     width() {
         const node = this.node();
+        let width;
 
         if (node instanceof Window) {
-            return node.screen.width;
+            width = node.screen.width;
         } else {
-            return node.clientWidth - this.padding().horizontal;
+            width = node.clientWidth - this.padding().horizontal;
         }
+        return width;
     }
 };
 

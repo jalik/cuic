@@ -203,8 +203,8 @@ if (!Element.prototype.matches) {
             var elWidth = element.outerWidth(true);
             var parentHeight = parent.height();
             var parentWidth = parent.width();
-            var relativeLeft = parent.node().scrollLeft;
-            var relativeTop = parent.node().scrollTop;
+            var relativeLeft = parent.node().scrollLeft; // todo use internal method scrollLeft
+            var relativeTop = parent.node().scrollTop; // todo use internal method scrollTop
             var relativeBottom = -relativeTop;
             var relativeRight = -relativeLeft;
             var prop = {
@@ -554,7 +554,7 @@ if (!Element.prototype.matches) {
                 return new this.Element(_element.get(0));
             }
             if (typeof _element === 'string') {
-                return new this.Element(document.querySelector(_element));
+                return this.find(_element).eq(0);
             }
             return _element;
         },
@@ -739,7 +739,7 @@ if (!Element.prototype.matches) {
         /**
          * Returns the HTML node from the element
          * @param element
-         * @return {HTMLDocument|HTMLElement|null}
+         * @return {null|HTMLDocument|HTMLElement|Window}
          */
         node: function node(element) {
             if (element instanceof HTMLElement) {
@@ -748,11 +748,17 @@ if (!Element.prototype.matches) {
             if (element instanceof HTMLDocument) {
                 return element;
             }
+            if (element instanceof Window) {
+                return element;
+            }
             if (element instanceof this.Element) {
                 return element.node();
             }
             if (element instanceof jQuery) {
                 return element.get(0);
+            }
+            if (typeof element === 'string') {
+                return this.find(element).get(0);
             }
             console.info(element);
             throw new TypeError('cannot get HTMLElement from element.');
@@ -2036,21 +2042,10 @@ Cuic.Element = function () {
         // Add default events
         this.events = new Cuic.Events(this);
 
-        // Get parent element
+        // Append element to parent node
         if (this.options.parent) {
-            var parent = null;
-
-            // Find element in DOM
-            if (typeof this.options.parent === 'string') {
-                parent = Cuic.find(this.options.parent).get(0);
-            } else {
-                parent = Cuic.node(this.options.parent);
-            }
-
-            // Append element to parent node
-            if (parent) {
-                this.appendTo(parent);
-            }
+            this.appendTo(this.options.parent);
+            Cuic.element(this.options.parent).append(this);
         }
 
         // Position the element
@@ -2060,13 +2055,60 @@ Cuic.Element = function () {
     }
 
     /**
-     * Adds the class
-     * @param className
+     * Displays element for calculation (positioning, parenting...)
      * @return {Cuic.Element}
+     * @private
      */
 
 
     _createClass(_class5, [{
+        key: '_display',
+        value: function _display() {
+            if (!this.hasClass('computing')) {
+                this._previousDisplay = this.css('display');
+
+                if (this._previousDisplay === 'none') {
+                    this.addClass('computing');
+                    this.css({ display: '' });
+
+                    if (this.hasClass('hidden')) {
+                        this.removeClass('hidden');
+                        this._previousClass = 'hidden';
+                    }
+                }
+            }
+            return this;
+        }
+
+        /**
+         * Restores element previous display state
+         * @return {Cuic.Element}
+         * @private
+         * @private
+         */
+
+    }, {
+        key: '_restoreDisplay',
+        value: function _restoreDisplay() {
+            if (this.hasClass('computing')) {
+                if (this._previousClass) {
+                    this.addClass(this._previousClass);
+                }
+                this.removeClass('computing');
+                this.css({ display: this._previousDisplay });
+                this._previousDisplay = null;
+                this._previousClass = null;
+            }
+            return this;
+        }
+
+        /**
+         * Adds the class
+         * @param className
+         * @return {Cuic.Element}
+         */
+
+    }, {
         key: 'addClass',
         value: function addClass(className) {
             this.debug('addClass', className);
@@ -2378,7 +2420,9 @@ Cuic.Element = function () {
     }, {
         key: 'closest',
         value: function closest(selector) {
+            this._display();
             var node = this.node().closest(selector);
+            this._restoreDisplay();
             return node ? Cuic.element(node) : null;
         }
 
@@ -2397,40 +2441,22 @@ Cuic.Element = function () {
             if (styles) {
                 if ((typeof styles === 'undefined' ? 'undefined' : _typeof(styles)) === 'object') {
                     this.debug('css', styles);
-                    var mergedStyles = '';
 
                     // Add pixel unit where needed
                     Cuic.autoPixel(styles);
 
-                    // Get current styles
-                    for (var i = 0; i < node.style.length; i += 1) {
-                        var property = node.style[i];
-
-                        // Ignore properties that are overwritten
-                        if (!(property in styles)) {
-                            var value = node.style[property];
-                            if (typeof value === 'string' && value === '') {
-                                value = '""';
-                            }
-                            mergedStyles += property + ': ' + value + ';';
-                        }
-                    }
                     // Add new styles
                     for (var style in styles) {
                         if (styles.hasOwnProperty(style)) {
-                            var _value = styles[style];
+                            var value = styles[style];
 
                             // Check if style is supported
                             if (!(style in node.style)) {
                                 console.warn('Style "' + style + '" is not supported by element.', node);
                             }
-                            if (typeof _value === 'string' && _value === '') {
-                                _value = '""';
-                            }
-                            mergedStyles += style + ': ' + _value + ';';
+                            node.style[style] = value;
                         }
                     }
-                    node.style = mergedStyles;
                     return this;
                 } else if (typeof styles === 'string') {
                     // Set styles
@@ -2442,6 +2468,7 @@ Cuic.Element = function () {
                         // Return computed version for some properties
                         // that would return nothing.
                         switch (styles) {
+                            case 'display':
                             case 'position':
                                 return Cuic.getComputedStyle(node, styles);
                         }
@@ -2622,12 +2649,14 @@ Cuic.Element = function () {
         key: 'height',
         value: function height() {
             var node = this.node();
+            var height = void 0;
 
             if (node instanceof Window) {
-                return node.screen.height;
+                height = node.screen.height;
             } else {
-                return node.clientHeight - this.padding().vertical;
+                height = node.clientHeight - this.padding().vertical;
             }
+            return height;
         }
 
         /**
@@ -2687,13 +2716,15 @@ Cuic.Element = function () {
         key: 'innerHeight',
         value: function innerHeight() {
             var node = this.node();
+            var height = void 0;
 
             if (node instanceof Window) {
-                return node.screen.height;
+                height = node.screen.height;
             } else {
                 // todo subtract vertical scrollbar width
-                return node.clientHeight;
+                height = node.clientHeight;
             }
+            return height;
         }
 
         /**
@@ -2705,13 +2736,15 @@ Cuic.Element = function () {
         key: 'innerWidth',
         value: function innerWidth() {
             var node = this.node();
+            var width = void 0;
 
             if (node instanceof Window) {
-                return node.screen.width;
+                width = node.screen.width;
             } else {
                 // todo subtract horizontal scrollbar width
-                return node.clientWidth;
+                width = node.clientWidth;
             }
+            return width;
         }
 
         /**
@@ -2967,10 +3000,10 @@ Cuic.Element = function () {
         key: 'offset',
         value: function offset() {
             var node = this.node();
-            return {
-                left: node.offsetLeft,
-                top: node.offsetTop
-            };
+            this._display();
+            var offset = { left: node.offsetLeft, top: node.offsetTop };
+            this._restoreDisplay();
+            return offset;
         }
 
         /**
@@ -2993,7 +3026,10 @@ Cuic.Element = function () {
     }, {
         key: 'offsetParentNode',
         value: function offsetParentNode() {
-            return this.node().offsetParent;
+            this._display();
+            var parent = this.node().offsetParent;
+            this._restoreDisplay();
+            return parent;
         }
 
         /**
@@ -3071,14 +3107,18 @@ Cuic.Element = function () {
 
     }, {
         key: 'outerHeight',
-        value: function outerHeight(includeMargin) {
+        value: function outerHeight() {
+            var includeMargin = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
             var node = this.node();
+            var height = void 0;
 
             if (node instanceof Window) {
-                return node.screen.height;
+                height = node.screen.height;
             } else {
-                return this.node().offsetHeight + (includeMargin ? this.margin().vertical : 0);
+                height = node.offsetHeight + (includeMargin ? this.margin().vertical : 0);
             }
+            return height;
         }
 
         /**
@@ -3089,14 +3129,18 @@ Cuic.Element = function () {
 
     }, {
         key: 'outerWidth',
-        value: function outerWidth(includeMargin) {
+        value: function outerWidth() {
+            var includeMargin = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
             var node = this.node();
+            var width = void 0;
 
             if (node instanceof Window) {
-                return node.screen.width;
+                width = node.screen.width;
             } else {
-                return this.node().offsetWidth + (includeMargin ? this.margin().horizontal : 0);
+                width = node.offsetWidth + (includeMargin ? this.margin().horizontal : 0);
             }
+            return width;
         }
 
         /**
@@ -3159,10 +3203,12 @@ Cuic.Element = function () {
     }, {
         key: 'position',
         value: function position() {
+            this._display();
             var bottom = parseFloat(Cuic.getComputedStyle(this, 'bottom'));
             var left = parseFloat(Cuic.getComputedStyle(this, 'left'));
             var right = parseFloat(Cuic.getComputedStyle(this, 'right'));
             var top = parseFloat(Cuic.getComputedStyle(this, 'top'));
+            this._restoreDisplay();
             return {
                 bottom: bottom,
                 left: left,
@@ -3246,7 +3292,7 @@ Cuic.Element = function () {
         key: 'show',
         value: function show() {
             this.debug('show');
-            // this.css({display: ''});
+            this.css({ display: '' });
             this.removeClass('hidden');
             this.events.trigger('shown');
             return this;
@@ -3299,12 +3345,14 @@ Cuic.Element = function () {
         key: 'width',
         value: function width() {
             var node = this.node();
+            var width = void 0;
 
             if (node instanceof Window) {
-                return node.screen.width;
+                width = node.screen.width;
             } else {
-                return node.clientWidth - this.padding().horizontal;
+                width = node.clientWidth - this.padding().horizontal;
             }
+            return width;
         }
     }]);
 
@@ -6940,29 +6988,6 @@ Cuic.Popup = function (_Cuic$Component7) {
         }
 
         /**
-         * Updates location
-         * @param ev
-         * @return {Cuic.Popup}
-         */
-
-    }, {
-        key: 'update',
-        value: function update(ev) {
-            if (this.options.followPointer && ev) {
-                if (this.parentNode() !== document.body) {
-                    this.appendTo(document.body);
-                }
-                this.anchor(this.options.anchor, [ev.pageX, ev.pageY]);
-            } else if (this.currentTarget) {
-                if (this.parentNode() !== this.currentTarget.parentNode) {
-                    this.appendTo(this.currentTarget.parentNode);
-                }
-                this.anchor(this.options.anchor, this.currentTarget);
-            }
-            return this;
-        }
-
-        /**
          * Position the tail
          * @return {Cuic.Popup}
          */
@@ -7692,18 +7717,19 @@ Cuic.Tooltip = function (_Cuic$Component9) {
                     _this30.content.html(content);
                 }
 
-                // Keep reference to current target
                 _this30.currentTarget = ev.currentTarget;
 
                 // Position tooltip
-                _this30.update();
+                if (!_this30.options.followPointer) {
+                    if (_this30.parentNode() !== ev.currentTarget.parentNode) {
+                        _this30.appendTo(ev.currentTarget.parentNode);
+                    }
+                }
                 _this30.open();
             });
 
             // Close tooltip when mouse leaves area
             target.on('mouseleave', function () {
-                // Clear reference to current target
-                _this30.currentTarget = null;
                 _this30.close();
             });
         });
@@ -7714,7 +7740,10 @@ Cuic.Tooltip = function (_Cuic$Component9) {
         // Move tooltip when mouse moves and tooltip is opened
         Cuic.on('mousemove', document, function (ev) {
             if (_this30.options.followPointer && !_this30.isHidden()) {
-                _this30.update(ev);
+                if (_this30.parentNode() !== document.body) {
+                    _this30.appendTo(document.body);
+                }
+                _this30.anchor(_this30.options.anchor, [ev.pageX, ev.pageY]);
             }
         });
 
@@ -7739,6 +7768,12 @@ Cuic.Tooltip = function (_Cuic$Component9) {
             }
         });
 
+        _this30.onOpen(function () {
+            if (!_this30.options.followPointer) {
+                _this30.anchor(_this30.options.anchor, _this30.currentTarget);
+            }
+        });
+
         _this30.onOpened(function () {
             // Close the popup when the user clicks outside of it
             Cuic.on('click', document, autoClose);
@@ -7757,29 +7792,6 @@ Cuic.Tooltip = function (_Cuic$Component9) {
         key: 'setContent',
         value: function setContent(html) {
             this.content.html(html);
-            return this;
-        }
-
-        /**
-         * Updates location
-         * @param ev
-         * @return {Cuic.Tooltip}
-         */
-
-    }, {
-        key: 'update',
-        value: function update(ev) {
-            if (this.options.followPointer && ev) {
-                if (this.parentNode() !== document.body) {
-                    this.appendTo(document.body);
-                }
-                this.anchor(this.options.anchor, [ev.pageX, ev.pageY]);
-            } else if (this.currentTarget) {
-                if (this.parentNode() !== this.currentTarget.parentNode) {
-                    this.appendTo(this.currentTarget.parentNode);
-                }
-                this.anchor(this.options.anchor, this.currentTarget);
-            }
             return this;
         }
 

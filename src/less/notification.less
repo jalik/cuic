@@ -33,7 +33,7 @@
   overflow: auto;
   padding: @padding;
   position: absolute;
-  transition-property: background, opacity, height, width, transform;
+  transition-property: background, height, width, bottom, left, right, top, opacity, transform;
   z-index: 10;
 }
 
@@ -116,12 +116,20 @@ body > .notification {
 
 .notification-stack {
   position: absolute;
-  transition: all @anim-open-duration;
+  transition-property: height, width, bottom, left, right, top, opacity, transform;
   z-index: 10;
 }
 
 body > .notification-stack {
   position: fixed;
+}
+
+.notification-stack.closed {
+  opacity: 0;
+}
+
+.notification-stack.opened {
+  opacity: 1;
 }
 
 .notification-stack .notification {

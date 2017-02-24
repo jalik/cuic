@@ -147,8 +147,8 @@
             let elWidth = element.outerWidth(true);
             let parentHeight = parent.height();
             let parentWidth = parent.width();
-            let relativeLeft = parent.node().scrollLeft;
-            let relativeTop = parent.node().scrollTop;
+            let relativeLeft = parent.node().scrollLeft; // todo use internal method scrollLeft
+            let relativeTop = parent.node().scrollTop; // todo use internal method scrollTop
             let relativeBottom = -relativeTop;
             let relativeRight = -relativeLeft;
             let prop = {
@@ -500,7 +500,7 @@
                 return new this.Element(element.get(0));
             }
             if (typeof element === 'string') {
-                return new this.Element(document.querySelector(element));
+                return this.find(element).eq(0);
             }
             return element;
         },
@@ -677,7 +677,7 @@
         /**
          * Returns the HTML node from the element
          * @param element
-         * @return {HTMLDocument|HTMLElement|null}
+         * @return {null|HTMLDocument|HTMLElement|Window}
          */
         node(element) {
             if (element instanceof HTMLElement) {
@@ -686,11 +686,17 @@
             if (element instanceof HTMLDocument) {
                 return element;
             }
+            if (element instanceof Window) {
+                return element;
+            }
             if (element instanceof this.Element) {
                 return element.node();
             }
             if (element instanceof jQuery) {
                 return element.get(0);
+            }
+            if (typeof element === 'string') {
+                return this.find(element).get(0);
             }
             console.info(element);
             throw new TypeError(`cannot get HTMLElement from element.`);
