@@ -850,6 +850,20 @@
             return this.addEventListener(element, browserEvent, listener);
         },
 
+        /**
+         * Executes a callback when the window is resized
+         * @param callback
+         * @param delay
+         */
+        onWindowResized(callback, delay = 100) {
+            let timer;
+            this.on('resize', window, function (ev) {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    callback.call(this, ev);
+                }, delay);
+            });
+        },
 
         /**
          * Returns the value as boolean

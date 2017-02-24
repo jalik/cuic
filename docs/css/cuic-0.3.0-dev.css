@@ -113,7 +113,8 @@ body > .dialog {
 .dialog-content {
   line-height: 1.5rem;
   overflow: auto;
-  padding: 20px;
+  margin: 20px 0;
+  padding: 0 20px;
 }
 .dialog-footer {
   border-top: solid 1px #eee;
@@ -123,6 +124,9 @@ body > .dialog {
 .dialog-header {
   border-bottom: solid 1px #eee;
   padding: 20px;
+}
+.dialog.closable .dialog-header {
+  padding-right: 56px;
 }
 .dialog-header .btn-close {
   color: rgba(0, 0, 0, 0.4);
@@ -197,6 +201,11 @@ body > .fader {
 }
 .fader.opened {
   opacity: 1;
+}
+/* Fullscreen fix for Webkit */
+:-webkit-full-screen {
+  width: 100%;
+  height: 100%;
 }
 .grid {
   background-color: #eee;
@@ -437,7 +446,8 @@ body > .panel {
 .panel-content {
   line-height: 1.5rem;
   overflow: auto;
-  padding: 20px;
+  margin: 20px 0;
+  padding: 0 20px;
 }
 .panel-footer {
   color: #888;

@@ -236,7 +236,7 @@ Cuic.Dialog = class extends Cuic.Component {
             Cuic.dialogs.remove(this);
         });
 
-        Cuic.on('resize', window, () => {
+        Cuic.onWindowResized(() => {
             this.resizeContent();
         });
 

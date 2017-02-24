@@ -55,7 +55,8 @@ body > .dialog {
 .dialog-content {
   line-height: @content-line-height;
   overflow: auto;
-  padding: @content-padding;
+  margin: @content-padding 0;
+  padding: 0 @content-padding;
 }
 
 .dialog-footer {
@@ -67,6 +68,10 @@ body > .dialog {
 .dialog-header {
   border-bottom: solid 1px #eee;
   padding: @content-padding;
+}
+
+.dialog.closable .dialog-header {
+  padding-right: 56px;
 }
 
 .dialog-header .btn-close {

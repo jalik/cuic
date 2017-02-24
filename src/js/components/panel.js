@@ -200,7 +200,7 @@ Cuic.Panel = class extends Cuic.Component {
             Cuic.on('click', document, autoClose);
         });
 
-        Cuic.on('resize', window, () => {
+        Cuic.onWindowResized(()=>{
             this.resizeContent();
         });
 
