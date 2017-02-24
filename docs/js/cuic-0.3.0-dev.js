@@ -5388,10 +5388,6 @@ Cuic.Dialog = function (_Cuic$Component3) {
             Cuic.dialogs.remove(_this21);
         });
 
-        Cuic.onWindowResized(function () {
-            _this21.resizeContent();
-        });
-
         // Add element to collection
         Cuic.dialogs.add(_this21);
         return _this21;
@@ -5599,6 +5595,12 @@ Cuic.dialogs.getCurrentZIndex = function () {
     });
     return zIndex;
 };
+
+Cuic.onWindowResized(function () {
+    Cuic.dialogs.each(function (dialog) {
+        dialog.resizeContent();
+    });
+});
 
 /*
  * The MIT License (MIT)
@@ -6798,10 +6800,6 @@ Cuic.Panel = function (_Cuic$Component6) {
             Cuic.on('click', document, autoClose);
         });
 
-        Cuic.onWindowResized(function () {
-            _this27.resizeContent();
-        });
-
         // Add element to collection
         Cuic.panels.add(_this27);
         return _this27;
@@ -6947,6 +6945,12 @@ Cuic.Panel.prototype.options = {
 };
 
 Cuic.panels = new Cuic.Collection();
+
+Cuic.onWindowResized(function () {
+    Cuic.panels.each(function (panel) {
+        panel.resizeContent();
+    });
+});
 
 /*
  * The MIT License (MIT)

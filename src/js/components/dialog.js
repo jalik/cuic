@@ -236,10 +236,6 @@ Cuic.Dialog = class extends Cuic.Component {
             Cuic.dialogs.remove(this);
         });
 
-        Cuic.onWindowResized(() => {
-            this.resizeContent();
-        });
-
         // Add element to collection
         Cuic.dialogs.add(this);
     }
@@ -411,3 +407,9 @@ Cuic.dialogs.getCurrentZIndex = function () {
     });
     return zIndex;
 };
+
+Cuic.onWindowResized(() => {
+    Cuic.dialogs.each((dialog) => {
+        dialog.resizeContent();
+    });
+});

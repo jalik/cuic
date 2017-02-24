@@ -200,10 +200,6 @@ Cuic.Panel = class extends Cuic.Component {
             Cuic.on('click', document, autoClose);
         });
 
-        Cuic.onWindowResized(()=>{
-            this.resizeContent();
-        });
-
         // Add element to collection
         Cuic.panels.add(this);
     }
@@ -320,3 +316,9 @@ Cuic.Panel.prototype.options = {
 };
 
 Cuic.panels = new Cuic.Collection();
+
+Cuic.onWindowResized(() => {
+    Cuic.panels.each((panel) => {
+        panel.resizeContent();
+    });
+});
