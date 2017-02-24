@@ -23,8 +23,6 @@
  *
  */
 
-Cuic.tooltips = new Cuic.Collection();
-
 Cuic.Tooltip = class extends Cuic.Component {
 
     constructor(options) {
@@ -89,9 +87,6 @@ Cuic.Tooltip = class extends Cuic.Component {
             });
         });
 
-        // Add the tooltip to the list
-        Cuic.tooltips.add(this);
-
         // Move tooltip when mouse moves and tooltip is opened
         Cuic.on('mousemove', document, (ev) => {
             if (this.options.followPointer && !this.isHidden()) {
@@ -133,6 +128,9 @@ Cuic.Tooltip = class extends Cuic.Component {
             // Close the popup when the user clicks outside of it
             Cuic.on('click', document, autoClose);
         });
+
+        // Add element to collection
+        Cuic.tooltips.add(this);
     }
 
     /**
@@ -196,3 +194,5 @@ Cuic.Tooltip.prototype.options = {
     selector: '[title]',
     zIndex: 100
 };
+
+Cuic.tooltips = new Cuic.Collection();

@@ -23,18 +23,6 @@
  *
  */
 
-let dialogZIndex = 0;
-
-Cuic.dialogs = new Cuic.Collection();
-
-Cuic.dialogs.onAdded(() => {
-    dialogZIndex += 1;
-});
-
-Cuic.dialogs.onRemoved(() => {
-    dialogZIndex -= 1;
-});
-
 Cuic.Dialog = class extends Cuic.Component {
 
     constructor(options) {
@@ -167,9 +155,6 @@ Cuic.Dialog = class extends Cuic.Component {
             })
         };
 
-        // Add dialog to collection
-        Cuic.dialogs.add(this);
-
         // Close dialog when fader is clicked
         this.fader.on('click', () => {
             if (this.options.autoClose) {
@@ -202,7 +187,9 @@ Cuic.Dialog = class extends Cuic.Component {
         // Called when dialog is opening
         this.onOpen(() => {
             // Calculate z-index
-            let zIndex = this.options.zIndex + dialogZIndex; // todo calculate current z-index
+            let zIndex = Math.max(this.options.zIndex, Cuic.dialogs.getCurrentZIndex() + 1);
+
+            // Find current top dialog z-index
             this.css({'z-index': zIndex});
             this.resizeContent();
 
@@ -231,7 +218,7 @@ Cuic.Dialog = class extends Cuic.Component {
         // Called when dialog is opened
         this.onOpened((ev) => {
             // // todo wait images to be loaded to resize content
-            // let images = this.find('img');
+            let images = this.find('img');
             //
             // if (images.length > 0) {
             //     // Position the dialog when images are loaded
@@ -252,6 +239,9 @@ Cuic.Dialog = class extends Cuic.Component {
         Cuic.on('resize', window, () => {
             this.resizeContent();
         });
+
+        // Add element to collection
+        Cuic.dialogs.add(this);
     }
 
     /**
@@ -401,4 +391,23 @@ Cuic.Dialog.prototype.options = {
     resizable: false,
     title: null,
     zIndex: 10
+};
+
+Cuic.dialogs = new Cuic.Collection();
+
+/**
+ * Returns the z-index of the highest dialog
+ * @return {number}
+ */
+Cuic.dialogs.getCurrentZIndex = function () {
+    let zIndex = 0;
+
+    Cuic.dialogs.each((dialog) => {
+        const index = parseInt(dialog.css('z-index'));
+
+        if (index > zIndex) {
+            zIndex = index;
+        }
+    });
+    return zIndex;
 };

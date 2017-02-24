@@ -5093,18 +5093,6 @@ Cuic.Button.prototype.options = {
  *
  */
 
-var dialogZIndex = 0;
-
-Cuic.dialogs = new Cuic.Collection();
-
-Cuic.dialogs.onAdded(function () {
-    dialogZIndex += 1;
-});
-
-Cuic.dialogs.onRemoved(function () {
-    dialogZIndex -= 1;
-});
-
 Cuic.Dialog = function (_Cuic$Component3) {
     _inherits(_class14, _Cuic$Component3);
 
@@ -5241,9 +5229,6 @@ Cuic.Dialog = function (_Cuic$Component3) {
             })
         };
 
-        // Add dialog to collection
-        Cuic.dialogs.add(_this20);
-
         // Close dialog when fader is clicked
         _this20.fader.on('click', function () {
             if (_this20.options.autoClose) {
@@ -5276,7 +5261,9 @@ Cuic.Dialog = function (_Cuic$Component3) {
         // Called when dialog is opening
         _this20.onOpen(function () {
             // Calculate z-index
-            var zIndex = _this20.options.zIndex + dialogZIndex; // todo calculate current z-index
+            var zIndex = Math.max(_this20.options.zIndex, Cuic.dialogs.getCurrentZIndex() + 1);
+
+            // Find current top dialog z-index
             _this20.css({ 'z-index': zIndex });
             _this20.resizeContent();
 
@@ -5305,7 +5292,7 @@ Cuic.Dialog = function (_Cuic$Component3) {
         // Called when dialog is opened
         _this20.onOpened(function (ev) {
             // // todo wait images to be loaded to resize content
-            // let images = this.find('img');
+            var images = _this20.find('img');
             //
             // if (images.length > 0) {
             //     // Position the dialog when images are loaded
@@ -5326,6 +5313,9 @@ Cuic.Dialog = function (_Cuic$Component3) {
         Cuic.on('resize', window, function () {
             _this20.resizeContent();
         });
+
+        // Add element to collection
+        Cuic.dialogs.add(_this20);
         return _this20;
     }
 
@@ -5511,6 +5501,25 @@ Cuic.Dialog.prototype.options = {
     resizable: false,
     title: null,
     zIndex: 10
+};
+
+Cuic.dialogs = new Cuic.Collection();
+
+/**
+ * Returns the z-index of the highest dialog
+ * @return {number}
+ */
+Cuic.dialogs.getCurrentZIndex = function () {
+    var zIndex = 0;
+
+    Cuic.dialogs.each(function (dialog) {
+        var index = parseInt(dialog.css('z-index'));
+
+        if (index > zIndex) {
+            zIndex = index;
+        }
+    });
+    return zIndex;
 };
 
 /*
@@ -6309,8 +6318,6 @@ Cuic.Fader.prototype.options = {
  *
  */
 
-Cuic.notifications = new Cuic.Collection();
-
 Cuic.Notification = function (_Cuic$Component5) {
     _inherits(_class16, _Cuic$Component5);
 
@@ -6341,9 +6348,6 @@ Cuic.Notification = function (_Cuic$Component5) {
             html: _this23.options.closeButton,
             role: 'button'
         }).addClass('btn-close').appendTo(_this23);
-
-        // Add dialog to collection
-        Cuic.notifications.add(_this23);
 
         // Avoid closing notification when mouse is over
         _this23.on('mouseenter', function (ev) {
@@ -6385,6 +6389,9 @@ Cuic.Notification = function (_Cuic$Component5) {
         _this23.onRemoved(function () {
             Cuic.notifications.remove(_this23);
         });
+
+        // Add element to collection
+        Cuic.notifications.add(_this23);
         return _this23;
     }
 
@@ -6437,6 +6444,8 @@ Cuic.Notification.prototype.options = {
     position: 'center',
     zIndex: 10
 };
+
+Cuic.notifications = new Cuic.Collection();
 
 /*
  * The MIT License (MIT)
@@ -6714,6 +6723,9 @@ Cuic.Panel = function (_Cuic$Component6) {
         Cuic.on('resize', window, function () {
             _this26.resizeContent();
         });
+
+        // Add element to collection
+        Cuic.panels.add(_this26);
         return _this26;
     }
 
@@ -6856,6 +6868,8 @@ Cuic.Panel.prototype.options = {
     zIndex: 1
 };
 
+Cuic.panels = new Cuic.Collection();
+
 /*
  * The MIT License (MIT)
  *
@@ -6967,6 +6981,9 @@ Cuic.Popup = function (_Cuic$Component7) {
             // Close the popup when the user clicks outside of it
             Cuic.on('click', document, autoClose);
         });
+
+        // Add element to collection
+        Cuic.popups.add(_this27);
         return _this27;
     }
 
@@ -7046,6 +7063,8 @@ Cuic.Popup.prototype.options = {
     zIndex: 9
 };
 
+Cuic.popups = new Cuic.Collection();
+
 /*
  * The MIT License (MIT)
  *
@@ -7101,6 +7120,9 @@ Cuic.Switcher = function (_Cuic$Component8) {
         if (_this28.options.autoStart) {
             _this28.start();
         }
+
+        // Add element to collection
+        Cuic.switchers.add(_this28);
         return _this28;
     }
 
@@ -7278,6 +7300,8 @@ Cuic.Switcher.prototype.options = {
     namespace: 'switcher',
     repeat: true
 };
+
+Cuic.switchers = new Cuic.Collection();
 
 /*
  * The MIT License (MIT)
@@ -7661,8 +7685,6 @@ Cuic.Switcher.prototype.options = {
  *
  */
 
-Cuic.tooltips = new Cuic.Collection();
-
 Cuic.Tooltip = function (_Cuic$Component9) {
     _inherits(_class21, _Cuic$Component9);
 
@@ -7731,9 +7753,6 @@ Cuic.Tooltip = function (_Cuic$Component9) {
             });
         });
 
-        // Add the tooltip to the list
-        Cuic.tooltips.add(_this30);
-
         // Move tooltip when mouse moves and tooltip is opened
         Cuic.on('mousemove', document, function (ev) {
             if (_this30.options.followPointer && !_this30.isHidden()) {
@@ -7775,6 +7794,9 @@ Cuic.Tooltip = function (_Cuic$Component9) {
             // Close the popup when the user clicks outside of it
             Cuic.on('click', document, autoClose);
         });
+
+        // Add element to collection
+        Cuic.tooltips.add(_this30);
         return _this30;
     }
 
@@ -7849,6 +7871,8 @@ Cuic.Tooltip.prototype.options = {
     selector: '[title]',
     zIndex: 100
 };
+
+Cuic.tooltips = new Cuic.Collection();
 
 /*
  * The MIT License (MIT)

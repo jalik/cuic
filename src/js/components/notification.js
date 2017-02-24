@@ -23,8 +23,6 @@
  *
  */
 
-Cuic.notifications = new Cuic.Collection();
-
 Cuic.Notification = class extends Cuic.Component {
 
     constructor(options) {
@@ -51,9 +49,6 @@ Cuic.Notification = class extends Cuic.Component {
             html: this.options.closeButton,
             role: 'button'
         }).addClass('btn-close').appendTo(this);
-
-        // Add dialog to collection
-        Cuic.notifications.add(this);
 
         // Avoid closing notification when mouse is over
         this.on('mouseenter', (ev) => {
@@ -95,6 +90,9 @@ Cuic.Notification = class extends Cuic.Component {
         this.onRemoved(() => {
             Cuic.notifications.remove(this);
         });
+
+        // Add element to collection
+        Cuic.notifications.add(this);
     }
 
     /**
@@ -134,3 +132,5 @@ Cuic.Notification.prototype.options = {
     position: 'center',
     zIndex: 10
 };
+
+Cuic.notifications = new Cuic.Collection();

@@ -203,6 +203,9 @@ Cuic.Panel = class extends Cuic.Component {
         Cuic.on('resize', window, () => {
             this.resizeContent();
         });
+
+        // Add element to collection
+        Cuic.panels.add(this);
     }
 
     /**
@@ -315,3 +318,5 @@ Cuic.Panel.prototype.options = {
     title: null,
     zIndex: 1
 };
+
+Cuic.panels = new Cuic.Collection();

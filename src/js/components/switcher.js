@@ -49,6 +49,9 @@ Cuic.Switcher = class extends Cuic.Component {
         if (this.options.autoStart) {
             this.start();
         }
+
+        // Add element to collection
+        Cuic.switchers.add(this);
     }
 
     /**
@@ -188,3 +191,5 @@ Cuic.Switcher.prototype.options = {
     namespace: 'switcher',
     repeat: true
 };
+
+Cuic.switchers = new Cuic.Collection();

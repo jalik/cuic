@@ -105,6 +105,9 @@ Cuic.Popup = class extends Cuic.Component {
             // Close the popup when the user clicks outside of it
             Cuic.on('click', document, autoClose);
         });
+
+        // Add element to collection
+        Cuic.popups.add(this);
     }
 
     /**
@@ -172,3 +175,5 @@ Cuic.Popup.prototype.options = {
     target: null,
     zIndex: 9
 };
+
+Cuic.popups = new Cuic.Collection();
