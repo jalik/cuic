@@ -850,6 +850,22 @@
             return this.addEventListener(element, browserEvent, listener);
         },
 
+
+        /**
+         * Returns the value as boolean
+         * @param val
+         * @return {null|boolean}
+         */
+        parseBoolean  (val) {
+            if (/^true$/i.test(val)) {
+                return true;
+            }
+            if (/^false$/i.test(val)) {
+                return false;
+            }
+            return null;
+        },
+
         /**
          * Returns the prefixed style
          * @param style

@@ -41,6 +41,17 @@ Cuic.Elements = class {
     }
 
     /**
+     * Adds class to all elements
+     * @param className
+     * @return {Cuic.Elements}
+     */
+    addClass(className) {
+        return this.each((el) => {
+            el.addClass(className);
+        });
+    }
+
+    /**
      * Aligns all elements
      * @param position
      * @return {Cuic.Elements}
@@ -64,6 +75,18 @@ Cuic.Elements = class {
     }
 
     /**
+     * Defines attribute for all elements
+     * @return {Cuic.Elements}
+     * @param name
+     * @param value
+     */
+    attr(name, value) {
+        return this.each((el) => {
+            el.attr(name, value);
+        });
+    }
+
+    /**
      * Removes all elements
      * @param styles
      * @return {Cuic.Elements}
@@ -81,7 +104,7 @@ Cuic.Elements = class {
      */
     each(callback) {
         for (let i = 0; i < this.length; i += 1) {
-            callback.call(this, this[i]);
+            callback.call(this[i], this[i], this);
         }
         return this;
     }
@@ -230,12 +253,34 @@ Cuic.Elements = class {
     }
 
     /**
+     * Removes class from all elements
+     * @param className
+     * @return {Cuic.Elements}
+     */
+    removeClass(className) {
+        return this.each((el) => {
+            el.removeClass(className);
+        });
+    }
+
+    /**
      * Shows all elements
      * @return {Cuic.Elements}
      */
     show() {
         return this.each((el) => {
             el.show();
+        });
+    }
+
+    /**
+     * Toggles class from all elements
+     * @param className
+     * @return {Cuic.Elements}
+     */
+    toggleClass(className) {
+        return this.each((el) => {
+            el.toggleClass(className);
         });
     }
 
