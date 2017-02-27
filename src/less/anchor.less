@@ -23,57 +23,40 @@
  *
  */
 
-.notification {
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: @border-radius;
-  box-shadow: @shadow-x @shadow-y @shadow-size @shadow-color;
-  color: #fff;
-  display: inline-block;
-  margin: @margin;
-  overflow: auto;
-  padding: @padding;
-  position: absolute;
-  transition-property: background, height, width, bottom, left, right, top, opacity, transform;
-  z-index: 10;
+.anchored-bottom,
+.anchored-bottom.anchored-center {
+  transform-origin: top center;
 }
 
-body > .notification {
-  position: fixed;
+.anchored-bottom.anchored-left {
+  transform-origin: top right;
 }
 
-.notification.closed {
-  opacity: 0;
-  transform: scale(0);
+.anchored-bottom.anchored-right {
+  transform-origin: top left;
 }
 
-.notification.opened {
-  opacity: 1;
-  transform: scale(1);
+.anchored-center {
+  transform-origin: center;
 }
 
-.notification.opened:hover {
-  background: rgba(0, 0, 0, 0.8);
+.anchored-left {
+  transform-origin: right center;
 }
 
-.notification-content {
-  line-height: @content-line-height;
+.anchored-right {
+  transform-origin: left center;
 }
 
-.notification.closable .notification-content {
-  margin-right: @margin * 2;
+.anchored-top,
+.anchored-top.anchored-center {
+  transform-origin: bottom center;
 }
 
-.notification .btn-close {
-  color: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  font-weight: bolder;
-  margin: @margin;
-  position: absolute;
-  top: 0;
-  right: 0;
+.anchored-top.anchored-left {
+  transform-origin: bottom right;
 }
 
-.notification .btn-close:focus,
-.notification .btn-close:hover {
-  color: rgba(255, 255, 255, 0.7);
+.anchored-top.anchored-right {
+  transform-origin: bottom left;
 }

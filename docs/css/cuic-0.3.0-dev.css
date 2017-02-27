@@ -24,6 +24,94 @@
  */
 
 /* ANIMATIONS */
+.aligned-bottom,
+.aligned-bottom.aligned-center {
+  bottom: 0;
+  -webkit-transform-origin: bottom center;
+          transform-origin: bottom center;
+}
+.aligned-bottom.aligned-left {
+  bottom: 0;
+  left: 0;
+  -webkit-transform-origin: bottom left;
+          transform-origin: bottom left;
+}
+.aligned-bottom.aligned-right {
+  bottom: 0;
+  right: 0;
+  -webkit-transform-origin: bottom right;
+          transform-origin: bottom right;
+}
+.aligned-center {
+  -webkit-transform-origin: center;
+          transform-origin: center;
+}
+.aligned-left {
+  left: 0;
+  -webkit-transform-origin: left center;
+          transform-origin: left center;
+}
+.aligned-right {
+  right: 0;
+  -webkit-transform-origin: right center;
+          transform-origin: right center;
+}
+.aligned-top,
+.aligned-top.aligned-center {
+  top: 0;
+  -webkit-transform-origin: top center;
+          transform-origin: top center;
+}
+.aligned-top.aligned-left {
+  top: 0;
+  left: 0;
+  -webkit-transform-origin: top left;
+          transform-origin: top left;
+}
+.aligned-top.aligned-right {
+  top: 0;
+  right: 0;
+  -webkit-transform-origin: top right;
+          transform-origin: top right;
+}
+.anchored-bottom,
+.anchored-bottom.anchored-center {
+  -webkit-transform-origin: top center;
+          transform-origin: top center;
+}
+.anchored-bottom.anchored-left {
+  -webkit-transform-origin: top right;
+          transform-origin: top right;
+}
+.anchored-bottom.anchored-right {
+  -webkit-transform-origin: top left;
+          transform-origin: top left;
+}
+.anchored-center {
+  -webkit-transform-origin: center;
+          transform-origin: center;
+}
+.anchored-left {
+  -webkit-transform-origin: right center;
+          transform-origin: right center;
+}
+.anchored-right {
+  -webkit-transform-origin: left center;
+          transform-origin: left center;
+}
+.anchored-top,
+.anchored-top.anchored-center {
+  -webkit-transform-origin: bottom center;
+          transform-origin: bottom center;
+}
+.anchored-top.anchored-left {
+  -webkit-transform-origin: bottom right;
+          transform-origin: bottom right;
+}
+.anchored-top.anchored-right {
+  -webkit-transform-origin: bottom left;
+          transform-origin: bottom left;
+}
 .component .btn-close {
   cursor: pointer;
   display: none;
@@ -146,38 +234,6 @@ body > .dialog {
   font-weight: bold;
   margin: 0;
   padding: 0;
-}
-.dialog.aligned-bottom {
-  -webkit-transform-origin: bottom center;
-          transform-origin: bottom center;
-}
-.dialog.aligned-bottom.aligned-left {
-  -webkit-transform-origin: bottom left;
-          transform-origin: bottom left;
-}
-.dialog.aligned-bottom.aligned-right {
-  -webkit-transform-origin: bottom right;
-          transform-origin: bottom right;
-}
-.dialog.aligned-left {
-  -webkit-transform-origin: left center;
-          transform-origin: left center;
-}
-.dialog.aligned-right {
-  -webkit-transform-origin: right center;
-          transform-origin: right center;
-}
-.dialog.aligned-top {
-  -webkit-transform-origin: top center;
-          transform-origin: top center;
-}
-.dialog.aligned-top.aligned-left {
-  -webkit-transform-origin: top left;
-          transform-origin: top left;
-}
-.dialog.aligned-top.aligned-right {
-  -webkit-transform-origin: top right;
-          transform-origin: top right;
 }
 .fader {
   background: rgba(240, 240, 240, 0.5);
@@ -309,39 +365,8 @@ body > .notification {
 .notification .btn-close:hover {
   color: rgba(255, 255, 255, 0.7);
 }
-.notification.aligned-bottom {
-  -webkit-transform-origin: bottom center;
-          transform-origin: bottom center;
-}
-.notification.aligned-bottom.aligned-left {
-  -webkit-transform-origin: bottom left;
-          transform-origin: bottom left;
-}
-.notification.aligned-bottom.aligned-right {
-  -webkit-transform-origin: bottom right;
-          transform-origin: bottom right;
-}
-.notification.aligned-left {
-  -webkit-transform-origin: left center;
-          transform-origin: left center;
-}
-.notification.aligned-right {
-  -webkit-transform-origin: right center;
-          transform-origin: right center;
-}
-.notification.aligned-top {
-  -webkit-transform-origin: top center;
-          transform-origin: top center;
-}
-.notification.aligned-top.aligned-left {
-  -webkit-transform-origin: top left;
-          transform-origin: top left;
-}
-.notification.aligned-top.aligned-right {
-  -webkit-transform-origin: top right;
-          transform-origin: top right;
-}
 .notification-stack {
+  overflow: auto;
   position: absolute;
   -webkit-transition-property: height, width, bottom, left, right, top, opacity, -webkit-transform;
   transition-property: height, width, bottom, left, right, top, opacity, -webkit-transform;
@@ -365,38 +390,6 @@ body > .notification-stack {
   left: auto;
   right: auto;
   top: auto;
-}
-.notification-stack.aligned-bottom {
-  -webkit-transform-origin: bottom center;
-          transform-origin: bottom center;
-}
-.notification-stack.aligned-bottom.aligned-left {
-  -webkit-transform-origin: bottom left;
-          transform-origin: bottom left;
-}
-.notification-stack.aligned-bottom.aligned-right {
-  -webkit-transform-origin: bottom right;
-          transform-origin: bottom right;
-}
-.notification-stack.aligned-left {
-  -webkit-transform-origin: left center;
-          transform-origin: left center;
-}
-.notification-stack.aligned-right {
-  -webkit-transform-origin: right center;
-          transform-origin: right center;
-}
-.notification-stack.aligned-top {
-  -webkit-transform-origin: top center;
-          transform-origin: top center;
-}
-.notification-stack.aligned-top.aligned-left {
-  -webkit-transform-origin: top left;
-          transform-origin: top left;
-}
-.notification-stack.aligned-top.aligned-right {
-  -webkit-transform-origin: top right;
-          transform-origin: top right;
 }
 .notification-stack.aligned-bottom .notification {
   -webkit-transform-origin: bottom center;
@@ -476,42 +469,6 @@ body > .panel {
   font-weight: bold;
   margin: 0;
 }
-.panel.aligned-bottom {
-  bottom: 0;
-  -webkit-transform-origin: bottom center;
-          transform-origin: bottom center;
-}
-.panel.aligned-bottom.aligned-left {
-  -webkit-transform-origin: bottom left;
-          transform-origin: bottom left;
-}
-.panel.aligned-bottom.aligned-right {
-  -webkit-transform-origin: bottom right;
-          transform-origin: bottom right;
-}
-.panel.aligned-left {
-  left: 0;
-  -webkit-transform-origin: left center;
-          transform-origin: left center;
-}
-.panel.aligned-right {
-  right: 0;
-  -webkit-transform-origin: right center;
-          transform-origin: right center;
-}
-.panel.aligned-top {
-  top: 0;
-  -webkit-transform-origin: top center;
-          transform-origin: top center;
-}
-.panel.aligned-top.aligned-left {
-  -webkit-transform-origin: top left;
-          transform-origin: top left;
-}
-.panel.aligned-top.aligned-right {
-  -webkit-transform-origin: top right;
-          transform-origin: top right;
-}
 .popup {
   background: rgba(0, 0, 0, 0.7);
   border-radius: 5px;
@@ -557,40 +514,16 @@ body > .panel {
 .popup .btn-close:hover {
   color: rgba(255, 255, 255, 0.7);
 }
-.popup.anchored-bottom {
-  -webkit-transform-origin: top center;
-          transform-origin: top center;
-}
-.popup.anchored-left {
-  -webkit-transform-origin: right center;
-          transform-origin: right center;
-}
-.popup.anchored-right {
-  -webkit-transform-origin: left center;
-          transform-origin: left center;
-}
-.popup.anchored-top {
-  -webkit-transform-origin: bottom center;
-          transform-origin: bottom center;
-}
 .popup.anchored-bottom.anchored-left {
-  -webkit-transform-origin: top right;
-          transform-origin: top right;
   border-radius: 5px 0 5px 5px;
 }
 .popup.anchored-bottom.anchored-right {
-  -webkit-transform-origin: top left;
-          transform-origin: top left;
   border-radius: 0 5px 5px 5px;
 }
 .popup.anchored-top.anchored-left {
-  -webkit-transform-origin: bottom right;
-          transform-origin: bottom right;
   border-radius: 5px 5px 0 5px;
 }
 .popup.anchored-top.anchored-right {
-  -webkit-transform-origin: bottom left;
-          transform-origin: bottom left;
   border-radius: 5px 5px 5px 0;
 }
 .popup-tail {

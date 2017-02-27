@@ -23,57 +23,64 @@
  *
  */
 
-.notification {
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: @border-radius;
-  box-shadow: @shadow-x @shadow-y @shadow-size @shadow-color;
-  color: #fff;
-  display: inline-block;
-  margin: @margin;
+.notification-stack {
   overflow: auto;
-  padding: @padding;
   position: absolute;
-  transition-property: background, height, width, bottom, left, right, top, opacity, transform;
+  transition-property: height, width, bottom, left, right, top, opacity, transform;
   z-index: 10;
 }
 
-body > .notification {
+body > .notification-stack {
   position: fixed;
 }
 
-.notification.closed {
+.notification-stack.closed {
   opacity: 0;
-  transform: scale(0);
 }
 
-.notification.opened {
+.notification-stack.opened {
   opacity: 1;
-  transform: scale(1);
 }
 
-.notification.opened:hover {
-  background: rgba(0, 0, 0, 0.8);
+.notification-stack .notification {
+  display: block;
+  position: relative;
+  bottom: auto;
+  left: auto;
+  right: auto;
+  top: auto;
 }
 
-.notification-content {
-  line-height: @content-line-height;
+// NOTIFICATIONS IN STACK
+
+.notification-stack.aligned-bottom .notification {
+  transform-origin: bottom center;
 }
 
-.notification.closable .notification-content {
-  margin-right: @margin * 2;
+.notification-stack.aligned-bottom.aligned-left .notification {
+  transform-origin: bottom left;
 }
 
-.notification .btn-close {
-  color: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  font-weight: bolder;
-  margin: @margin;
-  position: absolute;
-  top: 0;
-  right: 0;
+.notification-stack.aligned-bottom.aligned-right .notification {
+  transform-origin: bottom right;
 }
 
-.notification .btn-close:focus,
-.notification .btn-close:hover {
-  color: rgba(255, 255, 255, 0.7);
+.notification-stack.aligned-left .notification {
+  transform-origin: left center;
+}
+
+.notification-stack.aligned-right .notification {
+  transform-origin: right center;
+}
+
+.notification-stack.aligned-top .notification {
+  transform-origin: top center;
+}
+
+.notification-stack.aligned-top.aligned-left .notification {
+  transform-origin: top left;
+}
+
+.notification-stack.aligned-top.aligned-right .notification {
+  transform-origin: top right;
 }

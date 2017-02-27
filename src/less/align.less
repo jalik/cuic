@@ -23,57 +23,52 @@
  *
  */
 
-.notification {
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: @border-radius;
-  box-shadow: @shadow-x @shadow-y @shadow-size @shadow-color;
-  color: #fff;
-  display: inline-block;
-  margin: @margin;
-  overflow: auto;
-  padding: @padding;
-  position: absolute;
-  transition-property: background, height, width, bottom, left, right, top, opacity, transform;
-  z-index: 10;
+.aligned-bottom,
+.aligned-bottom.aligned-center {
+  bottom: 0;
+  transform-origin: bottom center;
 }
 
-body > .notification {
-  position: fixed;
+.aligned-bottom.aligned-left {
+  bottom: 0;
+  left: 0;
+  transform-origin: bottom left;
 }
 
-.notification.closed {
-  opacity: 0;
-  transform: scale(0);
+.aligned-bottom.aligned-right {
+  bottom: 0;
+  right: 0;
+  transform-origin: bottom right;
 }
 
-.notification.opened {
-  opacity: 1;
-  transform: scale(1);
+.aligned-center {
+  transform-origin: center;
 }
 
-.notification.opened:hover {
-  background: rgba(0, 0, 0, 0.8);
+.aligned-left {
+  left: 0;
+  transform-origin: left center;
 }
 
-.notification-content {
-  line-height: @content-line-height;
+.aligned-right {
+  right: 0;
+  transform-origin: right center;
 }
 
-.notification.closable .notification-content {
-  margin-right: @margin * 2;
+.aligned-top,
+.aligned-top.aligned-center {
+  top: 0;
+  transform-origin: top center;
 }
 
-.notification .btn-close {
-  color: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  font-weight: bolder;
-  margin: @margin;
-  position: absolute;
+.aligned-top.aligned-left {
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+}
+
+.aligned-top.aligned-right {
   top: 0;
   right: 0;
-}
-
-.notification .btn-close:focus,
-.notification .btn-close:hover {
-  color: rgba(255, 255, 255, 0.7);
+  transform-origin: top right;
 }

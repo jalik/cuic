@@ -75,39 +75,19 @@
 
 // POPUP POSITION
 
-.popup.anchored-bottom {
-  transform-origin: top center;
-}
-
-.popup.anchored-left {
-  transform-origin: right center;
-}
-
-.popup.anchored-right {
-  transform-origin: left center;
-}
-
-.popup.anchored-top {
-  transform-origin: bottom center;
-}
-
 .popup.anchored-bottom.anchored-left {
-  transform-origin: top right;
   border-radius: @border-radius 0 @border-radius @border-radius;
 }
 
 .popup.anchored-bottom.anchored-right {
-  transform-origin: top left;
   border-radius: 0 @border-radius @border-radius @border-radius;
 }
 
 .popup.anchored-top.anchored-left {
-  transform-origin: bottom right;
   border-radius: @border-radius @border-radius 0 @border-radius;
 }
 
 .popup.anchored-top.anchored-right {
-  transform-origin: bottom left;
   border-radius: @border-radius @border-radius @border-radius 0;
 }
 
