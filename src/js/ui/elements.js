@@ -243,6 +243,42 @@ Cuic.Elements = class {
     }
 
     /**
+     * Removes an event listener from elements
+     * @param event
+     * @param callback
+     * @return {Cuic.Elements}
+     */
+    off(event, callback) {
+        return this.each((el) => {
+            el.off(event, callback);
+        });
+    }
+
+    /**
+     * Adds a unique event listener to elements
+     * @param event
+     * @param callback
+     * @return {Cuic.Elements}
+     */
+    once(event, callback) {
+        return this.each((el) => {
+            el.once(event, callback);
+        });
+    }
+
+    /**
+     * Adds an event listener to elements
+     * @param event
+     * @param callback
+     * @return {Cuic.Elements}
+     */
+    on(event, callback) {
+        return this.each((el) => {
+            el.on(event, callback);
+        });
+    }
+
+    /**
      * Removes all elements
      * @return {Cuic.Elements}
      */
