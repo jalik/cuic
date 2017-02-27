@@ -1028,7 +1028,10 @@ Cuic.Element = class {
                 || document.documentElement.clientHeight
                 || document.body.clientHeight;
         } else {
-            height = node.clientHeight - this.padding().vertical;
+            this._display();
+            height = node.clientHeight;
+            this._restoreDisplay();
+            height -= this.padding().vertical;
         }
         return height;
     }
@@ -1089,7 +1092,9 @@ Cuic.Element = class {
             height = node.screen.height;
         } else {
             // todo subtract vertical scrollbar width
+            this._display();
             height = node.clientHeight;
+            this._restoreDisplay();
         }
         return height;
     }
@@ -1106,7 +1111,9 @@ Cuic.Element = class {
             width = node.screen.width;
         } else {
             // todo subtract horizontal scrollbar width
+            this._display();
             width = node.clientWidth;
+            this._restoreDisplay();
         }
         return width;
     }
@@ -1619,7 +1626,13 @@ Cuic.Element = class {
         if (node instanceof Window) {
             height = node.screen.height;
         } else {
-            height = node.offsetHeight + (includeMargin ? this.margin().vertical : 0);
+            this._display();
+            height = node.offsetHeight;
+            this._restoreDisplay();
+
+            if (includeMargin) {
+                height += this.margin().vertical;
+            }
         }
         return height;
     }
@@ -1636,7 +1649,13 @@ Cuic.Element = class {
         if (node instanceof Window) {
             width = node.screen.width;
         } else {
-            width = node.offsetWidth + (includeMargin ? this.margin().horizontal : 0);
+            this._display();
+            width = node.offsetWidth;
+            this._restoreDisplay();
+
+            if (includeMargin) {
+                width += this.margin().horizontal;
+            }
         }
         return width;
     }
@@ -1838,7 +1857,10 @@ Cuic.Element = class {
                 || document.documentElement.clientWidth
                 || document.body.clientWidth;
         } else {
-            width = node.clientWidth - this.padding().horizontal;
+            this._display();
+            width = node.clientWidth;
+            this._restoreDisplay();
+            width -= this.padding().horizontal;
         }
         return width;
     }

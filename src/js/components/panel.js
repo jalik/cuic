@@ -135,7 +135,8 @@ Cuic.Panel = class extends Cuic.Component {
             if (this.isAligned('bottom')) {
                 prop.bottom = -height;
                 prop.top = '';
-            } else {
+            }
+            else if (this.isAligned('top')) {
                 prop.top = -height;
                 prop.bottom = '';
             }
@@ -151,6 +152,8 @@ Cuic.Panel = class extends Cuic.Component {
         this.onMaximized(() => {
             // Realign if panel is closed
             if (!this.isOpened()) {
+                let prop = {};
+
                 // Horizontal position
                 if (this.isAligned('left')) {
                     prop.left = -this.outerWidth(true);

@@ -2243,21 +2243,21 @@ Cuic.Element = function () {
             if (this.isInDOM()) {
                 this.debug('alignInParent');
                 var alignments = ['bottom', 'left', 'right', 'top'];
-                var _prop = this.position();
+                var prop = this.position();
 
                 // Only keep properties that are styled
                 for (var i = 0; i < alignments.length; i += 1) {
                     if (!this.css(alignments[i])) {
-                        _prop[alignments[i]] = '';
+                        prop[alignments[i]] = '';
                     }
                 }
 
                 // Limit position to parent available position
                 var available = this._calculateAvailablePosition();
-                _prop = Cuic.constraintPosition(_prop, available);
+                prop = Cuic.constraintPosition(prop, available);
 
                 // Apply alignment
-                this.css(_prop);
+                this.css(prop);
             }
             return this;
         }
@@ -2273,12 +2273,12 @@ Cuic.Element = function () {
             if (this.isInDOM()) {
                 this.debug('alignInScreen');
                 var alignments = ['bottom', 'left', 'right', 'top'];
-                var _prop2 = this.position();
+                var prop = this.position();
 
                 // Only keep properties that are styled
                 for (var i = 0; i < alignments.length; i += 1) {
                     if (!this.css(alignments[i])) {
-                        _prop2[alignments[i]] = '';
+                        prop[alignments[i]] = '';
                     }
                 }
 
@@ -2301,10 +2301,10 @@ Cuic.Element = function () {
                     var location = alignments[_i];
                     var screenPos = rect[location];
 
-                    if (typeof _prop2[location] === 'number') {
+                    if (typeof prop[location] === 'number') {
                         // negative
                         if (screenPos < 0) {
-                            _prop2[location] += Math.abs(screenPos);
+                            prop[location] += Math.abs(screenPos);
                         }
                         // positive
                         else if (['bottom', 'top'].indexOf(location) !== -1) {
@@ -2312,14 +2312,14 @@ Cuic.Element = function () {
                                     // console.log(location + ': ' + (screenPos + elHeight) + " > " + available.maxY);
                                     // const extraSpace = Math.abs(available.maxY - Math.abs(prop[location]) - elHeight);
                                     var extraSpace = Math.abs(screen.maxY - Math.abs(rect[location]) - elHeight);
-                                    _prop2[location] -= extraSpace;
+                                    prop[location] -= extraSpace;
                                     // console.log(available.maxY + '-' + extraSpace + ' = ', prop[location]);
                                 }
                             } else if (['left', 'right'].indexOf(location) !== -1) {
                                 if (screenPos + elWidth > screen.maxX) {
                                     // console.log(location + ': ' + (screenPos + elWidth) + " > " + available.maxX);
                                     var _extraSpace = Math.abs(screen.maxX - Math.abs(rect[location]) - elWidth);
-                                    _prop2[location] -= _extraSpace;
+                                    prop[location] -= _extraSpace;
                                     // console.log(available.maxX + '-' + extraSpace + ' = ', prop[location]);
                                 }
                             }
@@ -2328,7 +2328,7 @@ Cuic.Element = function () {
                 // console.log('prop', prop);
 
                 // Apply alignment
-                this.css(_prop2);
+                this.css(prop);
             }
             return this;
         }
@@ -2431,21 +2431,21 @@ Cuic.Element = function () {
                 this.debug('autoResize');
                 var available = this._calculateAvailableSpace();
 
-                var _prop3 = {
+                var prop = {
                     height: this.outerHeight(),
                     width: this.outerWidth()
                 };
 
                 // Limit to max width
-                if (_prop3.width && _prop3.width > available.width) {
-                    _prop3.width = available.width;
+                if (prop.width && prop.width > available.width) {
+                    prop.width = available.width;
                 }
                 // Limit to max height
-                if (_prop3.height && _prop3.height > available.height) {
-                    _prop3.height = available.height;
+                if (prop.height && prop.height > available.height) {
+                    prop.height = available.height;
                 }
                 // Apply size
-                this.css(_prop3);
+                this.css(prop);
             }
             return this;
         }
@@ -2749,7 +2749,10 @@ Cuic.Element = function () {
             if (node instanceof Window) {
                 height = node.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
             } else {
-                height = node.clientHeight - this.padding().vertical;
+                this._display();
+                height = node.clientHeight;
+                this._restoreDisplay();
+                height -= this.padding().vertical;
             }
             return height;
         }
@@ -2817,7 +2820,9 @@ Cuic.Element = function () {
                 height = node.screen.height;
             } else {
                 // todo subtract vertical scrollbar width
+                this._display();
                 height = node.clientHeight;
+                this._restoreDisplay();
             }
             return height;
         }
@@ -2837,7 +2842,9 @@ Cuic.Element = function () {
                 width = node.screen.width;
             } else {
                 // todo subtract horizontal scrollbar width
+                this._display();
                 width = node.clientWidth;
+                this._restoreDisplay();
             }
             return width;
         }
@@ -3472,7 +3479,13 @@ Cuic.Element = function () {
             if (node instanceof Window) {
                 height = node.screen.height;
             } else {
-                height = node.offsetHeight + (includeMargin ? this.margin().vertical : 0);
+                this._display();
+                height = node.offsetHeight;
+                this._restoreDisplay();
+
+                if (includeMargin) {
+                    height += this.margin().vertical;
+                }
             }
             return height;
         }
@@ -3494,7 +3507,13 @@ Cuic.Element = function () {
             if (node instanceof Window) {
                 width = node.screen.width;
             } else {
-                width = node.offsetWidth + (includeMargin ? this.margin().horizontal : 0);
+                this._display();
+                width = node.offsetWidth;
+                this._restoreDisplay();
+
+                if (includeMargin) {
+                    width += this.margin().horizontal;
+                }
             }
             return width;
         }
@@ -3739,7 +3758,10 @@ Cuic.Element = function () {
             if (node instanceof Window) {
                 width = node.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
             } else {
-                width = node.clientWidth - this.padding().horizontal;
+                this._display();
+                width = node.clientWidth;
+                this._restoreDisplay();
+                width -= this.padding().horizontal;
             }
             return width;
         }
@@ -6242,7 +6264,7 @@ Cuic.Panel = function (_Cuic$Component6) {
             if (_this27.isAligned('bottom')) {
                 prop.bottom = -height;
                 prop.top = '';
-            } else {
+            } else if (_this27.isAligned('top')) {
                 prop.top = -height;
                 prop.bottom = '';
             }
@@ -6258,6 +6280,8 @@ Cuic.Panel = function (_Cuic$Component6) {
         _this27.onMaximized(function () {
             // Realign if panel is closed
             if (!_this27.isOpened()) {
+                var prop = {};
+
                 // Horizontal position
                 if (_this27.isAligned('left')) {
                     prop.left = -_this27.outerWidth(true);
@@ -6281,25 +6305,25 @@ Cuic.Panel = function (_Cuic$Component6) {
         _this27.onMinimize(function () {
             // Realign if panel is closed
             if (!_this27.isOpened()) {
-                var _prop4 = {};
+                var prop = {};
 
                 // Horizontal position
                 if (_this27.isAligned('left')) {
-                    _prop4.left = -_this27.outerWidth(true);
-                    _prop4.right = '';
+                    prop.left = -_this27.outerWidth(true);
+                    prop.right = '';
                 } else if (_this27.isAligned('right')) {
-                    _prop4.right = -_this27.outerWidth(true);
-                    _prop4.left = '';
+                    prop.right = -_this27.outerWidth(true);
+                    prop.left = '';
                 }
                 // Vertical position
                 if (_this27.isAligned('bottom')) {
-                    _prop4.bottom = -_this27.outerHeight(true);
-                    _prop4.top = '';
+                    prop.bottom = -_this27.outerHeight(true);
+                    prop.top = '';
                 } else if (_this27.isAligned('top')) {
-                    _prop4.top = -_this27.outerHeight(true);
-                    _prop4.bottom = '';
+                    prop.top = -_this27.outerHeight(true);
+                    prop.bottom = '';
                 }
-                _this27.css(_prop4);
+                _this27.css(prop);
             }
         });
 
