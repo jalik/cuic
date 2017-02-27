@@ -93,7 +93,7 @@ Cuic.Tooltip = class extends Cuic.Component {
                 if (this.parentNode() !== document.body) {
                     this.appendTo(document.body);
                 }
-                this.anchor(this.options.anchor, [ev.pageX, ev.pageY]);
+                this.anchor(this.options.anchor, null, [ev.pageX, ev.pageY]);
             }
         });
 
@@ -108,7 +108,7 @@ Cuic.Tooltip = class extends Cuic.Component {
         // Reposition tail when tooltip position change
         this.onAnchored(() => {
             // Constraint tooltip in screen
-            if (this.isAbsolute() || this.isFixed()){
+            if (this.isAbsolute() || this.isFixed()) {
                 this.alignInScreen();
             }
             this.updateTail();
@@ -124,7 +124,7 @@ Cuic.Tooltip = class extends Cuic.Component {
 
         this.onOpen(() => {
             if (!this.options.followPointer) {
-                this.anchor(this.options.anchor, this.currentTarget);
+                this.anchor(this.options.anchor, null, this.currentTarget);
             }
         });
 
@@ -132,7 +132,7 @@ Cuic.Tooltip = class extends Cuic.Component {
             // Close the popup when the user clicks outside of it
             Cuic.on('click', document, autoClose);
             // Constraint tooltip in screen
-            if (this.isAbsolute() || this.isFixed()){
+            if (this.isAbsolute() || this.isFixed()) {
                 this.alignInScreen();
             }
         });

@@ -233,14 +233,18 @@ Cuic.Element = class {
     /**
      * Calculates the position of the element around its parent
      * @param position
-     * @param target
      * @param anchorPoint
-     * @return {{bottom: string, left: string, right: string, top: string}}
+     * @param target
+     * @return {{bottom, left, right, top}}
      * @protected
      */
-    _calculateAnchor(position, target, anchorPoint) {
-        position = position || '';
+    _calculateAnchor(position, anchorPoint, target) {
         anchorPoint = anchorPoint || '';
+        position = position || '';
+
+        if (!position || !position.length) {
+            throw new TypeError(`Cannot calculate anchor with position`);
+        }
 
         let targetHeight;
         let targetWidth;
@@ -269,7 +273,6 @@ Cuic.Element = class {
         let elCenterY = (elHeight / 2);
         let targetCenterX = (targetWidth / 2);
         let targetCenterY = (targetHeight / 2);
-
         let prop = {
             bottom: '',
             left: '',
@@ -277,26 +280,66 @@ Cuic.Element = class {
             top: ''
         };
 
-        // Vertical positioning
-        if (position.indexOf('bottom') !== -1) {
-            prop.top = targetOffset.top + targetHeight;
-        }
-        else if (position.indexOf('top') !== -1) {
-            prop.top = targetOffset.top - elHeight;
-        }
-        else {
-            prop.top = targetOffset.top + targetCenterY - elCenterY;
+        if (anchorPoint) {
+            // Vertical positioning
+            if (position.indexOf('top') !== -1) {
+                prop.top = targetOffset.top - elCenterY;
+            }
+            else if (position.indexOf('bottom') !== -1) {
+                prop.top = targetOffset.top - elCenterY + targetHeight;
+            }
+            else {
+                prop.top = targetOffset.top - elCenterY + targetCenterY;
+            }
+            // Horizontal positioning
+            if (position.indexOf('left') !== -1) {
+                prop.left = targetOffset.left - elCenterX;
+            }
+            else if (position.indexOf('right') !== -1) {
+                prop.left = targetOffset.left - elCenterX + targetWidth;
+            }
+            else {
+                prop.left = targetOffset.left - elCenterX + targetCenterX;
+            }
+        } else {
+            // Vertical positioning
+            if (position.indexOf('bottom') !== -1) {
+                prop.top = targetOffset.top + targetHeight;
+            }
+            else if (position.indexOf('top') !== -1) {
+                prop.top = targetOffset.top - elHeight;
+            }
+            else {
+                prop.top = targetOffset.top + targetCenterY - elCenterY;
+            }
+            // Horizontal positioning
+            if (position.indexOf('left') !== -1) {
+                prop.left = targetOffset.left - elWidth;
+            }
+            else if (position.indexOf('right') !== -1) {
+                prop.left = targetOffset.left + targetWidth;
+            }
+            else {
+                prop.left = targetOffset.left + targetCenterX - elCenterX;
+            }
         }
 
-        // Horizontal positioning
-        if (position.indexOf('left') !== -1) {
-            prop.left = targetOffset.left - elWidth;
-        }
-        else if (position.indexOf('right') !== -1) {
-            prop.left = targetOffset.left + targetWidth;
-        }
-        else {
-            prop.left = targetOffset.left + targetCenterX - elCenterX;
+        // Calculate anchor point
+        if (anchorPoint) {
+            // Vertical anchor point
+            if (anchorPoint.indexOf('top') !== -1) {
+                prop.top += elCenterY;
+            }
+            else if (anchorPoint.indexOf('bottom') !== -1) {
+                prop.top -= elCenterY;
+            }
+            // Horizontal anchor point
+            if (anchorPoint.indexOf('left') !== -1) {
+                prop.left += elCenterX;
+            }
+            else if (anchorPoint.indexOf('right') !== -1) {
+                prop.left -= elCenterX;
+            }
         }
 
         // Use window for positioning
@@ -669,15 +712,15 @@ Cuic.Element = class {
     /**
      * Sets the position of the element toward another element
      * @param position
+     * @param anchorPoint
      * @param target
-     * @param attach
      * @return {Cuic.Element}
      */
-    anchor(position, target, attach) {
+    anchor(position, anchorPoint, target) {
         if (this.isInDOM()) {
             this.debug('anchor', position, target);
             target = Cuic.element(target || this.options.target);
-            this.css(this._calculateAnchor(position, target, attach));
+            this.css(this._calculateAnchor(position, anchorPoint, target));
             this.addPositionClass(position, 'anchored');
             this.options.anchor = position;
             this.options.target = target;

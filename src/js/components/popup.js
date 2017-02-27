@@ -98,7 +98,7 @@ Cuic.Popup = class extends Cuic.Component {
         this.onOpen(() => {
             const targetParent = Cuic.node(this.options.target).parentNode;
             this.appendTo(targetParent);
-            this.anchor(this.options.anchor, this.options.target);
+            this.anchor(this.options.anchor, null, this.options.target);
         });
 
         this.onOpened(() => {

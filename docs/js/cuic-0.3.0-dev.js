@@ -1872,17 +1872,21 @@ Cuic.Element = function () {
         /**
          * Calculates the position of the element around its parent
          * @param position
-         * @param target
          * @param anchorPoint
-         * @return {{bottom: string, left: string, right: string, top: string}}
+         * @param target
+         * @return {{bottom, left, right, top}}
          * @protected
          */
 
     }, {
         key: '_calculateAnchor',
-        value: function _calculateAnchor(position, target, anchorPoint) {
-            position = position || '';
+        value: function _calculateAnchor(position, anchorPoint, target) {
             anchorPoint = anchorPoint || '';
+            position = position || '';
+
+            if (!position || !position.length) {
+                throw new TypeError('Cannot calculate anchor with position');
+            }
 
             var targetHeight = void 0;
             var targetWidth = void 0;
@@ -1911,7 +1915,6 @@ Cuic.Element = function () {
             var elCenterY = elHeight / 2;
             var targetCenterX = targetWidth / 2;
             var targetCenterY = targetHeight / 2;
-
             var prop = {
                 bottom: '',
                 left: '',
@@ -1919,22 +1922,56 @@ Cuic.Element = function () {
                 top: ''
             };
 
-            // Vertical positioning
-            if (position.indexOf('bottom') !== -1) {
-                prop.top = targetOffset.top + targetHeight;
-            } else if (position.indexOf('top') !== -1) {
-                prop.top = targetOffset.top - elHeight;
+            if (anchorPoint) {
+                // Vertical positioning
+                if (position.indexOf('top') !== -1) {
+                    prop.top = targetOffset.top - elCenterY;
+                } else if (position.indexOf('bottom') !== -1) {
+                    prop.top = targetOffset.top - elCenterY + targetHeight;
+                } else {
+                    prop.top = targetOffset.top - elCenterY + targetCenterY;
+                }
+                // Horizontal positioning
+                if (position.indexOf('left') !== -1) {
+                    prop.left = targetOffset.left - elCenterX;
+                } else if (position.indexOf('right') !== -1) {
+                    prop.left = targetOffset.left - elCenterX + targetWidth;
+                } else {
+                    prop.left = targetOffset.left - elCenterX + targetCenterX;
+                }
             } else {
-                prop.top = targetOffset.top + targetCenterY - elCenterY;
+                // Vertical positioning
+                if (position.indexOf('bottom') !== -1) {
+                    prop.top = targetOffset.top + targetHeight;
+                } else if (position.indexOf('top') !== -1) {
+                    prop.top = targetOffset.top - elHeight;
+                } else {
+                    prop.top = targetOffset.top + targetCenterY - elCenterY;
+                }
+                // Horizontal positioning
+                if (position.indexOf('left') !== -1) {
+                    prop.left = targetOffset.left - elWidth;
+                } else if (position.indexOf('right') !== -1) {
+                    prop.left = targetOffset.left + targetWidth;
+                } else {
+                    prop.left = targetOffset.left + targetCenterX - elCenterX;
+                }
             }
 
-            // Horizontal positioning
-            if (position.indexOf('left') !== -1) {
-                prop.left = targetOffset.left - elWidth;
-            } else if (position.indexOf('right') !== -1) {
-                prop.left = targetOffset.left + targetWidth;
-            } else {
-                prop.left = targetOffset.left + targetCenterX - elCenterX;
+            // Calculate anchor point
+            if (anchorPoint) {
+                // Vertical anchor point
+                if (anchorPoint.indexOf('top') !== -1) {
+                    prop.top += elCenterY;
+                } else if (anchorPoint.indexOf('bottom') !== -1) {
+                    prop.top -= elCenterY;
+                }
+                // Horizontal anchor point
+                if (anchorPoint.indexOf('left') !== -1) {
+                    prop.left += elCenterX;
+                } else if (anchorPoint.indexOf('right') !== -1) {
+                    prop.left -= elCenterX;
+                }
             }
 
             // Use window for positioning
@@ -2329,18 +2366,18 @@ Cuic.Element = function () {
         /**
          * Sets the position of the element toward another element
          * @param position
+         * @param anchorPoint
          * @param target
-         * @param attach
          * @return {Cuic.Element}
          */
 
     }, {
         key: 'anchor',
-        value: function anchor(position, target, attach) {
+        value: function anchor(position, anchorPoint, target) {
             if (this.isInDOM()) {
                 this.debug('anchor', position, target);
                 target = Cuic.element(target || this.options.target);
-                this.css(this._calculateAnchor(position, target, attach));
+                this.css(this._calculateAnchor(position, anchorPoint, target));
                 this.addPositionClass(position, 'anchored');
                 this.options.anchor = position;
                 this.options.target = target;
@@ -4193,15 +4230,16 @@ Cuic.Elements = function () {
         /**
          * Anchors all elements
          * @param position
+         * @param anchorPoint
          * @param target
          * @return {Cuic.Elements}
          */
 
     }, {
         key: 'anchor',
-        value: function anchor(position, target) {
+        value: function anchor(position, anchorPoint, target) {
             return this.each(function (el) {
-                el.anchor(position, target);
+                el.anchor(position, anchorPoint, target);
             });
         }
 
@@ -6589,7 +6627,7 @@ Cuic.Popup = function (_Cuic$Component7) {
         _this28.onOpen(function () {
             var targetParent = Cuic.node(_this28.options.target).parentNode;
             _this28.appendTo(targetParent);
-            _this28.anchor(_this28.options.anchor, _this28.options.target);
+            _this28.anchor(_this28.options.anchor, null, _this28.options.target);
         });
 
         _this28.onOpened(function () {
@@ -7017,7 +7055,7 @@ Cuic.Tooltip = function (_Cuic$Component9) {
                 if (_this31.parentNode() !== document.body) {
                     _this31.appendTo(document.body);
                 }
-                _this31.anchor(_this31.options.anchor, [ev.pageX, ev.pageY]);
+                _this31.anchor(_this31.options.anchor, null, [ev.pageX, ev.pageY]);
             }
         });
 
@@ -7048,7 +7086,7 @@ Cuic.Tooltip = function (_Cuic$Component9) {
 
         _this31.onOpen(function () {
             if (!_this31.options.followPointer) {
-                _this31.anchor(_this31.options.anchor, _this31.currentTarget);
+                _this31.anchor(_this31.options.anchor, null, _this31.currentTarget);
             }
         });
 

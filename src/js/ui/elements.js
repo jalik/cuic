@@ -65,12 +65,13 @@ Cuic.Elements = class {
     /**
      * Anchors all elements
      * @param position
+     * @param anchorPoint
      * @param target
      * @return {Cuic.Elements}
      */
-    anchor(position, target) {
+    anchor(position, anchorPoint, target) {
         return this.each((el) => {
-            el.anchor(position, target);
+            el.anchor(position, anchorPoint, target);
         });
     }
 
