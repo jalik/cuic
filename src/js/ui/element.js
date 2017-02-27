@@ -126,6 +126,19 @@ Cuic.Element = class {
         if (this.options.position && this.hasParent()) {
             this.align(this.options.position);
         }
+
+        if (this.hasParent()) {
+            // Maximize the panel
+            if (this.options.maximized) {
+                this.maximize();
+            }
+            if (this.options.maximizedX) {
+                this.maximizeX();
+            }
+            if (this.options.maximizedY) {
+                this.maximizeY();
+            }
+        }
     }
 
     /**
@@ -1241,6 +1254,42 @@ Cuic.Element = class {
     }
 
     /**
+     * Checks if the component is maximized
+     * @return {boolean}
+     */
+    isMaximized() {
+        return this.hasClass('maximized')
+            || this.hasClass('maximized-x maximized-y')
+            || (this.css('width') === '100%' && this.css('height') === '100%' );
+    }
+
+    /**
+     * Checks if the component width is maximized
+     * @return {boolean}
+     */
+    isMaximizedX() {
+        return this.hasClass('maximized-x')
+            || this.css('width') === '100%';
+    }
+
+    /**
+     * Checks if the component height is maximized
+     * @return {boolean}
+     */
+    isMaximizedY() {
+        return this.hasClass('maximized-y')
+            || this.css('height') === '100%';
+    }
+
+    /**
+     * Checks if the component is minimized
+     * @return {boolean}
+     */
+    isMinimized() {
+        return this.hasClass('minimized');
+    }
+
+    /**
      * Checks if the element is at the position
      * @param position
      * @return {boolean}
@@ -1324,6 +1373,104 @@ Cuic.Element = class {
             top: top,
             vertical: bottom + top
         };
+    }
+
+    /**
+     * Maximizes the component in its container
+     * @param callback
+     * @return {Cuic.Element}
+     */
+    maximize(callback) {
+        this.debug('maximize');
+        this.events.trigger('maximize');
+        this.removeClass('minimized');
+        this.addClass('maximized');
+        this.css(this._calculateMaximize());
+        this.once('transitionend', (ev) => {
+            if (this.isMaximized()) {
+                this.debug('maximized');
+                this.events.trigger('maximized', ev);
+
+                if (typeof callback === 'function') {
+                    callback.call(this, ev);
+                }
+            }
+        });
+        return this;
+    }
+
+    /**
+     * Maximizes element width
+     * @param callback
+     * @return {Cuic.Element}
+     */
+    maximizeX(callback) {
+        this.debug('maximizeX');
+        this.events.trigger('maximizeX');
+        this.removeClass('minimized');
+        this.addClass('maximized-x');
+        const prop = this._calculateMaximize();
+        this.css({width: prop.width, left: prop.left, right: prop.right});
+        this.once('transitionend', (ev) => {
+            if (this.isMaximizedX()) {
+                this.debug('maximizedX');
+                this.events.trigger('maximizedX', ev);
+
+                if (typeof callback === 'function') {
+                    callback.call(this, ev);
+                }
+            }
+        });
+        return this;
+    }
+
+    /**
+     * Maximizes element height
+     * @param callback
+     * @return {Cuic.Element}
+     */
+    maximizeY(callback) {
+        this.debug('maximizeY');
+        this.events.trigger('maximizeY');
+        this.removeClass('minimized');
+        this.addClass('maximized-y');
+        const prop = this._calculateMaximize();
+        this.css({height: prop.height, top: prop.top, bottom: prop.bottom});
+        this.once('transitionend', (ev) => {
+            if (this.isMaximizedY()) {
+                this.debug('maximizedY');
+                this.events.trigger('maximizedY', ev);
+
+                if (typeof callback === 'function') {
+                    callback.call(this, ev);
+                }
+            }
+        });
+        return this;
+    }
+
+    /**
+     * Minimizes the component in its container
+     * @param callback
+     * @return {Cuic.Element}
+     */
+    minimize(callback) {
+        this.debug('minimize');
+        this.events.trigger('minimize');
+        this.removeClass('maximized maximized-x maximized-y');
+        this.addClass('minimized');
+        this.css(this._calculateMinimize(this.options.position));
+        this.once('transitionend', (ev) => {
+            if (this.isMinimized()) {
+                this.debug('minimized');
+                this.events.trigger('minimized', ev);
+
+                if (typeof callback === 'function') {
+                    callback.call(this, ev);
+                }
+            }
+        });
+        return this;
     }
 
     /**
@@ -1417,6 +1564,38 @@ Cuic.Element = class {
     onAnchored(callback) {
         this.events.on('anchored', callback);
         return this;
+    }
+
+    /**
+     * Called when the component is maximizing
+     * @param callback
+     */
+    onMaximize(callback) {
+        this.events.on('maximize', callback);
+    }
+
+    /**
+     * Called when the component is maximized
+     * @param callback
+     */
+    onMaximized(callback) {
+        this.events.on('maximized', callback);
+    }
+
+    /**
+     * Called when the component is minimizing
+     * @param callback
+     */
+    onMinimize(callback) {
+        this.events.on('minimize', callback);
+    }
+
+    /**
+     * Called when the component is minimized
+     * @param callback
+     */
+    onMinimized(callback) {
+        this.events.on('minimized', callback);
     }
 
     /**
