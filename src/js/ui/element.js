@@ -129,6 +129,312 @@ Cuic.Element = class {
     }
 
     /**
+     * Position an object inside another
+     * @param position
+     * @param parent
+     * @return {{bottom: string, left: string, right: string, top: string}}
+     */
+    calculateAlign(position, parent) {
+        position = position || '';
+
+        if (parent) {
+            parent = Cuic.element(parent);
+
+            // Use body as parent
+            if (parent.node().nodeName === 'HTML') {
+                parent = Cuic.element(document.body);
+            }
+        }
+        else {
+            // Use parent node if no parent defined
+            parent = this.offsetParent();
+        }
+
+        let elHeight = this.outerHeight(true);
+        let elWidth = this.outerWidth(true);
+        let parentHeight = parent.height();
+        let parentWidth = parent.width();
+        let relativeLeft = parent.node().scrollLeft; // todo use internal method scrollLeft
+        let relativeTop = parent.node().scrollTop; // todo use internal method scrollTop
+        let relativeBottom = -relativeTop;
+        let relativeRight = -relativeLeft;
+        let prop = {
+            bottom: '',
+            left: '',
+            right: '',
+            top: ''
+        };
+
+        // If the target is fixed, we use the window as parent
+        switch (this.css('position')) {
+            case 'fixed':
+                parent = Cuic.element(window);
+                parentHeight = parent.innerHeight();
+                parentWidth = parent.innerWidth();
+                relativeLeft = 0;
+                relativeTop = 0;
+                relativeBottom = 0;
+                relativeRight = 0;
+                break;
+        }
+
+        const centerX = relativeLeft + Math.max(0, parent.innerWidth() / 2 - elWidth / 2);
+        const centerY = relativeTop + Math.max(0, parent.innerHeight() / 2 - elHeight / 2);
+
+        // Vertical position
+        if (position.indexOf('top') !== -1) {
+            prop.top = 0;
+        }
+        else if (position.indexOf('bottom') !== -1) {
+            prop.bottom = 0;
+        }
+        else {
+            prop.top = centerY;
+        }
+
+        // Horizontal position
+        if (position.indexOf('left') !== -1) {
+            prop.left = 0;
+        }
+        else if (position.indexOf('right') !== -1) {
+            prop.right = 0;
+        }
+        else {
+            prop.left = centerX;
+        }
+
+        // Calculate available position
+        const available = this.calculateAvailablePosition(parent);
+
+        // Constraint position
+        if (prop.left < available.minX) {
+            prop.left = available.minX;
+        }
+        else if (prop.left > available.maxX) {
+            prop.left = available.maxX;
+        }
+        return prop;
+    }
+
+    /**
+     * Position an object from the exterior
+     * @param position
+     * @param target
+     * @param attach todo attach to
+     * @return {{bottom: string, left: string, right: string, top: string}}
+     */
+    calculateAnchor(position, target, attach) {
+        position = position || '';
+
+        let targetHeight;
+        let targetWidth;
+        let targetOffset;
+
+        // Target is a coordinate (x, y)
+        if (target instanceof Array && target.length === 2) {
+            targetHeight = 1;
+            targetWidth = 1;
+            targetOffset = {
+                left: target[0],
+                top: target[1]
+            };
+        }
+        // Target is an element
+        else {
+            target = Cuic.element(target);
+            targetHeight = target.outerHeight();
+            targetWidth = target.outerWidth();
+            targetOffset = target.offset();
+        }
+
+        let elWidth = this.outerWidth(true);
+        let elHeight = this.outerHeight(true);
+        let elCenterX = (elWidth / 2);
+        let elCenterY = (elHeight / 2);
+        let targetCenterX = (targetWidth / 2);
+        let targetCenterY = (targetHeight / 2);
+
+        // fixme elHeight can be less if animated (resized), which leads to wrong elCenterY
+        // fixme the problem is with element with scale(0) or display:none
+
+        let prop = {
+            bottom: '',
+            left: '',
+            right: '',
+            top: ''
+        };
+
+        // Vertical positioning
+        if (position.indexOf('bottom') !== -1) {
+            prop.top = targetOffset.top + targetHeight;
+        }
+        else if (position.indexOf('top') !== -1) {
+            prop.top = targetOffset.top - elHeight;
+        }
+        else {
+            prop.top = targetOffset.top + targetCenterY - elCenterY;
+        }
+
+        // Horizontal positioning
+        if (position.indexOf('left') !== -1) {
+            prop.left = targetOffset.left - elWidth;
+        }
+        else if (position.indexOf('right') !== -1) {
+            prop.left = targetOffset.left + targetWidth;
+        }
+        else {
+            prop.left = targetOffset.left + targetCenterX - elCenterX;
+        }
+
+        // Use window for positioning
+        if (this.css('position') === 'fixed') {
+            prop.left -= window.scrollX;
+            prop.top -= window.scrollY;
+        }
+
+        // Calculate available position
+        // const limit = this.calculateAvailablePosition(target.offsetParent());
+        // prop = this.constraintPosition(prop, limit);
+
+        return prop;
+    }
+
+    /**
+     * Returns the available position inside a container
+     * @param parent
+     * @return {{minX: number, minY: number, maxX: number, maxY: number}}
+     */
+    calculateAvailablePosition(parent) {
+        parent = parent ? Cuic.element(parent) : this.offsetParent();
+
+        let prop = {
+            minX: 0,
+            minY: 0,
+            maxX: Math.max(0, parent.width() - this.outerWidth(true)),
+            maxY: Math.max(0, parent.height() - this.outerHeight(true))
+        };
+
+        // Adjust limits depending of element position
+        switch (this.css('position')) {
+            case 'absolute':
+            case 'fixed':
+                const prPadding = parent.padding();
+                // const elMargin = this.margin();
+                prop.maxX += prPadding.horizontal;
+                prop.maxY += prPadding.vertical;
+                // prop.maxX -= elMargin.horizontal;
+                // prop.maxY -= elMargin.vertical;
+                // fixme max is wrong sometimes
+                break;
+        }
+        return prop;
+    }
+
+    /**
+     * Returns the available space inside a container
+     * @param parent
+     * @return {{height, width}}
+     */
+    calculateAvailableSpace(parent) {
+        parent = parent ? Cuic.element(parent) : this.offsetParent();
+        const elMargin = this.margin();
+
+        let prop = {
+            height: parent.height(),
+            width: parent.width()
+        };
+
+        // Adjust limits depending of element position
+        switch (this.css('position')) {
+            case 'absolute':
+            case 'fixed':
+                const prPadding = parent.padding();
+                prop.height += prPadding.vertical;
+                prop.width += prPadding.horizontal;
+                prop.height -= elMargin.vertical;
+                prop.width -= elMargin.horizontal;
+                break;
+            case 'relative':
+                prop.height -= elMargin.vertical;
+                prop.width -= elMargin.horizontal;
+                break;
+        }
+        return prop;
+    }
+
+    /**
+     * Calculates maximized properties
+     * @return {*}
+     */
+    calculateMaximize() {
+        const parent = this.offsetParent();
+        const parentPadding = parent.padding();
+        const elMargin = this.margin();
+        let prop = {
+            bottom: '',
+            height: parent.innerHeight() - parentPadding.vertical,
+            left: '',
+            right: '',
+            top: '',
+            width: parent.innerWidth() - parentPadding.horizontal
+        };
+
+        // Adjust dimensions
+        switch (this.css('position')) {
+            case 'absolute':
+            case 'fixed':
+                prop.height += parentPadding.vertical;
+                prop.height -= elMargin.vertical;
+                prop.width += parentPadding.horizontal;
+                prop.width -= elMargin.horizontal;
+                break;
+
+            case 'relative':
+                prop.height -= elMargin.vertical;
+                prop.width -= elMargin.horizontal;
+                break;
+        }
+
+        // todo maximize from current this.options.position (if right:0, stay right:0)
+
+        // Horizontal position
+        if (this.isAligned('right')) {
+            prop.right = 0;
+        } else {
+            prop.left = 0;
+        }
+        // Vertical position
+        if (this.isAligned('bottom')) {
+            prop.bottom = 0;
+        } else {
+            prop.top = 0;
+        }
+        return prop;
+    }
+
+    /**
+     * Calculates minimized properties
+     * @param position
+     * @return {*}
+     */
+    calculateMinimize(position) {
+        position = position || '';
+
+        // Create a clone with minimal size
+        const clone = this.clone();
+        clone.css({height: 'auto', width: 'auto'});
+        clone.appendTo(this.parent());
+
+        // Calculate minimized size
+        let prop = clone.calculateAlign(position);
+        prop.height = clone.outerHeight();
+        prop.width = clone.outerWidth();
+        clone.remove();
+
+        return prop;
+    }
+
+    /**
      * Displays element for calculation (positioning, parenting...)
      * @return {Cuic.Element}
      * @private
@@ -245,7 +551,7 @@ Cuic.Element = class {
 
             if (['absolute', 'fixed'].indexOf(pos) !== -1) {
                 this.debug('align', position);
-                this.css(Cuic.calculateAlign(this, position));
+                this.css(this.calculateAlign(position));
                 this.addPositionClass(position, 'aligned');
                 this.options.position = position;
                 this.events.trigger('aligned', position);
@@ -255,16 +561,113 @@ Cuic.Element = class {
     }
 
     /**
+     * Aligns element in its parent
+     * @return {Cuic.Element}
+     */
+    alignInParent() {
+        if (this.isInDOM()) {
+            this.debug('alignInParent');
+            const alignments = ['bottom', 'left', 'right', 'top'];
+            let prop = this.position();
+
+            // Only keep properties that are styled
+            for (let i = 0; i < alignments.length; i += 1) {
+                if (!this.css(alignments[i])) {
+                    prop[alignments[i]] = '';
+                }
+            }
+
+            // Limit position to parent available position
+            const available = this.calculateAvailablePosition();
+            prop = Cuic.constraintPosition(prop, available);
+
+            // Apply alignment
+            this.css(prop);
+        }
+        return this;
+    }
+
+    /**
+     * Aligns element in screen
+     * @return {Cuic.Element}
+     */
+    alignInScreen() {
+        if (this.isInDOM()) {
+            this.debug('alignInScreen');
+            const alignments = ['bottom', 'left', 'right', 'top'];
+            let prop = this.position();
+
+            // Only keep properties that are styled
+            for (let i = 0; i < alignments.length; i += 1) {
+                if (!this.css(alignments[i])) {
+                    prop[alignments[i]] = '';
+                }
+            }
+
+            // Limit position to screen
+            const screen = {
+                minX: 0, maxX: Cuic.element(window).width(),
+                minY: 0, maxY: Cuic.element(window).height()
+            };
+            const rect = this.positionOnScreen();
+            const elWidth = this.outerWidth(true);
+            const elHeight = this.outerHeight(true);
+
+            // todo
+            // console.log('screen', screen);
+            // console.log('rect', rect);
+            // console.log('prop', prop);
+            // console.log('size', {width: elWidth, height: elHeight});
+
+            for (let i = 0; i < alignments.length; i += 1) {
+                const location = alignments[i];
+                const screenPos = rect[location];
+
+                if (typeof prop[location] === 'number') {
+                    // negative
+                    if (screenPos < 0) {
+                        prop[location] += Math.abs(screenPos);
+                    }
+                    // positive
+                    else if (['bottom', 'top'].indexOf(location) !== -1) {
+                        if (screenPos + elHeight > screen.maxY) {
+                            // console.log(location + ': ' + (screenPos + elHeight) + " > " + available.maxY);
+                            // const extraSpace = Math.abs(available.maxY - Math.abs(prop[location]) - elHeight);
+                            const extraSpace = Math.abs(screen.maxY - Math.abs(rect[location]) - elHeight);
+                            prop[location] -= extraSpace;
+                            // console.log(available.maxY + '-' + extraSpace + ' = ', prop[location]);
+                        }
+                    }
+                    else if (['left', 'right'].indexOf(location) !== -1) {
+                        if (screenPos + elWidth > screen.maxX) {
+                            // console.log(location + ': ' + (screenPos + elWidth) + " > " + available.maxX);
+                            const extraSpace = Math.abs(screen.maxX - Math.abs(rect[location]) - elWidth);
+                            prop[location] -= extraSpace;
+                            // console.log(available.maxX + '-' + extraSpace + ' = ', prop[location]);
+                        }
+                    }
+                }
+            }
+            // console.log('prop', prop);
+
+            // Apply alignment
+            this.css(prop);
+        }
+        return this;
+    }
+
+    /**
      * Sets the position of the element toward another element
      * @param position
      * @param target
+     * @param attach
      * @return {Cuic.Element}
      */
-    anchor(position, target) {
+    anchor(position, target, attach) {
         if (this.isInDOM()) {
             this.debug('anchor', position, target);
             target = Cuic.element(target || this.options.target);
-            this.css(Cuic.calculateAnchor(this, position, target));
+            this.css(this.calculateAnchor(position, target, attach));
             this.addPositionClass(position, 'anchored');
             this.options.anchor = position;
             this.options.target = target;
@@ -315,70 +718,11 @@ Cuic.Element = class {
     }
 
     /**
-     * Auto align element in its parent
-     * @return {Cuic.Element}
-     */
-    autoAlign() {
-        if (this.isInDOM()) {
-            this.debug('autoAlign');
-            const available = Cuic.calculateAvailablePosition(this, this.parent());
-            const alignments = ['bottom', 'left', 'right', 'top'];
-            let prop = this.position();
-
-            // Only keep properties that are styled
-            for (let i = 0; i < alignments.length; i += 1) {
-                if (!this.css(alignments[i])) {
-                    prop[alignments[i]] = '';
-                }
-            }
-
-            // Limit horizontal align
-            if (typeof prop.left === 'number') {
-                if (prop.left < available.minX) {
-                    prop.left = available.minX;
-                }
-                else if (prop.left > available.maxX) {
-                    prop.left = available.maxX;
-                }
-            }
-            if (typeof prop.right === 'number') {
-                if (prop.right < available.minX) {
-                    prop.right = available.minX;
-                }
-                else if (prop.right > available.maxX) {
-                    prop.right = available.maxX;
-                }
-            }
-
-            // Limit vertical align
-            if (typeof prop.top === 'number') {
-                if (prop.top < available.minY) {
-                    prop.top = available.minY;
-                }
-                else if (prop.top > available.maxY) {
-                    prop.top = available.maxY;
-                }
-            }
-            if (typeof prop.bottom === 'number') {
-                if (prop.bottom < available.minY) {
-                    prop.bottom = available.minY;
-                }
-                else if (prop.bottom > available.maxY) {
-                    prop.bottom = available.maxY;
-                }
-            }
-            // Apply alignment
-            this.css(prop);
-        }
-        return this;
-    }
-
-    /**
      * Auto fits element in its parent
      * @return {Cuic.Element}
      */
     autoFit() {
-        this.autoAlign();
+        this.alignInParent();
         this.autoResize();
         return this;
     }
@@ -390,7 +734,7 @@ Cuic.Element = class {
     autoResize() {
         if (this.isInDOM()) {
             this.debug('autoResize');
-            const available = Cuic.calculateAvailableSpace(this, this.parent());
+            const available = this.calculateAvailableSpace();
 
             let prop = {
                 height: this.outerHeight(),
@@ -663,7 +1007,9 @@ Cuic.Element = class {
         let height;
 
         if (node instanceof Window) {
-            height = node.screen.height;
+            height = node.innerHeight
+                || document.documentElement.clientHeight
+                || document.body.clientHeight;
         } else {
             height = node.clientHeight - this.padding().vertical;
         }
@@ -775,6 +1121,14 @@ Cuic.Element = class {
     }
 
     /**
+     * Checks if the element has an absolute position
+     * @return {boolean}
+     */
+    isAbsolute() {
+        return this.css('position') === 'absolute';
+    }
+
+    /**
      * Checks the element alignment
      * @param position
      * @return {boolean}
@@ -857,6 +1211,14 @@ Cuic.Element = class {
     }
 
     /**
+     * Checks if the element has a fixed position
+     * @return {boolean}
+     */
+    isFixed() {
+        return this.css('position') === 'fixed';
+    }
+
+    /**
      * Checks if the element is hidden
      * @return {boolean}
      */
@@ -900,6 +1262,14 @@ Cuic.Element = class {
     }
 
     /**
+     * Checks if the element has a relative position
+     * @return {boolean}
+     */
+    isRelative() {
+        return this.css('position') === 'relative';
+    }
+
+    /**
      * Checks if the element is removed from the DOM
      * @return {boolean}
      */
@@ -915,6 +1285,14 @@ Cuic.Element = class {
     isShown() {
         return !this.hasClass('hidden')
             && this.css('display') !== 'none';
+    }
+
+    /**
+     * Checks if the element has a static position
+     * @return {boolean}
+     */
+    isStatic() {
+        return this.css('position') === 'static';
     }
 
     /**
@@ -1143,6 +1521,14 @@ Cuic.Element = class {
     }
 
     /**
+     * Returns position of element in the screen
+     * @return {*}
+     */
+    positionOnScreen() {
+        return Cuic.extend({}, this.node().getBoundingClientRect());
+    }
+
+    /**
      * Prepends the element
      * @param element
      * @return {Cuic.Element}
@@ -1249,7 +1635,9 @@ Cuic.Element = class {
         let width;
 
         if (node instanceof Window) {
-            width = node.screen.width;
+            width = node.innerWidth
+                || document.documentElement.clientWidth
+                || document.body.clientWidth;
         } else {
             width = node.clientWidth - this.padding().horizontal;
         }

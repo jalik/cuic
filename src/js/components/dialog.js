@@ -123,6 +123,7 @@ Cuic.Dialog = class extends Cuic.Component {
          */
         if (this.options.movable) {
             this.movable = new Cuic.Movable({
+                constraintToParent: true,
                 enabled: this.options.movable,
                 element: this.node(),
                 handle: this.title,
@@ -311,13 +312,13 @@ Cuic.Dialog = class extends Cuic.Component {
      */
     resizeContent() {
         // Calculate available space
-        const availableSpace = Cuic.calculateAvailableSpace(this);
+        const available = this.calculateAvailableSpace();
 
         // Set panel max height
-        this.css({'max-height': availableSpace.height});
+        this.css({'max-height': available.height});
 
         // Calculate content max height
-        let maxHeight = availableSpace.height;
+        let maxHeight = available.height;
 
         // Subtract header height
         if (this.header instanceof Cuic.Element) {

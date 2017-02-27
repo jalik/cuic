@@ -107,6 +107,10 @@ Cuic.Tooltip = class extends Cuic.Component {
 
         // Reposition tail when tooltip position change
         this.onAnchored(() => {
+            // Constraint tooltip in screen
+            if (this.isAbsolute() || this.isFixed()){
+                this.alignInScreen();
+            }
             this.updateTail();
         });
 
@@ -127,6 +131,10 @@ Cuic.Tooltip = class extends Cuic.Component {
         this.onOpened(() => {
             // Close the popup when the user clicks outside of it
             Cuic.on('click', document, autoClose);
+            // Constraint tooltip in screen
+            if (this.isAbsolute() || this.isFixed()){
+                this.alignInScreen();
+            }
         });
 
         // Add element to collection

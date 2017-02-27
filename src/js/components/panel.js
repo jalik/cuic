@@ -161,7 +161,7 @@ Cuic.Panel = class extends Cuic.Component {
             clone.appendTo(this.parent());
 
             // Calculate minimized size
-            let prop = Cuic.calculateAlign(clone, this.options.position);
+            let prop = clone.calculateAlign(this.options.position);
             prop.height = clone.height();
             prop.width = clone.width();
             clone.remove();
@@ -243,13 +243,13 @@ Cuic.Panel = class extends Cuic.Component {
      */
     resizeContent() {
         // Calculate available space
-        const availableSpace = Cuic.calculateAvailableSpace(this);
+        const available = this.calculateAvailableSpace();
 
         // Set panel max height
-        this.css({'max-height': availableSpace.height});
+        this.css({'max-height': available.height});
 
         // Calculate content max height
-        let maxHeight = availableSpace.height;
+        let maxHeight = available.height;
 
         // Subtract header height
         if (this.header instanceof Cuic.Element) {

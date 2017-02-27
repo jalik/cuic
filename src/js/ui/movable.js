@@ -98,9 +98,15 @@ Cuic.Movable = class extends Cuic.Element {
                     prop.bottom = '';
                 }
 
+                // Limit position to parent available position
+                if (this.options.constraintToParent) {
+                    const available = this.calculateAvailablePosition();
+                    prop = Cuic.constraintPosition(prop, available);
+                    this.alignInParent();
+                }
+
                 // Move element
                 this.css(prop);
-                this.autoAlign();
             };
 
             // Moving
@@ -150,6 +156,7 @@ Cuic.Movable = class extends Cuic.Element {
 Cuic.Movable.prototype.options = {
     handle: null,
     handleClassName: 'movable-handle',
+    constraintToParent: true,
     horizontal: true,
     namespace: 'movable',
     rootOnly: true,

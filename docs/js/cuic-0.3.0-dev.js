@@ -177,333 +177,6 @@ if (!Element.prototype.matches) {
 
 
         /**
-         * Position an object inside another
-         * @param element
-         * @param position
-         * @param parent
-         * @return {*}
-         */
-        calculateAlign: function calculateAlign(element, position, parent) {
-            element = this.element(element);
-            position = position || '';
-
-            if (parent) {
-                parent = this.element(parent);
-
-                // Use body as parent
-                if (parent.node().nodeName === 'HTML') {
-                    parent = this.element(document.body);
-                }
-            } else {
-                // Use parent node if no parent defined
-                parent = element.offsetParent();
-            }
-
-            var elHeight = element.outerHeight(true);
-            var elWidth = element.outerWidth(true);
-            var parentHeight = parent.height();
-            var parentWidth = parent.width();
-            var relativeLeft = parent.node().scrollLeft; // todo use internal method scrollLeft
-            var relativeTop = parent.node().scrollTop; // todo use internal method scrollTop
-            var relativeBottom = -relativeTop;
-            var relativeRight = -relativeLeft;
-            var prop = {
-                bottom: '',
-                left: '',
-                right: '',
-                top: ''
-            };
-
-            // If the target is fixed, we use the window as parent
-            switch (element.css('position')) {
-                case 'fixed':
-                    parent = this.element(window);
-                    parentHeight = parent.innerHeight();
-                    parentWidth = parent.innerWidth();
-                    relativeLeft = 0;
-                    relativeTop = 0;
-                    relativeBottom = 0;
-                    relativeRight = 0;
-                    break;
-            }
-
-            var centerX = relativeLeft + Math.max(0, parent.innerWidth() / 2 - elWidth / 2);
-            var centerY = relativeTop + Math.max(0, parent.innerHeight() / 2 - elHeight / 2);
-
-            // Vertical position
-            if (position.indexOf('top') !== -1) {
-                prop.top = 0;
-            } else if (position.indexOf('bottom') !== -1) {
-                prop.bottom = 0;
-            } else {
-                prop.top = centerY;
-            }
-
-            // Horizontal position
-            if (position.indexOf('left') !== -1) {
-                prop.left = 0;
-            } else if (position.indexOf('right') !== -1) {
-                prop.right = 0;
-            } else {
-                prop.left = centerX;
-            }
-
-            // Calculate available position
-            var available = this.calculateAvailablePosition(element, parent);
-
-            // Constraint position
-            if (prop.left < available.minX) {
-                prop.left = available.minX;
-            } else if (prop.left > available.maxX) {
-                prop.left = available.maxX;
-            }
-            return prop;
-        },
-
-
-        /**
-         * Position an object from the exterior
-         * @param element
-         * @param position
-         * @param target
-         * @return {*}
-         */
-        calculateAnchor: function calculateAnchor(element, position, target) {
-            position = position || '';
-            element = this.element(element);
-
-            var targetHeight = void 0;
-            var targetWidth = void 0;
-            var targetOffset = void 0;
-
-            // Target is a coordinate (x, y)
-            if (target instanceof Array && target.length === 2) {
-                targetHeight = 1;
-                targetWidth = 1;
-                targetOffset = {
-                    left: target[0],
-                    top: target[1]
-                };
-            }
-            // Target is an element
-            else {
-                    target = this.element(target);
-                    targetHeight = target.outerHeight();
-                    targetWidth = target.outerWidth();
-                    targetOffset = target.offset();
-                }
-
-            var elWidth = element.outerWidth(true);
-            var elHeight = element.outerHeight(true);
-            var elCenterX = elWidth / 2;
-            var elCenterY = elHeight / 2;
-            var targetCenterX = targetWidth / 2;
-            var targetCenterY = targetHeight / 2;
-
-            // fixme elHeight can be less if animated (resized), which leads to wrong elCenterY
-            // fixme the problem is with element with scale(0) or display:none
-
-            // const disp = element.css('display');
-            // const cls = element.getClasses().join(' ');
-            // // element.css('display', '');
-            // element.removeClass(cls);
-            // let compHeight = this.getComputedStyle(element, 'height');
-            // let compBorder = element.border();
-            // let compPadding = element.padding();
-            // let compMargin = element.margin();
-            // let total = compPadding.vertical + compBorder.vertical + compMargin.vertical;
-            // console.log('elCenterY', elCenterY, 'outerHeight:', elHeight, 'compHeight:', compHeight, 'compTotal:', total);
-            // console.log('height', element.height())
-            // console.log('innerHeight', element.innerHeight())
-            // console.log('outerHeight', element.outerHeight())
-            // element.addClass(cls);
-            // // element.css(disp);
-            // element.hide();
-
-            var prop = {
-                bottom: '',
-                left: '',
-                right: '',
-                top: ''
-            };
-
-            // Vertical positioning
-            if (position.indexOf('bottom') !== -1) {
-                prop.top = targetOffset.top + targetHeight;
-            } else if (position.indexOf('top') !== -1) {
-                prop.top = targetOffset.top - elHeight;
-            } else {
-                prop.top = targetOffset.top + targetCenterY - elCenterY;
-            }
-
-            // Horizontal positioning
-            if (position.indexOf('left') !== -1) {
-                prop.left = targetOffset.left - elWidth;
-            } else if (position.indexOf('right') !== -1) {
-                prop.left = targetOffset.left + targetWidth;
-            } else {
-                prop.left = targetOffset.left + targetCenterX - elCenterX;
-            }
-
-            // Use window for positioning
-            if (element.css('position') === 'fixed') {
-                prop.left -= window.scrollX;
-                prop.top -= window.scrollY;
-            }
-
-            // todo constraint element to be inside visible area of the screen
-
-            return prop;
-        },
-
-
-        /**
-         * Returns the available position inside a container
-         * @param element
-         * @param parent
-         * @return {{height, width}}
-         */
-        calculateAvailablePosition: function calculateAvailablePosition(element, parent) {
-            element = this.element(element);
-            parent = parent ? this.element(parent) : element.offsetParent();
-
-            var prop = {
-                minX: 0,
-                minY: 0,
-                maxX: Math.max(0, parent.width() - element.outerWidth(true)),
-                maxY: Math.max(0, parent.height() - element.outerHeight(true))
-            };
-
-            // Adjust limits depending of element position
-            switch (element.css('position')) {
-                case 'absolute':
-                case 'fixed':
-                    var prPadding = parent.padding();
-                    // const elMargin = element.margin();
-                    prop.maxX += prPadding.horizontal;
-                    prop.maxY += prPadding.vertical;
-                    // prop.maxX -= elMargin.horizontal;
-                    // prop.maxY -= elMargin.vertical;
-                    // fixme max is wrong sometimes
-                    break;
-            }
-            return prop;
-        },
-
-
-        /**
-         * Returns the available space inside a container
-         * @param element
-         * @param parent
-         * @return {{height, width}}
-         */
-        calculateAvailableSpace: function calculateAvailableSpace(element, parent) {
-            element = this.element(element);
-            parent = parent ? this.element(parent) : element.offsetParent();
-
-            var elMargin = element.margin();
-
-            var prop = {
-                height: parent.height(),
-                width: parent.width()
-            };
-
-            // Adjust limits depending of element position
-            switch (element.css('position')) {
-                case 'absolute':
-                case 'fixed':
-                    var prPadding = parent.padding();
-                    prop.height += prPadding.vertical;
-                    prop.width += prPadding.horizontal;
-                    prop.height -= elMargin.vertical;
-                    prop.width -= elMargin.horizontal;
-                    break;
-                case 'relative':
-                    prop.height -= elMargin.vertical;
-                    prop.width -= elMargin.horizontal;
-                    break;
-            }
-            return prop;
-        },
-
-
-        /**
-         * Calculates maximized properties
-         * @param element
-         * @return {*}
-         */
-        calculateMaximize: function calculateMaximize(element) {
-            element = this.element(element);
-            var parent = element.offsetParent();
-            var parentPadding = parent.padding();
-            var elMargin = element.margin();
-            var prop = {
-                bottom: '',
-                height: parent.innerHeight() - parentPadding.vertical,
-                left: '',
-                right: '',
-                top: '',
-                width: parent.innerWidth() - parentPadding.horizontal
-            };
-
-            // Adjust dimensions
-            switch (element.css('position')) {
-                case 'absolute':
-                case 'fixed':
-                    prop.height += parentPadding.vertical;
-                    prop.height -= elMargin.vertical;
-                    prop.width += parentPadding.horizontal;
-                    prop.width -= elMargin.horizontal;
-                    break;
-
-                case 'relative':
-                    prop.height -= elMargin.vertical;
-                    prop.width -= elMargin.horizontal;
-                    break;
-            }
-
-            // Horizontal position
-            if (element.isAligned('right')) {
-                prop.right = 0;
-            } else {
-                prop.left = 0;
-            }
-            // Vertical position
-            if (element.isAligned('bottom')) {
-                prop.bottom = 0;
-            } else {
-                prop.top = 0;
-            }
-            return prop;
-        },
-
-
-        /**
-         * Calculates minimized properties
-         * @param element
-         * @param position
-         * @return {*}
-         */
-        calculateMinimize: function calculateMinimize(element, position) {
-            element = this.element(element);
-            position = position || '';
-
-            // Create a clone with minimal size
-            var clone = element.clone();
-            clone.css({ height: 'auto', width: 'auto' });
-            clone.appendTo(element.parent());
-
-            // Calculate minimized size
-            var prop = this.calculateAlign(clone, position);
-            prop.height = clone.outerHeight();
-            prop.width = clone.outerWidth();
-            clone.remove();
-
-            return prop;
-        },
-
-
-        /**
          * Calls the function with arguments
          * @return {*}
          */
@@ -519,6 +192,48 @@ if (!Element.prototype.matches) {
                 fn = args.shift();
             }
             return this.apply(fn, context, args);
+        },
+
+
+        /**
+         * Constraints position to limits
+         * @param prop
+         * @param limit
+         * @return {*}
+         */
+        constraintPosition: function constraintPosition(prop, limit) {
+            // Limit horizontal align
+            if (typeof prop.left === 'number') {
+                if (prop.left < limit.minX) {
+                    prop.left = limit.minX;
+                } else if (prop.left > limit.maxX) {
+                    prop.left = limit.maxX;
+                }
+            }
+            if (typeof prop.right === 'number') {
+                if (prop.right < limit.minX) {
+                    prop.right = limit.minX;
+                } else if (prop.right > limit.maxX) {
+                    prop.right = limit.maxX;
+                }
+            }
+
+            // Limit vertical align
+            if (typeof prop.top === 'number') {
+                if (prop.top < limit.minY) {
+                    prop.top = limit.minY;
+                } else if (prop.top > limit.maxY) {
+                    prop.top = limit.maxY;
+                }
+            }
+            if (typeof prop.bottom === 'number') {
+                if (prop.bottom < limit.minY) {
+                    prop.bottom = limit.minY;
+                } else if (prop.bottom > limit.maxY) {
+                    prop.bottom = limit.maxY;
+                }
+            }
+            return prop;
         },
 
 
@@ -592,12 +307,10 @@ if (!Element.prototype.matches) {
 
                 if ((typeof b === 'undefined' ? 'undefined' : _typeof(b)) === 'object' && b !== null && b !== undefined && (typeof a === 'undefined' ? 'undefined' : _typeof(a)) === 'object' && a !== null && a !== undefined) {
                     for (var key in b) {
-                        if (b.hasOwnProperty(key)) {
-                            if (recursive && _typeof(b[key]) === 'object' && b[key] !== null && b[key] !== undefined) {
-                                a[key] = this.extend(a[key], b[key]);
-                            } else {
-                                a[key] = b[key];
-                            }
+                        if (recursive && _typeof(b[key]) === 'object' && b[key] !== null && b[key] !== undefined) {
+                            a[key] = this.extend(a[key], b[key]);
+                        } else {
+                            a[key] = b[key];
                         }
                     }
                 } else if (b !== null && b !== undefined) {
@@ -2057,13 +1770,327 @@ Cuic.Element = function () {
     }
 
     /**
-     * Displays element for calculation (positioning, parenting...)
-     * @return {Cuic.Element}
-     * @private
+     * Position an object inside another
+     * @param position
+     * @param parent
+     * @return {{bottom: string, left: string, right: string, top: string}}
      */
 
 
     _createClass(_class5, [{
+        key: 'calculateAlign',
+        value: function calculateAlign(position, parent) {
+            position = position || '';
+
+            if (parent) {
+                parent = Cuic.element(parent);
+
+                // Use body as parent
+                if (parent.node().nodeName === 'HTML') {
+                    parent = Cuic.element(document.body);
+                }
+            } else {
+                // Use parent node if no parent defined
+                parent = this.offsetParent();
+            }
+
+            var elHeight = this.outerHeight(true);
+            var elWidth = this.outerWidth(true);
+            var parentHeight = parent.height();
+            var parentWidth = parent.width();
+            var relativeLeft = parent.node().scrollLeft; // todo use internal method scrollLeft
+            var relativeTop = parent.node().scrollTop; // todo use internal method scrollTop
+            var relativeBottom = -relativeTop;
+            var relativeRight = -relativeLeft;
+            var prop = {
+                bottom: '',
+                left: '',
+                right: '',
+                top: ''
+            };
+
+            // If the target is fixed, we use the window as parent
+            switch (this.css('position')) {
+                case 'fixed':
+                    parent = Cuic.element(window);
+                    parentHeight = parent.innerHeight();
+                    parentWidth = parent.innerWidth();
+                    relativeLeft = 0;
+                    relativeTop = 0;
+                    relativeBottom = 0;
+                    relativeRight = 0;
+                    break;
+            }
+
+            var centerX = relativeLeft + Math.max(0, parent.innerWidth() / 2 - elWidth / 2);
+            var centerY = relativeTop + Math.max(0, parent.innerHeight() / 2 - elHeight / 2);
+
+            // Vertical position
+            if (position.indexOf('top') !== -1) {
+                prop.top = 0;
+            } else if (position.indexOf('bottom') !== -1) {
+                prop.bottom = 0;
+            } else {
+                prop.top = centerY;
+            }
+
+            // Horizontal position
+            if (position.indexOf('left') !== -1) {
+                prop.left = 0;
+            } else if (position.indexOf('right') !== -1) {
+                prop.right = 0;
+            } else {
+                prop.left = centerX;
+            }
+
+            // Calculate available position
+            var available = this.calculateAvailablePosition(parent);
+
+            // Constraint position
+            if (prop.left < available.minX) {
+                prop.left = available.minX;
+            } else if (prop.left > available.maxX) {
+                prop.left = available.maxX;
+            }
+            return prop;
+        }
+
+        /**
+         * Position an object from the exterior
+         * @param position
+         * @param target
+         * @param attach todo attach to
+         * @return {{bottom: string, left: string, right: string, top: string}}
+         */
+
+    }, {
+        key: 'calculateAnchor',
+        value: function calculateAnchor(position, target, attach) {
+            position = position || '';
+
+            var targetHeight = void 0;
+            var targetWidth = void 0;
+            var targetOffset = void 0;
+
+            // Target is a coordinate (x, y)
+            if (target instanceof Array && target.length === 2) {
+                targetHeight = 1;
+                targetWidth = 1;
+                targetOffset = {
+                    left: target[0],
+                    top: target[1]
+                };
+            }
+            // Target is an element
+            else {
+                    target = Cuic.element(target);
+                    targetHeight = target.outerHeight();
+                    targetWidth = target.outerWidth();
+                    targetOffset = target.offset();
+                }
+
+            var elWidth = this.outerWidth(true);
+            var elHeight = this.outerHeight(true);
+            var elCenterX = elWidth / 2;
+            var elCenterY = elHeight / 2;
+            var targetCenterX = targetWidth / 2;
+            var targetCenterY = targetHeight / 2;
+
+            // fixme elHeight can be less if animated (resized), which leads to wrong elCenterY
+            // fixme the problem is with element with scale(0) or display:none
+
+            var prop = {
+                bottom: '',
+                left: '',
+                right: '',
+                top: ''
+            };
+
+            // Vertical positioning
+            if (position.indexOf('bottom') !== -1) {
+                prop.top = targetOffset.top + targetHeight;
+            } else if (position.indexOf('top') !== -1) {
+                prop.top = targetOffset.top - elHeight;
+            } else {
+                prop.top = targetOffset.top + targetCenterY - elCenterY;
+            }
+
+            // Horizontal positioning
+            if (position.indexOf('left') !== -1) {
+                prop.left = targetOffset.left - elWidth;
+            } else if (position.indexOf('right') !== -1) {
+                prop.left = targetOffset.left + targetWidth;
+            } else {
+                prop.left = targetOffset.left + targetCenterX - elCenterX;
+            }
+
+            // Use window for positioning
+            if (this.css('position') === 'fixed') {
+                prop.left -= window.scrollX;
+                prop.top -= window.scrollY;
+            }
+
+            // Calculate available position
+            // const limit = this.calculateAvailablePosition(target.offsetParent());
+            // prop = this.constraintPosition(prop, limit);
+
+            return prop;
+        }
+
+        /**
+         * Returns the available position inside a container
+         * @param parent
+         * @return {{minX: number, minY: number, maxX: number, maxY: number}}
+         */
+
+    }, {
+        key: 'calculateAvailablePosition',
+        value: function calculateAvailablePosition(parent) {
+            parent = parent ? Cuic.element(parent) : this.offsetParent();
+
+            var prop = {
+                minX: 0,
+                minY: 0,
+                maxX: Math.max(0, parent.width() - this.outerWidth(true)),
+                maxY: Math.max(0, parent.height() - this.outerHeight(true))
+            };
+
+            // Adjust limits depending of element position
+            switch (this.css('position')) {
+                case 'absolute':
+                case 'fixed':
+                    var prPadding = parent.padding();
+                    // const elMargin = this.margin();
+                    prop.maxX += prPadding.horizontal;
+                    prop.maxY += prPadding.vertical;
+                    // prop.maxX -= elMargin.horizontal;
+                    // prop.maxY -= elMargin.vertical;
+                    // fixme max is wrong sometimes
+                    break;
+            }
+            return prop;
+        }
+
+        /**
+         * Returns the available space inside a container
+         * @param parent
+         * @return {{height, width}}
+         */
+
+    }, {
+        key: 'calculateAvailableSpace',
+        value: function calculateAvailableSpace(parent) {
+            parent = parent ? Cuic.element(parent) : this.offsetParent();
+            var elMargin = this.margin();
+
+            var prop = {
+                height: parent.height(),
+                width: parent.width()
+            };
+
+            // Adjust limits depending of element position
+            switch (this.css('position')) {
+                case 'absolute':
+                case 'fixed':
+                    var prPadding = parent.padding();
+                    prop.height += prPadding.vertical;
+                    prop.width += prPadding.horizontal;
+                    prop.height -= elMargin.vertical;
+                    prop.width -= elMargin.horizontal;
+                    break;
+                case 'relative':
+                    prop.height -= elMargin.vertical;
+                    prop.width -= elMargin.horizontal;
+                    break;
+            }
+            return prop;
+        }
+
+        /**
+         * Calculates maximized properties
+         * @return {*}
+         */
+
+    }, {
+        key: 'calculateMaximize',
+        value: function calculateMaximize() {
+            var parent = this.offsetParent();
+            var parentPadding = parent.padding();
+            var elMargin = this.margin();
+            var prop = {
+                bottom: '',
+                height: parent.innerHeight() - parentPadding.vertical,
+                left: '',
+                right: '',
+                top: '',
+                width: parent.innerWidth() - parentPadding.horizontal
+            };
+
+            // Adjust dimensions
+            switch (this.css('position')) {
+                case 'absolute':
+                case 'fixed':
+                    prop.height += parentPadding.vertical;
+                    prop.height -= elMargin.vertical;
+                    prop.width += parentPadding.horizontal;
+                    prop.width -= elMargin.horizontal;
+                    break;
+
+                case 'relative':
+                    prop.height -= elMargin.vertical;
+                    prop.width -= elMargin.horizontal;
+                    break;
+            }
+
+            // todo maximize from current this.options.position (if right:0, stay right:0)
+
+            // Horizontal position
+            if (this.isAligned('right')) {
+                prop.right = 0;
+            } else {
+                prop.left = 0;
+            }
+            // Vertical position
+            if (this.isAligned('bottom')) {
+                prop.bottom = 0;
+            } else {
+                prop.top = 0;
+            }
+            return prop;
+        }
+
+        /**
+         * Calculates minimized properties
+         * @param position
+         * @return {*}
+         */
+
+    }, {
+        key: 'calculateMinimize',
+        value: function calculateMinimize(position) {
+            position = position || '';
+
+            // Create a clone with minimal size
+            var clone = this.clone();
+            clone.css({ height: 'auto', width: 'auto' });
+            clone.appendTo(this.parent());
+
+            // Calculate minimized size
+            var prop = clone.calculateAlign(position);
+            prop.height = clone.outerHeight();
+            prop.width = clone.outerWidth();
+            clone.remove();
+
+            return prop;
+        }
+
+        /**
+         * Displays element for calculation (positioning, parenting...)
+         * @return {Cuic.Element}
+         * @private
+         */
+
+    }, {
         key: '_display',
         value: function _display() {
             if (!this.hasClass('computing')) {
@@ -2179,7 +2206,7 @@ Cuic.Element = function () {
 
                 if (['absolute', 'fixed'].indexOf(pos) !== -1) {
                     this.debug('align', position);
-                    this.css(Cuic.calculateAlign(this, position));
+                    this.css(this.calculateAlign(position));
                     this.addPositionClass(position, 'aligned');
                     this.options.position = position;
                     this.events.trigger('aligned', position);
@@ -2189,19 +2216,121 @@ Cuic.Element = function () {
         }
 
         /**
+         * Aligns element in its parent
+         * @return {Cuic.Element}
+         */
+
+    }, {
+        key: 'alignInParent',
+        value: function alignInParent() {
+            if (this.isInDOM()) {
+                this.debug('alignInParent');
+                var alignments = ['bottom', 'left', 'right', 'top'];
+                var prop = this.position();
+
+                // Only keep properties that are styled
+                for (var i = 0; i < alignments.length; i += 1) {
+                    if (!this.css(alignments[i])) {
+                        prop[alignments[i]] = '';
+                    }
+                }
+
+                // Limit position to parent available position
+                var available = this.calculateAvailablePosition();
+                prop = Cuic.constraintPosition(prop, available);
+
+                // Apply alignment
+                this.css(prop);
+            }
+            return this;
+        }
+
+        /**
+         * Aligns element in screen
+         * @return {Cuic.Element}
+         */
+
+    }, {
+        key: 'alignInScreen',
+        value: function alignInScreen() {
+            if (this.isInDOM()) {
+                this.debug('alignInScreen');
+                var alignments = ['bottom', 'left', 'right', 'top'];
+                var prop = this.position();
+
+                // Only keep properties that are styled
+                for (var i = 0; i < alignments.length; i += 1) {
+                    if (!this.css(alignments[i])) {
+                        prop[alignments[i]] = '';
+                    }
+                }
+
+                // Limit position to screen
+                var screen = {
+                    minX: 0, maxX: Cuic.element(window).width(),
+                    minY: 0, maxY: Cuic.element(window).height()
+                };
+                var rect = this.positionOnScreen();
+                var elWidth = this.outerWidth(true);
+                var elHeight = this.outerHeight(true);
+
+                // todo
+                // console.log('screen', screen);
+                // console.log('rect', rect);
+                // console.log('prop', prop);
+                // console.log('size', {width: elWidth, height: elHeight});
+
+                for (var _i = 0; _i < alignments.length; _i += 1) {
+                    var location = alignments[_i];
+                    var screenPos = rect[location];
+
+                    if (typeof prop[location] === 'number') {
+                        // negative
+                        if (screenPos < 0) {
+                            prop[location] += Math.abs(screenPos);
+                        }
+                        // positive
+                        else if (['bottom', 'top'].indexOf(location) !== -1) {
+                                if (screenPos + elHeight > screen.maxY) {
+                                    // console.log(location + ': ' + (screenPos + elHeight) + " > " + available.maxY);
+                                    // const extraSpace = Math.abs(available.maxY - Math.abs(prop[location]) - elHeight);
+                                    var extraSpace = Math.abs(screen.maxY - Math.abs(rect[location]) - elHeight);
+                                    prop[location] -= extraSpace;
+                                    // console.log(available.maxY + '-' + extraSpace + ' = ', prop[location]);
+                                }
+                            } else if (['left', 'right'].indexOf(location) !== -1) {
+                                if (screenPos + elWidth > screen.maxX) {
+                                    // console.log(location + ': ' + (screenPos + elWidth) + " > " + available.maxX);
+                                    var _extraSpace = Math.abs(screen.maxX - Math.abs(rect[location]) - elWidth);
+                                    prop[location] -= _extraSpace;
+                                    // console.log(available.maxX + '-' + extraSpace + ' = ', prop[location]);
+                                }
+                            }
+                    }
+                }
+                // console.log('prop', prop);
+
+                // Apply alignment
+                this.css(prop);
+            }
+            return this;
+        }
+
+        /**
          * Sets the position of the element toward another element
          * @param position
          * @param target
+         * @param attach
          * @return {Cuic.Element}
          */
 
     }, {
         key: 'anchor',
-        value: function anchor(position, target) {
+        value: function anchor(position, target, attach) {
             if (this.isInDOM()) {
                 this.debug('anchor', position, target);
                 target = Cuic.element(target || this.options.target);
-                this.css(Cuic.calculateAnchor(this, position, target));
+                this.css(this.calculateAnchor(position, target, attach));
                 this.addPositionClass(position, 'anchored');
                 this.options.anchor = position;
                 this.options.target = target;
@@ -2261,64 +2390,6 @@ Cuic.Element = function () {
         }
 
         /**
-         * Auto align element in its parent
-         * @return {Cuic.Element}
-         */
-
-    }, {
-        key: 'autoAlign',
-        value: function autoAlign() {
-            if (this.isInDOM()) {
-                this.debug('autoAlign');
-                var available = Cuic.calculateAvailablePosition(this, this.parent());
-                var alignments = ['bottom', 'left', 'right', 'top'];
-                var prop = this.position();
-
-                // Only keep properties that are styled
-                for (var i = 0; i < alignments.length; i += 1) {
-                    if (!this.css(alignments[i])) {
-                        prop[alignments[i]] = '';
-                    }
-                }
-
-                // Limit horizontal align
-                if (typeof prop.left === 'number') {
-                    if (prop.left < available.minX) {
-                        prop.left = available.minX;
-                    } else if (prop.left > available.maxX) {
-                        prop.left = available.maxX;
-                    }
-                }
-                if (typeof prop.right === 'number') {
-                    if (prop.right < available.minX) {
-                        prop.right = available.minX;
-                    } else if (prop.right > available.maxX) {
-                        prop.right = available.maxX;
-                    }
-                }
-
-                // Limit vertical align
-                if (typeof prop.top === 'number') {
-                    if (prop.top < available.minY) {
-                        prop.top = available.minY;
-                    } else if (prop.top > available.maxY) {
-                        prop.top = available.maxY;
-                    }
-                }
-                if (typeof prop.bottom === 'number') {
-                    if (prop.bottom < available.minY) {
-                        prop.bottom = available.minY;
-                    } else if (prop.bottom > available.maxY) {
-                        prop.bottom = available.maxY;
-                    }
-                }
-                // Apply alignment
-                this.css(prop);
-            }
-            return this;
-        }
-
-        /**
          * Auto fits element in its parent
          * @return {Cuic.Element}
          */
@@ -2326,7 +2397,7 @@ Cuic.Element = function () {
     }, {
         key: 'autoFit',
         value: function autoFit() {
-            this.autoAlign();
+            this.alignInParent();
             this.autoResize();
             return this;
         }
@@ -2341,7 +2412,7 @@ Cuic.Element = function () {
         value: function autoResize() {
             if (this.isInDOM()) {
                 this.debug('autoResize');
-                var available = Cuic.calculateAvailableSpace(this, this.parent());
+                var available = this.calculateAvailableSpace();
 
                 var prop = {
                     height: this.outerHeight(),
@@ -2659,7 +2730,7 @@ Cuic.Element = function () {
             var height = void 0;
 
             if (node instanceof Window) {
-                height = node.screen.height;
+                height = node.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
             } else {
                 height = node.clientHeight - this.padding().vertical;
             }
@@ -2787,6 +2858,17 @@ Cuic.Element = function () {
         }
 
         /**
+         * Checks if the element has an absolute position
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isAbsolute',
+        value: function isAbsolute() {
+            return this.css('position') === 'absolute';
+        }
+
+        /**
          * Checks the element alignment
          * @param position
          * @return {boolean}
@@ -2882,6 +2964,17 @@ Cuic.Element = function () {
         }
 
         /**
+         * Checks if the element has a fixed position
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isFixed',
+        value: function isFixed() {
+            return this.css('position') === 'fixed';
+        }
+
+        /**
          * Checks if the element is hidden
          * @return {boolean}
          */
@@ -2933,6 +3026,17 @@ Cuic.Element = function () {
         }
 
         /**
+         * Checks if the element has a relative position
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isRelative',
+        value: function isRelative() {
+            return this.css('position') === 'relative';
+        }
+
+        /**
          * Checks if the element is removed from the DOM
          * @return {boolean}
          */
@@ -2953,6 +3057,17 @@ Cuic.Element = function () {
         key: 'isShown',
         value: function isShown() {
             return !this.hasClass('hidden') && this.css('display') !== 'none';
+        }
+
+        /**
+         * Checks if the element has a static position
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isStatic',
+        value: function isStatic() {
+            return this.css('position') === 'static';
         }
 
         /**
@@ -3236,6 +3351,17 @@ Cuic.Element = function () {
         }
 
         /**
+         * Returns position of element in the screen
+         * @return {*}
+         */
+
+    }, {
+        key: 'positionOnScreen',
+        value: function positionOnScreen() {
+            return Cuic.extend({}, this.node().getBoundingClientRect());
+        }
+
+        /**
          * Prepends the element
          * @param element
          * @return {Cuic.Element}
@@ -3366,7 +3492,7 @@ Cuic.Element = function () {
             var width = void 0;
 
             if (node instanceof Window) {
-                width = node.screen.width;
+                width = node.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
             } else {
                 width = node.clientWidth - this.padding().horizontal;
             }
@@ -3556,8 +3682,7 @@ Cuic.Component = function (_Cuic$Element) {
             this.events.trigger('maximize');
             this.removeClass('minimized');
             this.addClass('maximized');
-            this.css(Cuic.calculateMaximize(this));
-            // this.autoAlign();
+            this.css(this.calculateMaximize());
             this.once('transitionend', function (ev) {
                 if (_this7.isMaximized()) {
                     _this7.debug('maximized');
@@ -3586,8 +3711,8 @@ Cuic.Component = function (_Cuic$Element) {
             this.events.trigger('maximizeX');
             this.removeClass('minimized');
             this.addClass('maximized-x');
-            this.css({ width: Cuic.calculateMaximize(this).width });
-            this.autoAlign();
+            var prop = this.calculateMaximize();
+            this.css({ width: prop.width, left: prop.left, right: prop.right });
             this.once('transitionend', function (ev) {
                 if (_this8.isMaximizedX()) {
                     _this8.debug('maximizedX');
@@ -3616,8 +3741,8 @@ Cuic.Component = function (_Cuic$Element) {
             this.events.trigger('maximizeY');
             this.removeClass('minimized');
             this.addClass('maximized-y');
-            this.css({ height: Cuic.calculateMaximize(this).height });
-            this.autoAlign();
+            var prop = this.calculateMaximize();
+            this.css({ height: prop.height, top: prop.top, bottom: prop.bottom });
             this.once('transitionend', function (ev) {
                 if (_this9.isMaximizedY()) {
                     _this9.debug('maximizedY');
@@ -3646,7 +3771,7 @@ Cuic.Component = function (_Cuic$Element) {
             this.events.trigger('minimize');
             this.removeClass('maximized maximized-x maximized-y');
             this.addClass('minimized');
-            this.css(Cuic.calculateMinimize(this, this.options.position));
+            this.css(this.calculateMinimize(this.options.position));
             this.once('transitionend', function (ev) {
                 if (_this10.isMinimized()) {
                     _this10.debug('minimized');
@@ -4077,8 +4202,8 @@ Cuic.Elements = function () {
     }, {
         key: 'each',
         value: function each(callback) {
-            for (var _i = 0; _i < this.length; _i += 1) {
-                callback.call(this[_i], this[_i], this);
+            for (var _i2 = 0; _i2 < this.length; _i2 += 1) {
+                callback.call(this[_i2], this[_i2], this);
             }
             return this;
         }
@@ -4209,9 +4334,9 @@ Cuic.Elements = function () {
     }, {
         key: 'index',
         value: function index(element) {
-            for (var _i2 = 0; _i2 < this.length; _i2 += 1) {
-                if (this.eq(_i2) === element || this.get(_i2) === element) {
-                    return _i2;
+            for (var _i3 = 0; _i3 < this.length; _i3 += 1) {
+                if (this.eq(_i3) === element || this.get(_i3) === element) {
+                    return _i3;
                 }
             }
             return -1;
@@ -4634,9 +4759,15 @@ Cuic.Movable = function (_Cuic$Element3) {
                         prop.bottom = '';
                     }
 
+                    // Limit position to parent available position
+                    if (_this15.options.constraintToParent) {
+                        var available = _this15.calculateAvailablePosition();
+                        prop = Cuic.constraintPosition(prop, available);
+                        _this15.alignInParent();
+                    }
+
                     // Move element
                     _this15.css(prop);
-                    _this15.autoAlign();
                 };
 
                 // Moving
@@ -4698,6 +4829,7 @@ Cuic.Movable = function (_Cuic$Element3) {
 Cuic.Movable.prototype.options = {
     handle: null,
     handleClassName: 'movable-handle',
+    constraintToParent: true,
     horizontal: true,
     namespace: 'movable',
     rootOnly: true,
@@ -4809,8 +4941,8 @@ Cuic.Resizable = function (_Cuic$Element4) {
 
                     // Resize horizontally
                     if (_this16.options.horizontal) {
-                        for (var _i3 = 0; _i3 < _this16.horizontalHandles.length; _i3 += 1) {
-                            if (_this16.horizontalHandles.get(_i3).node() === handleTarget) {
+                        for (var _i4 = 0; _i4 < _this16.horizontalHandles.length; _i4 += 1) {
+                            if (_this16.horizontalHandles.get(_i4).node() === handleTarget) {
                                 var diffX = ev.clientX - startX;
                                 var width = initialWidth + diffX;
 
@@ -4825,8 +4957,8 @@ Cuic.Resizable = function (_Cuic$Element4) {
 
                     // Resize vertically
                     if (_this16.options.vertical) {
-                        for (var _i4 = 0; _i4 < _this16.verticalHandles.length; _i4 += 1) {
-                            if (_this16.verticalHandles.get(_i4).node() === handleTarget) {
+                        for (var _i5 = 0; _i5 < _this16.verticalHandles.length; _i5 += 1) {
+                            if (_this16.verticalHandles.get(_i5).node() === handleTarget) {
                                 var diffY = ev.clientY - startY;
                                 var height = initialHeight + diffY;
 
@@ -5254,8 +5386,8 @@ Cuic.Dialog = function (_Cuic$Component3) {
 
         // Add buttons
         if (_this21.options.buttons instanceof Array) {
-            for (var _i5 = 0; _i5 < _this21.options.buttons.length; _i5 += 1) {
-                _this21.addButton(_this21.options.buttons[_i5]);
+            for (var _i6 = 0; _i6 < _this21.options.buttons.length; _i6 += 1) {
+                _this21.addButton(_this21.options.buttons[_i6]);
             }
         }
 
@@ -5275,6 +5407,7 @@ Cuic.Dialog = function (_Cuic$Component3) {
          */
         if (_this21.options.movable) {
             _this21.movable = new Cuic.Movable({
+                constraintToParent: true,
                 enabled: _this21.options.movable,
                 element: _this21.node(),
                 handle: _this21.title,
@@ -5487,13 +5620,13 @@ Cuic.Dialog = function (_Cuic$Component3) {
         key: 'resizeContent',
         value: function resizeContent() {
             // Calculate available space
-            var availableSpace = Cuic.calculateAvailableSpace(this);
+            var available = this.calculateAvailableSpace();
 
             // Set panel max height
-            this.css({ 'max-height': availableSpace.height });
+            this.css({ 'max-height': available.height });
 
             // Calculate content max height
-            var maxHeight = availableSpace.height;
+            var maxHeight = available.height;
 
             // Subtract header height
             if (this.header instanceof Cuic.Element) {
@@ -6763,7 +6896,7 @@ Cuic.Panel = function (_Cuic$Component6) {
             clone.appendTo(_this27.parent());
 
             // Calculate minimized size
-            var prop = Cuic.calculateAlign(clone, _this27.options.position);
+            var prop = clone.calculateAlign(_this27.options.position);
             prop.height = clone.height();
             prop.width = clone.width();
             clone.remove();
@@ -6860,13 +6993,13 @@ Cuic.Panel = function (_Cuic$Component6) {
         key: 'resizeContent',
         value: function resizeContent() {
             // Calculate available space
-            var availableSpace = Cuic.calculateAvailableSpace(this);
+            var available = this.calculateAvailableSpace();
 
             // Set panel max height
-            this.css({ 'max-height': availableSpace.height });
+            this.css({ 'max-height': available.height });
 
             // Calculate content max height
-            var maxHeight = availableSpace.height;
+            var maxHeight = available.height;
 
             // Subtract header height
             if (this.header instanceof Cuic.Element) {
@@ -7278,10 +7411,10 @@ Cuic.Switcher = function (_Cuic$Component8) {
                 this.stop();
 
                 // Hide visible elements
-                for (var _i6 = 0; _i6 < children.length; _i6 += 1) {
-                    var child = Cuic.element(children[_i6]);
+                for (var _i7 = 0; _i7 < children.length; _i7 += 1) {
+                    var child = Cuic.element(children[_i7]);
 
-                    if (this.index === _i6) {
+                    if (this.index === _i7) {
                         child.addClass('visible');
                         child.removeClass('hidden');
                     } else {
@@ -7855,6 +7988,10 @@ Cuic.Tooltip = function (_Cuic$Component9) {
 
         // Reposition tail when tooltip position change
         _this31.onAnchored(function () {
+            // Constraint tooltip in screen
+            if (_this31.isAbsolute() || _this31.isFixed()) {
+                _this31.alignInScreen();
+            }
             _this31.updateTail();
         });
 
@@ -7875,6 +8012,10 @@ Cuic.Tooltip = function (_Cuic$Component9) {
         _this31.onOpened(function () {
             // Close the popup when the user clicks outside of it
             Cuic.on('click', document, autoClose);
+            // Constraint tooltip in screen
+            if (_this31.isAbsolute() || _this31.isFixed()) {
+                _this31.alignInScreen();
+            }
         });
 
         // Add element to collection

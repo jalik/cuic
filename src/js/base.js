@@ -120,337 +120,6 @@
         },
 
         /**
-         * Position an object inside another
-         * @param element
-         * @param position
-         * @param parent
-         * @return {*}
-         */
-        calculateAlign(element, position, parent) {
-            element = this.element(element);
-            position = position || '';
-
-            if (parent) {
-                parent = this.element(parent);
-
-                // Use body as parent
-                if (parent.node().nodeName === 'HTML') {
-                    parent = this.element(document.body);
-                }
-            }
-            else {
-                // Use parent node if no parent defined
-                parent = element.offsetParent();
-            }
-
-            let elHeight = element.outerHeight(true);
-            let elWidth = element.outerWidth(true);
-            let parentHeight = parent.height();
-            let parentWidth = parent.width();
-            let relativeLeft = parent.node().scrollLeft; // todo use internal method scrollLeft
-            let relativeTop = parent.node().scrollTop; // todo use internal method scrollTop
-            let relativeBottom = -relativeTop;
-            let relativeRight = -relativeLeft;
-            let prop = {
-                bottom: '',
-                left: '',
-                right: '',
-                top: ''
-            };
-
-            // If the target is fixed, we use the window as parent
-            switch (element.css('position')) {
-                case 'fixed':
-                    parent = this.element(window);
-                    parentHeight = parent.innerHeight();
-                    parentWidth = parent.innerWidth();
-                    relativeLeft = 0;
-                    relativeTop = 0;
-                    relativeBottom = 0;
-                    relativeRight = 0;
-                    break;
-            }
-
-            const centerX = relativeLeft + Math.max(0, parent.innerWidth() / 2 - elWidth / 2);
-            const centerY = relativeTop + Math.max(0, parent.innerHeight() / 2 - elHeight / 2);
-
-            // Vertical position
-            if (position.indexOf('top') !== -1) {
-                prop.top = 0;
-            }
-            else if (position.indexOf('bottom') !== -1) {
-                prop.bottom = 0;
-            }
-            else {
-                prop.top = centerY;
-            }
-
-            // Horizontal position
-            if (position.indexOf('left') !== -1) {
-                prop.left = 0;
-            }
-            else if (position.indexOf('right') !== -1) {
-                prop.right = 0;
-            }
-            else {
-                prop.left = centerX;
-            }
-
-            // Calculate available position
-            const available = this.calculateAvailablePosition(element, parent);
-
-            // Constraint position
-            if (prop.left < available.minX) {
-                prop.left = available.minX;
-            }
-            else if (prop.left > available.maxX) {
-                prop.left = available.maxX;
-            }
-            return prop;
-        },
-
-        /**
-         * Position an object from the exterior
-         * @param element
-         * @param position
-         * @param target
-         * @return {*}
-         */
-        calculateAnchor(element, position, target) {
-            position = position || '';
-            element = this.element(element);
-
-            let targetHeight;
-            let targetWidth;
-            let targetOffset;
-
-            // Target is a coordinate (x, y)
-            if (target instanceof Array && target.length === 2) {
-                targetHeight = 1;
-                targetWidth = 1;
-                targetOffset = {
-                    left: target[0],
-                    top: target[1]
-                };
-            }
-            // Target is an element
-            else {
-                target = this.element(target);
-                targetHeight = target.outerHeight();
-                targetWidth = target.outerWidth();
-                targetOffset = target.offset();
-            }
-
-            let elWidth = element.outerWidth(true);
-            let elHeight = element.outerHeight(true);
-            let elCenterX = (elWidth / 2);
-            let elCenterY = (elHeight / 2);
-            let targetCenterX = (targetWidth / 2);
-            let targetCenterY = (targetHeight / 2);
-
-            // fixme elHeight can be less if animated (resized), which leads to wrong elCenterY
-            // fixme the problem is with element with scale(0) or display:none
-
-            // const disp = element.css('display');
-            // const cls = element.getClasses().join(' ');
-            // // element.css('display', '');
-            // element.removeClass(cls);
-            // let compHeight = this.getComputedStyle(element, 'height');
-            // let compBorder = element.border();
-            // let compPadding = element.padding();
-            // let compMargin = element.margin();
-            // let total = compPadding.vertical + compBorder.vertical + compMargin.vertical;
-            // console.log('elCenterY', elCenterY, 'outerHeight:', elHeight, 'compHeight:', compHeight, 'compTotal:', total);
-            // console.log('height', element.height())
-            // console.log('innerHeight', element.innerHeight())
-            // console.log('outerHeight', element.outerHeight())
-            // element.addClass(cls);
-            // // element.css(disp);
-            // element.hide();
-
-            let prop = {
-                bottom: '',
-                left: '',
-                right: '',
-                top: ''
-            };
-
-            // Vertical positioning
-            if (position.indexOf('bottom') !== -1) {
-                prop.top = targetOffset.top + targetHeight;
-            }
-            else if (position.indexOf('top') !== -1) {
-                prop.top = targetOffset.top - elHeight;
-            }
-            else {
-                prop.top = targetOffset.top + targetCenterY - elCenterY;
-            }
-
-            // Horizontal positioning
-            if (position.indexOf('left') !== -1) {
-                prop.left = targetOffset.left - elWidth;
-            }
-            else if (position.indexOf('right') !== -1) {
-                prop.left = targetOffset.left + targetWidth;
-            }
-            else {
-                prop.left = targetOffset.left + targetCenterX - elCenterX;
-            }
-
-            // Use window for positioning
-            if (element.css('position') === 'fixed') {
-                prop.left -= window.scrollX;
-                prop.top -= window.scrollY;
-            }
-
-            // todo constraint element to be inside visible area of the screen
-
-            return prop;
-        },
-
-        /**
-         * Returns the available position inside a container
-         * @param element
-         * @param parent
-         * @return {{height, width}}
-         */
-        calculateAvailablePosition(element, parent) {
-            element = this.element(element);
-            parent = parent ? this.element(parent) : element.offsetParent();
-
-            let prop = {
-                minX: 0,
-                minY: 0,
-                maxX: Math.max(0, parent.width() - element.outerWidth(true)),
-                maxY: Math.max(0, parent.height() - element.outerHeight(true))
-            };
-
-            // Adjust limits depending of element position
-            switch (element.css('position')) {
-                case 'absolute':
-                case 'fixed':
-                    const prPadding = parent.padding();
-                    // const elMargin = element.margin();
-                    prop.maxX += prPadding.horizontal;
-                    prop.maxY += prPadding.vertical;
-                    // prop.maxX -= elMargin.horizontal;
-                    // prop.maxY -= elMargin.vertical;
-                    // fixme max is wrong sometimes
-                    break;
-            }
-            return prop;
-        },
-
-        /**
-         * Returns the available space inside a container
-         * @param element
-         * @param parent
-         * @return {{height, width}}
-         */
-        calculateAvailableSpace(element, parent) {
-            element = this.element(element);
-            parent = parent ? this.element(parent) : element.offsetParent();
-
-            const elMargin = element.margin();
-
-            let prop = {
-                height: parent.height(),
-                width: parent.width()
-            };
-
-            // Adjust limits depending of element position
-            switch (element.css('position')) {
-                case 'absolute':
-                case 'fixed':
-                    const prPadding = parent.padding();
-                    prop.height += prPadding.vertical;
-                    prop.width += prPadding.horizontal;
-                    prop.height -= elMargin.vertical;
-                    prop.width -= elMargin.horizontal;
-                    break;
-                case 'relative':
-                    prop.height -= elMargin.vertical;
-                    prop.width -= elMargin.horizontal;
-                    break;
-            }
-            return prop;
-        },
-
-        /**
-         * Calculates maximized properties
-         * @param element
-         * @return {*}
-         */
-        calculateMaximize(element) {
-            element = this.element(element);
-            const parent = element.offsetParent();
-            const parentPadding = parent.padding();
-            const elMargin = element.margin();
-            let prop = {
-                bottom: '',
-                height: parent.innerHeight() - parentPadding.vertical,
-                left: '',
-                right: '',
-                top: '',
-                width: parent.innerWidth() - parentPadding.horizontal
-            };
-
-            // Adjust dimensions
-            switch (element.css('position')) {
-                case 'absolute':
-                case 'fixed':
-                    prop.height += parentPadding.vertical;
-                    prop.height -= elMargin.vertical;
-                    prop.width += parentPadding.horizontal;
-                    prop.width -= elMargin.horizontal;
-                    break;
-
-                case 'relative':
-                    prop.height -= elMargin.vertical;
-                    prop.width -= elMargin.horizontal;
-                    break;
-            }
-
-            // Horizontal position
-            if (element.isAligned('right')) {
-                prop.right = 0;
-            } else {
-                prop.left = 0;
-            }
-            // Vertical position
-            if (element.isAligned('bottom')) {
-                prop.bottom = 0;
-            } else {
-                prop.top = 0;
-            }
-            return prop;
-        },
-
-        /**
-         * Calculates minimized properties
-         * @param element
-         * @param position
-         * @return {*}
-         */
-        calculateMinimize(element, position) {
-            element = this.element(element);
-            position = position || '';
-
-            // Create a clone with minimal size
-            const clone = element.clone();
-            clone.css({height: 'auto', width: 'auto'});
-            clone.appendTo(element.parent());
-
-            // Calculate minimized size
-            let prop = this.calculateAlign(clone, position);
-            prop.height = clone.outerHeight();
-            prop.width = clone.outerWidth();
-            clone.remove();
-
-            return prop;
-        },
-
-        /**
          * Calls the function with arguments
          * @return {*}
          */
@@ -467,6 +136,51 @@
                 fn = args.shift();
             }
             return this.apply(fn, context, args);
+        },
+
+        /**
+         * Constraints position to limits
+         * @param prop
+         * @param limit
+         * @return {*}
+         */
+        constraintPosition(prop, limit) {
+            // Limit horizontal align
+            if (typeof prop.left === 'number') {
+                if (prop.left < limit.minX) {
+                    prop.left = limit.minX;
+                }
+                else if (prop.left > limit.maxX) {
+                    prop.left = limit.maxX;
+                }
+            }
+            if (typeof prop.right === 'number') {
+                if (prop.right < limit.minX) {
+                    prop.right = limit.minX;
+                }
+                else if (prop.right > limit.maxX) {
+                    prop.right = limit.maxX;
+                }
+            }
+
+            // Limit vertical align
+            if (typeof prop.top === 'number') {
+                if (prop.top < limit.minY) {
+                    prop.top = limit.minY;
+                }
+                else if (prop.top > limit.maxY) {
+                    prop.top = limit.maxY;
+                }
+            }
+            if (typeof prop.bottom === 'number') {
+                if (prop.bottom < limit.minY) {
+                    prop.bottom = limit.minY;
+                }
+                else if (prop.bottom > limit.maxY) {
+                    prop.bottom = limit.maxY;
+                }
+            }
+            return prop;
         },
 
         /**
@@ -537,12 +251,10 @@
                 if (typeof b === 'object' && b !== null && b !== undefined
                     && typeof a === 'object' && a !== null && a !== undefined) {
                     for (let key in b) {
-                        if (b.hasOwnProperty(key)) {
-                            if (recursive && typeof b[key] === 'object' && b[key] !== null && b[key] !== undefined) {
-                                a[key] = this.extend(a[key], b[key]);
-                            } else {
-                                a[key] = b[key];
-                            }
+                        if (recursive && typeof b[key] === 'object' && b[key] !== null && b[key] !== undefined) {
+                            a[key] = this.extend(a[key], b[key]);
+                        } else {
+                            a[key] = b[key];
                         }
                     }
                 } else if (b !== null && b !== undefined) {
