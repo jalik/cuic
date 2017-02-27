@@ -94,6 +94,14 @@ Cuic.Panel = class extends Cuic.Component {
             this.parent().css({overflow: 'hidden'});
         }
 
+        const autoClose = (ev) => {
+            if (this.isOpened() && this.options.autoClose) {
+                if (ev.target !== this.node() && !Cuic.element(ev.target).isChildOf(this)) {
+                    this.close();
+                }
+            }
+        };
+
         // todo avoid closing panel if button is from another component
         this.on('click', (ev) => {
             // Close button
@@ -114,80 +122,82 @@ Cuic.Panel = class extends Cuic.Component {
             let prop = {};
 
             // Horizontal position
-            if (this.isAligned('left')) {
-                prop.left = -width;
-                prop.right = '';
-            }
-            else if (this.isAligned('right')) {
+            if (this.isAligned('right')) {
                 prop.right = -width;
                 prop.left = '';
+            }
+            else if (this.isAligned('left')) {
+                prop.left = -width;
+                prop.right = '';
             }
 
             // Vertical position
             if (this.isAligned('bottom')) {
                 prop.bottom = -height;
                 prop.top = '';
-            }
-            else if (this.isAligned('top')) {
+            } else {
                 prop.top = -height;
                 prop.bottom = '';
-            }
-
-            // Centered
-            if (prop.left === undefined && prop.right === undefined
-                && prop.bottom === undefined && prop.top === undefined) {
-                // todo Handle centered panel opening/closing
             }
 
             // Animate panel
             this.css(prop);
         });
 
-        const autoClose = (ev) => {
-            if (this.isOpened() && this.options.autoClose) {
-                if (ev.target !== this.node() && !Cuic.element(ev.target).isChildOf(this)) {
-                    this.close();
-                }
-            }
-        };
-
         this.onClosed(() => {
             Cuic.off('click', document, autoClose);
         });
 
-        this.onMinimize(() => {
-            const clone = this.clone();
-            clone.css({height: 'auto', width: 'auto'});
-            clone.appendTo(this.parent());
-
-            // Calculate minimized size
-            let prop = clone._calculateAlign(this.options.position);
-            prop.height = clone.height();
-            prop.width = clone.width();
-            clone.remove();
-
+        this.onMaximized(() => {
+            // Realign if panel is closed
             if (!this.isOpened()) {
                 // Horizontal position
-                if (this.isPosition('left')) {
+                if (this.isAligned('left')) {
                     prop.left = -this.outerWidth(true);
                     prop.right = '';
                 }
-                else if (this.isPosition('right')) {
+                else if (this.isAligned('right')) {
                     prop.right = -this.outerWidth(true);
                     prop.left = '';
                 }
                 // Vertical position
-                if (this.isPosition('bottom')) {
+                if (this.isAligned('bottom')) {
                     prop.bottom = -this.outerHeight(true);
                     prop.top = '';
                 }
-                else if (this.isPosition('top')) {
+                else if (this.isAligned('top')) {
                     prop.top = -this.outerHeight(true);
                     prop.bottom = '';
                 }
+                this.css(prop);
             }
-            // Minimize panel
-            this.css(prop);
+        });
+
+        this.onMinimize(() => {
+            // Realign if panel is closed
+            if (!this.isOpened()) {
+                let prop = {};
+
+                // Horizontal position
+                if (this.isAligned('left')) {
+                    prop.left = -this.outerWidth(true);
+                    prop.right = '';
+                }
+                else if (this.isAligned('right')) {
+                    prop.right = -this.outerWidth(true);
+                    prop.left = '';
+                }
+                // Vertical position
+                if (this.isAligned('bottom')) {
+                    prop.bottom = -this.outerHeight(true);
+                    prop.top = '';
+                }
+                else if (this.isAligned('top')) {
+                    prop.top = -this.outerHeight(true);
+                    prop.bottom = '';
+                }
+                this.css(prop);
+            }
         });
 
         this.onOpen(() => {
@@ -245,8 +255,11 @@ Cuic.Panel = class extends Cuic.Component {
         // Calculate available space
         const available = this._calculateAvailableSpace();
 
-        // Set panel max height
-        this.css({'max-height': available.height});
+        // Set panel max dimensions
+        this.css({
+            'max-height': available.height,
+            'max-width': available.width
+        });
 
         // Calculate content max height
         let maxHeight = available.height;

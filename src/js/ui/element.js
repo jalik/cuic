@@ -146,7 +146,7 @@ Cuic.Element = class {
      * @param position
      * @param parent
      * @return {{bottom: string, left: string, right: string, top: string}}
-     * @private
+     * @protected
      */
     _calculateAlign(position, parent) {
         position = position || '';
@@ -168,8 +168,8 @@ Cuic.Element = class {
         let elWidth = this.outerWidth(true);
         let parentHeight = parent.height();
         let parentWidth = parent.width();
-        let relativeLeft = parent.node().scrollLeft; // todo use internal method scrollLeft
-        let relativeTop = parent.node().scrollTop; // todo use internal method scrollTop
+        let relativeLeft = parent.scrollLeft();
+        let relativeTop = parent.scrollTop();
         let relativeBottom = -relativeTop;
         let relativeRight = -relativeLeft;
         let prop = {
@@ -236,7 +236,7 @@ Cuic.Element = class {
      * @param target
      * @param attach todo attach to
      * @return {{bottom: string, left: string, right: string, top: string}}
-     * @private
+     * @protected
      */
     _calculateAnchor(position, target, attach) {
         position = position || '';
@@ -318,7 +318,7 @@ Cuic.Element = class {
      * Returns the available position inside a container
      * @param parent
      * @return {{minX: number, minY: number, maxX: number, maxY: number}}
-     * @private
+     * @protected
      */
     _calculateAvailablePosition(parent) {
         parent = parent ? Cuic.element(parent) : this.offsetParent();
@@ -350,7 +350,7 @@ Cuic.Element = class {
      * Returns the available space inside a container
      * @param parent
      * @return {{height, width}}
-     * @private
+     * @protected
      */
     _calculateAvailableSpace(parent) {
         parent = parent ? Cuic.element(parent) : this.offsetParent();
@@ -382,7 +382,7 @@ Cuic.Element = class {
     /**
      * Calculates maximized properties
      * @return {{bottom: string, height: number, left: string, right: string, top: string, width: number}}
-     * @private
+     * @protected
      */
     _calculateMaximize() {
         const parent = this.offsetParent();
@@ -390,10 +390,10 @@ Cuic.Element = class {
         const elMargin = this.margin();
         let prop = {
             bottom: '',
-            height: parent.innerHeight() - parentPadding.vertical,
             left: '',
             right: '',
             top: '',
+            height: parent.innerHeight() - parentPadding.vertical,
             width: parent.innerWidth() - parentPadding.horizontal
         };
 
@@ -412,8 +412,6 @@ Cuic.Element = class {
                 prop.width -= elMargin.horizontal;
                 break;
         }
-
-        // todo maximize from current this.options.position (if right:0, stay right:0)
 
         // Horizontal position
         if (this.isAligned('right')) {
@@ -434,7 +432,7 @@ Cuic.Element = class {
      * Calculates minimized properties
      * @param position
      * @return {{height, width}}
-     * @private
+     * @protected
      */
     _calculateMinimize(position) {
         position = position || '';
@@ -442,7 +440,7 @@ Cuic.Element = class {
         // Create a clone with minimal size
         const clone = this.clone();
         clone.css({height: 'auto', width: 'auto'});
-        clone.appendTo(this.parent());
+        clone.show().appendTo(this.parent());
 
         // Calculate minimized size
         let prop = clone._calculateAlign(position);
@@ -456,7 +454,7 @@ Cuic.Element = class {
     /**
      * Displays element for calculation (positioning, parenting...)
      * @return {Cuic.Element}
-     * @private
+     * @protected
      */
     _display() {
         if (!this.hasClass('computing')) {
@@ -478,17 +476,18 @@ Cuic.Element = class {
     /**
      * Restores element previous display state
      * @return {Cuic.Element}
-     * @private
+     * @protected
      */
     _restoreDisplay() {
         if (this.hasClass('computing')) {
+            this.removeClass('computing');
+
             if (this._previousClass) {
                 this.addClass(this._previousClass);
+                this.css({display: this._previousDisplay});
+                this._previousDisplay = null;
+                this._previousClass = null;
             }
-            this.removeClass('computing');
-            this.css({display: this._previousDisplay});
-            this._previousDisplay = null;
-            this._previousClass = null;
         }
         return this;
     }
@@ -1764,6 +1763,22 @@ Cuic.Element = class {
         }
         this.node().className = classes.join(' ');
         return this;
+    }
+
+    /**
+     * Returns element scroll left
+     * @return {number|*}
+     */
+    scrollLeft() {
+        return this.node().scrollLeft;
+    }
+
+    /**
+     * Returns element scroll top
+     * @return {number|*}
+     */
+    scrollTop() {
+        return this.node().scrollTop;
     }
 
     /**

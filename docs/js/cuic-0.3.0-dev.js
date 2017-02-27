@@ -1787,7 +1787,7 @@ Cuic.Element = function () {
      * @param position
      * @param parent
      * @return {{bottom: string, left: string, right: string, top: string}}
-     * @private
+     * @protected
      */
 
 
@@ -1812,8 +1812,8 @@ Cuic.Element = function () {
             var elWidth = this.outerWidth(true);
             var parentHeight = parent.height();
             var parentWidth = parent.width();
-            var relativeLeft = parent.node().scrollLeft; // todo use internal method scrollLeft
-            var relativeTop = parent.node().scrollTop; // todo use internal method scrollTop
+            var relativeLeft = parent.scrollLeft();
+            var relativeTop = parent.scrollTop();
             var relativeBottom = -relativeTop;
             var relativeRight = -relativeLeft;
             var prop = {
@@ -1875,7 +1875,7 @@ Cuic.Element = function () {
          * @param target
          * @param attach todo attach to
          * @return {{bottom: string, left: string, right: string, top: string}}
-         * @private
+         * @protected
          */
 
     }, {
@@ -1956,7 +1956,7 @@ Cuic.Element = function () {
          * Returns the available position inside a container
          * @param parent
          * @return {{minX: number, minY: number, maxX: number, maxY: number}}
-         * @private
+         * @protected
          */
 
     }, {
@@ -1991,7 +1991,7 @@ Cuic.Element = function () {
          * Returns the available space inside a container
          * @param parent
          * @return {{height, width}}
-         * @private
+         * @protected
          */
 
     }, {
@@ -2026,7 +2026,7 @@ Cuic.Element = function () {
         /**
          * Calculates maximized properties
          * @return {{bottom: string, height: number, left: string, right: string, top: string, width: number}}
-         * @private
+         * @protected
          */
 
     }, {
@@ -2037,10 +2037,10 @@ Cuic.Element = function () {
             var elMargin = this.margin();
             var prop = {
                 bottom: '',
-                height: parent.innerHeight() - parentPadding.vertical,
                 left: '',
                 right: '',
                 top: '',
+                height: parent.innerHeight() - parentPadding.vertical,
                 width: parent.innerWidth() - parentPadding.horizontal
             };
 
@@ -2059,8 +2059,6 @@ Cuic.Element = function () {
                     prop.width -= elMargin.horizontal;
                     break;
             }
-
-            // todo maximize from current this.options.position (if right:0, stay right:0)
 
             // Horizontal position
             if (this.isAligned('right')) {
@@ -2081,7 +2079,7 @@ Cuic.Element = function () {
          * Calculates minimized properties
          * @param position
          * @return {{height, width}}
-         * @private
+         * @protected
          */
 
     }, {
@@ -2092,7 +2090,7 @@ Cuic.Element = function () {
             // Create a clone with minimal size
             var clone = this.clone();
             clone.css({ height: 'auto', width: 'auto' });
-            clone.appendTo(this.parent());
+            clone.show().appendTo(this.parent());
 
             // Calculate minimized size
             var prop = clone._calculateAlign(position);
@@ -2106,7 +2104,7 @@ Cuic.Element = function () {
         /**
          * Displays element for calculation (positioning, parenting...)
          * @return {Cuic.Element}
-         * @private
+         * @protected
          */
 
     }, {
@@ -2131,20 +2129,21 @@ Cuic.Element = function () {
         /**
          * Restores element previous display state
          * @return {Cuic.Element}
-         * @private
+         * @protected
          */
 
     }, {
         key: '_restoreDisplay',
         value: function _restoreDisplay() {
             if (this.hasClass('computing')) {
+                this.removeClass('computing');
+
                 if (this._previousClass) {
                     this.addClass(this._previousClass);
+                    this.css({ display: this._previousDisplay });
+                    this._previousDisplay = null;
+                    this._previousClass = null;
                 }
-                this.removeClass('computing');
-                this.css({ display: this._previousDisplay });
-                this._previousDisplay = null;
-                this._previousClass = null;
             }
             return this;
         }
@@ -2244,21 +2243,21 @@ Cuic.Element = function () {
             if (this.isInDOM()) {
                 this.debug('alignInParent');
                 var alignments = ['bottom', 'left', 'right', 'top'];
-                var prop = this.position();
+                var _prop = this.position();
 
                 // Only keep properties that are styled
                 for (var i = 0; i < alignments.length; i += 1) {
                     if (!this.css(alignments[i])) {
-                        prop[alignments[i]] = '';
+                        _prop[alignments[i]] = '';
                     }
                 }
 
                 // Limit position to parent available position
                 var available = this._calculateAvailablePosition();
-                prop = Cuic.constraintPosition(prop, available);
+                _prop = Cuic.constraintPosition(_prop, available);
 
                 // Apply alignment
-                this.css(prop);
+                this.css(_prop);
             }
             return this;
         }
@@ -2274,12 +2273,12 @@ Cuic.Element = function () {
             if (this.isInDOM()) {
                 this.debug('alignInScreen');
                 var alignments = ['bottom', 'left', 'right', 'top'];
-                var prop = this.position();
+                var _prop2 = this.position();
 
                 // Only keep properties that are styled
                 for (var i = 0; i < alignments.length; i += 1) {
                     if (!this.css(alignments[i])) {
-                        prop[alignments[i]] = '';
+                        _prop2[alignments[i]] = '';
                     }
                 }
 
@@ -2302,10 +2301,10 @@ Cuic.Element = function () {
                     var location = alignments[_i];
                     var screenPos = rect[location];
 
-                    if (typeof prop[location] === 'number') {
+                    if (typeof _prop2[location] === 'number') {
                         // negative
                         if (screenPos < 0) {
-                            prop[location] += Math.abs(screenPos);
+                            _prop2[location] += Math.abs(screenPos);
                         }
                         // positive
                         else if (['bottom', 'top'].indexOf(location) !== -1) {
@@ -2313,14 +2312,14 @@ Cuic.Element = function () {
                                     // console.log(location + ': ' + (screenPos + elHeight) + " > " + available.maxY);
                                     // const extraSpace = Math.abs(available.maxY - Math.abs(prop[location]) - elHeight);
                                     var extraSpace = Math.abs(screen.maxY - Math.abs(rect[location]) - elHeight);
-                                    prop[location] -= extraSpace;
+                                    _prop2[location] -= extraSpace;
                                     // console.log(available.maxY + '-' + extraSpace + ' = ', prop[location]);
                                 }
                             } else if (['left', 'right'].indexOf(location) !== -1) {
                                 if (screenPos + elWidth > screen.maxX) {
                                     // console.log(location + ': ' + (screenPos + elWidth) + " > " + available.maxX);
                                     var _extraSpace = Math.abs(screen.maxX - Math.abs(rect[location]) - elWidth);
-                                    prop[location] -= _extraSpace;
+                                    _prop2[location] -= _extraSpace;
                                     // console.log(available.maxX + '-' + extraSpace + ' = ', prop[location]);
                                 }
                             }
@@ -2329,7 +2328,7 @@ Cuic.Element = function () {
                 // console.log('prop', prop);
 
                 // Apply alignment
-                this.css(prop);
+                this.css(_prop2);
             }
             return this;
         }
@@ -2432,21 +2431,21 @@ Cuic.Element = function () {
                 this.debug('autoResize');
                 var available = this._calculateAvailableSpace();
 
-                var prop = {
+                var _prop3 = {
                     height: this.outerHeight(),
                     width: this.outerWidth()
                 };
 
                 // Limit to max width
-                if (prop.width && prop.width > available.width) {
-                    prop.width = available.width;
+                if (_prop3.width && _prop3.width > available.width) {
+                    _prop3.width = available.width;
                 }
                 // Limit to max height
-                if (prop.height && prop.height > available.height) {
-                    prop.height = available.height;
+                if (_prop3.height && _prop3.height > available.height) {
+                    _prop3.height = available.height;
                 }
                 // Apply size
-                this.css(prop);
+                this.css(_prop3);
             }
             return this;
         }
@@ -3652,6 +3651,28 @@ Cuic.Element = function () {
         }
 
         /**
+         * Returns element scroll left
+         * @return {number|*}
+         */
+
+    }, {
+        key: 'scrollLeft',
+        value: function scrollLeft() {
+            return this.node().scrollLeft;
+        }
+
+        /**
+         * Returns element scroll top
+         * @return {number|*}
+         */
+
+    }, {
+        key: 'scrollTop',
+        value: function scrollTop() {
+            return this.node().scrollTop;
+        }
+
+        /**
          * Shows the element
          * @return {Cuic.Element}
          */
@@ -4417,10 +4438,10 @@ Cuic.Elements = function () {
          */
 
     }, {
-        key: 'one',
-        value: function one(event, callback) {
+        key: 'on',
+        value: function on(event, callback) {
             return this.each(function (el) {
-                el.one(event, callback);
+                el.on(event, callback);
             });
         }
 
@@ -5672,8 +5693,11 @@ Cuic.Dialog = function (_Cuic$Component3) {
             // Calculate available space
             var available = this._calculateAvailableSpace();
 
-            // Set panel max height
-            this.css({ 'max-height': available.height });
+            // Set dialog max dimensions
+            this.css({
+                'max-height': available.height,
+                'max-width': available.width
+            });
 
             // Calculate content max height
             var maxHeight = available.height;
@@ -6178,6 +6202,14 @@ Cuic.Panel = function (_Cuic$Component6) {
             _this27.parent().css({ overflow: 'hidden' });
         }
 
+        var autoClose = function autoClose(ev) {
+            if (_this27.isOpened() && _this27.options.autoClose) {
+                if (ev.target !== _this27.node() && !Cuic.element(ev.target).isChildOf(_this27)) {
+                    _this27.close();
+                }
+            }
+        };
+
         // todo avoid closing panel if button is from another component
         _this27.on('click', function (ev) {
             // Close button
@@ -6198,75 +6230,77 @@ Cuic.Panel = function (_Cuic$Component6) {
             var prop = {};
 
             // Horizontal position
-            if (_this27.isAligned('left')) {
-                prop.left = -width;
-                prop.right = '';
-            } else if (_this27.isAligned('right')) {
+            if (_this27.isAligned('right')) {
                 prop.right = -width;
                 prop.left = '';
+            } else if (_this27.isAligned('left')) {
+                prop.left = -width;
+                prop.right = '';
             }
 
             // Vertical position
             if (_this27.isAligned('bottom')) {
                 prop.bottom = -height;
                 prop.top = '';
-            } else if (_this27.isAligned('top')) {
+            } else {
                 prop.top = -height;
                 prop.bottom = '';
             }
-
-            // Centered
-            if (prop.left === undefined && prop.right === undefined && prop.bottom === undefined && prop.top === undefined) {}
-            // todo Handle centered panel opening/closing
-
 
             // Animate panel
             _this27.css(prop);
         });
 
-        var autoClose = function autoClose(ev) {
-            if (_this27.isOpened() && _this27.options.autoClose) {
-                if (ev.target !== _this27.node() && !Cuic.element(ev.target).isChildOf(_this27)) {
-                    _this27.close();
-                }
-            }
-        };
-
         _this27.onClosed(function () {
             Cuic.off('click', document, autoClose);
         });
 
-        _this27.onMinimize(function () {
-            var clone = _this27.clone();
-            clone.css({ height: 'auto', width: 'auto' });
-            clone.appendTo(_this27.parent());
-
-            // Calculate minimized size
-            var prop = clone._calculateAlign(_this27.options.position);
-            prop.height = clone.height();
-            prop.width = clone.width();
-            clone.remove();
-
+        _this27.onMaximized(function () {
+            // Realign if panel is closed
             if (!_this27.isOpened()) {
                 // Horizontal position
-                if (_this27.isPosition('left')) {
+                if (_this27.isAligned('left')) {
                     prop.left = -_this27.outerWidth(true);
                     prop.right = '';
-                } else if (_this27.isPosition('right')) {
+                } else if (_this27.isAligned('right')) {
                     prop.right = -_this27.outerWidth(true);
                     prop.left = '';
                 }
                 // Vertical position
-                if (_this27.isPosition('bottom')) {
+                if (_this27.isAligned('bottom')) {
                     prop.bottom = -_this27.outerHeight(true);
                     prop.top = '';
-                } else if (_this27.isPosition('top')) {
+                } else if (_this27.isAligned('top')) {
                     prop.top = -_this27.outerHeight(true);
                     prop.bottom = '';
                 }
+                _this27.css(prop);
             }
-            // Minimize panel
-            _this27.css(prop);
+        });
+
+        _this27.onMinimize(function () {
+            // Realign if panel is closed
+            if (!_this27.isOpened()) {
+                var _prop4 = {};
+
+                // Horizontal position
+                if (_this27.isAligned('left')) {
+                    _prop4.left = -_this27.outerWidth(true);
+                    _prop4.right = '';
+                } else if (_this27.isAligned('right')) {
+                    _prop4.right = -_this27.outerWidth(true);
+                    _prop4.left = '';
+                }
+                // Vertical position
+                if (_this27.isAligned('bottom')) {
+                    _prop4.bottom = -_this27.outerHeight(true);
+                    _prop4.top = '';
+                } else if (_this27.isAligned('top')) {
+                    _prop4.top = -_this27.outerHeight(true);
+                    _prop4.bottom = '';
+                }
+                _this27.css(_prop4);
+            }
         });
 
         _this27.onOpen(function () {
@@ -6341,8 +6375,11 @@ Cuic.Panel = function (_Cuic$Component6) {
             // Calculate available space
             var available = this._calculateAvailableSpace();
 
-            // Set panel max height
-            this.css({ 'max-height': available.height });
+            // Set panel max dimensions
+            this.css({
+                'max-height': available.height,
+                'max-width': available.width
+            });
 
             // Calculate content max height
             var maxHeight = available.height;

@@ -314,8 +314,11 @@ Cuic.Dialog = class extends Cuic.Component {
         // Calculate available space
         const available = this._calculateAvailableSpace();
 
-        // Set panel max height
-        this.css({'max-height': available.height});
+        // Set dialog max dimensions
+        this.css({
+            'max-height': available.height,
+            'max-width': available.width
+        });
 
         // Calculate content max height
         let maxHeight = available.height;
