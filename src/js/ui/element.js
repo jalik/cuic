@@ -129,12 +129,13 @@ Cuic.Element = class {
     }
 
     /**
-     * Position an object inside another
+     * Calculates the alignment of the element inside its parent
      * @param position
      * @param parent
      * @return {{bottom: string, left: string, right: string, top: string}}
+     * @private
      */
-    calculateAlign(position, parent) {
+    _calculateAlign(position, parent) {
         position = position || '';
 
         if (parent) {
@@ -204,7 +205,7 @@ Cuic.Element = class {
         }
 
         // Calculate available position
-        const available = this.calculateAvailablePosition(parent);
+        const available = this._calculateAvailablePosition(parent);
 
         // Constraint position
         if (prop.left < available.minX) {
@@ -217,13 +218,14 @@ Cuic.Element = class {
     }
 
     /**
-     * Position an object from the exterior
+     * Calculates the position of the element around its parent
      * @param position
      * @param target
      * @param attach todo attach to
      * @return {{bottom: string, left: string, right: string, top: string}}
+     * @private
      */
-    calculateAnchor(position, target, attach) {
+    _calculateAnchor(position, target, attach) {
         position = position || '';
 
         let targetHeight;
@@ -293,7 +295,7 @@ Cuic.Element = class {
         }
 
         // Calculate available position
-        // const limit = this.calculateAvailablePosition(target.offsetParent());
+        // const limit = this._calculateAvailablePosition(target.offsetParent());
         // prop = this.constraintPosition(prop, limit);
 
         return prop;
@@ -303,8 +305,9 @@ Cuic.Element = class {
      * Returns the available position inside a container
      * @param parent
      * @return {{minX: number, minY: number, maxX: number, maxY: number}}
+     * @private
      */
-    calculateAvailablePosition(parent) {
+    _calculateAvailablePosition(parent) {
         parent = parent ? Cuic.element(parent) : this.offsetParent();
 
         let prop = {
@@ -334,8 +337,9 @@ Cuic.Element = class {
      * Returns the available space inside a container
      * @param parent
      * @return {{height, width}}
+     * @private
      */
-    calculateAvailableSpace(parent) {
+    _calculateAvailableSpace(parent) {
         parent = parent ? Cuic.element(parent) : this.offsetParent();
         const elMargin = this.margin();
 
@@ -364,9 +368,10 @@ Cuic.Element = class {
 
     /**
      * Calculates maximized properties
-     * @return {*}
+     * @return {{bottom: string, height: number, left: string, right: string, top: string, width: number}}
+     * @private
      */
-    calculateMaximize() {
+    _calculateMaximize() {
         const parent = this.offsetParent();
         const parentPadding = parent.padding();
         const elMargin = this.margin();
@@ -415,9 +420,10 @@ Cuic.Element = class {
     /**
      * Calculates minimized properties
      * @param position
-     * @return {*}
+     * @return {{height, width}}
+     * @private
      */
-    calculateMinimize(position) {
+    _calculateMinimize(position) {
         position = position || '';
 
         // Create a clone with minimal size
@@ -426,7 +432,7 @@ Cuic.Element = class {
         clone.appendTo(this.parent());
 
         // Calculate minimized size
-        let prop = clone.calculateAlign(position);
+        let prop = clone._calculateAlign(position);
         prop.height = clone.outerHeight();
         prop.width = clone.outerWidth();
         clone.remove();
@@ -459,7 +465,6 @@ Cuic.Element = class {
     /**
      * Restores element previous display state
      * @return {Cuic.Element}
-     * @private
      * @private
      */
     _restoreDisplay() {
@@ -551,7 +556,7 @@ Cuic.Element = class {
 
             if (['absolute', 'fixed'].indexOf(pos) !== -1) {
                 this.debug('align', position);
-                this.css(this.calculateAlign(position));
+                this.css(this._calculateAlign(position));
                 this.addPositionClass(position, 'aligned');
                 this.options.position = position;
                 this.events.trigger('aligned', position);
@@ -578,7 +583,7 @@ Cuic.Element = class {
             }
 
             // Limit position to parent available position
-            const available = this.calculateAvailablePosition();
+            const available = this._calculateAvailablePosition();
             prop = Cuic.constraintPosition(prop, available);
 
             // Apply alignment
@@ -667,7 +672,7 @@ Cuic.Element = class {
         if (this.isInDOM()) {
             this.debug('anchor', position, target);
             target = Cuic.element(target || this.options.target);
-            this.css(this.calculateAnchor(position, target, attach));
+            this.css(this._calculateAnchor(position, target, attach));
             this.addPositionClass(position, 'anchored');
             this.options.anchor = position;
             this.options.target = target;
@@ -734,7 +739,7 @@ Cuic.Element = class {
     autoResize() {
         if (this.isInDOM()) {
             this.debug('autoResize');
-            const available = this.calculateAvailableSpace();
+            const available = this._calculateAvailableSpace();
 
             let prop = {
                 height: this.outerHeight(),

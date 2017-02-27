@@ -1,28 +1,3 @@
-/*
- * The MIT License (MIT)
- *
- * Copyright (c) 2017 Karl STEIN
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- */
-
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1770,16 +1745,17 @@ Cuic.Element = function () {
     }
 
     /**
-     * Position an object inside another
+     * Calculates the alignment of the element inside its parent
      * @param position
      * @param parent
      * @return {{bottom: string, left: string, right: string, top: string}}
+     * @private
      */
 
 
     _createClass(_class5, [{
-        key: 'calculateAlign',
-        value: function calculateAlign(position, parent) {
+        key: '_calculateAlign',
+        value: function _calculateAlign(position, parent) {
             position = position || '';
 
             if (parent) {
@@ -1844,7 +1820,7 @@ Cuic.Element = function () {
             }
 
             // Calculate available position
-            var available = this.calculateAvailablePosition(parent);
+            var available = this._calculateAvailablePosition(parent);
 
             // Constraint position
             if (prop.left < available.minX) {
@@ -1856,16 +1832,17 @@ Cuic.Element = function () {
         }
 
         /**
-         * Position an object from the exterior
+         * Calculates the position of the element around its parent
          * @param position
          * @param target
          * @param attach todo attach to
          * @return {{bottom: string, left: string, right: string, top: string}}
+         * @private
          */
 
     }, {
-        key: 'calculateAnchor',
-        value: function calculateAnchor(position, target, attach) {
+        key: '_calculateAnchor',
+        value: function _calculateAnchor(position, target, attach) {
             position = position || '';
 
             var targetHeight = void 0;
@@ -1931,7 +1908,7 @@ Cuic.Element = function () {
             }
 
             // Calculate available position
-            // const limit = this.calculateAvailablePosition(target.offsetParent());
+            // const limit = this._calculateAvailablePosition(target.offsetParent());
             // prop = this.constraintPosition(prop, limit);
 
             return prop;
@@ -1941,11 +1918,12 @@ Cuic.Element = function () {
          * Returns the available position inside a container
          * @param parent
          * @return {{minX: number, minY: number, maxX: number, maxY: number}}
+         * @private
          */
 
     }, {
-        key: 'calculateAvailablePosition',
-        value: function calculateAvailablePosition(parent) {
+        key: '_calculateAvailablePosition',
+        value: function _calculateAvailablePosition(parent) {
             parent = parent ? Cuic.element(parent) : this.offsetParent();
 
             var prop = {
@@ -1975,11 +1953,12 @@ Cuic.Element = function () {
          * Returns the available space inside a container
          * @param parent
          * @return {{height, width}}
+         * @private
          */
 
     }, {
-        key: 'calculateAvailableSpace',
-        value: function calculateAvailableSpace(parent) {
+        key: '_calculateAvailableSpace',
+        value: function _calculateAvailableSpace(parent) {
             parent = parent ? Cuic.element(parent) : this.offsetParent();
             var elMargin = this.margin();
 
@@ -2008,12 +1987,13 @@ Cuic.Element = function () {
 
         /**
          * Calculates maximized properties
-         * @return {*}
+         * @return {{bottom: string, height: number, left: string, right: string, top: string, width: number}}
+         * @private
          */
 
     }, {
-        key: 'calculateMaximize',
-        value: function calculateMaximize() {
+        key: '_calculateMaximize',
+        value: function _calculateMaximize() {
             var parent = this.offsetParent();
             var parentPadding = parent.padding();
             var elMargin = this.margin();
@@ -2062,12 +2042,13 @@ Cuic.Element = function () {
         /**
          * Calculates minimized properties
          * @param position
-         * @return {*}
+         * @return {{height, width}}
+         * @private
          */
 
     }, {
-        key: 'calculateMinimize',
-        value: function calculateMinimize(position) {
+        key: '_calculateMinimize',
+        value: function _calculateMinimize(position) {
             position = position || '';
 
             // Create a clone with minimal size
@@ -2076,7 +2057,7 @@ Cuic.Element = function () {
             clone.appendTo(this.parent());
 
             // Calculate minimized size
-            var prop = clone.calculateAlign(position);
+            var prop = clone._calculateAlign(position);
             prop.height = clone.outerHeight();
             prop.width = clone.outerWidth();
             clone.remove();
@@ -2112,7 +2093,6 @@ Cuic.Element = function () {
         /**
          * Restores element previous display state
          * @return {Cuic.Element}
-         * @private
          * @private
          */
 
@@ -2206,7 +2186,7 @@ Cuic.Element = function () {
 
                 if (['absolute', 'fixed'].indexOf(pos) !== -1) {
                     this.debug('align', position);
-                    this.css(this.calculateAlign(position));
+                    this.css(this._calculateAlign(position));
                     this.addPositionClass(position, 'aligned');
                     this.options.position = position;
                     this.events.trigger('aligned', position);
@@ -2236,7 +2216,7 @@ Cuic.Element = function () {
                 }
 
                 // Limit position to parent available position
-                var available = this.calculateAvailablePosition();
+                var available = this._calculateAvailablePosition();
                 prop = Cuic.constraintPosition(prop, available);
 
                 // Apply alignment
@@ -2330,7 +2310,7 @@ Cuic.Element = function () {
             if (this.isInDOM()) {
                 this.debug('anchor', position, target);
                 target = Cuic.element(target || this.options.target);
-                this.css(this.calculateAnchor(position, target, attach));
+                this.css(this._calculateAnchor(position, target, attach));
                 this.addPositionClass(position, 'anchored');
                 this.options.anchor = position;
                 this.options.target = target;
@@ -2412,7 +2392,7 @@ Cuic.Element = function () {
         value: function autoResize() {
             if (this.isInDOM()) {
                 this.debug('autoResize');
-                var available = this.calculateAvailableSpace();
+                var available = this._calculateAvailableSpace();
 
                 var prop = {
                     height: this.outerHeight(),
@@ -3682,7 +3662,7 @@ Cuic.Component = function (_Cuic$Element) {
             this.events.trigger('maximize');
             this.removeClass('minimized');
             this.addClass('maximized');
-            this.css(this.calculateMaximize());
+            this.css(this._calculateMaximize());
             this.once('transitionend', function (ev) {
                 if (_this7.isMaximized()) {
                     _this7.debug('maximized');
@@ -3711,7 +3691,7 @@ Cuic.Component = function (_Cuic$Element) {
             this.events.trigger('maximizeX');
             this.removeClass('minimized');
             this.addClass('maximized-x');
-            var prop = this.calculateMaximize();
+            var prop = this._calculateMaximize();
             this.css({ width: prop.width, left: prop.left, right: prop.right });
             this.once('transitionend', function (ev) {
                 if (_this8.isMaximizedX()) {
@@ -3741,7 +3721,7 @@ Cuic.Component = function (_Cuic$Element) {
             this.events.trigger('maximizeY');
             this.removeClass('minimized');
             this.addClass('maximized-y');
-            var prop = this.calculateMaximize();
+            var prop = this._calculateMaximize();
             this.css({ height: prop.height, top: prop.top, bottom: prop.bottom });
             this.once('transitionend', function (ev) {
                 if (_this9.isMaximizedY()) {
@@ -3771,7 +3751,7 @@ Cuic.Component = function (_Cuic$Element) {
             this.events.trigger('minimize');
             this.removeClass('maximized maximized-x maximized-y');
             this.addClass('minimized');
-            this.css(this.calculateMinimize(this.options.position));
+            this.css(this._calculateMinimize(this.options.position));
             this.once('transitionend', function (ev) {
                 if (_this10.isMinimized()) {
                     _this10.debug('minimized');
@@ -4761,7 +4741,7 @@ Cuic.Movable = function (_Cuic$Element3) {
 
                     // Limit position to parent available position
                     if (_this15.options.constraintToParent) {
-                        var available = _this15.calculateAvailablePosition();
+                        var available = _this15._calculateAvailablePosition();
                         prop = Cuic.constraintPosition(prop, available);
                         _this15.alignInParent();
                     }
@@ -5620,7 +5600,7 @@ Cuic.Dialog = function (_Cuic$Component3) {
         key: 'resizeContent',
         value: function resizeContent() {
             // Calculate available space
-            var available = this.calculateAvailableSpace();
+            var available = this._calculateAvailableSpace();
 
             // Set panel max height
             this.css({ 'max-height': available.height });
@@ -6896,7 +6876,7 @@ Cuic.Panel = function (_Cuic$Component6) {
             clone.appendTo(_this27.parent());
 
             // Calculate minimized size
-            var prop = clone.calculateAlign(_this27.options.position);
+            var prop = clone._calculateAlign(_this27.options.position);
             prop.height = clone.height();
             prop.width = clone.width();
             clone.remove();
@@ -6993,7 +6973,7 @@ Cuic.Panel = function (_Cuic$Component6) {
         key: 'resizeContent',
         value: function resizeContent() {
             // Calculate available space
-            var available = this.calculateAvailableSpace();
+            var available = this._calculateAvailableSpace();
 
             // Set panel max height
             this.css({ 'max-height': available.height });

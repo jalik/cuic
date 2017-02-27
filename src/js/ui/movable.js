@@ -100,7 +100,7 @@ Cuic.Movable = class extends Cuic.Element {
 
                 // Limit position to parent available position
                 if (this.options.constraintToParent) {
-                    const available = this.calculateAvailablePosition();
+                    const available = this._calculateAvailablePosition();
                     prop = Cuic.constraintPosition(prop, available);
                     this.alignInParent();
                 }
