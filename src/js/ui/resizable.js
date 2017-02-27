@@ -36,7 +36,7 @@ Cuic.Resizable = class extends Cuic.Element {
         this.addClass('resizable');
 
         // Force the target to be the relative parent
-        if (this.css('position') === 'static') {
+        if (this.isStatic()) {
             this.css('position', 'relative');
         }
 

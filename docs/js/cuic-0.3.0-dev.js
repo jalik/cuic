@@ -1873,15 +1873,16 @@ Cuic.Element = function () {
          * Calculates the position of the element around its parent
          * @param position
          * @param target
-         * @param attach todo attach to
+         * @param anchorPoint
          * @return {{bottom: string, left: string, right: string, top: string}}
          * @protected
          */
 
     }, {
         key: '_calculateAnchor',
-        value: function _calculateAnchor(position, target, attach) {
+        value: function _calculateAnchor(position, target, anchorPoint) {
             position = position || '';
+            anchorPoint = anchorPoint || '';
 
             var targetHeight = void 0;
             var targetWidth = void 0;
@@ -1911,9 +1912,6 @@ Cuic.Element = function () {
             var targetCenterX = targetWidth / 2;
             var targetCenterY = targetHeight / 2;
 
-            // fixme elHeight can be less if animated (resized), which leads to wrong elCenterY
-            // fixme the problem is with element with scale(0) or display:none
-
             var prop = {
                 bottom: '',
                 left: '',
@@ -1940,15 +1938,10 @@ Cuic.Element = function () {
             }
 
             // Use window for positioning
-            if (this.css('position') === 'fixed') {
+            if (this.isFixed()) {
                 prop.left -= window.scrollX;
                 prop.top -= window.scrollY;
             }
-
-            // Calculate available position
-            // const limit = this._calculateAvailablePosition(target.offsetParent());
-            // prop = this.constraintPosition(prop, limit);
-
             return prop;
         }
 
@@ -4783,7 +4776,7 @@ Cuic.Movable = function (_Cuic$Element3) {
         _this14.addClass('movable');
 
         // Force the target to be the relative parent
-        if (_this14.css('position') === 'static') {
+        if (_this14.isStatic()) {
             _this14.css({ position: 'relative' });
         }
 
@@ -4971,7 +4964,7 @@ Cuic.Resizable = function (_Cuic$Element4) {
         _this16.addClass('resizable');
 
         // Force the target to be the relative parent
-        if (_this16.css('position') === 'static') {
+        if (_this16.isStatic()) {
             _this16.css('position', 'relative');
         }
 

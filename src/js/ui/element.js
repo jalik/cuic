@@ -234,12 +234,13 @@ Cuic.Element = class {
      * Calculates the position of the element around its parent
      * @param position
      * @param target
-     * @param attach todo attach to
+     * @param anchorPoint
      * @return {{bottom: string, left: string, right: string, top: string}}
      * @protected
      */
-    _calculateAnchor(position, target, attach) {
+    _calculateAnchor(position, target, anchorPoint) {
         position = position || '';
+        anchorPoint = anchorPoint || '';
 
         let targetHeight;
         let targetWidth;
@@ -268,9 +269,6 @@ Cuic.Element = class {
         let elCenterY = (elHeight / 2);
         let targetCenterX = (targetWidth / 2);
         let targetCenterY = (targetHeight / 2);
-
-        // fixme elHeight can be less if animated (resized), which leads to wrong elCenterY
-        // fixme the problem is with element with scale(0) or display:none
 
         let prop = {
             bottom: '',
@@ -302,15 +300,10 @@ Cuic.Element = class {
         }
 
         // Use window for positioning
-        if (this.css('position') === 'fixed') {
+        if (this.isFixed()) {
             prop.left -= window.scrollX;
             prop.top -= window.scrollY;
         }
-
-        // Calculate available position
-        // const limit = this._calculateAvailablePosition(target.offsetParent());
-        // prop = this.constraintPosition(prop, limit);
-
         return prop;
     }
 

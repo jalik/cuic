@@ -36,7 +36,7 @@ Cuic.Movable = class extends Cuic.Element {
         this.addClass('movable');
 
         // Force the target to be the relative parent
-        if (this.css('position') === 'static') {
+        if (this.isStatic()) {
             this.css({position: 'relative'});
         }
 
