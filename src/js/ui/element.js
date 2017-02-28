@@ -847,6 +847,13 @@ Cuic.Element = class {
     }
 
     /**
+     * Triggers a click event on the element
+     */
+    click() {
+        this.node().click();
+    }
+
+    /**
      * Returns a clone of the element
      * @return {*|Cuic.Element}
      */

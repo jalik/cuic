@@ -77,13 +77,23 @@ Cuic.Elements = class {
 
     /**
      * Defines attribute for all elements
-     * @return {Cuic.Elements}
      * @param name
      * @param value
+     * @return {Cuic.Elements}
      */
     attr(name, value) {
         return this.each((el) => {
             el.attr(name, value);
+        });
+    }
+
+    /**
+     * Triggers a click event on elements
+     * @return {Cuic.Elements}
+     */
+    click() {
+        return this.each((el) => {
+            el.click();
         });
     }
 

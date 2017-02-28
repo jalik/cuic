@@ -2525,6 +2525,16 @@ Cuic.Element = function () {
         }
 
         /**
+         * Triggers a click event on the element
+         */
+
+    }, {
+        key: 'click',
+        value: function click() {
+            this.node().click();
+        }
+
+        /**
          * Returns a clone of the element
          * @return {*|Cuic.Element}
          */
@@ -4245,9 +4255,9 @@ Cuic.Elements = function () {
 
         /**
          * Defines attribute for all elements
-         * @return {Cuic.Elements}
          * @param name
          * @param value
+         * @return {Cuic.Elements}
          */
 
     }, {
@@ -4255,6 +4265,19 @@ Cuic.Elements = function () {
         value: function attr(name, value) {
             return this.each(function (el) {
                 el.attr(name, value);
+            });
+        }
+
+        /**
+         * Triggers a click event on elements
+         * @return {Cuic.Elements}
+         */
+
+    }, {
+        key: 'click',
+        value: function click() {
+            return this.each(function (el) {
+                el.click();
             });
         }
 
