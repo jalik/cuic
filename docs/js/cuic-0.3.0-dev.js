@@ -2623,7 +2623,7 @@ Cuic.Element = function () {
                 dataSet[Cuic.toCamelCase(key)] = value;
                 return this;
             } else if (key) {
-                return dataSet[key];
+                return dataSet[Cuic.toCamelCase(key)];
             } else {
                 return dataSet;
             }
@@ -4282,7 +4282,7 @@ Cuic.Elements = function () {
         key: 'each',
         value: function each(callback) {
             for (var _i2 = 0; _i2 < this.length; _i2 += 1) {
-                callback.call(this[_i2], this[_i2], this);
+                callback.call(this[_i2], this[_i2], _i2);
             }
             return this;
         }
@@ -6625,9 +6625,12 @@ Cuic.Popup = function (_Cuic$Component7) {
         });
 
         _this28.onOpen(function () {
-            var targetParent = Cuic.node(_this28.options.target).parentNode;
-            _this28.appendTo(targetParent);
-            _this28.anchor(_this28.options.anchor, null, _this28.options.target);
+            var target = Cuic.element(_this28.options.target);
+            _this28.appendTo(target.parent());
+            // Get anchor from data attribute
+            var anchor = target.data('anchor') || _this28.options.anchor;
+            var anchorPoint = target.data('anchor-point') || _this28.options.anchorPoint;
+            _this28.anchor(anchor, anchorPoint, target);
         });
 
         _this28.onOpened(function () {
@@ -7055,7 +7058,11 @@ Cuic.Tooltip = function (_Cuic$Component9) {
                 if (_this31.parentNode() !== document.body) {
                     _this31.appendTo(document.body);
                 }
-                _this31.anchor(_this31.options.anchor, null, [ev.pageX, ev.pageY]);
+                var target = Cuic.element(_this31.currentTarget);
+                // Get anchor from data attribute
+                var anchor = target.data('anchor') || _this31.options.anchor;
+                var anchorPoint = target.data('anchor-point') || _this31.options.anchorPoint;
+                _this31.anchor(anchor, anchorPoint, [ev.pageX, ev.pageY]);
             }
         });
 
@@ -7086,7 +7093,11 @@ Cuic.Tooltip = function (_Cuic$Component9) {
 
         _this31.onOpen(function () {
             if (!_this31.options.followPointer) {
-                _this31.anchor(_this31.options.anchor, null, _this31.currentTarget);
+                var target = Cuic.element(_this31.currentTarget);
+                // Get anchor from data attribute
+                var anchor = target.data('anchor') || _this31.options.anchor;
+                var anchorPoint = target.data('anchor-point') || _this31.options.anchorPoint;
+                _this31.anchor(anchor, anchorPoint, target);
             }
         });
 

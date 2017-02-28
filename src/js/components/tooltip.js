@@ -93,7 +93,11 @@ Cuic.Tooltip = class extends Cuic.Component {
                 if (this.parentNode() !== document.body) {
                     this.appendTo(document.body);
                 }
-                this.anchor(this.options.anchor, null, [ev.pageX, ev.pageY]);
+                const target = Cuic.element(this.currentTarget);
+                // Get anchor from data attribute
+                const anchor = target.data('anchor') || this.options.anchor;
+                const anchorPoint = target.data('anchor-point') || this.options.anchorPoint;
+                this.anchor(anchor, anchorPoint, [ev.pageX, ev.pageY]);
             }
         });
 
@@ -124,7 +128,11 @@ Cuic.Tooltip = class extends Cuic.Component {
 
         this.onOpen(() => {
             if (!this.options.followPointer) {
-                this.anchor(this.options.anchor, null, this.currentTarget);
+                const target = Cuic.element(this.currentTarget);
+                // Get anchor from data attribute
+                const anchor = target.data('anchor') || this.options.anchor;
+                const anchorPoint = target.data('anchor-point') || this.options.anchorPoint;
+                this.anchor(anchor, anchorPoint, target);
             }
         });
 

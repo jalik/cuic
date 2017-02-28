@@ -580,8 +580,55 @@
                                 </select>
                             </label>
                         </form>
-                        <div class="blueprint">
-                            <button class="btn btn-default" type="button">Toggle popup</button>
+                        <div class="blueprint" style="height: 300px;">
+                            <!-- BOTTOM ANCHOR -->
+                            <button class="btn btn-default" type="button"
+                                    style="position: absolute; left: 0; top: 0;"
+                                    data-anchor="bottom right">
+                                <span>Bottom Right</span>
+                            </button>
+                            <button class="btn btn-default" type="button"
+                                    style="position: absolute; left: 50%; top: 0; margin-left: -50px"
+                                    data-anchor="bottom center">
+                                <span>Bottom Center</span>
+                            </button>
+                            <button class="btn btn-default" type="button"
+                                    style="position: absolute; right: 0; top: 0;"
+                                    data-anchor="bottom left">
+                                <span>Bottom Left</span>
+                            </button>
+                            <!-- MIDDLE ANCHOR -->
+                            <button class="btn btn-default" type="button"
+                                    style="position: absolute; left: 0; top: 50%; margin-top: -17px"
+                                    data-anchor="middle right">
+                                <span>Middle Right</span>
+                            </button>
+                            <button class="btn btn-default" type="button"
+                                    style="position: absolute; left: 50%; top: 50%; margin-top: -17px; margin-left: -50px"
+                                    data-anchor="middle center">
+                                <span>Middle Center</span>
+                            </button>
+                            <button class="btn btn-default" type="button"
+                                    style="position: absolute; right: 0; top: 50%; margin-top: -17px"
+                                    data-anchor="middle left">
+                                <span>Middle Left</span>
+                            </button>
+                            <!-- TOP ANCHOR -->
+                            <button class="btn btn-default" type="button"
+                                    style="position: absolute; left: 0; bottom: 0;"
+                                    data-anchor="top right">
+                                <span>Top Right</span>
+                            </button>
+                            <button class="btn btn-default" type="button"
+                                    style="position: absolute; left: 50%; bottom: 0; margin-left: -50px"
+                                    data-anchor="top center">
+                                <span>Top Center</span>
+                            </button>
+                            <button class="btn btn-default" type="button"
+                                    style="position: absolute; right: 0; bottom: 0;"
+                                    data-anchor="top left">
+                                <span>Top Left</span>
+                            </button>
                         </div>
                     </div>
                     <script>
@@ -591,26 +638,30 @@
                             var blueprint = sandbox.find('.blueprint').eq(0);
                             var anchor = sandbox.find("[name=anchor]").eq(0);
                             var anchorPoint = sandbox.find("[name=anchorPoint]").eq(0);
-                            var popupButton = blueprint.find("button").eq(0);
+//                            var popupButton = blueprint.find("button").eq(0);
 
-                            window.popup = new Cuic.Popup({
-                                anchor: anchor.val(),
-                                autoClose: false,
-                                autoRemove: false,
-                                closable: true,
-                                content: "This is a popup",
-                                target: popupButton
-                            });
+                            window.popup = [];
 
-                            anchor.on("change", function () {
-                                window.popup.anchor(anchor.val(), anchorPoint.val());
-                            });
-                            anchorPoint.on("change", function () {
-                                window.popup.anchor(anchor.val(), anchorPoint.val());
-                            });
-                            popupButton.on("click", function () {
-                                popup.setContent("Clicked at <em>" + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds() + "</em>");
-                                popup.toggle();
+                            blueprint.find('button').each(function (el, i) {
+                                window.popup[i] = new Cuic.Popup({
+                                    anchor: anchor.val(),
+                                    autoClose: false,
+                                    autoRemove: false,
+                                    closable: true,
+                                    content: "This is a popup",
+                                    target: el
+                                });
+
+                                anchor.on("change", function () {
+                                    window.popup[i].anchor(anchor.val(), anchorPoint.val());
+                                });
+                                anchorPoint.on("change", function () {
+                                    window.popup[i].anchor(anchor.val(), anchorPoint.val());
+                                });
+                                el.on("click", function () {
+                                    popup[i].setContent("Clicked at <em>" + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds() + "</em>");
+                                    popup[i].toggle();
+                                });
                             });
                         });
                     </script>
@@ -1097,17 +1148,49 @@
                         <!--<span>Run</span>-->
                         <!--</button>-->
 
-                        <div class="blueprint" style="height: 400px;margin-top: 1em">
+                        <div class="blueprint" style="height: 400px; margin-top: 1em">
                             <div class="group1">
-                                <img src="images/square-100.png" title="Top left" style="margin: 10px">
-                                <img src="images/square-100.png" title="Top center" style="margin: 10px">
-                                <img src="images/square-100.png" title="Top right" style="margin: 10px">
+                                <!-- Bottom anchor -->
+                                <div class="testbox aligned-top aligned-left" style="position: absolute;"
+                                     data-anchor="bottom right" title="Bottom Right"></div>
+                                <div class="testbox aligned-top aligned-center"
+                                     style="position: absolute; left: 50%; margin-left: -50px"
+                                     data-anchor="bottom center" title="Bottom Center"></div>
+                                <div class="testbox aligned-top aligned-right" style="position: absolute;"
+                                     data-anchor="bottom left" title="Bottom Left"></div>
+
+                                <!-- Middle anchor -->
+                                <div class="testbox aligned-middle aligned-left"
+                                     style="position: absolute; top: 50%; margin-top: -50px"
+                                     data-anchor="middle right" title="Middle Right"></div>
+                                <div class="testbox aligned-middle aligned-center"
+                                     style="position: absolute; top: 50%; margin-top: -50px; left: 50%; margin-left: -50px"
+                                     data-anchor="middle middle" title="Middle Center"></div>
+                                <div class="testbox aligned-middle aligned-right"
+                                     style="position: absolute; top: 50%; margin-top: -50px"
+                                     data-anchor="middle left" title="Middle Left"></div>
+
+                                <!-- Top anchor -->
+                                <div class="testbox aligned-bottom aligned-left" style="position: absolute;"
+                                     data-anchor="top right" title="Top Right"></div>
+                                <div class="testbox aligned-bottom aligned-center"
+                                     style="position: absolute; left: 50%; margin-left: -50px"
+                                     data-anchor="top center" title="Top Center"></div>
+                                <div class="testbox aligned-bottom aligned-right" style="position: absolute;"
+                                     data-anchor="top left" title="Top Left"></div>
                             </div>
                             <div class="group2">
-                                <img src="images/square-100.png" title="Bottom left" style="margin: 10px">
-                                <img src="images/square-100.png" title="Bottom right" style="margin: 10px">
-                                <img src="images/square-100.png" style="margin: 10px"
-                                     title="<em>Description</em><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in pharetra tortor. Mauris tortor dui, malesuada sit amet dolor ut, tincidunt porttitor mauris. Cras rutrum risus nec justo sollicitudin ultricies. Phasellus fringilla posuere erat, bibendum blandit turpis aliquet quis. Nam sagittis libero eget neque imperdiet facilisis nec vitae lacus. Morbi. ">
+                                <div class="testbox aligned-top"
+                                     style="position: absolute; left:25%; margin-left: -50px"
+                                     title="Default">
+                                    <span>Default position</span>
+                                </div>
+                                <div class="testbox aligned-bottom"
+                                     style="position: absolute; left:25%; margin-left: -50px"
+                                     data-anchor=""
+                                     title="<em>Description</em><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in pharetra tortor. Mauris tortor dui, malesuada sit amet dolor ut, tincidunt porttitor mauris. Cras rutrum risus nec justo sollicitudin ultricies. Phasellus fringilla posuere erat, bibendum blandit turpis aliquet quis. Nam sagittis libero eget neque imperdiet facilisis nec vitae lacus. Morbi.">
+                                    <span>Custom HTML</span>
+                                </div>
                             </div>
                         </div>
                     </div>

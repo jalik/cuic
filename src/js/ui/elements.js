@@ -105,7 +105,7 @@ Cuic.Elements = class {
      */
     each(callback) {
         for (let i = 0; i < this.length; i += 1) {
-            callback.call(this[i], this[i], this);
+            callback.call(this[i], this[i], i);
         }
         return this;
     }

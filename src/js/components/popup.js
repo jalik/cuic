@@ -96,9 +96,12 @@ Cuic.Popup = class extends Cuic.Component {
         });
 
         this.onOpen(() => {
-            const targetParent = Cuic.node(this.options.target).parentNode;
-            this.appendTo(targetParent);
-            this.anchor(this.options.anchor, null, this.options.target);
+            const target = Cuic.element(this.options.target);
+            this.appendTo(target.parent());
+            // Get anchor from data attribute
+            const anchor = target.data('anchor') || this.options.anchor;
+            const anchorPoint = target.data('anchor-point') || this.options.anchorPoint;
+            this.anchor(anchor, anchorPoint, target);
         });
 
         this.onOpened(() => {

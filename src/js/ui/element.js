@@ -935,7 +935,7 @@ Cuic.Element = class {
             return this;
         }
         else if (key) {
-            return dataSet[key];
+            return dataSet[Cuic.toCamelCase(key)];
         }
         else {
             return dataSet;
