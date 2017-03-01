@@ -1730,6 +1730,12 @@ Cuic.Element = function () {
                         continue;
                     }
 
+                    // Apply CSS styles
+                    if (attr === 'data') {
+                        this.data(value);
+                        continue;
+                    }
+
                     // Set attribute
                     if (this.element[attr] !== undefined) {
                         this.element[attr] = value;
@@ -1802,7 +1808,9 @@ Cuic.Element = function () {
     _createClass(_class5, [{
         key: '_calculateAlign',
         value: function _calculateAlign(position, parent) {
-            position = position || '';
+            if (position === undefined) {
+                position = this.options.position;
+            }
 
             if (parent) {
                 parent = Cuic.element(parent);
@@ -1889,9 +1897,12 @@ Cuic.Element = function () {
     }, {
         key: '_calculateAnchor',
         value: function _calculateAnchor(position, anchorPoint, target) {
-            anchorPoint = anchorPoint || '';
-            position = position || '';
-
+            if (position === undefined) {
+                position = this.options.anchor;
+            }
+            if (anchorPoint === undefined) {
+                anchorPoint = this.options.anchorPoint;
+            }
             if (!position || !position.length) {
                 throw new TypeError('Cannot calculate anchor with position');
             }
@@ -2140,6 +2151,19 @@ Cuic.Element = function () {
         }
 
         /**
+         * Disables transitions
+         * @return {Cuic.Element}
+         * @protected
+         */
+
+    }, {
+        key: '_disableTransitions',
+        value: function _disableTransitions() {
+            this.addClass('no-transition');
+            return this;
+        }
+
+        /**
          * Displays element for calculation (positioning, parenting...)
          * @return {Cuic.Element}
          * @protected
@@ -2161,6 +2185,19 @@ Cuic.Element = function () {
                     }
                 }
             }
+            return this;
+        }
+
+        /**
+         * Enables transitions
+         * @return {Cuic.Element}
+         * @protected
+         */
+
+    }, {
+        key: '_enableTransitions',
+        value: function _enableTransitions() {
+            this.removeClass('no-transition');
             return this;
         }
 
@@ -2260,6 +2297,7 @@ Cuic.Element = function () {
                 var pos = this.css('position');
 
                 if (['absolute', 'fixed'].indexOf(pos) !== -1) {
+                    // Use default position
                     if (position === undefined) {
                         position = this.options.position;
                     }
@@ -2386,17 +2424,24 @@ Cuic.Element = function () {
         key: 'anchor',
         value: function anchor(_anchor, anchorPoint, target) {
             if (this.isInDOM()) {
+                // Use default anchor
                 if (_anchor === undefined) {
                     _anchor = this.options.anchor;
                 }
+                // Use default anchor point
                 if (anchorPoint === undefined) {
                     anchorPoint = this.options.anchorPoint;
                 }
+                // Use default target
+                if (target === undefined) {
+                    target = this.options.target;
+                }
+                target = Cuic.element(target);
                 this.debug('anchor', _anchor, target);
-                target = Cuic.element(target || this.options.target);
                 this.css(this._calculateAnchor(_anchor, anchorPoint, target));
                 this.addPositionClass(_anchor, 'anchored');
                 this.options.anchor = _anchor;
+                this.options.anchorPoint = anchorPoint;
                 this.options.target = target;
                 this.events.trigger('anchored', _anchor);
             }
@@ -2650,7 +2695,17 @@ Cuic.Element = function () {
                 dataSet[Cuic.toCamelCase(key)] = value;
                 return this;
             } else if (key) {
-                return dataSet[Cuic.toCamelCase(key)];
+                if (typeof key === 'string') {
+                    return dataSet[Cuic.toCamelCase(key)];
+                }
+                if ((typeof key === 'undefined' ? 'undefined' : _typeof(key)) === 'object' && key) {
+                    for (var name in key) {
+                        if (key.hasOwnProperty(name)) {
+                            dataSet[Cuic.toCamelCase(name)] = key[name];
+                        }
+                    }
+                    return this;
+                }
             } else {
                 return dataSet;
             }
@@ -6614,13 +6669,6 @@ Cuic.Popup = function (_Cuic$Component7) {
             className: 'popup-tail'
         }).appendTo(_this28);
 
-        // Add close button
-        _this28.closeButton = new Cuic.Element('span', {
-            className: _this28.options.closeButtonClass,
-            html: _this28.options.closeButton,
-            role: 'button'
-        }).addClass('btn-close').appendTo(_this28);
-
         /**
          * Popup shortcuts
          * @type {{close: *}}
@@ -6749,9 +6797,6 @@ Cuic.Popup.prototype.options = {
     anchor: 'top',
     autoClose: true,
     autoRemove: false,
-    closable: true,
-    closeButton: null,
-    closeButtonClass: 'glyphicon glyphicon-remove-sign',
     content: null,
     namespace: 'popup',
     opened: false,
@@ -6760,6 +6805,16 @@ Cuic.Popup.prototype.options = {
 };
 
 Cuic.popups = new Cuic.Collection();
+
+Cuic.onWindowResized(function () {
+    Cuic.popups.each(function (popup) {
+        if (popup.isShown()) {
+            popup._disableTransitions();
+            popup.anchor();
+            popup._enableTransitions();
+        }
+    });
+});
 
 /*
  * The MIT License (MIT)

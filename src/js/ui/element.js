@@ -79,6 +79,12 @@ Cuic.Element = class {
                         continue;
                     }
 
+                    // Apply CSS styles
+                    if (attr === 'data') {
+                        this.data(value);
+                        continue;
+                    }
+
                     // Set attribute
                     if (this.element[attr] !== undefined) {
                         this.element[attr] = value;
@@ -149,7 +155,9 @@ Cuic.Element = class {
      * @protected
      */
     _calculateAlign(position, parent) {
-        position = position || '';
+        if (position === undefined) {
+            position = this.options.position;
+        }
 
         if (parent) {
             parent = Cuic.element(parent);
@@ -239,9 +247,12 @@ Cuic.Element = class {
      * @protected
      */
     _calculateAnchor(position, anchorPoint, target) {
-        anchorPoint = anchorPoint || '';
-        position = position || '';
-
+        if (position === undefined) {
+            position = this.options.anchor;
+        }
+        if (anchorPoint === undefined) {
+            anchorPoint = this.options.anchorPoint;
+        }
         if (!position || !position.length) {
             throw new TypeError(`Cannot calculate anchor with position`);
         }
@@ -488,6 +499,16 @@ Cuic.Element = class {
     }
 
     /**
+     * Disables transitions
+     * @return {Cuic.Element}
+     * @protected
+     */
+    _disableTransitions() {
+        this.addClass('no-transition');
+        return this;
+    }
+
+    /**
      * Displays element for calculation (positioning, parenting...)
      * @return {Cuic.Element}
      * @protected
@@ -506,6 +527,16 @@ Cuic.Element = class {
                 }
             }
         }
+        return this;
+    }
+
+    /**
+     * Enables transitions
+     * @return {Cuic.Element}
+     * @protected
+     */
+    _enableTransitions() {
+        this.removeClass('no-transition');
         return this;
     }
 
@@ -603,6 +634,7 @@ Cuic.Element = class {
             const pos = this.css('position');
 
             if (['absolute', 'fixed'].indexOf(pos) !== -1) {
+                // Use default position
                 if (position === undefined) {
                     position = this.options.position;
                 }
@@ -721,17 +753,24 @@ Cuic.Element = class {
      */
     anchor(anchor, anchorPoint, target) {
         if (this.isInDOM()) {
+            // Use default anchor
             if (anchor === undefined) {
                 anchor = this.options.anchor;
             }
+            // Use default anchor point
             if (anchorPoint === undefined) {
                 anchorPoint = this.options.anchorPoint;
             }
+            // Use default target
+            if (target === undefined) {
+                target = this.options.target;
+            }
+            target = Cuic.element(target);
             this.debug('anchor', anchor, target);
-            target = Cuic.element(target || this.options.target);
             this.css(this._calculateAnchor(anchor, anchorPoint, target));
             this.addPositionClass(anchor, 'anchored');
             this.options.anchor = anchor;
+            this.options.anchorPoint = anchorPoint;
             this.options.target = target;
             this.events.trigger('anchored', anchor);
         }
@@ -951,7 +990,17 @@ Cuic.Element = class {
             return this;
         }
         else if (key) {
-            return dataSet[Cuic.toCamelCase(key)];
+            if (typeof key === 'string') {
+                return dataSet[Cuic.toCamelCase(key)];
+            }
+            if (typeof key === 'object' && key) {
+                for (let name in key) {
+                    if (key.hasOwnProperty(name)) {
+                        dataSet[Cuic.toCamelCase(name)] = key[name];
+                    }
+                }
+                return this;
+            }
         }
         else {
             return dataSet;

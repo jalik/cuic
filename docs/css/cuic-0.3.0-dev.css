@@ -132,18 +132,19 @@
   font-size: 1.3rem;
   position: relative;
 }
-.component.computing {
-  -webkit-transition-property: all;
-  transition-property: all;
-  -webkit-transition-duration: 0s;
-          transition-duration: 0s;
+.component.computing,
+.component.no-transition {
+  -webkit-transition-property: all !important;
+  transition-property: all !important;
+  -webkit-transition-duration: 0s !important;
+          transition-duration: 0s !important;
 }
 .component.hidden {
   display: none;
-  -webkit-transition-property: all;
-  transition-property: all;
-  -webkit-transition-duration: 0s;
-          transition-duration: 0s;
+  -webkit-transition-property: all !important;
+  transition-property: all !important;
+  -webkit-transition-duration: 0s !important;
+          transition-duration: 0s !important;
 }
 .component.maximized {
   height: 100%;
@@ -494,18 +495,6 @@ body > .panel {
 }
 .popup-content {
   line-height: 1.5rem;
-}
-.popup.closable .popup-content {
-  margin-right: 20px;
-}
-.popup .btn-close {
-  color: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  font-weight: bolder;
-  margin: 10px;
-  position: absolute;
-  top: 0;
-  right: 0;
 }
 .popup .btn-close:focus,
 .popup .btn-close:hover {

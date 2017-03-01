@@ -45,13 +45,6 @@ Cuic.Popup = class extends Cuic.Component {
             className: 'popup-tail'
         }).appendTo(this);
 
-        // Add close button
-        this.closeButton = new Cuic.Element('span', {
-            className: this.options.closeButtonClass,
-            html: this.options.closeButton,
-            role: 'button'
-        }).addClass('btn-close').appendTo(this);
-
         /**
          * Popup shortcuts
          * @type {{close: *}}
@@ -169,9 +162,6 @@ Cuic.Popup.prototype.options = {
     anchor: 'top',
     autoClose: true,
     autoRemove: false,
-    closable: true,
-    closeButton: null,
-    closeButtonClass: 'glyphicon glyphicon-remove-sign',
     content: null,
     namespace: 'popup',
     opened: false,
@@ -180,3 +170,13 @@ Cuic.Popup.prototype.options = {
 };
 
 Cuic.popups = new Cuic.Collection();
+
+Cuic.onWindowResized(() => {
+    Cuic.popups.each((popup) => {
+        if (popup.isShown()) {
+            popup._disableTransitions();
+            popup.anchor();
+            popup._enableTransitions();
+        }
+    });
+});
