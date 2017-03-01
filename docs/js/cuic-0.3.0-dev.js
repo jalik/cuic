@@ -60,6 +60,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  *
  */
 
+if (!Element.prototype.remove) {
+    Element.prototype.remove = function () {
+        if (this.parentNode) {
+            this.parentNode.removeChild(this);
+        }
+    };
+}
+
 if (!Element.prototype.matches) {
     Element.prototype.matches = Element.prototype.matchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.oMatchesSelector || Element.prototype.webkitMatchesSelector || function (s) {
         var matches = (this.document || this.ownerDocument).querySelectorAll(s);
@@ -583,7 +591,7 @@ if (!Element.prototype.matches) {
          * @param delay
          */
         onWindowResized: function onWindowResized(callback) {
-            var delay = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100;
+            var delay = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 50;
 
             var timer = void 0;
             this.on('resize', window, function (ev) {
@@ -2252,6 +2260,9 @@ Cuic.Element = function () {
                 var pos = this.css('position');
 
                 if (['absolute', 'fixed'].indexOf(pos) !== -1) {
+                    if (position === undefined) {
+                        position = this.options.position;
+                    }
                     this.debug('align', position);
                     this.css(this._calculateAlign(position));
                     this.addPositionClass(position, 'aligned');
@@ -2365,7 +2376,7 @@ Cuic.Element = function () {
 
         /**
          * Sets the position of the element toward another element
-         * @param position
+         * @param anchor
          * @param anchorPoint
          * @param target
          * @return {Cuic.Element}
@@ -2373,15 +2384,21 @@ Cuic.Element = function () {
 
     }, {
         key: 'anchor',
-        value: function anchor(position, anchorPoint, target) {
+        value: function anchor(_anchor, anchorPoint, target) {
             if (this.isInDOM()) {
-                this.debug('anchor', position, target);
+                if (_anchor === undefined) {
+                    _anchor = this.options.anchor;
+                }
+                if (anchorPoint === undefined) {
+                    anchorPoint = this.options.anchorPoint;
+                }
+                this.debug('anchor', _anchor, target);
                 target = Cuic.element(target || this.options.target);
-                this.css(this._calculateAnchor(position, anchorPoint, target));
-                this.addPositionClass(position, 'anchored');
-                this.options.anchor = position;
+                this.css(this._calculateAnchor(_anchor, anchorPoint, target));
+                this.addPositionClass(_anchor, 'anchored');
+                this.options.anchor = _anchor;
                 this.options.target = target;
-                this.events.trigger('anchored', position);
+                this.events.trigger('anchored', _anchor);
             }
             return this;
         }

@@ -532,7 +532,7 @@
          * @param callback
          * @param delay
          */
-        onWindowResized(callback, delay = 100) {
+        onWindowResized(callback, delay = 50) {
             let timer;
             this.on('resize', window, function (ev) {
                 clearTimeout(timer);

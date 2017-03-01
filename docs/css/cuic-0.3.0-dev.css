@@ -494,7 +494,6 @@ body > .panel {
 }
 .popup-content {
   line-height: 1.5rem;
-  overflow: auto;
 }
 .popup.closable .popup-content {
   margin-right: 20px;

@@ -603,6 +603,9 @@ Cuic.Element = class {
             const pos = this.css('position');
 
             if (['absolute', 'fixed'].indexOf(pos) !== -1) {
+                if (position === undefined) {
+                    position = this.options.position;
+                }
                 this.debug('align', position);
                 this.css(this._calculateAlign(position));
                 this.addPositionClass(position, 'aligned');
@@ -711,20 +714,26 @@ Cuic.Element = class {
 
     /**
      * Sets the position of the element toward another element
-     * @param position
+     * @param anchor
      * @param anchorPoint
      * @param target
      * @return {Cuic.Element}
      */
-    anchor(position, anchorPoint, target) {
+    anchor(anchor, anchorPoint, target) {
         if (this.isInDOM()) {
-            this.debug('anchor', position, target);
+            if (anchor === undefined) {
+                anchor = this.options.anchor;
+            }
+            if (anchorPoint === undefined) {
+                anchorPoint = this.options.anchorPoint;
+            }
+            this.debug('anchor', anchor, target);
             target = Cuic.element(target || this.options.target);
-            this.css(this._calculateAnchor(position, anchorPoint, target));
-            this.addPositionClass(position, 'anchored');
-            this.options.anchor = position;
+            this.css(this._calculateAnchor(anchor, anchorPoint, target));
+            this.addPositionClass(anchor, 'anchored');
+            this.options.anchor = anchor;
             this.options.target = target;
-            this.events.trigger('anchored', position);
+            this.events.trigger('anchored', anchor);
         }
         return this;
     }
