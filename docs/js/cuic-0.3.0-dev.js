@@ -1,28 +1,3 @@
-/*
- * The MIT License (MIT)
- *
- * Copyright (c) 2017 Karl STEIN
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- */
-
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1779,7 +1754,7 @@ Cuic.Element = function () {
 
         // Position the element
         if (this.options.position && this.hasParent()) {
-            this.align(this.options.position);
+            this.align();
         }
 
         if (this.hasParent()) {
@@ -1808,8 +1783,8 @@ Cuic.Element = function () {
     _createClass(_class5, [{
         key: '_calculateAlign',
         value: function _calculateAlign(position, parent) {
-            if (position === undefined) {
-                position = this.options.position;
+            if (!position || !position.length) {
+                throw new TypeError('Cannot calculate alignment if no position defined');
             }
 
             if (parent) {
@@ -1887,7 +1862,7 @@ Cuic.Element = function () {
 
         /**
          * Calculates the position of the element around its parent
-         * @param position
+         * @param anchor
          * @param anchorPoint
          * @param target
          * @return {{bottom, left, right, top}}
@@ -1896,15 +1871,9 @@ Cuic.Element = function () {
 
     }, {
         key: '_calculateAnchor',
-        value: function _calculateAnchor(position, anchorPoint, target) {
-            if (position === undefined) {
-                position = this.options.anchor;
-            }
-            if (anchorPoint === undefined) {
-                anchorPoint = this.options.anchorPoint;
-            }
-            if (!position || !position.length) {
-                throw new TypeError('Cannot calculate anchor with position');
+        value: function _calculateAnchor(anchor, anchorPoint, target) {
+            if (!anchor || !anchor.length) {
+                throw new TypeError('Cannot calculate anchor with no position defined');
             }
 
             var targetHeight = void 0;
@@ -1943,34 +1912,34 @@ Cuic.Element = function () {
 
             if (anchorPoint) {
                 // Vertical positioning
-                if (position.indexOf('top') !== -1) {
+                if (anchor.indexOf('top') !== -1) {
                     prop.top = targetOffset.top - elCenterY;
-                } else if (position.indexOf('bottom') !== -1) {
+                } else if (anchor.indexOf('bottom') !== -1) {
                     prop.top = targetOffset.top - elCenterY + targetHeight;
                 } else {
                     prop.top = targetOffset.top - elCenterY + targetCenterY;
                 }
                 // Horizontal positioning
-                if (position.indexOf('left') !== -1) {
+                if (anchor.indexOf('left') !== -1) {
                     prop.left = targetOffset.left - elCenterX;
-                } else if (position.indexOf('right') !== -1) {
+                } else if (anchor.indexOf('right') !== -1) {
                     prop.left = targetOffset.left - elCenterX + targetWidth;
                 } else {
                     prop.left = targetOffset.left - elCenterX + targetCenterX;
                 }
             } else {
                 // Vertical positioning
-                if (position.indexOf('bottom') !== -1) {
+                if (anchor.indexOf('bottom') !== -1) {
                     prop.top = targetOffset.top + targetHeight;
-                } else if (position.indexOf('top') !== -1) {
+                } else if (anchor.indexOf('top') !== -1) {
                     prop.top = targetOffset.top - elHeight;
                 } else {
                     prop.top = targetOffset.top + targetCenterY - elCenterY;
                 }
                 // Horizontal positioning
-                if (position.indexOf('left') !== -1) {
+                if (anchor.indexOf('left') !== -1) {
                     prop.left = targetOffset.left - elWidth;
-                } else if (position.indexOf('right') !== -1) {
+                } else if (anchor.indexOf('right') !== -1) {
                     prop.left = targetOffset.left + targetWidth;
                 } else {
                     prop.left = targetOffset.left + targetCenterX - elCenterX;
@@ -2293,7 +2262,7 @@ Cuic.Element = function () {
     }, {
         key: 'align',
         value: function align(position) {
-            if (this.isInDOM()) {
+            if (this.isInDOM() && (position || this.options.position)) {
                 var pos = this.css('position');
 
                 if (['absolute', 'fixed'].indexOf(pos) !== -1) {
@@ -2423,7 +2392,7 @@ Cuic.Element = function () {
     }, {
         key: 'anchor',
         value: function anchor(_anchor, anchorPoint, target) {
-            if (this.isInDOM()) {
+            if (this.isInDOM() && (_anchor || this.options.anchor)) {
                 // Use default anchor
                 if (_anchor === undefined) {
                     _anchor = this.options.anchor;
@@ -2929,7 +2898,7 @@ Cuic.Element = function () {
             var height = void 0;
 
             if (node instanceof Window) {
-                height = node.screen.height;
+                height = this.height();
             } else {
                 // todo subtract vertical scrollbar width
                 this._display();
@@ -2951,7 +2920,7 @@ Cuic.Element = function () {
             var width = void 0;
 
             if (node instanceof Window) {
-                width = node.screen.width;
+                width = this.width();
             } else {
                 // todo subtract horizontal scrollbar width
                 this._display();
@@ -3589,7 +3558,7 @@ Cuic.Element = function () {
             var height = void 0;
 
             if (node instanceof Window) {
-                height = node.screen.height;
+                height = this.height();
             } else {
                 this._display();
                 height = node.offsetHeight;
@@ -3617,7 +3586,7 @@ Cuic.Element = function () {
             var width = void 0;
 
             if (node instanceof Window) {
-                width = node.screen.width;
+                width = this.width();
             } else {
                 this._display();
                 width = node.offsetWidth;
@@ -5708,7 +5677,7 @@ Cuic.Dialog = function (_Cuic$Component3) {
             if (_this21.options.maximized) {
                 _this21.maximize();
             } else {
-                _this21.align(_this21.options.position);
+                _this21.align();
             }
 
             // Focus the last button
@@ -5953,7 +5922,9 @@ Cuic.dialogs.getCurrentZIndex = function () {
 
 Cuic.onWindowResized(function () {
     Cuic.dialogs.each(function (dialog) {
-        dialog.resizeContent();
+        if (dialog.isInDOM()) {
+            dialog.resizeContent();
+        }
     });
 });
 
@@ -6108,7 +6079,7 @@ Cuic.Notification = function (_Cuic$Component5) {
 
         _this24.onOpen(function () {
             if (_this24.options.position) {
-                _this24.align(_this24.options.position);
+                _this24.align();
             }
         });
 
@@ -6178,6 +6149,14 @@ Cuic.Notification.prototype.options = {
 
 Cuic.notifications = new Cuic.Collection();
 
+Cuic.onWindowResized(function () {
+    Cuic.notifications.each(function (notif) {
+        if (notif.isInDOM()) {
+            notif.align();
+        }
+    });
+});
+
 /*
  * The MIT License (MIT)
  *
@@ -6220,7 +6199,7 @@ Cuic.NotificationStack = function (_Cuic$Group) {
         var _this26 = _possibleConstructorReturn(this, (_class17.__proto__ || Object.getPrototypeOf(_class17)).call(this, 'div', { className: options.className }, options));
 
         if (_this26.options.position) {
-            _this26.align(_this26.options.position);
+            _this26.align();
         }
 
         // Display the notification when it's added to the stack
@@ -6340,7 +6319,7 @@ Cuic.Panel = function (_Cuic$Component6) {
         }
 
         if (_this27.isOpened()) {
-            _this27.align(_this27.options.position);
+            _this27.align();
             _this27.resizeContent();
         }
 
@@ -6455,7 +6434,7 @@ Cuic.Panel = function (_Cuic$Component6) {
 
         _this27.onOpen(function () {
             _this27.resizeContent();
-            _this27.align(_this27.options.position);
+            _this27.align();
         });
 
         _this27.onOpened(function () {
@@ -6614,7 +6593,10 @@ Cuic.panels = new Cuic.Collection();
 
 Cuic.onWindowResized(function () {
     Cuic.panels.each(function (panel) {
-        panel.resizeContent();
+        if (panel.isInDOM()) {
+            panel.align();
+            panel.resizeContent();
+        }
     });
 });
 
@@ -6808,7 +6790,7 @@ Cuic.popups = new Cuic.Collection();
 
 Cuic.onWindowResized(function () {
     Cuic.popups.each(function (popup) {
-        if (popup.isShown()) {
+        if (popup.isInDOM() && popup.isShown()) {
             popup._disableTransitions();
             popup.anchor();
             popup._enableTransitions();

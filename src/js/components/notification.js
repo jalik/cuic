@@ -78,7 +78,7 @@ Cuic.Notification = class extends Cuic.Component {
 
         this.onOpen(() => {
             if (this.options.position) {
-                this.align(this.options.position);
+                this.align();
             }
         });
 
@@ -134,3 +134,11 @@ Cuic.Notification.prototype.options = {
 };
 
 Cuic.notifications = new Cuic.Collection();
+
+Cuic.onWindowResized(() => {
+    Cuic.notifications.each((notif) => {
+        if (notif.isInDOM()) {
+            notif.align();
+        }
+    });
+});

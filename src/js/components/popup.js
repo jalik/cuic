@@ -173,7 +173,7 @@ Cuic.popups = new Cuic.Collection();
 
 Cuic.onWindowResized(() => {
     Cuic.popups.each((popup) => {
-        if (popup.isShown()) {
+        if (popup.isInDOM() && popup.isShown()) {
             popup._disableTransitions();
             popup.anchor();
             popup._enableTransitions();

@@ -36,7 +36,7 @@ Cuic.NotificationStack = class extends Cuic.Group {
 
         // Set position
         if (this.options.position) {
-            this.align(this.options.position);
+            this.align();
         }
 
         // Display the notification when it's added to the stack

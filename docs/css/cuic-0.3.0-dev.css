@@ -347,7 +347,7 @@ body > .notification {
   line-height: 1.5rem;
 }
 .notification.closable .notification-content {
-  margin-right: 20px;
+  margin-right: 25px;
 }
 .notification .btn-close {
   color: rgba(255, 255, 255, 0.5);

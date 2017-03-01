@@ -130,7 +130,7 @@ Cuic.Element = class {
 
         // Position the element
         if (this.options.position && this.hasParent()) {
-            this.align(this.options.position);
+            this.align();
         }
 
         if (this.hasParent()) {
@@ -155,8 +155,8 @@ Cuic.Element = class {
      * @protected
      */
     _calculateAlign(position, parent) {
-        if (position === undefined) {
-            position = this.options.position;
+        if (!position || !position.length) {
+            throw new TypeError(`Cannot calculate alignment if no position defined`);
         }
 
         if (parent) {
@@ -240,21 +240,15 @@ Cuic.Element = class {
 
     /**
      * Calculates the position of the element around its parent
-     * @param position
+     * @param anchor
      * @param anchorPoint
      * @param target
      * @return {{bottom, left, right, top}}
      * @protected
      */
-    _calculateAnchor(position, anchorPoint, target) {
-        if (position === undefined) {
-            position = this.options.anchor;
-        }
-        if (anchorPoint === undefined) {
-            anchorPoint = this.options.anchorPoint;
-        }
-        if (!position || !position.length) {
-            throw new TypeError(`Cannot calculate anchor with position`);
+    _calculateAnchor(anchor, anchorPoint, target) {
+        if (!anchor || !anchor.length) {
+            throw new TypeError(`Cannot calculate anchor with no position defined`);
         }
 
         let targetHeight;
@@ -293,20 +287,20 @@ Cuic.Element = class {
 
         if (anchorPoint) {
             // Vertical positioning
-            if (position.indexOf('top') !== -1) {
+            if (anchor.indexOf('top') !== -1) {
                 prop.top = targetOffset.top - elCenterY;
             }
-            else if (position.indexOf('bottom') !== -1) {
+            else if (anchor.indexOf('bottom') !== -1) {
                 prop.top = targetOffset.top - elCenterY + targetHeight;
             }
             else {
                 prop.top = targetOffset.top - elCenterY + targetCenterY;
             }
             // Horizontal positioning
-            if (position.indexOf('left') !== -1) {
+            if (anchor.indexOf('left') !== -1) {
                 prop.left = targetOffset.left - elCenterX;
             }
-            else if (position.indexOf('right') !== -1) {
+            else if (anchor.indexOf('right') !== -1) {
                 prop.left = targetOffset.left - elCenterX + targetWidth;
             }
             else {
@@ -314,20 +308,20 @@ Cuic.Element = class {
             }
         } else {
             // Vertical positioning
-            if (position.indexOf('bottom') !== -1) {
+            if (anchor.indexOf('bottom') !== -1) {
                 prop.top = targetOffset.top + targetHeight;
             }
-            else if (position.indexOf('top') !== -1) {
+            else if (anchor.indexOf('top') !== -1) {
                 prop.top = targetOffset.top - elHeight;
             }
             else {
                 prop.top = targetOffset.top + targetCenterY - elCenterY;
             }
             // Horizontal positioning
-            if (position.indexOf('left') !== -1) {
+            if (anchor.indexOf('left') !== -1) {
                 prop.left = targetOffset.left - elWidth;
             }
-            else if (position.indexOf('right') !== -1) {
+            else if (anchor.indexOf('right') !== -1) {
                 prop.left = targetOffset.left + targetWidth;
             }
             else {
@@ -630,7 +624,7 @@ Cuic.Element = class {
      * @return {Cuic.Element}
      */
     align(position) {
-        if (this.isInDOM()) {
+        if (this.isInDOM() && (position || this.options.position)) {
             const pos = this.css('position');
 
             if (['absolute', 'fixed'].indexOf(pos) !== -1) {
@@ -752,7 +746,7 @@ Cuic.Element = class {
      * @return {Cuic.Element}
      */
     anchor(anchor, anchorPoint, target) {
-        if (this.isInDOM()) {
+        if (this.isInDOM() && (anchor || this.options.anchor)) {
             // Use default anchor
             if (anchor === undefined) {
                 anchor = this.options.anchor;
@@ -1190,7 +1184,7 @@ Cuic.Element = class {
         let height;
 
         if (node instanceof Window) {
-            height = node.screen.height;
+            height = this.height();
         } else {
             // todo subtract vertical scrollbar width
             this._display();
@@ -1209,7 +1203,7 @@ Cuic.Element = class {
         let width;
 
         if (node instanceof Window) {
-            width = node.screen.width;
+            width = this.width();
         } else {
             // todo subtract horizontal scrollbar width
             this._display();
@@ -1725,7 +1719,7 @@ Cuic.Element = class {
         let height;
 
         if (node instanceof Window) {
-            height = node.screen.height;
+            height = this.height();
         } else {
             this._display();
             height = node.offsetHeight;
@@ -1748,7 +1742,7 @@ Cuic.Element = class {
         let width;
 
         if (node instanceof Window) {
-            width = node.screen.width;
+            width = this.width();
         } else {
             this._display();
             width = node.offsetWidth;

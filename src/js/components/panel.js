@@ -84,7 +84,7 @@ Cuic.Panel = class extends Cuic.Component {
         }
 
         if (this.isOpened()) {
-            this.align(this.options.position);
+            this.align();
             this.resizeContent();
         }
 
@@ -205,7 +205,7 @@ Cuic.Panel = class extends Cuic.Component {
 
         this.onOpen(() => {
             this.resizeContent();
-            this.align(this.options.position);
+            this.align();
         });
 
         this.onOpened(() => {
@@ -335,6 +335,9 @@ Cuic.panels = new Cuic.Collection();
 
 Cuic.onWindowResized(() => {
     Cuic.panels.each((panel) => {
-        panel.resizeContent();
+        if (panel.isInDOM()) {
+            panel.align();
+            panel.resizeContent();
+        }
     });
 });

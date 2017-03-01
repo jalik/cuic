@@ -29,7 +29,7 @@
   box-shadow: @shadow-x @shadow-y @shadow-size @shadow-color;
   color: #fff;
   display: inline-block;
-  margin: @margin;
+  margin: @shadow-size;
   overflow: auto;
   padding: @padding;
   position: absolute;
@@ -60,7 +60,7 @@ body > .notification {
 }
 
 .notification.closable .notification-content {
-  margin-right: @margin * 2;
+  margin-right: @margin * 2.5;
 }
 
 .notification .btn-close {

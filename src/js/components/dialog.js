@@ -205,7 +205,7 @@ Cuic.Dialog = class extends Cuic.Component {
             if (this.options.maximized) {
                 this.maximize();
             } else {
-                this.align(this.options.position);
+                this.align();
             }
 
             // Focus the last button
@@ -414,6 +414,8 @@ Cuic.dialogs.getCurrentZIndex = function () {
 
 Cuic.onWindowResized(() => {
     Cuic.dialogs.each((dialog) => {
-        dialog.resizeContent();
+        if (dialog.isInDOM()) {
+            dialog.resizeContent();
+        }
     });
 });
