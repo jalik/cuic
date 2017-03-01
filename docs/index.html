@@ -40,59 +40,78 @@
     <script src="./js/cuic-0.3.0-dev.js"></script>
 
     <script type="application/javascript">
-        Cuic.ready(function (event) {
-            window.onresize = function () {
-                var windowHeight = window.innerHeight;
-                var sidebar = Cuic.find('#sidebar').eq(0);
-                var content = Cuic.find('#content').eq(0);
-                sidebar.css({'max-height': windowHeight});
-                content.css({'max-height': windowHeight});
+        Cuic.ready(function () {
+            var resize = function () {
+                var navbar = Cuic.element('.navbar');
+                var sidebar = Cuic.find('#sidebar');
+                var content = Cuic.find('#content');
+                var maxHeight = Cuic.element(window).height() - navbar.outerHeight(true);
+                sidebar.css({'max-height': maxHeight});
+                content.css({'max-height': maxHeight});
             };
-            window.onresize();
+            Cuic.onWindowResized(resize);
+            resize();
         });
     </script>
 </head>
 <body>
 
-<div id="page" class="container">
+<!-- NAVBAR -->
+
+<header>
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#navbar" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Cuic.js</a>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<div id="page" class="container-fluid">
     <div class="row">
 
         <!-- SIDEBAR -->
 
-        <div class="col-sm-3">
-            <aside id="sidebar">
-                <h4 class="menu-title">Components</h4>
-                <ul class="menu">
-                    <li><a href="#ui-dialog">Dialog</a></li>
-                    <!--<li><a href="#ui-grid">Grid</a></li>-->
-                    <li><a href="#ui-notification">Notification</a></li>
-                    <li><a href="#ui-notification-stack">NotificationStack</a></li>
-                    <li><a href="#ui-panel">Panel</a></li>
-                    <li><a href="#ui-popup">Popup</a></li>
-                    <li><a href="#ui-switcher">Switcher</a></li>
-                    <!--<li><a href="#ui-table">Table</a></li>-->
-                    <!--<li><a href="#ui-tabs">Tabs</a></li>-->
-                    <li><a href="#ui-tooltip">Tooltip</a></li>
-                    <!--<li><a href="#ui-tree">Tree</a></li>-->
-                </ul>
-                <h4 class="menu-title">Events</h4>
-                <ul class="menu">
-                    <!--<li><a href="#ui-hook">Hook</a></li>-->
-                    <li><a href="#ui-movable">Movable</a></li>
-                    <li><a href="#ui-resizable">Resizable</a></li>
-                    <li><a href="#ui-selectable">Selectable</a></li>
-                </ul>
-                <h4 class="menu-title">Utils</h4>
-                <ul class="menu">
-                    <li><a href="#ui-utils">Common</a></li>
-                    <li><a href="#ui-utils-form">Form</a></li>
-                </ul>
-            </aside>
-        </div>
+        <aside id="sidebar" class="col-sm-3 col-md-2">
+            <h4 class="menu-title">Components</h4>
+            <ul class="menu">
+                <li><a href="#ui-dialog">Dialog</a></li>
+                <!--<li><a href="#ui-grid">Grid</a></li>-->
+                <li><a href="#ui-notification">Notification</a></li>
+                <li><a href="#ui-notification-stack">NotificationStack</a></li>
+                <li><a href="#ui-panel">Panel</a></li>
+                <li><a href="#ui-popup">Popup</a></li>
+                <li><a href="#ui-switcher">Switcher</a></li>
+                <!--<li><a href="#ui-table">Table</a></li>-->
+                <!--<li><a href="#ui-tabs">Tabs</a></li>-->
+                <li><a href="#ui-tooltip">Tooltip</a></li>
+                <!--<li><a href="#ui-tree">Tree</a></li>-->
+            </ul>
+            <h4 class="menu-title">Events</h4>
+            <ul class="menu">
+                <!--<li><a href="#ui-hook">Hook</a></li>-->
+                <li><a href="#ui-movable">Movable</a></li>
+                <li><a href="#ui-resizable">Resizable</a></li>
+                <li><a href="#ui-selectable">Selectable</a></li>
+            </ul>
+            <h4 class="menu-title">Utils</h4>
+            <ul class="menu">
+                <li><a href="#ui-utils">Common</a></li>
+                <li><a href="#ui-utils-form">Form</a></li>
+            </ul>
+        </aside>
 
         <!-- CONTENT -->
 
-        <div class="col-sm-9">
+        <div class="col-sm-9 col-md-10">
             <div id="content">
 
                 <h1>Cuic.js - Common User Interface Components</h1>
@@ -105,82 +124,96 @@
 
                 <!-- DIALOG -->
 
-                <div id="ui-dialog">
+                <section id="ui-dialog">
                     <h2><a href="#ui-dialog">Cuic.Dialog</a></h2>
 
                     <p class="alert alert-info">Dialogs are used to display things that needs interactions, for example
-                        a
-                        confirmation, or a login
-                        form.</p>
+                        a confirmation, or a login form.</p>
 
-                    <div class="sandbox" id="sb-dialog">
-                        <label class="inline">
-                            <span class="help-block">position</span>
-                            <select class="form-control" name="position">
-                                <option selected>center</option>
-                                <option>left top</option>
-                                <option>top</option>
-                                <option>right top</option>
-                                <option>right</option>
-                                <option>right bottom</option>
-                                <option>bottom</option>
-                                <option>left bottom</option>
-                                <option>left</option>
-                            </select>
-                        </label>
-                        <label class="inline">
-                            <span class="help-block">css</span>
-                            <input class="form-control" type="text" name="css" value="width: 400px">
-                        </label>
-                        <label class="inline">
-                            <span class="help-block">parent</span>
-                            <input type="checkbox" name="parent" checked>
-                        </label>
-                        <label class="inline">
-                            <span class="help-block">buttons</span>
-                            <input type="checkbox" name="buttons" checked>
-                        </label>
-                        <label class="inline">
-                            <span class="help-block">title</span>
-                            <input type="checkbox" name="title" checked>
-                        </label>
-                        <label class="inline">
-                            <span class="help-block">modal</span>
-                            <input type="checkbox" name="modal" checked>
-                        </label>
-                        <label class="inline">
-                            <span class="help-block">autoClose</span>
-                            <input type="checkbox" name="autoClose" checked>
-                        </label>
-                        <button class="btn btn-primary btn-run" type="submit">
-                            <span class="glyphicon glyphicon-console"></span>
-                            Run
-                        </button>
-
-                        <div class="blueprint" style="height: 500px; margin-top: 1em"></div>
+                    <div class="sandbox">
+                        <div class="row">
+                            <form class="col-md-2 settings">
+                                <div class="form-group">
+                                    <label>position</label>
+                                    <select class="form-control" name="position">
+                                        <option selected>center</option>
+                                        <option>left top</option>
+                                        <option>top</option>
+                                        <option>right top</option>
+                                        <option>right</option>
+                                        <option>right bottom</option>
+                                        <option>bottom</option>
+                                        <option>left bottom</option>
+                                        <option>left</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>css</label>
+                                    <input class="form-control" type="text" name="css" value="width: 400px">
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="parent" checked>
+                                        <span>parent</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="buttons" checked>
+                                        <span>buttons</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="title" checked>
+                                        <span>title</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="modal" checked>
+                                        <span>modal</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="autoClose" checked>
+                                        <span>autoClose</span>
+                                    </label>
+                                </div>
+                                <button class="btn btn-primary btn-run btn-block" type="submit">
+                                    <span class="glyphicon glyphicon-console"></span>
+                                    <span>Run</span>
+                                </button>
+                            </form>
+                            <div class="col-md-10">
+                                <div class="blueprint"></div>
+                            </div>
+                        </div>
                     </div>
                     <script>
                         Cuic.ready(function () {
-                            var sandbox = $('#sb-dialog');
-                            var blueprint = sandbox.find('.blueprint');
-                            var modal = sandbox.find('[name=modal]');
-                            var parent = sandbox.find('[name="parent"]');
-                            var css = sandbox.find('[name="css"]');
-                            var position = sandbox.find('[name="position"]');
-                            var autoClose = sandbox.find('[name="autoClose"]');
+                            var sandbox = Cuic.element('#ui-dialog .sandbox');
+                            var blueprint = sandbox.find('.blueprint').eq(0);
+                            var modal = sandbox.find('[name=modal]').eq(0);
+                            var parent = sandbox.find('[name="parent"]').eq(0);
+                            var css = sandbox.find('[name="css"]').eq(0);
+                            var position = sandbox.find('[name="position"]').eq(0);
+                            var autoClose = sandbox.find('[name="autoClose"]').eq(0);
 
-                            sandbox.find('.btn-run').on('click', function () {
+                            sandbox.find('form').on('submit', function (ev) {
+                                ev.preventDefault();
                                 window.dialog = new Cuic.Dialog({
 //                                    debug: true,
-                                    autoClose: autoClose.is(':checked'),
+                                    autoClose: autoClose.node().checked,
                                     autoRemove: false,
                                     css: css.val(),
-                                    modal: modal.is(':checked'),
-                                    parent: parent.is(':checked') ? blueprint : document.body,
+                                    modal: modal.node().checked,
+                                    parent: parent.node().checked ? blueprint : document.body,
                                     position: position.val(),
-                                    title: sandbox.find("[name=title]").is(":checked") ? 'Header & title' : null,
+                                    title: sandbox.find("[name=title]").eq(0).node().checked ? 'Header & title' : null,
                                     content: 'This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p>',
-                                    buttons: sandbox.find("[name=buttons]").is(":checked") ? [
+                                    buttons: sandbox.find("[name=buttons]").eq(0).node().checked ? [
                                             {
                                                 label: 'Accept',
                                                 callback: 'close'
@@ -195,7 +228,7 @@
                             });
                         });
                     </script>
-                </div>
+                </section>
 
                 <!-- GRID -->
 
@@ -207,32 +240,32 @@
                 <!--to drag them.</p>-->
 
                 <!--<div class="sandbox" id="sb-grid">-->
-                <!--<label class="inline">-->
-                <!--<span class="help-block">cols</span>-->
+                <!--<label>-->
+                <!--<span>cols</span>-->
                 <!--<input class="form-control" type="text" name="cols" value="6" size="2">-->
                 <!--</label>-->
-                <!--<label class="inline">-->
-                <!--<span class="help-block">rows</span>-->
+                <!--<label>-->
+                <!--<span>rows</span>-->
                 <!--<input class="form-control" type="text" name="rows" value="5" size="2">-->
                 <!--</label>-->
-                <!--<label class="inline">-->
-                <!--<span class="help-block">colsWidth</span>-->
+                <!--<label>-->
+                <!--<span>colsWidth</span>-->
                 <!--<input class="form-control" type="text" name="colsWidth" value="100" size="4">-->
                 <!--</label>-->
-                <!--<label class="inline">-->
-                <!--<span class="help-block">rowsHeight</span>-->
+                <!--<label>-->
+                <!--<span>rowsHeight</span>-->
                 <!--<input class="form-control" type="text" name="rowsHeight" value="100" size="4">-->
                 <!--</label>-->
-                <!--<label class="inline">-->
-                <!--<span class="help-block">spacing</span>-->
+                <!--<label>-->
+                <!--<span>spacing</span>-->
                 <!--<input class="form-control" type="text" name="spacing" value="10" size="2">-->
                 <!--</label>-->
-                <!--<label class="inline">-->
-                <!--<span class="help-block">editable</span>-->
+                <!--<label>-->
+                <!--<span>editable</span>-->
                 <!--<input type="checkbox" name="editable" checked>-->
                 <!--</label>-->
-                <!--<label class="inline">-->
-                <!--<span class="help-block">autoResize</span>-->
+                <!--<label>-->
+                <!--<span>autoResize</span>-->
                 <!--<input type="checkbox" name="autoResize" checked>-->
                 <!--</label>-->
                 <!--<button class="btn btn-primary btn-run" type="submit">-->
@@ -299,121 +332,135 @@
 
                 <!-- NOTIFICATION -->
 
-                <div id="ui-notification">
+                <section id="ui-notification">
                     <h2><a href="#ui-notification">Cuic.Notification</a></h2>
 
                     <p class="alert alert-info">Notifications are used to display messages that does not require any
                         interaction.</p>
 
-                    <div class="sandbox" id="sb-notification">
-                        <label class="inline">
-                            <span class="help-block">position</span>
-                            <select class="form-control" name="position">
-                                <option selected>center</option>
-                                <option>left top</option>
-                                <option>top</option>
-                                <option>right top</option>
-                                <option>right</option>
-                                <option>right bottom</option>
-                                <option>bottom</option>
-                                <option>left bottom</option>
-                                <option>left</option>
-                            </select>
-                        </label>
-                        <label class="inline">
-                            <span class="help-block">duration</span>
-                            <input class="form-control" type="number" name="duration" value="2000">
-                        </label>
-                        <label class="inline">
-                            <span class="help-block">autoClose</span>
-                            <input type="checkbox" name="autoClose" checked>
-                        </label>
-                        <label class="inline">
-                            <span class="help-block">parent</span>
-                            <input type="checkbox" name="parent" checked>
-                        </label>
-                        <button class="btn btn-primary btn-run" type="submit">
-                            <span class="glyphicon glyphicon-console"></span>
-                            Run
-                        </button>
-
-                        <div class="blueprint" style="height: 300px;margin-top: 1em"></div>
+                    <div class="sandbox">
+                        <div class="row">
+                            <form class="col-md-2 settings">
+                                <div class="form-group">
+                                    <label>position</label>
+                                    <select class="form-control" name="position">
+                                        <option selected>center</option>
+                                        <option>left top</option>
+                                        <option>top</option>
+                                        <option>right top</option>
+                                        <option>right</option>
+                                        <option>right bottom</option>
+                                        <option>bottom</option>
+                                        <option>left bottom</option>
+                                        <option>left</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>duration</label>
+                                    <input class="form-control" type="number" name="duration" value="2000">
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" name="autoClose" checked>
+                                        <span>autoClose</span>
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" name="parent" checked>
+                                        <span>parent</span>
+                                    </label>
+                                </div>
+                                <button class="btn btn-primary btn-run btn-block" type="submit">
+                                    <span class="glyphicon glyphicon-console"></span>
+                                    <span>Run</span>
+                                </button>
+                            </form>
+                            <div class="col-md-10">
+                                <div class="blueprint"></div>
+                            </div>
+                        </div>
                     </div>
                     <script>
                         Cuic.ready(function () {
-                            var sandbox = $('#sb-notification');
-                            var blueprint = sandbox.find('.blueprint');
-                            var autoClose = sandbox.find('[name=autoClose]');
-                            var parent = sandbox.find('[name=parent]');
-                            var duration = sandbox.find('[name=duration]');
-                            var position = sandbox.find('[name=position]');
+                            var sandbox = Cuic.element('#ui-notification .sandbox');
+                            var blueprint = sandbox.find('.blueprint').eq(0);
+                            var autoClose = sandbox.find('[name=autoClose]').eq(0);
+                            var parent = sandbox.find('[name=parent]').eq(0);
+                            var duration = sandbox.find('[name=duration]').eq(0);
+                            var position = sandbox.find('[name=position]').eq(0);
 
-                            sandbox.find('.btn-run').on('click', function () {
+                            sandbox.find('form').on('submit', function (ev) {
+                                ev.preventDefault();
                                 window.notification = new Cuic.Notification({
-                                    autoClose: autoClose.is(":checked"),
+                                    autoClose: autoClose.node().checked,
                                     autoRemove: true,
                                     closable: true,
                                     debug: false,
-                                    parent: parent.is(':checked') ? blueprint : document.body,
+                                    parent: parent.node().checked ? blueprint : document.body,
                                     content: 'Notification from <b>' + position.val() + '</b>',
                                     duration: duration.val(),
                                     position: position.val()
                                 }).open();
 
                                 autoClose.on("change", function () {
-                                    notification.options.autoClose = autoClose.is(":checked");
+                                    notification.options.autoClose = autoClose.node().checked;
                                 });
                                 position.off('change').on("change", function () {
                                     if (!notification.isRemoved()) {
-                                        notification.align(position.val(), parent.is(':checked') ? '#sb-notification .blueprint' : document.body);
+                                        notification.align(position.val(), parent.node().checked ? blueprint : document.body);
                                     }
                                 });
                             });
                         });
                     </script>
-                </div>
+                </section>
 
                 <!-- NOTIFICATION STACK -->
 
-                <div id="ui-notification-stack">
+                <section id="ui-notification-stack">
                     <h2><a href="#ui-notification-stack">Cuic.NotificationStack</a></h2>
 
                     <p class="alert alert-info">Notification areas are used to centralize notifications display.</p>
 
-                    <div class="sandbox" id="sb-notification-stack">
-                        <label class="inline">
-                            <div>
-                                <button class="btn btn-default" name="add-notif">
+                    <div class="sandbox">
+                        <div class="row">
+                            <form class="col-md-2 settings">
+                                <div class="form-group">
+                                    <label>position</label>
+                                    <select class="form-control" name="position">
+                                        <option>center</option>
+                                        <option selected>left top</option>
+                                        <option>top</option>
+                                        <option>right top</option>
+                                        <option>right</option>
+                                        <option>right bottom</option>
+                                        <option>bottom</option>
+                                        <option>left bottom</option>
+                                        <option>left</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-default" name="add-notif" type="button">
                                     <span class="glyphicon glyphicon-plus"></span>
                                     <span>Add a notification</span>
                                 </button>
+                            </form>
+                            <div class="col-md-10">
+                                <div class="blueprint"></div>
                             </div>
-                            <span class="help-block">position</span>
-                            <select class="form-control" name="position">
-                                <option>center</option>
-                                <option selected>left top</option>
-                                <option>top</option>
-                                <option>right top</option>
-                                <option>right</option>
-                                <option>right bottom</option>
-                                <option>bottom</option>
-                                <option>left bottom</option>
-                                <option>left</option>
-                            </select>
-                        </label>
-                        <!--<button class="btn btn-primary btn-run" type="submit">
-                        <span class="glyphicon glyphicon-console"></span> Run</button>-->
-
-                        <div class="blueprint" style="height: 300px; margin-top: 1em; overflow: auto"></div>
+                        </div>
                     </div>
                     <script>
                         Cuic.ready(function () {
-                            var sandbox = $('#sb-notification-stack');
-                            var position = sandbox.find('[name=position]');
+                            var sandbox = Cuic.element('#ui-notification-stack');
+                            var blueprint = sandbox.find('.blueprint').eq(0);
+                            var position = sandbox.find('[name=position]').eq(0);
+
                             window.notificationStack = new Cuic.NotificationStack({
-                                parent: $('#sb-notification-stack .blueprint'),
+                                parent: blueprint,
                                 position: position.val()
                             });
+
                             position.on("change", function () {
                                 notificationStack.align(position.val());
                             });
@@ -425,97 +472,99 @@
                             });
                         });
                     </script>
-                </div>
+                </section>
 
                 <!-- PANEL -->
 
-                <div id="ui-panel">
+                <section id="ui-panel">
                     <h2><a href="#ui-panel">Cuic.Panel</a></h2>
 
                     <p class="alert alert-info">Panels are used to display content that could be hidden when more screen
-                        space
-                        is needed.</p>
+                        space is needed.</p>
 
-                    <div class="sandbox" id="sb-panel">
-                        <label class="inline">
-                            <span class="help-block">position</span>
-                            <select class="form-control" name="position">
-                                <option>center</option>
-                                <option>left top</option>
-                                <option>top</option>
-                                <option>right top</option>
-                                <option>right</option>
-                                <option>right bottom</option>
-                                <option>bottom</option>
-                                <option>left bottom</option>
-                                <option selected>left</option>
-                            </select>
-                        </label>
-                        <!--<label class="inline">-->
-                        <!--<span class="help-block">css</span>-->
-                        <!--<input class="form-control" type="text" name="css" value="min-width: 200px">-->
-                        <!--</label>-->
-                        <label class="inline">
-                            <span class="help-block">autoClose</span>
-                            <input type="checkbox" name="autoClose">
-                        </label>
-                        <label class="inline">
-                            <span class="help-block">parent</span>
-                            <input type="checkbox" name="parent" checked>
-                        </label>
-                        <label class="inline">
-                            <span class="help-block">maximized</span>
-                            <input type="checkbox" name="maximized">
-                        </label>
-                        <label class="inline">
-                            <span class="help-block">opened</span>
-                            <input type="checkbox" name="opened" checked>
-                        </label>
-
-                        <!--<button class="btn btn-primary btn-run" type="submit">-->
-                        <!--<span class="glyphicon glyphicon-console"></span> Run-->
-                        <!--</button>-->
-
-                        <div>
-                            <button class="btn btn-default fn-close" type="button">close()</button>
-                            <button class="btn btn-default fn-open" type="button">open()</button>
-                            <button class="btn btn-default fn-toggle" type="button">toggle()</button>
-                        </div>
-
-                        <div class="blueprint" style="height: 400px;margin-top: 1em">
-                            <div id="panel" class="panel panel-default">
-                                <header class="panel-header">
-                                    <h5 class="panel-title">Title</h5>
-                                </header>
-                                <div class="panel-content" contenteditable="true">
-                                    <p>write something here...</p>
+                    <div class="sandbox">
+                        <div class="row">
+                            <form class="col-md-2 settings">
+                                <div class="form-group">
+                                    <label>position</label>
+                                    <select class="form-control" name="position">
+                                        <option>center</option>
+                                        <option selected>left top</option>
+                                        <option>top</option>
+                                        <option>right top</option>
+                                        <option>right</option>
+                                        <option>right bottom</option>
+                                        <option>bottom</option>
+                                        <option>left bottom</option>
+                                        <option>left</option>
+                                    </select>
                                 </div>
-                                <footer class="panel-footer">Footer -
-                                    <a href="#" class="btn-close">Close</a> -
-                                    <a href="#" class="btn-toggle">Toggle</a>
-                                </footer>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="autoClose">
+                                        <span>autoClose</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="parent" checked>
+                                        <span>parent</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="maximized">
+                                        <span>maximized</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="opened" checked>
+                                        <span>opened</span>
+                                    </label>
+                                </div>
+                                <button class="btn btn-default fn-close" type="button">close()</button>
+                                <button class="btn btn-default fn-open" type="button">open()</button>
+                                <button class="btn btn-default fn-toggle" type="button">toggle()</button>
+                            </form>
+                            <div class="col-md-10">
+                                <div class="blueprint">
+                                    <div class="panel panel-default">
+                                        <header class="panel-header">
+                                            <h5 class="panel-title">Title</h5>
+                                        </header>
+                                        <div class="panel-content" contenteditable="true">
+                                            <p>write something here...</p>
+                                        </div>
+                                        <footer class="panel-footer">Footer -
+                                            <a href="#" class="btn-close">Close</a> -
+                                            <a href="#" class="btn-toggle">Toggle</a>
+                                        </footer>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <script>
                         Cuic.ready(function () {
-                            var sandbox = $('#sb-panel');
-                            var blueprint = sandbox.find('.blueprint');
-                            var autoClose = sandbox.find('[name=autoClose]');
-                            var parent = sandbox.find('[name=parent]');
-                            var position = sandbox.find('[name=position]');
-                            var maximized = sandbox.find('[name=maximized]');
-                            var opened = sandbox.find('[name=opened]');
+                            var sandbox = Cuic.element('#ui-panel .sandbox');
+                            var blueprint = sandbox.find('.blueprint').eq(0);
+                            var autoClose = sandbox.find('[name=autoClose]').eq(0);
+                            var parent = sandbox.find('[name=parent]').eq(0);
+                            var position = sandbox.find('[name=position]').eq(0);
+                            var maximized = sandbox.find('[name=maximized]').eq(0);
+                            var opened = sandbox.find('[name=opened]').eq(0);
 
                             window.panel = new Cuic.Panel({
                                 css: {'min-width': '200px'},
-                                autoClose: autoClose.is(':checked'),
-                                element: document.getElementById('panel'),
-                                maximized: maximized.is(':checked'),
-                                opened: opened.is(':checked'),
-                                parent: parent.is(':checked') ? blueprint : document.body,
+                                autoClose: autoClose.node().checked,
+                                element: blueprint.find('.panel').eq(0),
+                                maximized: maximized.node().checked,
+                                opened: opened.node().checked,
+                                parent: parent.node().checked ? blueprint : document.body,
                                 position: position.val()
                             });
+
                             sandbox.find('.fn-close').on('click', function () {
                                 panel.close();
                             });
@@ -526,10 +575,10 @@
                                 panel.toggle();
                             });
                             autoClose.on("change", function () {
-                                panel.options.autoClose = autoClose.is(":checked");
+                                panel.options.autoClose = autoClose.node().checked;
                             });
                             maximized.on("change", function () {
-                                if (maximized.is(":checked")) {
+                                if (maximized.node().checked) {
                                     panel.maximize();
                                 } else {
                                     panel.minimize();
@@ -540,110 +589,115 @@
                             });
                         });
                     </script>
-                </div>
+                </section>
 
                 <!-- POPUP -->
 
-                <div id="ui-popup">
+                <section id="ui-popup">
                     <h2><a href="#ui-popup">Cuic.Popup</a></h2>
 
                     <p class="alert alert-info">Popups are often used to display menus, for example, when a user clicks
                         on a button, a popup menu appears next to it.</p>
 
-                    <div class="sandbox" id="sb-popup">
-                        <form class="params">
-                            <label class="inline">
-                                <span class="help-block">anchor</span>
-                                <select class="form-control" name="anchor">
-                                    <option>left top</option>
-                                    <option>top</option>
-                                    <option>right top</option>
-                                    <option selected>right</option>
-                                    <option>right bottom</option>
-                                    <option>bottom</option>
-                                    <option>left bottom</option>
-                                    <option>left</option>
-                                </select>
-                            </label>
-                            <label class="inline">
-                                <span class="help-block">anchor point</span>
-                                <select class="form-control" name="anchorPoint">
-                                    <option selected></option>
-                                    <option>left top</option>
-                                    <option>top</option>
-                                    <option>right top</option>
-                                    <option>right</option>
-                                    <option>right bottom</option>
-                                    <option>bottom</option>
-                                    <option>left bottom</option>
-                                    <option>left</option>
-                                </select>
-                            </label>
-                        </form>
-                        <div class="blueprint" style="height: 300px;">
-                            <!-- BOTTOM ANCHOR -->
-                            <button class="btn btn-default" type="button"
-                                    style="position: absolute; left: 0; top: 0;"
-                                    data-anchor="bottom right">
-                                <span>Bottom Right</span>
-                            </button>
-                            <button class="btn btn-default" type="button"
-                                    style="position: absolute; left: 50%; top: 0; margin-left: -50px"
-                                    data-anchor="bottom center">
-                                <span>Bottom Center</span>
-                            </button>
-                            <button class="btn btn-default" type="button"
-                                    style="position: absolute; right: 0; top: 0;"
-                                    data-anchor="bottom left">
-                                <span>Bottom Left</span>
-                            </button>
-                            <!-- MIDDLE ANCHOR -->
-                            <button class="btn btn-default" type="button"
-                                    style="position: absolute; left: 0; top: 50%; margin-top: -17px"
-                                    data-anchor="middle right">
-                                <span>Middle Right</span>
-                            </button>
-                            <button class="btn btn-default" type="button"
-                                    style="position: absolute; left: 50%; top: 50%; margin-top: -17px; margin-left: -50px"
-                                    data-anchor="middle center">
-                                <span>Middle Center</span>
-                            </button>
-                            <button class="btn btn-default" type="button"
-                                    style="position: absolute; right: 0; top: 50%; margin-top: -17px"
-                                    data-anchor="middle left">
-                                <span>Middle Left</span>
-                            </button>
-                            <!-- TOP ANCHOR -->
-                            <button class="btn btn-default" type="button"
-                                    style="position: absolute; left: 0; bottom: 0;"
-                                    data-anchor="top right">
-                                <span>Top Right</span>
-                            </button>
-                            <button class="btn btn-default" type="button"
-                                    style="position: absolute; left: 50%; bottom: 0; margin-left: -50px"
-                                    data-anchor="top center">
-                                <span>Top Center</span>
-                            </button>
-                            <button class="btn btn-default" type="button"
-                                    style="position: absolute; right: 0; bottom: 0;"
-                                    data-anchor="top left">
-                                <span>Top Left</span>
-                            </button>
+                    <div class="sandbox">
+                        <div class="row">
+                            <form class="col-md-2 settings">
+                                <div class="form-group">
+                                    <label>anchor</label>
+                                    <select class="form-control" name="anchor">
+                                        <option>left top</option>
+                                        <option>top</option>
+                                        <option>right top</option>
+                                        <option selected>right</option>
+                                        <option>right bottom</option>
+                                        <option>bottom</option>
+                                        <option>left bottom</option>
+                                        <option>left</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>anchor point</label>
+                                    <select class="form-control" name="anchorPoint">
+                                        <option selected></option>
+                                        <option>left top</option>
+                                        <option>top</option>
+                                        <option>right top</option>
+                                        <option>right</option>
+                                        <option>right bottom</option>
+                                        <option>bottom</option>
+                                        <option>left bottom</option>
+                                        <option>left</option>
+                                    </select>
+                                </div>
+                            </form>
+                            <div class="col-md-10">
+                                <div class="blueprint">
+                                    <!-- BOTTOM ANCHOR -->
+                                    <button class="btn btn-default" type="button"
+                                            style="position: absolute; left: 0; top: 0;"
+                                            data-anchor="bottom right">
+                                        <span>Bottom Right</span>
+                                    </button>
+                                    <button class="btn btn-default" type="button"
+                                            style="position: absolute; left: 50%; top: 0; margin-left: -50px"
+                                            data-anchor="bottom center">
+                                        <span>Bottom Center</span>
+                                    </button>
+                                    <button class="btn btn-default" type="button"
+                                            style="position: absolute; right: 0; top: 0;"
+                                            data-anchor="bottom left">
+                                        <span>Bottom Left</span>
+                                    </button>
+
+                                    <!-- MIDDLE ANCHOR -->
+                                    <button class="btn btn-default" type="button"
+                                            style="position: absolute; left: 0; top: 50%; margin-top: -17px"
+                                            data-anchor="middle right">
+                                        <span>Middle Right</span>
+                                    </button>
+                                    <button class="btn btn-default" type="button"
+                                            style="position: absolute; left: 50%; top: 50%; margin-top: -17px; margin-left: -50px"
+                                            data-anchor="middle center">
+                                        <span>Middle Center</span>
+                                    </button>
+                                    <button class="btn btn-default" type="button"
+                                            style="position: absolute; right: 0; top: 50%; margin-top: -17px"
+                                            data-anchor="middle left">
+                                        <span>Middle Left</span>
+                                    </button>
+
+                                    <!-- TOP ANCHOR -->
+                                    <button class="btn btn-default" type="button"
+                                            style="position: absolute; left: 0; bottom: 0;"
+                                            data-anchor="top right">
+                                        <span>Top Right</span>
+                                    </button>
+                                    <button class="btn btn-default" type="button"
+                                            style="position: absolute; left: 50%; bottom: 0; margin-left: -50px"
+                                            data-anchor="top center">
+                                        <span>Top Center</span>
+                                    </button>
+                                    <button class="btn btn-default" type="button"
+                                            style="position: absolute; right: 0; bottom: 0;"
+                                            data-anchor="top left">
+                                        <span>Top Left</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <script>
                         Cuic.ready(function () {
-                            var section = Cuic.find("#ui-popup").eq(0);
+                            var section = Cuic.element("#ui-popup");
                             var sandbox = section.find('.sandbox').eq(0);
                             var blueprint = sandbox.find('.blueprint').eq(0);
                             var anchor = sandbox.find("[name=anchor]").eq(0);
                             var anchorPoint = sandbox.find("[name=anchorPoint]").eq(0);
-//                            var popupButton = blueprint.find("button").eq(0);
 
-                            window.popup = [];
+                            window.popups = [];
 
                             blueprint.find('button').each(function (el, i) {
-                                window.popup[i] = new Cuic.Popup({
+                                window.popups[i] = new Cuic.Popup({
                                     anchor: anchor.val(),
                                     autoClose: false,
                                     autoRemove: false,
@@ -653,20 +707,20 @@
                                 });
 
                                 anchor.on("change", function () {
-                                    window.popup[i].anchor(anchor.val(), anchorPoint.val());
+                                    window.popups[i].anchor(anchor.val(), anchorPoint.val());
                                 });
                                 anchorPoint.on("change", function () {
-                                    window.popup[i].anchor(anchor.val(), anchorPoint.val());
+                                    window.popups[i].anchor(anchor.val(), anchorPoint.val());
                                 });
                                 el.on("click", function () {
-                                    popup[i].setContent("Clicked at <em>" + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds() + "</em>");
-                                    popup[i].toggle();
+                                    popups[i].setContent("Clicked at <em>" + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds() + "</em>");
+                                    popups[i].toggle();
                                 });
                                 el.click();
                             });
                         });
                     </script>
-                </div>
+                </section>
 
                 <!-- HOOK -->
 
@@ -676,7 +730,7 @@
                 <!--<p class="alert alert-info">Hooks allows you to keep elements visible while scrolling the page.</p>-->
 
                 <!--<div class="sandbox">-->
-                <!--<div class="blueprint" style="min-height: 300px;">-->
+                <!--<div class="blueprint">-->
                 <!--<div class="testbox"></div>-->
                 <!--</div>-->
                 <!--</div>-->
@@ -695,20 +749,12 @@
 
                 <!-- MOVABLE-->
 
-                <div id="ui-movable">
+                <section id="ui-movable">
                     <h2><a href="#ui-movable">Cuic.Movable</a></h2>
 
                     <div class="sandbox">
                         <div class="row">
-                            <div class="col-sm-6">
-                                <div class="blueprint" style="height: 300px">
-                                    <div class="testbox testbox-a" style="position: relative;">Relative</div>
-                                    <div class="testbox testbox-b" style="position: absolute; bottom: 0; right: 0;">
-                                        Absolute
-                                    </div>
-                                </div>
-                            </div>
-                            <form class="col-sm-6">
+                            <form class="col-md-2 settings">
                                 <div class="form-group">
                                     <label>X</label>
                                     <div class="input-group">
@@ -728,11 +774,19 @@
                                     <input class="form-control" name="state" readonly>
                                 </div>
                             </form>
+                            <div class="col-md-10">
+                                <div class="blueprint">
+                                    <div class="testbox testbox-a" style="position: relative;">Relative</div>
+                                    <div class="testbox testbox-b" style="position: absolute; bottom: 0; right: 0;">
+                                        Absolute
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <script>
                         Cuic.ready(function () {
-                            var section = Cuic.find('#ui-movable').eq(0);
+                            var section = Cuic.element('#ui-movable');
                             var form = section.find('form').eq(0);
                             var sandbox = section.find('.sandbox').eq(0);
                             var testBoxA = sandbox.find('.testbox-a').eq(0);
@@ -780,24 +834,16 @@
                             }
                         });
                     </script>
-                </div>
+                </section>
 
                 <!-- RESIZABLE -->
 
-                <div id="ui-resizable">
+                <section id="ui-resizable">
                     <h2><a href="#ui-resizable">Cuic.Resizable</a></h2>
 
-                    <div class="sandbox" id="sb-resizable">
+                    <div class="sandbox">
                         <div class="row">
-                            <div class="col-sm-6">
-                                <div class="blueprint" style="height: 300px">
-                                    <div class="testbox testbox-a" style="position: relative;">Relative</div>
-                                    <div class="testbox testbox-b" style="position: absolute; bottom: 0; right: 0;">
-                                        Absolute
-                                    </div>
-                                </div>
-                            </div>
-                            <form class="col-sm-6">
+                            <form class="col-md-2 settings">
                                 <div class="form-group">
                                     <label>width</label>
                                     <div class="input-group">
@@ -821,26 +867,34 @@
                                     <input class="form-control" name="hratio" readonly>
                                 </div>
                             </form>
+                            <div class="col-md-10">
+                                <div class="blueprint">
+                                    <div class="testbox testbox-a" style="position: relative;">Relative</div>
+                                    <div class="testbox testbox-b" style="position: absolute; bottom: 0; right: 0;">
+                                        Absolute
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <script>
                         Cuic.ready(function () {
-                            var section = $('#ui-resizable');
-                            var sandbox = section.find('.sandbox');
-                            var blueprint = sandbox.find('.blueprint');
-                            var width = sandbox.find('[name="width"]');
-                            var height = sandbox.find('[name="height"]');
-                            var hratio = sandbox.find('[name="hratio"]');
-                            var vratio = sandbox.find('[name="vratio"]');
+                            var section = Cuic.element('#ui-resizable');
+                            var sandbox = section.find('.sandbox').eq(0);
+                            var blueprint = sandbox.find('.blueprint').eq(0);
+                            var width = sandbox.find('[name="width"]').eq(0);
+                            var height = sandbox.find('[name="height"]').eq(0);
+                            var hratio = sandbox.find('[name="hratio"]').eq(0);
+                            var vratio = sandbox.find('[name="vratio"]').eq(0);
 
                             window.resizable = new Cuic.Resizable({
                                 debug: true,
-                                element: sandbox.find('.testbox-a'),
+                                element: sandbox.find('.testbox-a').eq(0),
                                 keepRatio: false
                             });
                             window.resizableB = new Cuic.Resizable({
                                 debug: true,
-                                element: sandbox.find('.testbox-b'),
+                                element: sandbox.find('.testbox-b').eq(0),
                                 keepRatio: false
                             });
 
@@ -859,17 +913,18 @@
                             });
                         });
                     </script>
-                </div>
+                </section>
 
                 <!-- SELECTABLE -->
 
-                <div id="ui-selectable">
+                <section id="ui-selectable">
                     <h2><a href="#ui-selectable">Cuic.Selectable</a></h2>
 
                     <div class="sandbox">
                         <div class="row">
-                            <div class="col-sm-6">
-                                <div class="blueprint" style="height: 300px">
+                            <div class="col-md-2"></div>
+                            <div class="col-md-10">
+                                <div class="blueprint">
                                     <div class="testbox testbox-a">A</div>
                                     <div class="testbox testbox-b">B</div>
                                     <div class="testbox testbox-c">C</div>
@@ -880,7 +935,7 @@
                     </div>
                     <script>
                         Cuic.ready(function () {
-                            var section = Cuic.find('#ui-selectable').eq(0);
+                            var section = Cuic.element('#ui-selectable');
                             var sandbox = section.find('.sandbox').eq(0);
                             var blueprint = sandbox.find('.blueprint').eq(0);
 
@@ -891,69 +946,76 @@
                             });
                         });
                     </script>
-                </div>
+                </section>
 
                 <!-- SWITCHER -->
 
-                <div id="ui-switcher">
+                <section id="ui-switcher">
                     <h2><a href="#ui-switcher">Cuic.Switcher</a></h2>
 
                     <p class="alert alert-info">The switcher is a parent that take a group of elements and displays
                         only one at a time, allowing to navigate forward and backward.</p>
 
-                    <div class="sandbox" id="sb-switcher">
-                        <div class="btn-group" role="group">
-                            <button class="btn btn-default" type="button" name="method" value="start">
-                                <span class="glyphicon glyphicon-play"></span>
-                                <span>start()</span>
-                            </button>
-                            <button class="btn btn-default" type="button" name="method" value="stop">
-                                <span class="glyphicon glyphicon-stop"></span>
-                                <span>stop()</span>
-                            </button>
-                            <button class="btn btn-default" type="button" name="method" value="first">
-                                <span class="glyphicon glyphicon-step-backward"></span>
-                                <span>first()</span>
-                            </button>
-                            <button class="btn btn-default" type="button" name="method" value="previous">
-                                <span class="glyphicon glyphicon-backward"></span>
-                                <span>previous()</span>
-                            </button>
-                            <button class="btn btn-default" type="button" name="method" value="next">
-                                <span class="glyphicon glyphicon-forward"></span>
-                                <span>next()</span>
-                            </button>
-                            <button class="btn btn-default" type="button" name="method" value="last">
-                                <span class="glyphicon glyphicon-step-forward"></span>
-                                <span>last()</span>
-                            </button>
-                        </div>
-                        <label class="inline">
-                            <span class="help-block">repeat</span>
-                            <input type="checkbox" name="repeat" checked>
-                        </label>
-                        <div class="blueprint">
-                            <div class="switcher">
-                                <p>1. This is the first element</p>
-                                <p>2. This is the second element</p>
-                                <p>3. This is the third element</p>
-                                <p>4. This is the fourth element</p>
-                                <p>5. This is the fifth element</p>
-                                <p>6. This is the sixth element</p>
+                    <div class="sandbox">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="repeat" checked>
+                                        <span>repeat</span>
+                                    </label>
+                                </div>
+                                <div class="btn-group-vertical btn-block" role="group">
+                                    <button class="btn btn-default" type="button" name="method" value="start">
+                                        <span class="glyphicon glyphicon-play"></span>
+                                        <span>start()</span>
+                                    </button>
+                                    <button class="btn btn-default" type="button" name="method" value="stop">
+                                        <span class="glyphicon glyphicon-stop"></span>
+                                        <span>stop()</span>
+                                    </button>
+                                    <button class="btn btn-default" type="button" name="method" value="first">
+                                        <span class="glyphicon glyphicon-step-backward"></span>
+                                        <span>first()</span>
+                                    </button>
+                                    <button class="btn btn-default" type="button" name="method" value="previous">
+                                        <span class="glyphicon glyphicon-backward"></span>
+                                        <span>previous()</span>
+                                    </button>
+                                    <button class="btn btn-default" type="button" name="method" value="next">
+                                        <span class="glyphicon glyphicon-forward"></span>
+                                        <span>next()</span>
+                                    </button>
+                                    <button class="btn btn-default" type="button" name="method" value="last">
+                                        <span class="glyphicon glyphicon-step-forward"></span>
+                                        <span>last()</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-10">
+                                <div class="blueprint">
+                                    <div class="switcher">
+                                        <p>1. This is the first element</p>
+                                        <p>2. This is the second element</p>
+                                        <p>3. This is the third element</p>
+                                        <p>4. This is the fourth element</p>
+                                        <p>5. This is the fifth element</p>
+                                        <p>6. This is the sixth element</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-
                     <script>
                         Cuic.ready(function () {
-                            var section = $('#ui-switcher');
-                            var sandbox = section.find('.sandbox');
+                            var section = Cuic.element('#ui-switcher');
+                            var sandbox = section.find('.sandbox').eq(0);
 
                             window.switcher = new Cuic.Switcher({
                                 autoStart: false,
                                 delay: 1000,
-                                element: sandbox.find('.switcher'),
-                                repeat: sandbox.find('[name=repeat]').is(':checked')
+                                element: sandbox.find('.switcher').eq(0),
+                                repeat: sandbox.find('[name=repeat]').eq(0).node().checked
                             });
 
                             // Options
@@ -969,7 +1031,7 @@
                             });
                         });
                     </script>
-                </div>
+                </section>
 
                 <!-- TABLE -->
 
@@ -1116,95 +1178,94 @@
 
                 <!-- TOOLTIP -->
 
-                <div id="ui-tooltip">
+                <section id="ui-tooltip">
                     <h2><a href="#ui-tooltip">Cuic.Tooltip</a></h2>
 
                     <p class="alert alert-info">Tooltips are used to display a short description (eg: help, tips, etc.)
                         next to an element.</p>
 
-                    <div class="sandbox" id="sb-tooltip">
-                        <label class="inline">
-                            <span class="help-block">anchor</span>
-                            <select class="form-control" name="anchor">
-                                <option>left top</option>
-                                <option>top</option>
-                                <option>right top</option>
-                                <option selected>right</option>
-                                <option>right bottom</option>
-                                <option>bottom</option>
-                                <option>left bottom</option>
-                                <option>left</option>
-                            </select>
-                        </label>
-                        <!--<label class="inline">-->
-                        <!--<span class="help-block">css</span>-->
-                        <!--<input class="form-control" type="text" name="css" value="margin: 10px">-->
-                        <!--</label>-->
-                        <label class="inline">
-                            <span class="help-block">followPointer</span>
-                            <input type="checkbox" name="followPointer" checked>
-                        </label>
-                        <!--<button class="btn btn-primary btn-run" type="submit">-->
-                        <!--<span class="glyphicon glyphicon-console"></span>-->
-                        <!--<span>Run</span>-->
-                        <!--</button>-->
-
-                        <div class="blueprint" style="height: 400px; margin-top: 1em">
-                            <div class="group1">
-                                <!-- Bottom anchor -->
-                                <div class="testbox aligned-top aligned-left" style="position: absolute;"
-                                     data-anchor="bottom right" title="Bottom Right"></div>
-                                <div class="testbox aligned-top aligned-center"
-                                     style="position: absolute; left: 50%; margin-left: -50px"
-                                     data-anchor="bottom center" title="Bottom Center"></div>
-                                <div class="testbox aligned-top aligned-right" style="position: absolute;"
-                                     data-anchor="bottom left" title="Bottom Left"></div>
-
-                                <!-- Middle anchor -->
-                                <div class="testbox aligned-middle aligned-left"
-                                     style="position: absolute; top: 50%; margin-top: -50px"
-                                     data-anchor="middle right" title="Middle Right"></div>
-                                <div class="testbox aligned-middle aligned-center"
-                                     style="position: absolute; top: 50%; margin-top: -50px; left: 50%; margin-left: -50px"
-                                     data-anchor="middle middle" title="Middle Center"></div>
-                                <div class="testbox aligned-middle aligned-right"
-                                     style="position: absolute; top: 50%; margin-top: -50px"
-                                     data-anchor="middle left" title="Middle Left"></div>
-
-                                <!-- Top anchor -->
-                                <div class="testbox aligned-bottom aligned-left" style="position: absolute;"
-                                     data-anchor="top right" title="Top Right"></div>
-                                <div class="testbox aligned-bottom aligned-center"
-                                     style="position: absolute; left: 50%; margin-left: -50px"
-                                     data-anchor="top center" title="Top Center"></div>
-                                <div class="testbox aligned-bottom aligned-right" style="position: absolute;"
-                                     data-anchor="top left" title="Top Left"></div>
-                            </div>
-                            <div class="group2">
-                                <div class="testbox aligned-top"
-                                     style="position: absolute; left:25%; margin-left: -50px"
-                                     title="Default">
-                                    <span>Default position</span>
+                    <div class="sandbox">
+                        <div class="row">
+                            <form class="col-md-2 settings">
+                                <div class="form-group">
+                                    <label>anchor</label>
+                                    <select class="form-control" name="anchor">
+                                        <option>left top</option>
+                                        <option>top</option>
+                                        <option>right top</option>
+                                        <option selected>right</option>
+                                        <option>right bottom</option>
+                                        <option>bottom</option>
+                                        <option>left bottom</option>
+                                        <option>left</option>
+                                    </select>
                                 </div>
-                                <div class="testbox aligned-bottom"
-                                     style="position: absolute; left:25%; margin-left: -50px"
-                                     data-anchor=""
-                                     title="<em>Description</em><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in pharetra tortor. Mauris tortor dui, malesuada sit amet dolor ut, tincidunt porttitor mauris. Cras rutrum risus nec justo sollicitudin ultricies. Phasellus fringilla posuere erat, bibendum blandit turpis aliquet quis. Nam sagittis libero eget neque imperdiet facilisis nec vitae lacus. Morbi.">
-                                    <span>Custom HTML</span>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="followPointer" checked>
+                                        <span>followPointer</span>
+                                    </label>
+                                </div>
+                            </form>
+                            <div class="col-md-10">
+                                <div class="blueprint">
+                                    <div class="group1">
+                                        <!-- Bottom anchor -->
+                                        <div class="testbox aligned-top aligned-left" style="position: absolute;"
+                                             data-anchor="bottom right" title="Bottom Right"></div>
+                                        <div class="testbox aligned-top aligned-center"
+                                             style="position: absolute; left: 50%; margin-left: -50px"
+                                             data-anchor="bottom center" title="Bottom Center"></div>
+                                        <div class="testbox aligned-top aligned-right" style="position: absolute;"
+                                             data-anchor="bottom left" title="Bottom Left"></div>
+
+                                        <!-- Middle anchor -->
+                                        <div class="testbox aligned-middle aligned-left"
+                                             style="position: absolute; top: 50%; margin-top: -50px"
+                                             data-anchor="middle right" title="Middle Right"></div>
+                                        <div class="testbox aligned-middle aligned-center"
+                                             style="position: absolute; top: 50%; margin-top: -50px; left: 50%; margin-left: -50px"
+                                             data-anchor="middle middle" title="Middle Center"></div>
+                                        <div class="testbox aligned-middle aligned-right"
+                                             style="position: absolute; top: 50%; margin-top: -50px"
+                                             data-anchor="middle left" title="Middle Left"></div>
+
+                                        <!-- Top anchor -->
+                                        <div class="testbox aligned-bottom aligned-left" style="position: absolute;"
+                                             data-anchor="top right" title="Top Right"></div>
+                                        <div class="testbox aligned-bottom aligned-center"
+                                             style="position: absolute; left: 50%; margin-left: -50px"
+                                             data-anchor="top center" title="Top Center"></div>
+                                        <div class="testbox aligned-bottom aligned-right" style="position: absolute;"
+                                             data-anchor="top left" title="Top Left"></div>
+                                    </div>
+                                    <div class="group2">
+                                        <div class="testbox aligned-top"
+                                             style="position: absolute; left:25%; margin-left: -50px"
+                                             title="Default">
+                                            <span>Default position</span>
+                                        </div>
+                                        <div class="testbox aligned-bottom"
+                                             style="position: absolute; left:25%; margin-left: -50px"
+                                             data-anchor=""
+                                             title="<em>Description</em><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in pharetra tortor. Mauris tortor dui, malesuada sit amet dolor ut, tincidunt porttitor mauris. Cras rutrum risus nec justo sollicitudin ultricies. Phasellus fringilla posuere erat, bibendum blandit turpis aliquet quis. Nam sagittis libero eget neque imperdiet facilisis nec vitae lacus. Morbi.">
+                                            <span>Custom HTML</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <script>
                         Cuic.ready(function () {
-                            var sandbox = $('#sb-tooltip');
-                            var anchor = sandbox.find("[name=anchor]");
-                            var followPointer = sandbox.find("[name=followPointer]");
+                            var sandbox = Cuic.element('#ui-tooltip .sandbox');
+                            var anchor = sandbox.find("[name=anchor]").eq(0);
+                            var followPointer = sandbox.find("[name=followPointer]").eq(0);
 
                             window.tooltip = new Cuic.Tooltip({
                                 anchor: anchor.val(),
                                 attribute: "title",
-                                followPointer: followPointer.is(":checked"),
+                                followPointer: followPointer.node().checked,
                                 selector: '.group1 [title]'
                             });
 
@@ -1212,7 +1273,7 @@
                                 anchor: anchor.val(),
                                 attribute: "title",
                                 css: {background: 'rgba(93,190,221,0.9)'},
-                                followPointer: followPointer.is(":checked"),
+                                followPointer: followPointer.node().checked,
                                 selector: '.group2 [title]'
                             });
 
@@ -1222,12 +1283,12 @@
                             });
 
                             followPointer.on("change", function () {
-                                window.tooltip.options.followPointer = followPointer.is(":checked");
-                                window.tooltipBlue.options.followPointer = followPointer.is(":checked");
+                                window.tooltip.options.followPointer = followPointer.node().checked;
+                                window.tooltipBlue.options.followPointer = followPointer.node().checked;
                             });
                         });
                     </script>
-                </div>
+                </section>
 
                 <!-- TREE -->
 
@@ -1282,76 +1343,86 @@
 
                 <!-- UTILS -->
 
-                <div id="ui-utils">
+                <section id="ui-utils">
                     <h2><a href="#ui-utils">Utils</a></h2>
 
-                    <div class="sandbox" id="sb-dimensions">
-                        <form class="parameters" style="margin-bottom: 10px">
-                            <div class="btn-toolbar" role="toolbar">
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-default" name="method" value="height" type="button">
-                                        <span>height()</span>
-                                    </button>
-                                    <button class="btn btn-default" name="method" value="innerHeight" type="button">
-                                        <span>innerHeight()</span>
-                                    </button>
-                                    <button class="btn btn-default" name="method" value="outerHeight" type="button">
-                                        <span>outerHeight()</span>
-                                    </button>
+                    <div class="sandbox">
+                        <div class="row">
+                            <form class="col-md-2 settings">
+                                <div class="form-group">
+                                    <input class="form-control" name="value" disabled>
                                 </div>
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-default" name="method" value="width" type="button">
-                                        <span>width()</span>
-                                    </button>
-                                    <button class="btn btn-default" name="method" value="innerWidth" type="button">
-                                        <span>innerWidth()</span>
-                                    </button>
-                                    <button class="btn btn-default" name="method" value="outerWidth" type="button">
-                                        <span>outerWidth()</span>
-                                    </button>
+                                <div class="btn-toolbar" role="toolbar">
+                                    <div class="btn-group-vertical btn-block" role="group">
+                                        <button class="btn btn-default" name="method" value="height" type="button">
+                                            <span>height()</span>
+                                        </button>
+                                        <button class="btn btn-default" name="method" value="innerHeight" type="button">
+                                            <span>innerHeight()</span>
+                                        </button>
+                                        <button class="btn btn-default" name="method" value="outerHeight" type="button">
+                                            <span>outerHeight()</span>
+                                        </button>
+                                    </div>
+                                    <div class="btn-group-vertical btn-block" role="group">
+                                        <button class="btn btn-default" name="method" value="width" type="button">
+                                            <span>width()</span>
+                                        </button>
+                                        <button class="btn btn-default" name="method" value="innerWidth" type="button">
+                                            <span>innerWidth()</span>
+                                        </button>
+                                        <button class="btn btn-default" name="method" value="outerWidth" type="button">
+                                            <span>outerWidth()</span>
+                                        </button>
+                                    </div>
+                                    <div class="btn-group-vertical btn-block" role="group">
+                                        <button class="btn btn-default" name="method" value="offset" type="button">
+                                            <span>offset()</span>
+                                        </button>
+                                        <button class="btn btn-default" name="method" value="position" type="button">
+                                            <span>position()</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="col-md-10">
+                                <div class="blueprint">
+                                    <div class="target testbox"></div>
                                 </div>
                             </div>
-                            <div class="btn-toolbar" role="toolbar">
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-default" name="method" value="offset" type="button">
-                                        <span>offset()</span>
-                                    </button>
-                                    <button class="btn btn-default" name="method" value="position" type="button">
-                                        <span>position()</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                        <div class="blueprint" style="min-height: 300px;">
-                            <div class="target testbox"></div>
                         </div>
                     </div>
                     <script>
-                        var sectionUtils = $('#ui-utils');
-                        var sandbox = sectionUtils.find('.sandbox');
-                        var blueprint = sectionUtils.find('.blueprint');
-                        var target = blueprint.find('.target');
-                        var form = sectionUtils.find('form');
-                        form.find('[name="method"]').on('click', function (ev) {
-                            var button = ev.currentTarget;
-                            var value = null;
+                        Cuic.ready(function () {
+                            var section = Cuic.element('#ui-utils');
+                            var sandbox = section.find('.sandbox').eq(0);
+                            var blueprint = section.find('.blueprint').eq(0);
+                            var target = blueprint.find('.target').eq(0);
+                            var form = section.find('form').eq(0);
+                            var field = section.find('[name="value"]').eq(0);
 
-                            if (typeof Cuic.Element.prototype[button.value] === 'function') {
-                                value = Cuic.element(target)[button.value]();
-                            }
-                            console.log(button.value, value);
+                            form.find('[name="method"]').on('click', function (ev) {
+                                var button = ev.currentTarget;
+                                var value = null;
+
+                                if (typeof Cuic.Element.prototype[button.value] === 'function') {
+                                    value = Cuic.element(target)[button.value]();
+                                }
+                                field.val(value);
+                                console.log(button.value, value);
+                            });
                         });
                     </script>
-                </div>
+                </section>
 
                 <!-- FORM UTILS -->
 
-                <div id="ui-utils-form">
+                <section id="ui-utils-form">
                     <h2><a href="#ui-utils-form">Form</a></h2>
 
                     <p class="alert alert-info">Form helpers.</p>
 
-                    <form class="sandbox" id="sb-form">
+                    <form class="sandbox">
                         <fieldset>
                             <legend>Classic Fields</legend>
 
@@ -1549,19 +1620,16 @@
                     </form>
                     <script>
                         Cuic.ready(function () {
-                            var sandbox = $('#sb-form');
+                            var sandbox = Cuic.element('#ui-utils-form .sandbox');
 
                             sandbox.on('submit', function (ev) {
                                 ev.preventDefault();
-//                        var field = Cuic.getField("fields[][name]");
-//                        console.log("Field:", field);
-
                                 var fields = Cuic.getFields(ev.target);
                                 console.log("Fields:", fields);
                             }).click();
                         });
                     </script>
-                </div>
+                </section>
             </div>
         </div>
     </div>

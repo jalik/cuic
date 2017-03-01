@@ -7099,10 +7099,6 @@ Cuic.Tooltip = function (_Cuic$Component9) {
 
         // Reposition tail when tooltip position change
         _this31.onAnchored(function () {
-            // Constraint tooltip in screen
-            if (_this31.isAbsolute() || _this31.isFixed()) {
-                _this31.alignInScreen();
-            }
             _this31.updateTail();
         });
 
@@ -7127,10 +7123,6 @@ Cuic.Tooltip = function (_Cuic$Component9) {
         _this31.onOpened(function () {
             // Close the popup when the user clicks outside of it
             Cuic.on('click', document, autoClose);
-            // Constraint tooltip in screen
-            if (_this31.isAbsolute() || _this31.isFixed()) {
-                _this31.alignInScreen();
-            }
         });
 
         // Add element to collection

@@ -28,6 +28,7 @@ html {
 }
 
 body {
+    padding-top: 70px;
 }
 
 a {
@@ -136,11 +137,6 @@ tr {
 
 /* SIDEBAR */
 
-#sidebar {
-    overflow: auto;
-    padding: 10px;
-}
-
 #sidebar h4 {
     margin-top: 0;
 }
@@ -201,8 +197,15 @@ tr {
     background: url('../images/blueprint.png') repeat;
     border: solid 1px #aaa;
     box-sizing: border-box;
+    height: 400px;
+    min-height: 400px;
+    overflow: auto;
     padding: 10px;
     position: relative;
+}
+
+.blueprint > button {
+    margin: 10px;
 }
 
 /* INLINE */
@@ -223,14 +226,14 @@ tr {
     margin-bottom: 2px;
 }
 
+.settings label {
+    color: #888;
+    font-size: 0.9em;
+}
+
 /* RUN */
 
 .btn-run {
-    border-radius: 0 0 0 5px;
-    margin: 0;
-    right: 0;
-    position: absolute;
-    top: 0;
 }
 
 /* NAVBAR */
@@ -265,7 +268,6 @@ tr {
     border-radius: 3px;
     box-sizing: border-box;
     padding: 20px;
-    position: relative;
 }
 
 .help-block {
