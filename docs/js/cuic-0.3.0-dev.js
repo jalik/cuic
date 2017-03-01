@@ -1,3 +1,28 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2017 Karl STEIN
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -6144,7 +6169,7 @@ Cuic.Notification.prototype.options = {
     opened: false,
     parent: document.body,
     position: 'center',
-    zIndex: 10
+    zIndex: 100
 };
 
 Cuic.notifications = new Cuic.Collection();
@@ -7089,44 +7114,47 @@ Cuic.Tooltip = function (_Cuic$Component9) {
             className: 'tooltip-tail'
         }).appendTo(_this31);
 
-        // Find tooltip targets
-        var targets = Cuic.find(_this31.options.selector);
+        Cuic.element(document).on('mouseover', function (ev) {
+            var targets = Cuic.find(_this31.options.selector);
 
-        targets.each(function (target) {
-            // Open tooltip when mouse enter area
-            target.on('mouseenter', function (ev) {
-                // Get stored tooltip content
-                var content = target.data('tooltip');
+            for (var _i8 = 0; _i8 < targets.length; _i8 += 1) {
+                var target = targets[_i8];
 
-                if (!content || !content.length) {
-                    // Get tooltip content from attribute
-                    content = target.attr(_this31.options.attribute);
-                    // Avoid tooltip conflict
-                    target.attr(_this31.options.attribute, '');
-                    // Store tooltip content
-                    target.data('tooltip', content);
-                }
+                if (ev.target === target.node()) {
+                    // Get stored tooltip content
+                    var content = target.data('tooltip');
 
-                // Update tooltip content
-                if (content && content.length) {
-                    _this31.content.html(content);
-                }
-
-                _this31.currentTarget = ev.currentTarget;
-
-                // Position tooltip
-                if (!_this31.options.followPointer) {
-                    if (_this31.parentNode() !== ev.currentTarget.parentNode) {
-                        _this31.appendTo(ev.currentTarget.parentNode);
+                    if (!content || !content.length) {
+                        // Get tooltip content from attribute
+                        content = target.attr(_this31.options.attribute);
+                        // Avoid conflict with native tooltip
+                        target.attr(_this31.options.attribute, '');
+                        // Store tooltip content
+                        target.data('tooltip', content);
                     }
-                }
-                _this31.open();
-            });
 
-            // Close tooltip when mouse leaves area
-            target.on('mouseleave', function () {
-                _this31.close();
-            });
+                    // Update tooltip content
+                    if (content && content.length) {
+                        _this31.content.html(content);
+                    }
+
+                    _this31.currentTarget = ev.target;
+
+                    // Position tooltip
+                    if (!_this31.options.followPointer) {
+                        if (_this31.parentNode() !== ev.target.parentNode) {
+                            _this31.appendTo(ev.target.parentNode);
+                        }
+                    }
+                    _this31.open();
+
+                    // Close tooltip when mouse leaves area
+                    target.on('mouseleave', function () {
+                        _this31.close();
+                    });
+                    break;
+                }
+            }
         });
 
         // Move tooltip when mouse moves and tooltip is opened

@@ -120,12 +120,12 @@
   display: inline-block;
 }
 .component.closed {
-  -webkit-transition-duration: 0.25s;
-          transition-duration: 0.25s;
+  -webkit-transition-duration: 0.2s;
+          transition-duration: 0.2s;
 }
 .component.opened {
-  -webkit-transition-duration: 0.5s;
-          transition-duration: 0.5s;
+  -webkit-transition-duration: 0.3s;
+          transition-duration: 0.3s;
 }
 .component {
   display: inline-block;
@@ -167,9 +167,9 @@
   width: auto;
 }
 .dialog {
-  background: #fff;
+  background-color: #fff;
   border-radius: 5px;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
   display: block;
   margin: 10px;
   position: absolute;
@@ -233,7 +233,7 @@ body > .dialog {
   padding: 0;
 }
 .fader {
-  background: rgba(240, 240, 240, 0.5);
+  background-color: rgba(240, 240, 240, 0.5);
   display: block;
   left: 0;
   top: 0;
@@ -312,9 +312,9 @@ body > .fader {
   cursor: move;
 }
 .notification {
-  background: rgba(0, 0, 0, 0.7);
+  background-color: rgba(50, 50, 50, 0.8);
   border-radius: 5px;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
   color: #fff;
   display: inline-block;
   margin: 10px;
@@ -325,7 +325,7 @@ body > .fader {
   transition-property: background, height, width, bottom, left, right, top, opacity, -webkit-transform;
   transition-property: background, height, width, bottom, left, right, top, opacity, transform;
   transition-property: background, height, width, bottom, left, right, top, opacity, transform, -webkit-transform;
-  z-index: 10;
+  z-index: 100;
 }
 body > .notification {
   position: fixed;
@@ -341,7 +341,7 @@ body > .notification {
           transform: scale(1);
 }
 .notification.opened:hover {
-  background: rgba(0, 0, 0, 0.8);
+  background-color: rgba(50, 50, 50, 0.9);
 }
 .notification-content {
   line-height: 1.5rem;
@@ -364,6 +364,7 @@ body > .notification {
 }
 .notification-stack {
   overflow: auto;
+  padding-bottom: 5px;
   position: absolute;
   -webkit-transition-property: height, width, bottom, left, right, top, opacity, -webkit-transform;
   transition-property: height, width, bottom, left, right, top, opacity, -webkit-transform;
@@ -421,9 +422,9 @@ body > .notification-stack {
           transform-origin: top right;
 }
 .panel {
-  background: #fff;
+  background-color: #fff;
   border: solid 1px #ccc;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
   margin: 10px;
   position: absolute;
   -webkit-transition-property: background, opacity, height, width, bottom, left, right, top, -webkit-transform;
@@ -469,9 +470,9 @@ body > .panel {
   margin: 0;
 }
 .popup {
-  background: rgba(0, 0, 0, 0.7);
+  background-color: rgba(50, 50, 50, 0.8);
   border-radius: 5px;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
   color: #fff;
   display: inline-block;
   margin: 10px;
@@ -521,7 +522,7 @@ body > .panel {
 .popup-tail-bottom {
   border-left: solid 6px transparent;
   border-right: solid 6px transparent;
-  border-top: solid 6px rgba(0, 0, 0, 0.7);
+  border-top: solid 6px rgba(50, 50, 50, 0.8);
   margin: 0 0 -6px -6px;
   bottom: 0;
   left: 50%;
@@ -531,7 +532,7 @@ body > .panel {
 .popup-tail-left {
   border-bottom: solid 6px transparent !important;
   border-top: solid 6px transparent !important;
-  border-right: solid 6px rgba(0, 0, 0, 0.7);
+  border-right: solid 6px rgba(50, 50, 50, 0.8);
   margin: -6px 0 0 -6px;
   bottom: auto;
   left: 0;
@@ -541,7 +542,7 @@ body > .panel {
 .popup-tail-right {
   border-bottom: solid 6px transparent !important;
   border-top: solid 6px transparent !important;
-  border-left: solid 6px rgba(0, 0, 0, 0.7);
+  border-left: solid 6px rgba(50, 50, 50, 0.8);
   margin: -6px -6px 0 0;
   bottom: auto;
   left: auto;
@@ -551,7 +552,7 @@ body > .panel {
 .popup-tail-top {
   border-left: solid 6px transparent !important;
   border-right: solid 6px transparent !important;
-  border-bottom: solid 6px rgba(0, 0, 0, 0.7);
+  border-bottom: solid 6px rgba(50, 50, 50, 0.8);
   margin: -6px 0 0 -6px;
   bottom: auto;
   left: 50%;
@@ -582,7 +583,7 @@ body > .panel {
   z-index: 1;
 }
 .resizable.debug .resize-handle {
-  background: rgba(255, 0, 0, 0.3);
+  background-color: rgba(255, 0, 0, 0.3);
 }
 .resizable.resizing .resize-handle,
 .resizable:hover .resize-handle {
@@ -644,30 +645,30 @@ body > .panel {
   opacity: 0;
   -webkit-transition-property: all;
   transition-property: all;
-  -webkit-transition-duration: 0.25s;
-          transition-duration: 0.25s;
+  -webkit-transition-duration: 0.2s;
+          transition-duration: 0.2s;
 }
 .switcher .active,
 .switcher .visible {
   opacity: 1;
-  -webkit-transition-duration: 0.5s;
-          transition-duration: 0.5s;
+  -webkit-transition-duration: 0.3s;
+          transition-duration: 0.3s;
 }
 td.sorted {
-  background: rgba(230, 230, 230, 0.5);
+  background-color: rgba(230, 230, 230, 0.5);
 }
 th.sortable {
   cursor: pointer;
 }
 thead th.sorted {
-  background: rgba(230, 230, 230, 0.5);
+  background-color: rgba(230, 230, 230, 0.5);
   border-bottom-color: #57a0be;
 }
 tr.selected {
-  background: rgba(87, 160, 190, 0.1);
+  background-color: rgba(87, 160, 190, 0.1);
 }
 .tab {
-  background: #ddd;
+  background-color: #ddd;
   border-radius: 3px 3px 0 0;
   color: #888;
   cursor: pointer;
@@ -680,7 +681,7 @@ tr.selected {
   color: #333;
 }
 .tab-content {
-  background: #fff;
+  background-color: #fff;
   border: solid 1px #ccc;
   border-top: none;
   display: block;
@@ -694,17 +695,17 @@ tr.selected {
   display: block;
 }
 .tabs .active {
-  background: #57a0be;
+  background-color: #57a0be;
   color: #fff;
 }
 .tabs .disabled {
-  background: #ddd;
+  background-color: #ddd;
   color: #aaa;
 }
 .tooltip {
-  background: rgba(0, 0, 0, 0.7);
+  background-color: rgba(50, 50, 50, 0.8);
   border-radius: 5px;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
   color: #fff;
   display: inline-block;
   margin: 10px;
@@ -775,7 +776,7 @@ tr.selected {
 .tooltip-tail-bottom {
   border-left: solid 6px transparent;
   border-right: solid 6px transparent;
-  border-top: solid 6px rgba(0, 0, 0, 0.7);
+  border-top: solid 6px rgba(50, 50, 50, 0.8);
   margin: 0 0 -6px -6px;
   bottom: 0;
   left: 50%;
@@ -785,7 +786,7 @@ tr.selected {
 .tooltip-tail-left {
   border-bottom: solid 6px transparent !important;
   border-top: solid 6px transparent !important;
-  border-right: solid 6px rgba(0, 0, 0, 0.7);
+  border-right: solid 6px rgba(50, 50, 50, 0.8);
   margin: -6px 0 0 -6px;
   bottom: auto;
   left: 0;
@@ -795,7 +796,7 @@ tr.selected {
 .tooltip-tail-right {
   border-bottom: solid 6px transparent !important;
   border-top: solid 6px transparent !important;
-  border-left: solid 6px rgba(0, 0, 0, 0.7);
+  border-left: solid 6px rgba(50, 50, 50, 0.8);
   margin: -6px -6px 0 0;
   bottom: auto;
   left: auto;
@@ -805,7 +806,7 @@ tr.selected {
 .tooltip-tail-top {
   border-left: solid 6px transparent !important;
   border-right: solid 6px transparent !important;
-  border-bottom: solid 6px rgba(0, 0, 0, 0.7);
+  border-bottom: solid 6px rgba(50, 50, 50, 0.8);
   margin: -6px 0 0 -6px;
   bottom: auto;
   left: 50%;
@@ -820,7 +821,7 @@ tr.selected {
 }
 
 .tree {
-  background: #fff;
+  background-color: #fff;
   border: solid 1px #ddd;
   border-radius: 3px;
   display: block;
@@ -857,12 +858,12 @@ tr.selected {
   color: #57a0be;
 }
 .tree .collapsed > .tree-item-name {
-  background: #eee;
+  background-color: #eee;
   color: #888;
 }
 .tree .disabled > .tree-item-name {
   color: #aaa;
 }
 .tree .expanded > .tree-item-name {
-  background: #f5f5f5;
+  background-color: #f5f5f5;
 }

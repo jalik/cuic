@@ -47,44 +47,47 @@ Cuic.Tooltip = class extends Cuic.Component {
             className: 'tooltip-tail'
         }).appendTo(this);
 
-        // Find tooltip targets
-        const targets = Cuic.find(this.options.selector);
+        Cuic.element(document).on('mouseover', (ev) => {
+            const targets = Cuic.find(this.options.selector);
 
-        targets.each((target) => {
-            // Open tooltip when mouse enter area
-            target.on('mouseenter', (ev) => {
-                // Get stored tooltip content
-                let content = target.data('tooltip');
+            for (let i = 0; i < targets.length; i += 1) {
+                const target = targets[i];
 
-                if (!content || !content.length) {
-                    // Get tooltip content from attribute
-                    content = target.attr(this.options.attribute);
-                    // Avoid tooltip conflict
-                    target.attr(this.options.attribute, '');
-                    // Store tooltip content
-                    target.data('tooltip', content);
-                }
+                if (ev.target === target.node()) {
+                    // Get stored tooltip content
+                    let content = target.data('tooltip');
 
-                // Update tooltip content
-                if (content && content.length) {
-                    this.content.html(content);
-                }
-
-                this.currentTarget = ev.currentTarget;
-
-                // Position tooltip
-                if (!this.options.followPointer) {
-                    if (this.parentNode() !== ev.currentTarget.parentNode) {
-                        this.appendTo(ev.currentTarget.parentNode);
+                    if (!content || !content.length) {
+                        // Get tooltip content from attribute
+                        content = target.attr(this.options.attribute);
+                        // Avoid conflict with native tooltip
+                        target.attr(this.options.attribute, '');
+                        // Store tooltip content
+                        target.data('tooltip', content);
                     }
-                }
-                this.open();
-            });
 
-            // Close tooltip when mouse leaves area
-            target.on('mouseleave', () => {
-                this.close();
-            });
+                    // Update tooltip content
+                    if (content && content.length) {
+                        this.content.html(content);
+                    }
+
+                    this.currentTarget = ev.target;
+
+                    // Position tooltip
+                    if (!this.options.followPointer) {
+                        if (this.parentNode() !== ev.target.parentNode) {
+                            this.appendTo(ev.target.parentNode);
+                        }
+                    }
+                    this.open();
+
+                    // Close tooltip when mouse leaves area
+                    target.on('mouseleave', () => {
+                        this.close();
+                    });
+                    break;
+                }
+            }
         });
 
         // Move tooltip when mouse moves and tooltip is opened

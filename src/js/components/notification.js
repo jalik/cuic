@@ -130,7 +130,7 @@ Cuic.Notification.prototype.options = {
     opened: false,
     parent: document.body,
     position: 'center',
-    zIndex: 10
+    zIndex: 100
 };
 
 Cuic.notifications = new Cuic.Collection();
