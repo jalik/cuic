@@ -160,7 +160,7 @@
                         <div class="blueprint" style="height: 500px; margin-top: 1em"></div>
                     </div>
                     <script>
-                        $(document).ready(function () {
+                        Cuic.ready(function () {
                             var sandbox = $('#sb-dialog');
                             var blueprint = sandbox.find('.blueprint');
                             var modal = sandbox.find('[name=modal]');
@@ -257,7 +257,7 @@
                 <!--</div>-->
                 <!--</div>-->
                 <!--<script>-->
-                <!--//                        $(document).ready(function () {-->
+                <!--//                        Cuic.ready(function () {-->
                 <!--//                            var sandbox = $('#sb-grid');-->
                 <!--//                            var autoResize = sandbox.find('[name=autoResize]');-->
                 <!--//                            var cols = sandbox.find('[name=cols]');-->
@@ -340,7 +340,7 @@
                         <div class="blueprint" style="height: 300px;margin-top: 1em"></div>
                     </div>
                     <script>
-                        $(document).ready(function () {
+                        Cuic.ready(function () {
                             var sandbox = $('#sb-notification');
                             var blueprint = sandbox.find('.blueprint');
                             var autoClose = sandbox.find('[name=autoClose]');
@@ -407,7 +407,7 @@
                         <div class="blueprint" style="height: 300px; margin-top: 1em; overflow: auto"></div>
                     </div>
                     <script>
-                        $(document).ready(function () {
+                        Cuic.ready(function () {
                             var sandbox = $('#sb-notification-stack');
                             var position = sandbox.find('[name=position]');
                             window.notificationStack = new Cuic.NotificationStack({
@@ -498,7 +498,7 @@
                         </div>
                     </div>
                     <script>
-                        $(document).ready(function () {
+                        Cuic.ready(function () {
                             var sandbox = $('#sb-panel');
                             var blueprint = sandbox.find('.blueprint');
                             var autoClose = sandbox.find('[name=autoClose]');
@@ -632,7 +632,7 @@
                         </div>
                     </div>
                     <script>
-                        $(document).ready(function () {
+                        Cuic.ready(function () {
                             var section = Cuic.find("#ui-popup").eq(0);
                             var sandbox = section.find('.sandbox').eq(0);
                             var blueprint = sandbox.find('.blueprint').eq(0);
@@ -681,7 +681,7 @@
                 <!--</div>-->
                 <!--</div>-->
                 <!--<script>-->
-                <!--$(document).ready(function () {-->
+                <!--Cuic.ready(function () {-->
                 <!--var section = Cuic.find('#ui-hook').eq(0);-->
                 <!--var sandbox = section.find('.sandbox').eq(0);-->
                 <!--var testBox = sandbox.find('.testbox').eq(0);-->
@@ -731,7 +731,7 @@
                         </div>
                     </div>
                     <script>
-                        $(document).ready(function () {
+                        Cuic.ready(function () {
                             var section = Cuic.find('#ui-movable').eq(0);
                             var form = section.find('form').eq(0);
                             var sandbox = section.find('.sandbox').eq(0);
@@ -824,7 +824,7 @@
                         </div>
                     </div>
                     <script>
-                        $(document).ready(function () {
+                        Cuic.ready(function () {
                             var section = $('#ui-resizable');
                             var sandbox = section.find('.sandbox');
                             var blueprint = sandbox.find('.blueprint');
@@ -879,7 +879,7 @@
                         </div>
                     </div>
                     <script>
-                        $(document).ready(function () {
+                        Cuic.ready(function () {
                             var section = Cuic.find('#ui-selectable').eq(0);
                             var sandbox = section.find('.sandbox').eq(0);
                             var blueprint = sandbox.find('.blueprint').eq(0);
@@ -945,7 +945,7 @@
                     </div>
 
                     <script>
-                        $(document).ready(function () {
+                        Cuic.ready(function () {
                             var section = $('#ui-switcher');
                             var sandbox = section.find('.sandbox');
 
@@ -1032,7 +1032,7 @@
                 <!--</table>-->
                 <!--</div>-->
                 <!--<script>-->
-                <!--$(document).ready(function () {-->
+                <!--Cuic.ready(function () {-->
                 <!--window.table = new Cuic.Table({-->
                 <!--target: '#sb-table table',-->
                 <!--selectRowOnClick: true-->
@@ -1105,7 +1105,7 @@
                 <!--</div>-->
                 <!--</div>-->
                 <!--<script>-->
-                <!--$(document).ready(function () {-->
+                <!--Cuic.ready(function () {-->
                 <!--window.tabs = new Cuic.Tabs({-->
                 <!--target: '#sb-tabs > .tabs',-->
                 <!--content: '#sb-tabs > .tab-content'-->
@@ -1196,7 +1196,7 @@
                         </div>
                     </div>
                     <script>
-                        $(document).ready(function () {
+                        Cuic.ready(function () {
                             var sandbox = $('#sb-tooltip');
                             var anchor = sandbox.find("[name=anchor]");
                             var followPointer = sandbox.find("[name=followPointer]");
@@ -1271,7 +1271,7 @@
                 <!--</ul>-->
                 <!--</div>-->
                 <!--<script>-->
-                <!--$(document).ready(function () {-->
+                <!--Cuic.ready(function () {-->
                 <!--window.tree = new Cuic.Tree({-->
                 <!--target: '#sb-tree > .tree',-->
                 <!--collapsed: true-->
@@ -1548,7 +1548,7 @@
                         <button class="btn btn-primary btn-run" type="submit">Submit</button>
                     </form>
                     <script>
-                        $(document).ready(function () {
+                        Cuic.ready(function () {
                             var sandbox = $('#sb-form');
 
                             sandbox.on('submit', function (ev) {
