@@ -23,19 +23,17 @@
  *
  */
 
-.component .btn-close {
-  cursor: pointer;
-  display: none;
-}
-
 .component.closable .btn-close {
+  cursor: pointer;
   display: inline-block;
 }
 
 .component.closed {
   transition-duration: @anim-close-duration;
+  transition-timing-function: @anim-close-curve;
 }
 
 .component.opened {
   transition-duration: @anim-open-duration;
+  transition-timing-function: @anim-open-curve;
 }

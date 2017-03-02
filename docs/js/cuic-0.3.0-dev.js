@@ -472,7 +472,7 @@ if (!Element.prototype.matches) {
 
                 // Execute callback now
                 if (!browserEvent && !('animation' in element.style) || getComputedStyle(element)[duration] == '0s') {
-                    this.apply(callback, this, Array.prototype.slice.call(arguments));
+                    this.apply(callback, element);
                 }
             }
             // Event is a transition
@@ -481,7 +481,7 @@ if (!Element.prototype.matches) {
 
                     // Execute callback now
                     if (!browserEvent && !('transition' in element.style) || getComputedStyle(element)[_duration] == '0s') {
-                        this.apply(callback, this, Array.prototype.slice.call(arguments));
+                        this.apply(callback, element);
                     }
                 }
             return this.removeEventListener(element, browserEvent, callback);
@@ -517,7 +517,7 @@ if (!Element.prototype.matches) {
 
                 // Execute callback now
                 if (!browserEvent && !('animation' in element.style) || getComputedStyle(element)[duration] == '0s') {
-                    this.apply(callback, this, Array.prototype.slice.call(arguments));
+                    this.apply(callback, element);
                 }
             }
             // Event is a transition
@@ -526,7 +526,7 @@ if (!Element.prototype.matches) {
 
                     // Execute callback now
                     if (!browserEvent && !('transition' in element.style) || getComputedStyle(element)[_duration2] == '0s') {
-                        this.apply(callback, this, Array.prototype.slice.call(arguments));
+                        this.apply(callback, element);
                     }
                 }
             return this.addEventListener(element, browserEvent, callback);
@@ -541,8 +541,7 @@ if (!Element.prototype.matches) {
          * @return {*}
          */
         once: function once(event, element, callback) {
-            var _this = this,
-                _arguments = arguments;
+            var _this = this;
 
             if (element instanceof this.Element) {
                 element = element.node();
@@ -565,7 +564,7 @@ if (!Element.prototype.matches) {
 
                 // Execute callback now
                 if (!browserEvent && !('animation' in element.style) || getComputedStyle(element)[duration] == '0s') {
-                    this.apply(callback, this, Array.prototype.slice.call(arguments));
+                    this.apply(callback, element);
                 }
             }
             // Event is a transition
@@ -574,12 +573,12 @@ if (!Element.prototype.matches) {
 
                     // Execute callback now
                     if (!browserEvent && !('transition' in element.style) || getComputedStyle(element)[_duration3] == '0s') {
-                        this.apply(callback, this, Array.prototype.slice.call(arguments));
+                        this.apply(callback, element);
                     }
                 }
             var listener = function listener(ev) {
-                Cuic.removeEventListener(element, browserEvent, listener);
-                Cuic.apply(callback, _this, Array.prototype.slice.call(_arguments));
+                _this.removeEventListener(element, browserEvent, listener);
+                _this.apply(callback, element, Array.prototype.slice.call(ev));
             };
             return this.addEventListener(element, browserEvent, listener);
         },
@@ -1170,14 +1169,14 @@ Cuic.Events = function () {
     }, {
         key: 'once',
         value: function once(event, callback) {
-            var _arguments2 = arguments,
+            var _arguments = arguments,
                 _this3 = this;
 
             if (!(this.callbacks[event] instanceof Array)) {
                 this.callbacks[event] = [];
             }
             var cb = function cb() {
-                var args = Array.prototype.slice.call(_arguments2);
+                var args = Array.prototype.slice.call(_arguments);
                 var context = args.shift();
                 callback.apply(context, args);
                 _this3.off(event, cb);
@@ -5716,7 +5715,7 @@ Cuic.Dialog = function (_Cuic$Component3) {
         // Called when dialog is opened
         _this21.onOpened(function (ev) {
             // // todo wait images to be loaded to resize content
-            var images = _this21.find('img');
+            // let images = this.find('img');
             //
             // if (images.length > 0) {
             //     // Position the dialog when images are loaded
@@ -7149,7 +7148,7 @@ Cuic.Tooltip = function (_Cuic$Component9) {
                     _this31.open();
 
                     // Close tooltip when mouse leaves area
-                    target.on('mouseleave', function () {
+                    target.once('mouseleave', function () {
                         _this31.close();
                     });
                     break;
@@ -7158,7 +7157,7 @@ Cuic.Tooltip = function (_Cuic$Component9) {
         });
 
         // Move tooltip when mouse moves and tooltip is opened
-        Cuic.on('mousemove', document, function (ev) {
+        Cuic.element(document).on('mousemove', function (ev) {
             if (_this31.options.followPointer && !_this31.isHidden()) {
                 if (_this31.parentNode() !== document.body) {
                     _this31.appendTo(document.body);
@@ -7178,6 +7177,16 @@ Cuic.Tooltip = function (_Cuic$Component9) {
                 }
             }
         };
+
+        // Keep tooltip open when mouse is over
+        _this31.on('mouseover', function () {
+            _this31.open();
+        });
+
+        // Close tooltip open when mouse leave it
+        _this31.on('mouseleave', function () {
+            _this31.close();
+        });
 
         // Reposition tail when tooltip position change
         _this31.onAnchored(function () {

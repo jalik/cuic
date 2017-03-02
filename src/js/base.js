@@ -416,7 +416,7 @@
 
                 // Execute callback now
                 if (!browserEvent && !('animation' in element.style) || getComputedStyle(element)[duration] == '0s') {
-                    this.apply(callback, this, Array.prototype.slice.call(arguments));
+                    this.apply(callback, element);
                 }
             }
             // Event is a transition
@@ -425,7 +425,7 @@
 
                 // Execute callback now
                 if (!browserEvent && !('transition' in element.style) || getComputedStyle(element)[duration] == '0s') {
-                    this.apply(callback, this, Array.prototype.slice.call(arguments));
+                    this.apply(callback, element);
                 }
             }
             return this.removeEventListener(element, browserEvent, callback);
@@ -462,7 +462,7 @@
 
                 // Execute callback now
                 if (!browserEvent && !('animation' in element.style) || getComputedStyle(element)[duration] == '0s') {
-                    this.apply(callback, this, Array.prototype.slice.call(arguments));
+                    this.apply(callback, element);
                 }
             }
             // Event is a transition
@@ -471,7 +471,7 @@
 
                 // Execute callback now
                 if (!browserEvent && !('transition' in element.style) || getComputedStyle(element)[duration] == '0s') {
-                    this.apply(callback, this, Array.prototype.slice.call(arguments));
+                    this.apply(callback, element);
                 }
             }
             return this.addEventListener(element, browserEvent, callback);
@@ -508,7 +508,7 @@
 
                 // Execute callback now
                 if (!browserEvent && !('animation' in element.style) || getComputedStyle(element)[duration] == '0s') {
-                    this.apply(callback, this, Array.prototype.slice.call(arguments));
+                    this.apply(callback, element);
                 }
             }
             // Event is a transition
@@ -517,12 +517,12 @@
 
                 // Execute callback now
                 if (!browserEvent && !('transition' in element.style) || getComputedStyle(element)[duration] == '0s') {
-                    this.apply(callback, this, Array.prototype.slice.call(arguments));
+                    this.apply(callback, element);
                 }
             }
             const listener = (ev) => {
-                Cuic.removeEventListener(element, browserEvent, listener);
-                Cuic.apply(callback, this, Array.prototype.slice.call(arguments));
+                this.removeEventListener(element, browserEvent, listener);
+                this.apply(callback, element, Array.prototype.slice.call(ev));
             };
             return this.addEventListener(element, browserEvent, listener);
         },

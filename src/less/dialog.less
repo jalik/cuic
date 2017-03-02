@@ -24,9 +24,9 @@
  */
 
 .dialog {
-  background-color: #fff;
+  background-color: @background-color;
   border-radius: @border-radius;
-  box-shadow: @shadow-x @shadow-y @shadow-size @shadow-color;
+  box-shadow: @shadow;
   display: block;
   margin: @margin;
   position: absolute;
@@ -43,31 +43,31 @@ body > .dialog {
   transform: scale(0);
 }
 
+.dialog.movable {
+  position: absolute;
+}
+
 .dialog.opened {
   opacity: 1;
   transform: scale(1);
 }
 
-.dialog.movable {
-  position: absolute;
-}
-
 .dialog-content {
-  line-height: @content-line-height;
+  line-height: @text-line-height;
   overflow: auto;
-  margin: @content-padding 0;
-  padding: 0 @content-padding;
+  margin: @text-padding 0;
+  padding: 0 @text-padding;
 }
 
 .dialog-footer {
   border-top: solid 1px #eee;
-  padding: @content-padding;
+  padding: @text-padding;
   text-align: right;
 }
 
 .dialog-header {
   border-bottom: solid 1px #eee;
-  padding: @content-padding;
+  padding: @text-padding;
 }
 
 .dialog.closable .dialog-header {
@@ -81,7 +81,7 @@ body > .dialog {
   position: absolute;
   top: 0;
   right: 0;
-  padding: @content-padding;
+  padding: @text-padding;
 }
 
 .dialog-header .btn-close:focus,

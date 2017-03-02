@@ -219,7 +219,7 @@ Cuic.Dialog = class extends Cuic.Component {
         // Called when dialog is opened
         this.onOpened((ev) => {
             // // todo wait images to be loaded to resize content
-            let images = this.find('img');
+            // let images = this.find('img');
             //
             // if (images.length > 0) {
             //     // Position the dialog when images are loaded

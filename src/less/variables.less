@@ -23,19 +23,30 @@
  *
  */
 
-@button-padding: 10px;
+// Default
+@background-color: rgba(255, 255, 255, 1.0);
 @border-radius: 5px;
-@content-padding: 20px;
-@content-line-height: 1.5rem;
 @margin: 10px;
 @padding: 10px;
+
+// Inverse
+@background-color-inverse: rgba(60, 60, 60, 0.9);
+@color-inverse: rgba(250, 250, 250, 1.0);
+
+// Text
+@text-padding: 20px;
+@text-line-height: 1.5rem;
+
+// Animation
+@anim-duration: 0.5s;
+@anim-close-curve: ease;
+@anim-close-duration: 0.2s;
+@anim-open-curve: ease;
+@anim-open-duration: 0.3s;
+
+// Shadows
 @shadow-color: rgba(0, 0, 0, 0.3);
 @shadow-size: 10px;
 @shadow-x: 0;
 @shadow-y: 5px;
-
-/* ANIMATIONS */
-
-@anim-duration: 0.5s;
-@anim-close-duration: 0.2s;
-@anim-open-duration: 0.3s;
+@shadow: @shadow-x @shadow-y @shadow-size @shadow-color;

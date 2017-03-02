@@ -82,7 +82,7 @@ Cuic.Tooltip = class extends Cuic.Component {
                     this.open();
 
                     // Close tooltip when mouse leaves area
-                    target.on('mouseleave', () => {
+                    target.once('mouseleave', () => {
                         this.close();
                     });
                     break;
@@ -91,7 +91,7 @@ Cuic.Tooltip = class extends Cuic.Component {
         });
 
         // Move tooltip when mouse moves and tooltip is opened
-        Cuic.on('mousemove', document, (ev) => {
+        Cuic.element(document).on('mousemove', (ev) => {
             if (this.options.followPointer && !this.isHidden()) {
                 if (this.parentNode() !== document.body) {
                     this.appendTo(document.body);
@@ -111,6 +111,16 @@ Cuic.Tooltip = class extends Cuic.Component {
                 }
             }
         };
+
+        // Keep tooltip open when mouse is over
+        this.on('mouseover', () => {
+            this.open();
+        });
+
+        // Close tooltip open when mouse leave it
+        this.on('mouseleave', () => {
+            this.close();
+        });
 
         // Reposition tail when tooltip position change
         this.onAnchored(() => {

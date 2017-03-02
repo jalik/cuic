@@ -23,14 +23,14 @@
  *
  */
 
-@tooltip-background-color: rgba(50, 50, 50, 0.8);
+@tooltip-background-color: @background-color-inverse;
 @tooltip-tail-size: 6px;
 
 .tooltip {
   background-color: @tooltip-background-color;
   border-radius: @border-radius;
-  box-shadow: @shadow-x @shadow-y @shadow-size @shadow-color;
-  color: #fff;
+  box-shadow: @shadow;
+  color: @color-inverse;
   display: inline-block;
   margin: @margin;
   max-width: 250px;
@@ -51,7 +51,7 @@
 }
 
 .tooltip-content {
-  line-height: @content-line-height;
+  line-height: @text-line-height;
 }
 
 // TOOLTIP POSITION

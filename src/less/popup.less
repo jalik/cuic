@@ -23,14 +23,14 @@
  *
  */
 
-@popup-background-color: rgba(50, 50, 50, 0.8);
+@popup-background-color: @background-color-inverse;
 @popup-tail-size: 6px;
 
 .popup {
   background-color: @popup-background-color;
   border-radius: @border-radius;
-  box-shadow: @shadow-x @shadow-y @shadow-size @shadow-color;
-  color: #fff;
+  box-shadow: @shadow;
+  color: @color-inverse;
   display: inline-block;
   margin: @margin;
   padding: @padding;
@@ -50,7 +50,7 @@
 }
 
 .popup-content {
-  line-height: @content-line-height;
+  line-height: @text-line-height;
 }
 
 .popup .btn-close:focus,

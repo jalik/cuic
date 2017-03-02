@@ -292,8 +292,7 @@ tr {
 
 .testbox.moving,
 .testbox.resizing {
-    background: rgba(255, 255, 255, 0.9);
-    /*box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);*/
+    border-color: tomato;
 }
 
 .testbox.selectable {
@@ -301,6 +300,5 @@ tr {
 }
 
 .testbox.selected {
-    background-color: rgba(255, 99, 71, 0.3);
     border-color: tomato;
 }

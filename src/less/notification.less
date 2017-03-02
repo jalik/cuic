@@ -24,10 +24,10 @@
  */
 
 .notification {
-  background-color: rgba(50, 50, 50, 0.8);
+  background-color: @background-color-inverse;
   border-radius: @border-radius;
-  box-shadow: @shadow-x @shadow-y @shadow-size @shadow-color;
-  color: #fff;
+  box-shadow: @shadow;
+  color: @color-inverse;
   display: inline-block;
   margin: @shadow-size;
   overflow: auto;
@@ -56,7 +56,7 @@ body > .notification {
 }
 
 .notification-content {
-  line-height: @content-line-height;
+  line-height: @text-line-height;
 }
 
 .notification.closable .notification-content {
@@ -64,7 +64,6 @@ body > .notification {
 }
 
 .notification .btn-close {
-  color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
   font-weight: bolder;
   margin: @margin;
@@ -75,5 +74,5 @@ body > .notification {
 
 .notification .btn-close:focus,
 .notification .btn-close:hover {
-  color: rgba(255, 255, 255, 0.7);
+  //color: rgba(255, 255, 255, 0.7);
 }
