@@ -777,8 +777,22 @@ Cuic.Element = class {
      * @return {Cuic.Element}
      */
     append(element) {
+        const node = this.node();
         this.debug('append', element);
-        this.node().append(Cuic.node(element));
+
+        if (element instanceof Cuic.Elements) {
+            element.each((el) => {
+                node.append(el.node());
+            });
+        }
+        else if (element instanceof jQuery) {
+            element.each(function () {
+                node.append(this);
+            });
+        }
+        else {
+            node.append(Cuic.node(element));
+        }
         return this;
     }
 
@@ -1831,8 +1845,22 @@ Cuic.Element = class {
      * @return {Cuic.Element}
      */
     prepend(element) {
+        const node = this.node();
         this.debug('prepend', element);
-        this.node().prepend(Cuic.node(element));
+
+        if (element instanceof Cuic.Elements) {
+            element.each((el) => {
+                node.prepend(el.node());
+            });
+        }
+        else if (element instanceof jQuery) {
+            element.each(function () {
+                node.prepend(this);
+            });
+        }
+        else {
+            node.prepend(Cuic.node(element));
+        }
         return this;
     }
 

@@ -2450,8 +2450,20 @@ Cuic.Element = function () {
     }, {
         key: 'append',
         value: function append(element) {
+            var node = this.node();
             this.debug('append', element);
-            this.node().append(Cuic.node(element));
+
+            if (element instanceof Cuic.Elements) {
+                element.each(function (el) {
+                    node.append(el.node());
+                });
+            } else if (element instanceof jQuery) {
+                element.each(function () {
+                    node.append(this);
+                });
+            } else {
+                node.append(Cuic.node(element));
+            }
             return this;
         }
 
@@ -3717,8 +3729,20 @@ Cuic.Element = function () {
     }, {
         key: 'prepend',
         value: function prepend(element) {
+            var node = this.node();
             this.debug('prepend', element);
-            this.node().prepend(Cuic.node(element));
+
+            if (element instanceof Cuic.Elements) {
+                element.each(function (el) {
+                    node.prepend(el.node());
+                });
+            } else if (element instanceof jQuery) {
+                element.each(function () {
+                    node.prepend(this);
+                });
+            } else {
+                node.prepend(Cuic.node(element));
+            }
             return this;
         }
 
@@ -4319,6 +4343,20 @@ Cuic.Elements = function () {
         }
 
         /**
+         * Appends one or more elements
+         * @param element
+         * @return {Cuic.Elements}
+         */
+
+    }, {
+        key: 'append',
+        value: function append(element) {
+            return this.each(function (el) {
+                el.append(element);
+            });
+        }
+
+        /**
          * Defines attribute for all elements
          * @param name
          * @param value
@@ -4587,6 +4625,20 @@ Cuic.Elements = function () {
         }
 
         /**
+         * Prepends one or more elements
+         * @param element
+         * @return {Cuic.Elements}
+         */
+
+    }, {
+        key: 'prepend',
+        value: function prepend(element) {
+            return this.each(function (el) {
+                el.prepend(element);
+            });
+        }
+
+        /**
          * Removes all elements
          * @return {Cuic.Elements}
          */
@@ -4649,9 +4701,13 @@ Cuic.Elements = function () {
     }, {
         key: 'val',
         value: function val(value) {
-            return this.each(function (el) {
-                el.val(value);
-            });
+            if (value !== undefined) {
+                return this.each(function (el) {
+                    el.val(value);
+                });
+            } else if (this.length) {
+                return this.eq(0).val();
+            }
         }
     }]);
 

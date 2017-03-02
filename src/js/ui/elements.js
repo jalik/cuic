@@ -76,6 +76,17 @@ Cuic.Elements = class {
     }
 
     /**
+     * Appends one or more elements
+     * @param element
+     * @return {Cuic.Elements}
+     */
+    append(element) {
+        return this.each((el) => {
+            el.append(element);
+        });
+    }
+
+    /**
      * Defines attribute for all elements
      * @param name
      * @param value
@@ -290,6 +301,17 @@ Cuic.Elements = class {
     }
 
     /**
+     * Prepends one or more elements
+     * @param element
+     * @return {Cuic.Elements}
+     */
+    prepend(element) {
+        return this.each((el) => {
+            el.prepend(element);
+        });
+    }
+
+    /**
      * Removes all elements
      * @return {Cuic.Elements}
      */
@@ -337,8 +359,13 @@ Cuic.Elements = class {
      * @return {Cuic.Elements}
      */
     val(value) {
-        return this.each((el) => {
-            el.val(value);
-        });
+        if (value !== undefined) {
+            return this.each((el) => {
+                el.val(value);
+            });
+        }
+        else if (this.length) {
+            return this.eq(0).val();
+        }
     }
 };
