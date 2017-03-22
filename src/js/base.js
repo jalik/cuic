@@ -188,7 +188,8 @@
          */
         debug() {
             if (this.options.debug && console !== undefined) {
-                (console.debug || console.log).apply(this, Array.prototype.slice.call(arguments));
+                const args = Array.prototype.slice.call(arguments);
+                (console.debug || console.log).apply(this, args);
             }
         },
 

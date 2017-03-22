@@ -23,14 +23,9 @@
  *
  */
 
-if (!Element.prototype.remove) {
-    Element.prototype.remove = function () {
-        if (this.parentNode) {
-            this.parentNode.removeChild(this);
-        }
-    };
-}
-
+/**
+ * Element.matches()
+ */
 if (!Element.prototype.matches) {
     Element.prototype.matches =
         Element.prototype.matchesSelector ||
@@ -47,6 +42,20 @@ if (!Element.prototype.matches) {
         };
 }
 
+/**
+ * Element.remove()
+ */
+if (!Element.prototype.remove) {
+    Element.prototype.remove = function () {
+        if (this.parentNode) {
+            this.parentNode.removeChild(this);
+        }
+    };
+}
+
+/**
+ * Node.append()
+ */
 // Source: https://github.com/jserz/js_piece/blob/master/DOM/ParentNode/append()/append().md
 (function (arr) {
     arr.forEach(function (item) {
@@ -70,3 +79,43 @@ if (!Element.prototype.matches) {
         });
     });
 })([Element.prototype, Document.prototype, DocumentFragment.prototype]);
+
+/**
+ * Node.prepend()
+ */
+// from: https://github.com/jserz/js_piece/blob/master/DOM/ParentNode/prepend()/prepend().md
+(function (arr) {
+    arr.forEach(function (item) {
+        if (item.hasOwnProperty('prepend')) {
+            return;
+        }
+        Object.defineProperty(item, 'prepend', {
+            configurable: true,
+            enumerable: true,
+            writable: true,
+            value: function prepend() {
+                let argArr = Array.prototype.slice.call(arguments);
+                let docFrag = document.createDocumentFragment();
+
+                argArr.forEach(function (argItem) {
+                    let isNode = argItem instanceof Node;
+                    docFrag.appendChild(isNode ? argItem : document.createTextNode(String(argItem)));
+                });
+
+                this.insertBefore(docFrag, this.firstChild);
+            }
+        });
+    });
+})([Element.prototype, Document.prototype, DocumentFragment.prototype]);
+
+/**
+ * console.debug()
+ */
+(function (arr) {
+    arr.forEach(function (item) {
+        if (console.hasOwnProperty(item)) {
+            return;
+        }
+        console[item] = console.log.bind(console);
+    });
+})(["debug", "info", "warn"]);
