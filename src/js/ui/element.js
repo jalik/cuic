@@ -1043,7 +1043,7 @@ Cuic.Element = class {
      */
     empty() {
         this.debug('empty');
-        this.text('');
+        this.html('');
         return this;
     }
 
@@ -1941,13 +1941,22 @@ Cuic.Element = class {
      * @return {Cuic.Element|string}
      */
     text(text) {
+        const node = this.node();
         this.debug('text', text);
 
         if (text !== undefined) {
-            this.node().innerText = text;
+            if (node.innerText !== undefined) {
+                node.innerText = text;
+            } else {
+                node.textContent = text;
+            }
             return this;
-        } else {
-            return this.node().innerText;
+        }
+        else if (node.hasOwnProperty("textContent")) {
+            return node.textContent;
+        }
+        else {
+            return Cuic.stripTags(node.innerHTML);
         }
     }
 

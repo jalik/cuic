@@ -23,69 +23,42 @@
  *
  */
 
-const gulp = require('gulp');
-const autoprefixer = require('gulp-autoprefixer');
-const babel = require('gulp-babel');
-const concat = require('gulp-concat');
-const eslint = require('gulp-eslint');
-const less = require('gulp-less');
-const minifyCSS = require('gulp-csso');
-const pump = require('pump');
-const rename = require('gulp-rename');
-const standard = require('gulp-standard');
-const uglify = require('gulp-uglify');
-const watch = require('gulp-watch');
+const gulp = require("gulp");
+const autoprefixer = require("gulp-autoprefixer");
+const babel = require("gulp-babel");
+const concat = require("gulp-concat");
+const eslint = require("gulp-eslint");
+const less = require("gulp-less");
+const minifyCSS = require("gulp-csso");
+const pump = require("pump");
+const rename = require("gulp-rename");
+const standard = require("gulp-standard");
+const uglify = require("gulp-uglify");
+const watch = require("gulp-watch");
 
-const pkg = require('./package.json');
-const buildDir = 'build/' + pkg.version;
-const baseFile = pkg.name + '-' + pkg.version;
-const docsDir = 'docs';
-
-
-/**
- * Copy compiled CSS to docs
- */
-gulp.task('doc:css', function () {
-    return gulp.src(buildDir + '/css/*.css')
-        .pipe(gulp.dest(docsDir + '/css'));
-});
-
-/**
- * Copy compiled JS to docs
- */
-gulp.task('doc:js', function () {
-    return gulp.src(buildDir + '/js/*.js')
-        .pipe(gulp.dest(docsDir + '/js'));
-});
+const pkg = require("./package.json");
+const baseFile = pkg.name;
+const distDir = "dist";
+const docsDir = "docs";
 
 /**
  * Compile CSS files
  */
-gulp.task('build:css', function () {
+gulp.task("build:css", function () {
     return gulp.src([
-        'src/less/base.less',
-        'src/**/*.less'
+        "src/less/base.less",
+        "src/**/*.less"
     ])
-        .pipe(concat(baseFile + '.css'))
+        .pipe(concat(`${baseFile}.css`))
         .pipe(less())
         .pipe(autoprefixer())
-        .pipe(gulp.dest(buildDir + '/css'));
-});
-
-/**
- * Compress CSS/LESS files
- */
-gulp.task('compress:css', function () {
-    return gulp.src(buildDir + '/css/' + baseFile + '.css')
-        .pipe(minifyCSS())
-        .pipe(rename({suffix: '.min'}))
-        .pipe(gulp.dest(buildDir + '/css'));
+        .pipe(gulp.dest(`${distDir}/css`));
 });
 
 /**
  * Compile Javascript files
  */
-gulp.task('build:js', function () {
+gulp.task("build:js", function () {
     return gulp.src([
         "src/js/polyfill.js",
         "src/js/base.js",
@@ -96,49 +69,67 @@ gulp.task('build:js', function () {
         "src/js/ui/**/*.js",
         "src/js/**/*.js"
     ])
-    // .pipe(eslint())
-    // .pipe(eslint.format())
-    // .pipe(eslint.failAfterError())
-    // .pipe(standard())
-    // .pipe(standard.reporter('default', {
-    //     breakOnError: true,
-    //     quiet: true
-    // }))
-        .pipe(concat(baseFile + '.js'))
-        .pipe(babel({presets: ['es2015']}))
-        .pipe(gulp.dest(buildDir + '/js'));
+        .pipe(concat(`${baseFile}.js`))
+        .pipe(babel({presets: ["es2015"]}))
+        .pipe(gulp.dest(`${distDir}/js`));
+});
+
+/**
+ * Compress CSS/LESS files
+ */
+gulp.task("compress:css", function () {
+    return gulp.src(`${distDir}/css/${baseFile}.css`)
+        .pipe(minifyCSS())
+        .pipe(rename({suffix: ".min"}))
+        .pipe(gulp.dest(`${distDir}/css`));
 });
 
 /**
  * Compress Javascript files
  */
-gulp.task('compress:js', function (cb) {
+gulp.task("compress:js", function (cb) {
     pump([
-            gulp.src(buildDir + '/js/' + baseFile + '.js'),
+            gulp.src(`${distDir}/js/${baseFile}.js`),
             uglify(),
-            rename({suffix: '.min'}),
-            gulp.dest(buildDir + '/js')
+            rename({suffix: ".min"}),
+            gulp.dest(`${distDir}/js`)
         ],
         cb
     );
 });
 
+/**
+ * Copy compiled CSS to docs
+ */
+gulp.task("doc:css", function () {
+    return gulp.src(`${distDir}/css/*.min.css`)
+        .pipe(gulp.dest(`${docsDir}/css`));
+});
+
+/**
+ * Copy compiled JS to docs
+ */
+gulp.task("doc:js", function () {
+    return gulp.src(`${distDir}/js/*.min.js`)
+        .pipe(gulp.dest(`${docsDir}/js`));
+});
+
 // Concat + compile files
-gulp.task('build', ['build:css', 'build:js']);
+gulp.task("build", ["build:css", "build:js"]);
 
 // Compress files
-gulp.task('compress', ['compress:css', 'compress:js']);
+gulp.task("compress", ["compress:css", "compress:js"]);
 
 // Add compiled files to docs
-gulp.task('doc', ['doc:css', 'doc:js']);
+gulp.task("doc", ["doc:css", "doc:js"]);
 
 // Concat + compress files
-gulp.task('default', ['build', 'compress', 'doc']);
+gulp.task("default", ["build", "compress", "doc"]);
 
 // Automatic rebuild
-gulp.task('watch', function () {
-    gulp.watch(['src/**/*.less'], ['build:css']);
-    gulp.watch(['src/**/*.js'], ['build:js']);
-    gulp.watch(['build/**/*.css', '!build/**/*.min.css'], ['compress:css', 'doc:css']);
-    gulp.watch(['build/**/*.js', '!build/**/*.min.js'], ['compress:js', 'doc:js']);
+gulp.task("watch", function () {
+    gulp.watch(["src/**/*.less"], ["build:css"]);
+    gulp.watch(["src/**/*.js"], ["build:js"]);
+    gulp.watch([`${distDir}/**/*.css`, `!${distDir}/**/*.min.css`], ["compress:css", "doc:css"]);
+    gulp.watch([`${distDir}/**/*.js`, `!${distDir}/**/*.min.js`], ["compress:js", "doc:js"]);
 });

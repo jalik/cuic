@@ -606,6 +606,23 @@
         },
 
         /**
+         * Removes HTML tags leaving only text
+         * @param html
+         * @return {*}
+         */
+        stripTags (html) {
+            if (typeof html === 'string' && html.length) {
+                // Replaces <br> with new line
+                html = html.replace(/<br[^>]>/gi, "\r\n");
+                // Removes tags
+                html = html.replace(/<[^>]+>/g, '');
+                // Removes extra spaces
+                html = html.trim();
+            }
+            return html;
+        },
+
+        /**
          * Returns the string converted to CamelCase
          * @param str
          * @return {string}

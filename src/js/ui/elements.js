@@ -214,7 +214,7 @@ Cuic.Elements = class {
     }
 
     /**
-     * Sets elements content
+     * Sets elements content as HTML
      * @param html
      * @return {Cuic.Elements}
      */
@@ -339,6 +339,17 @@ Cuic.Elements = class {
     show() {
         return this.each((el) => {
             el.show();
+        });
+    }
+
+    /**
+     * Sets elements content as raw text
+     * @param text
+     * @return {Cuic.Elements}
+     */
+    text(text) {
+        return this.each((el) => {
+            el.text(text);
         });
     }
 
