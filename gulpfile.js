@@ -27,37 +27,31 @@ const gulp = require("gulp");
 const autoprefixer = require("gulp-autoprefixer");
 const babel = require("gulp-babel");
 const concat = require("gulp-concat");
-const eslint = require("gulp-eslint");
 const less = require("gulp-less");
 const minifyCSS = require("gulp-csso");
 const pump = require("pump");
 const rename = require("gulp-rename");
-const standard = require("gulp-standard");
 const uglify = require("gulp-uglify");
 const watch = require("gulp-watch");
 
 const pkg = require("./package.json");
-const baseFile = pkg.name;
 const distDir = "dist";
 const docsDir = "docs";
+const distFile = `${pkg.name}`;
 
-/**
- * Compile CSS files
- */
+// Compile CSS files
 gulp.task("build:css", function () {
     return gulp.src([
         "src/less/base.less",
         "src/**/*.less"
     ])
-        .pipe(concat(`${baseFile}.css`))
+        .pipe(concat(`${distFile}.css`))
         .pipe(less())
         .pipe(autoprefixer())
         .pipe(gulp.dest(`${distDir}/css`));
 });
 
-/**
- * Compile Javascript files
- */
+// Compile JavaScript files
 gulp.task("build:js", function () {
     return gulp.src([
         "src/js/polyfill.js",
@@ -69,27 +63,23 @@ gulp.task("build:js", function () {
         "src/js/ui/**/*.js",
         "src/js/**/*.js"
     ])
-        .pipe(concat(`${baseFile}.js`))
+        .pipe(concat(`${distFile}.js`))
         .pipe(babel({presets: ["es2015"]}))
         .pipe(gulp.dest(`${distDir}/js`));
 });
 
-/**
- * Compress CSS/LESS files
- */
+// Compress CSS files
 gulp.task("compress:css", function () {
-    return gulp.src(`${distDir}/css/${baseFile}.css`)
+    return gulp.src(`${distDir}/css/${distFile}.css`)
         .pipe(minifyCSS())
         .pipe(rename({suffix: ".min"}))
         .pipe(gulp.dest(`${distDir}/css`));
 });
 
-/**
- * Compress Javascript files
- */
+// Compress JavaScript files
 gulp.task("compress:js", function (cb) {
     pump([
-            gulp.src(`${distDir}/js/${baseFile}.js`),
+            gulp.src(`${distDir}/js/${distFile}.js`),
             uglify(),
             rename({suffix: ".min"}),
             gulp.dest(`${distDir}/js`)
@@ -98,17 +88,13 @@ gulp.task("compress:js", function (cb) {
     );
 });
 
-/**
- * Copy compiled CSS to docs
- */
+// Copy compiled CSS to docs
 gulp.task("doc:css", function () {
     return gulp.src(`${distDir}/css/*.min.css`)
         .pipe(gulp.dest(`${docsDir}/css`));
 });
 
-/**
- * Copy compiled JS to docs
- */
+// Copy compiled JS to docs
 gulp.task("doc:js", function () {
     return gulp.src(`${distDir}/js/*.min.js`)
         .pipe(gulp.dest(`${docsDir}/js`));
