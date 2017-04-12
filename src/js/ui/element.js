@@ -1634,7 +1634,7 @@ Cuic.Element = class {
      */
     offsetParentNode() {
         this._display();
-        const parent = this.node().offsetParent;
+        const parent = this.node().offsetParent || document.body;
         this._restoreDisplay();
         return parent;
     }
