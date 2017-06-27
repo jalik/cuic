@@ -1,6 +1,6 @@
 {
   "name": "cuic",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Common User Interface Components",
   "main": "dist/js/cuic.js",
   "scripts": {

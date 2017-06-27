@@ -53,7 +53,7 @@ Cuic.Dialog = class extends Cuic.Component {
         // Add header
         this.header = new Cuic.Element('header', {
             className: 'dialog-header',
-            css: {display: this.options.title != null ? 'block' : 'none'}
+            css: {display: !!this.options.title ? 'block' : 'none'}
         }).appendTo(this);
 
         // Add title
@@ -71,7 +71,7 @@ Cuic.Dialog = class extends Cuic.Component {
         // Add footer
         this.footer = new Cuic.Element('footer', {
             className: 'dialog-footer',
-            css: {display: this.options.buttons != null ? 'block' : 'none'}
+            css: {display: !!this.options.buttons ? 'block' : 'none'}
         }).appendTo(this);
 
         // Add buttons group
@@ -107,6 +107,11 @@ Cuic.Dialog = class extends Cuic.Component {
             }
         }
 
+        // Hide footer if no buttons
+        if (!(this.options.buttons instanceof Array) || this.options.buttons.length < 1) {
+            this.footer.hide();
+        }
+
         // Set content height
         if (parseFloat(options.contentHeight) > 0) {
             this.content.css({height: options.contentHeight});
@@ -126,7 +131,7 @@ Cuic.Dialog = class extends Cuic.Component {
                 constraintToParent: true,
                 enabled: this.options.movable,
                 element: this.node(),
-                handle: this.title,
+                handle: this.header,
                 rootOnly: false
             });
         }

@@ -55,18 +55,21 @@ body > .dialog {
 .dialog-content {
   line-height: @text-line-height;
   overflow: auto;
-  margin: @text-padding 0;
+  margin: 0;
   padding: 0 @text-padding;
 }
 
 .dialog-footer {
   border-top: solid 1px #eee;
+  margin-top: @text-padding;
   padding: @text-padding;
   text-align: right;
 }
 
 .dialog-header {
   border-bottom: solid 1px #eee;
+  margin-bottom: @text-padding;
+  min-height: 56px;
   padding: @text-padding;
 }
 
