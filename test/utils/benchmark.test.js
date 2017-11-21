@@ -23,12 +23,11 @@
  *
  */
 
-import Cuic from "../src/js/cuic";
+import {Benchmark} from "../../src/js/utils/benchmark";
 
-describe(`Cuic`, () => {
+describe(`Benchmark`, () => {
 
     it(`should be importable from package`, () => {
-        expect(Cuic.hasOwnProperty("options")).toEqual(true);
-        expect(typeof Cuic.element).toEqual("function");
+        expect(typeof Benchmark).toEqual("function");
     });
 });

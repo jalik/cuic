@@ -23,11 +23,11 @@
  *
  */
 
-import {Popup} from "../../src/js/components/popup";
+import {Tooltip} from "../../src/js/ui/tooltip";
 
-describe(`Popup`, () => {
+describe(`Tooltip`, () => {
 
     it(`should be importable from package`, () => {
-        expect(typeof Popup).toEqual("function");
+        expect(typeof Tooltip).toEqual("function");
     });
 });

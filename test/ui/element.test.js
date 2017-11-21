@@ -23,11 +23,11 @@
  *
  */
 
-import {Button} from "../../src/js/components/button";
+import {Element} from "../../src/js/ui/element";
 
-describe(`Button`, () => {
+describe(`Element`, () => {
 
     it(`should be importable from package`, () => {
-        expect(typeof Button).toEqual("function");
+        expect(typeof Element).toEqual("function");
     });
 });

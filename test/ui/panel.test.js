@@ -23,12 +23,11 @@
  *
  */
 
-import Cuic from "../src/js/cuic";
+import {Panel} from "../../src/js/ui/panel";
 
-describe(`Cuic`, () => {
+describe(`Panel`, () => {
 
     it(`should be importable from package`, () => {
-        expect(Cuic.hasOwnProperty("options")).toEqual(true);
-        expect(typeof Cuic.element).toEqual("function");
+        expect(typeof Panel).toEqual("function");
     });
 });

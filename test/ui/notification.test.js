@@ -23,12 +23,11 @@
  *
  */
 
-import Cuic from "../src/js/cuic";
+import {Notification} from "../../src/js/ui/notification";
 
-describe(`Cuic`, () => {
+describe(`Notification`, () => {
 
     it(`should be importable from package`, () => {
-        expect(Cuic.hasOwnProperty("options")).toEqual(true);
-        expect(typeof Cuic.element).toEqual("function");
+        expect(typeof Notification).toEqual("function");
     });
 });

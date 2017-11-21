@@ -23,11 +23,11 @@
  *
  */
 
-import {Fader} from "../../src/js/components/fader";
+import {Dialog} from "../../src/js/ui/dialog";
 
-describe(`Fader`, () => {
+describe(`Dialog`, () => {
 
     it(`should be importable from package`, () => {
-        expect(typeof Fader).toEqual("function");
+        expect(typeof Dialog).toEqual("function");
     });
 });

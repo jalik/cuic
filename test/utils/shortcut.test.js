@@ -23,11 +23,11 @@
  *
  */
 
-import {NotificationStack} from "../../src/js/components/notification-stack";
+import {Shortcut} from "../../src/js/utils/shortcut";
 
-describe(`NotificationStack`, () => {
+describe(`Shortcut`, () => {
 
     it(`should be importable from package`, () => {
-        expect(typeof NotificationStack).toEqual("function");
+        expect(typeof Shortcut).toEqual("function");
     });
 });

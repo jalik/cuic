@@ -7,7 +7,7 @@ Cuic stands for **Common User Interface Components** and aims to offer various U
 ### Button
 
 ```js
-import {Button} from "cuic/button";
+import {Button} from "cuic/ui/button";
 
 const button = new Button({
     className: "btn-primary",
@@ -21,7 +21,7 @@ const button = new Button({
 ### Dialog
 
 ```js
-import {Dialog} from "cuic/dialog";
+import {Dialog} from "cuic/ui/dialog";
 
 const dialog = new Dialog({
     autoClose: false,
@@ -50,7 +50,7 @@ const dialog = new Dialog({
 ### Fader
 
 ```js
-import {Fader} from "cuic/fader";
+import {Fader} from "cuic/ui/fader";
 
 const fader = new Fader({
     autoClose: false,
@@ -63,7 +63,7 @@ const fader = new Fader({
 ### Notification
 
 ```js
-import {Notification} from "cuic/notification";
+import {Notification} from "cuic/ui/notification";
 
 const notification = new Notification({
     autoClose: true,
@@ -83,7 +83,7 @@ const notification = new Notification({
 ### NotificationStack
 
 ```js
-import {NotificationStack} from "cuic/notification-stack";
+import {NotificationStack} from "cuic/ui/notification-stack";
 
 const notificationStack = new NotificationStack({
     position: "right top",
@@ -94,7 +94,7 @@ const notificationStack = new NotificationStack({
 ### Panel
 
 ```js
-import {Panel} from "cuic/panel";
+import {Panel} from "cuic/ui/panel";
 
 const panel = new Panel({
     autoClose: false,
@@ -115,7 +115,7 @@ const panel = new Panel({
 ### Popup
 
 ```js
-import {Popup} from "cuic/popup";
+import {Popup} from "cuic/ui/popup";
 
 const popup = new Popup({
     anchor: "top",
@@ -131,7 +131,7 @@ const popup = new Popup({
 ### Switcher
 
 ```js
-import {Switcher} from "cuic/switcher";
+import {Switcher} from "cuic/ui/switcher";
 
 const switcher = new Switcher({
     autoStart: true,
@@ -143,7 +143,7 @@ const switcher = new Switcher({
 ### Tooltip
 
 ```js
-import {Tooltip} from "cuic/tooltip";
+import {Tooltip} from "cuic/ui/tooltip";
 
 const tooltip = new Tooltip({
     anchor: "right",

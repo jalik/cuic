@@ -23,11 +23,11 @@
  *
  */
 
-import {Switcher} from "../../src/js/components/switcher";
+import {Fader} from "../../src/js/ui/fader";
 
-describe(`Switcher`, () => {
+describe(`Fader`, () => {
 
     it(`should be importable from package`, () => {
-        expect(typeof Switcher).toEqual("function");
+        expect(typeof Fader).toEqual("function");
     });
 });

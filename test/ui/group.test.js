@@ -23,12 +23,11 @@
  *
  */
 
-import Cuic from "../src/js/cuic";
+import {Group} from "../../src/js/ui/group";
 
-describe(`Cuic`, () => {
+describe(`Group`, () => {
 
     it(`should be importable from package`, () => {
-        expect(Cuic.hasOwnProperty("options")).toEqual(true);
-        expect(typeof Cuic.element).toEqual("function");
+        expect(typeof Group).toEqual("function");
     });
 });

@@ -23,11 +23,11 @@
  *
  */
 
-import {Dialog} from "../../src/js/components/dialog";
+import {Events} from "../../src/js/utils/events";
 
-describe(`Dialog`, () => {
+describe(`Events`, () => {
 
     it(`should be importable from package`, () => {
-        expect(typeof Dialog).toEqual("function");
+        expect(typeof Events).toEqual("function");
     });
 });

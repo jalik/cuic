@@ -23,12 +23,11 @@
  *
  */
 
-import Cuic from "../src/js/cuic";
+import {Component} from "../../src/js/ui/component";
 
-describe(`Cuic`, () => {
+describe(`Component`, () => {
 
     it(`should be importable from package`, () => {
-        expect(Cuic.hasOwnProperty("options")).toEqual(true);
-        expect(typeof Cuic.element).toEqual("function");
+        expect(typeof Component).toEqual("function");
     });
 });

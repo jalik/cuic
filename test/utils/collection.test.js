@@ -23,11 +23,11 @@
  *
  */
 
-import {Panel} from "../../src/js/components/panel";
+import {Collection} from "../../src/js/utils/collection";
 
-describe(`Panel`, () => {
+describe(`Collection`, () => {
 
     it(`should be importable from package`, () => {
-        expect(typeof Panel).toEqual("function");
+        expect(typeof Collection).toEqual("function");
     });
 });

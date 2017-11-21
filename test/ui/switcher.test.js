@@ -23,12 +23,11 @@
  *
  */
 
-import Cuic from "../src/js/cuic";
+import {Switcher} from "../../src/js/ui/switcher";
 
-describe(`Cuic`, () => {
+describe(`Switcher`, () => {
 
     it(`should be importable from package`, () => {
-        expect(Cuic.hasOwnProperty("options")).toEqual(true);
-        expect(typeof Cuic.element).toEqual("function");
+        expect(typeof Switcher).toEqual("function");
     });
 });

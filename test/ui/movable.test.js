@@ -23,12 +23,11 @@
  *
  */
 
-import Cuic from "../src/js/cuic";
+import {Movable} from "../../src/js/ui/movable";
 
-describe(`Cuic`, () => {
+describe(`Movable`, () => {
 
     it(`should be importable from package`, () => {
-        expect(Cuic.hasOwnProperty("options")).toEqual(true);
-        expect(typeof Cuic.element).toEqual("function");
+        expect(typeof Movable).toEqual("function");
     });
 });

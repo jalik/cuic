@@ -23,11 +23,11 @@
  *
  */
 
-import {Notification} from "../../src/js/components/notification";
+import {Elements} from "../../src/js/ui/elements";
 
-describe(`Notification`, () => {
+describe(`Elements`, () => {
 
     it(`should be importable from package`, () => {
-        expect(typeof Notification).toEqual("function");
+        expect(typeof Elements).toEqual("function");
     });
 });

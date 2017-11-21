@@ -23,12 +23,11 @@
  *
  */
 
-import Cuic from "../src/js/cuic";
+import {Resizable} from "../../src/js/ui/resizable";
 
-describe(`Cuic`, () => {
+describe(`Resizable`, () => {
 
     it(`should be importable from package`, () => {
-        expect(Cuic.hasOwnProperty("options")).toEqual(true);
-        expect(typeof Cuic.element).toEqual("function");
+        expect(typeof Resizable).toEqual("function");
     });
 });
