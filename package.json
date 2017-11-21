@@ -4,9 +4,21 @@
   "description": "Common User Interface Components.",
   "license": "MIT",
   "keywords": [
+    "button",
     "component",
     "dialog",
+    "element",
+    "fader",
+    "group",
+    "hook",
+    "moveable",
     "notification",
+    "stack",
+    "panel",
+    "popup",
+    "resizable",
+    "selectable",
+    "switcher",
     "tooltip",
     "ui"
   ],
@@ -24,8 +36,8 @@
   },
   "main": "dist/cuic.js",
   "scripts": {
-    "build": "./node_modules/.bin/webpack --config webpack.config.js",
-    "build:prod": "./node_modules/.bin/webpack --config webpack.config.js -p",
+    "build": "./node_modules/.bin/gulp build && ./node_modules/.bin/webpack --config webpack.config.js",
+    "build:prod": "./node_modules/.bin/gulp build && ./node_modules/.bin/webpack --config webpack.config.js -p",
     "prepublish": "npm run build && npm run build:prod && npm test",
     "test": "jest",
     "watch": "./node_modules/.bin/webpack --config webpack.config.js --watch"
@@ -36,8 +48,6 @@
     "babel-loader": "^7.1.2",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
-    "chai": "^4.1.2",
-    "extract-text-webpack-plugin": "^3.0.2",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^4.0.0",
     "gulp-babel": "^7.0.0",
@@ -45,10 +55,13 @@
     "gulp-csso": "^3.0.0",
     "gulp-less": "^3.3.2",
     "gulp-rename": "^1.2.2",
+    "gulp-strip-comments": "^2.5.1",
+    "gulp-strip-css-comments": "^1.2.0",
     "gulp-uglify": "^3.0.0",
     "gulp-watch": "^4.3.11",
     "jest": "^21.2.1",
     "pump": "^1.0.3",
+    "remove-comments-loader": "^0.1.2",
     "webpack": "^3.8.1"
   }
 }

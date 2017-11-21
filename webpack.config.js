@@ -23,15 +23,14 @@
  *
  */
 
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const path = require("path");
 const Package = require("./package.json");
 const isProd = process.argv.indexOf("-p") !== -1;
-const filename = Package.name + (isProd ? ".min" : "");
+const filename = Package.name + "-aio" + (isProd ? ".min" : "");
 
 module.exports = {
     entry: {
-        bundle: path.join(__dirname, "src", "js", `${Package.name}.js`)
+        bundle: path.join(__dirname, "src", `index.js`)
     },
     output: {
         libraryTarget: "umd",
@@ -50,15 +49,11 @@ module.exports = {
                 loader: "babel-loader"
             },
             {
-                test: /\.css$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: "style-loader",
-                    use: "css-loader"
-                })
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: "remove-comments-loader"
             }
         ]
     },
-    plugins: [
-        new ExtractTextPlugin("styles.css"),
-    ]
+    plugins: []
 };

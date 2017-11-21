@@ -31,6 +31,8 @@ const less = require("gulp-less");
 const minifyCSS = require("gulp-csso");
 const pump = require("pump");
 const rename = require("gulp-rename");
+const stripComments = require('gulp-strip-comments');
+const stripCssComments = require('gulp-strip-css-comments');
 const uglify = require("gulp-uglify");
 const watch = require("gulp-watch");
 
@@ -46,6 +48,7 @@ gulp.task("build:css", function () {
     ])
         .pipe(concat(`${distFile}.css`))
         .pipe(less())
+        .pipe(stripCssComments())
         // .pipe(autoprefixer()) //fixme needs node v7.10.0
         .pipe(gulp.dest(`${distDir}`));
 });
@@ -72,19 +75,20 @@ gulp.task("build:js", function () {
     ])
     // .pipe(concat(`${distFile}.js`))
         .pipe(babel({presets: ["env"]}))
+        .pipe(stripComments())
         .pipe(gulp.dest(`${distDir}`));
 });
 
 // Compress JavaScript files
 gulp.task("compress:js", function (cb) {
-    pump([
-            gulp.src(`${distDir}/${distFile}.js`),
-            uglify(),
-            rename({suffix: ".min"}),
-            gulp.dest(`${distDir}`)
-        ],
-        cb
-    );
+    // pump([
+    //         gulp.src(`${distDir}/${distFile}.js`),
+    //         uglify(),
+    //         rename({suffix: ".min"}),
+    //         gulp.dest(`${distDir}`)
+    //     ],
+    //     cb
+    // );
 });
 
 // Copy compiled CSS to docs
