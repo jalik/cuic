@@ -33,7 +33,6 @@ import {Group} from "../ui/group";
 import {Movable} from "../ui/movable";
 import {Resizable} from "../ui/resizable";
 import {Shortcut} from "../utils/shortcut";
-import DialogStyles from "../../less/dialog.less";
 
 export class Dialog extends Component {
 

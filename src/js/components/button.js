@@ -59,6 +59,7 @@ export class Button extends Component {
 Button.prototype.options = {
     className: "btn-default",
     disabled: false,
+    label: null,
     shortcut: null,
     title: null,
     type: "button"
