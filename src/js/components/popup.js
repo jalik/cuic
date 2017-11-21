@@ -23,26 +23,32 @@
  *
  */
 
-Cuic.Popup = class extends Cuic.Component {
+import Cuic from "../cuic";
+import {Collection} from "../utils/collection";
+import {Component} from "../ui/component";
+import {Element} from "../ui/element";
+import {Shortcut} from "../utils/shortcut";
+
+export class Popup extends Component {
 
     constructor(options) {
         // Set default options
-        options = Cuic.extend({}, Cuic.Popup.prototype.options, options, {
-            mainClass: 'popup'
+        options = Cuic.extend({}, Popup.prototype.options, options, {
+            mainClass: "popup"
         });
 
         // Create element
-        super('div', {className: options.className}, options);
+        super("div", {className: options.className}, options);
 
         // Add content
-        this.content = new Cuic.Element('div', {
-            className: 'popup-content',
+        this.content = new Element("div", {
+            className: "popup-content",
             html: options.content
         }).appendTo(this);
 
         // Add tail
-        this.tail = new Cuic.Element('span', {
-            className: 'popup-tail'
+        this.tail = new Element("span", {
+            className: "popup-tail"
         }).appendTo(this);
 
         /**
@@ -50,7 +56,7 @@ Cuic.Popup = class extends Cuic.Component {
          * @type {{close: *}}
          */
         this.shortcuts = {
-            close: new Cuic.Shortcut({
+            close: new Shortcut({
                 element: this,
                 keyCode: Cuic.keys.ESC,
                 callback: () => {
@@ -67,9 +73,9 @@ Cuic.Popup = class extends Cuic.Component {
             }
         };
 
-        this.on('click', (ev) => {
+        this.on("click", (ev) => {
             // Close button
-            if (Cuic.element(ev.target).hasClass('btn-close')) {
+            if (Cuic.element(ev.target).hasClass("btn-close")) {
                 ev.preventDefault();
                 this.close();
             }
@@ -81,7 +87,7 @@ Cuic.Popup = class extends Cuic.Component {
         });
 
         this.onClosed(() => {
-            Cuic.off('click', document, autoClose);
+            Cuic.off("click", document, autoClose);
 
             if (this.options.autoRemove) {
                 this.remove();
@@ -92,14 +98,14 @@ Cuic.Popup = class extends Cuic.Component {
             const target = Cuic.element(this.options.target);
             this.appendTo(target.parent());
             // Get anchor from data attribute
-            const anchor = target.data('anchor') || this.options.anchor;
-            const anchorPoint = target.data('anchor-point') || this.options.anchorPoint;
+            const anchor = target.data("anchor") || this.options.anchor;
+            const anchorPoint = target.data("anchor-point") || this.options.anchorPoint;
             this.anchor(anchor, anchorPoint, target);
         });
 
         this.onOpened(() => {
             // Close the popup when the user clicks outside of it
-            Cuic.on('click', document, autoClose);
+            Cuic.on("click", document, autoClose);
         });
 
         // Add element to collection
@@ -109,7 +115,7 @@ Cuic.Popup = class extends Cuic.Component {
     /**
      * Sets popup content
      * @param html
-     * @return {Cuic.Popup}
+     * @return {Popup}
      */
     setContent(html) {
         this.content.html(html);
@@ -118,37 +124,37 @@ Cuic.Popup = class extends Cuic.Component {
 
     /**
      * Position the tail
-     * @return {Cuic.Popup}
+     * @return {Popup}
      */
     updateTail() {
         let prop = {
-            bottom: '',
-            left: '',
-            right: '',
-            top: '',
+            bottom: "",
+            left: "",
+            right: "",
+            top: "",
         };
 
         // todo copy popup background color
-        // prop['border-color'] = this.css('background-color');
+        // prop["border-color"] = this.css("background-color");
 
         // Remove previous classes
-        this.tail.removeClass('popup-tail-bottom popup-tail-left popup-tail-right popup-tail-top');
+        this.tail.removeClass("popup-tail-bottom popup-tail-left popup-tail-right popup-tail-top");
 
         // Top tail
-        if (this.isAnchored('bottom')) {
-            this.tail.addClass('popup-tail-top');
+        if (this.isAnchored("bottom")) {
+            this.tail.addClass("popup-tail-top");
         }
         // Bottom tail
-        if (this.isAnchored('top')) {
-            this.tail.addClass('popup-tail-bottom');
+        if (this.isAnchored("top")) {
+            this.tail.addClass("popup-tail-bottom");
         }
         // Right tail
-        if (this.isAnchored('left')) {
-            this.tail.addClass('popup-tail-right');
+        if (this.isAnchored("left")) {
+            this.tail.addClass("popup-tail-right");
         }
         // Left tail
-        if (this.isAnchored('right')) {
-            this.tail.addClass('popup-tail-left');
+        if (this.isAnchored("right")) {
+            this.tail.addClass("popup-tail-left");
         }
 
         // Apply CSS
@@ -156,20 +162,20 @@ Cuic.Popup = class extends Cuic.Component {
 
         return this;
     }
-};
+}
 
-Cuic.Popup.prototype.options = {
-    anchor: 'top',
+Popup.prototype.options = {
+    anchor: "top",
     autoClose: true,
     autoRemove: false,
     content: null,
-    namespace: 'popup',
+    namespace: "popup",
     opened: false,
     target: null,
     zIndex: 9
 };
 
-Cuic.popups = new Cuic.Collection();
+Cuic.popups = new Collection();
 
 Cuic.onWindowResized(() => {
     Cuic.popups.each((popup) => {

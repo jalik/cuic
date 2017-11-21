@@ -23,68 +23,80 @@
  *
  */
 
-Cuic.Dialog = class extends Cuic.Component {
+import Cuic from "../cuic";
+import {Button} from "./button";
+import {Collection} from "../utils/collection";
+import {Component} from "../ui/component";
+import {Element} from "../ui/element";
+import {Fader} from "./fader";
+import {Group} from "../ui/group";
+import {Movable} from "../ui/movable";
+import {Resizable} from "../ui/resizable";
+import {Shortcut} from "../utils/shortcut";
+import DialogStyles from "../../less/dialog.less";
+
+export class Dialog extends Component {
 
     constructor(options) {
         // Set default options
-        options = Cuic.extend({}, Cuic.Dialog.prototype.options, options, {
-            mainClass: 'dialog'
+        options = Cuic.extend({}, Dialog.prototype.options, options, {
+            mainClass: "dialog"
         });
 
         // Create element
-        super('div', {
+        super("div", {
             className: options.className,
-            role: 'dialog'
+            role: "dialog"
         }, options);
 
         // Set dialog position
         if (this.parentNode() === document.body) {
-            this.css({position: 'absolute'});
+            this.css({position: "absolute"});
         }
 
         // Create the fader
-        this.fader = new Cuic.Fader({
-            className: 'fader dialog-fader',
+        this.fader = new Fader({
+            className: "fader dialog-fader",
             autoClose: false,
             autoRemove: false,
             opened: false
         }).appendTo(this.options.parent);
 
         // Add header
-        this.header = new Cuic.Element('header', {
-            className: 'dialog-header',
-            css: {display: !!this.options.title ? 'block' : 'none'}
+        this.header = new Element("header", {
+            className: "dialog-header",
+            css: {display: !!this.options.title ? "block" : "none"}
         }).appendTo(this);
 
         // Add title
-        this.title = new Cuic.Element('h3', {
-            className: 'dialog-title',
+        this.title = new Element("h3", {
+            className: "dialog-title",
             html: this.options.title
         }).appendTo(this.header);
 
         // Add content
-        this.content = new Cuic.Element('section', {
-            className: 'dialog-content',
+        this.content = new Element("section", {
+            className: "dialog-content",
             html: this.options.content
         }).appendTo(this);
 
         // Add footer
-        this.footer = new Cuic.Element('footer', {
-            className: 'dialog-footer',
-            css: {display: !!this.options.buttons ? 'block' : 'none'}
+        this.footer = new Element("footer", {
+            className: "dialog-footer",
+            css: {display: !!this.options.buttons ? "block" : "none"}
         }).appendTo(this);
 
         // Add buttons group
-        this.buttons = new Cuic.Group('div', {
-            className: 'btn-group'
+        this.buttons = new Group("div", {
+            className: "btn-group"
         }).appendTo(this.footer);
 
         // Add close button
-        this.closeButton = new Cuic.Element('span', {
+        this.closeButton = new Element("span", {
             className: this.options.closeButtonClass,
             html: this.options.closeButton,
-            role: 'button'
-        }).addClass('btn-close').appendTo(this.header);
+            role: "button"
+        }).addClass("btn-close").appendTo(this.header);
 
         // Show footer if not empty
         this.buttons.onComponentAdded(() => {
@@ -124,10 +136,10 @@ Cuic.Dialog = class extends Cuic.Component {
 
         /**
          * Movable interface
-         * @type {Cuic.Movable}
+         * @type {Movable}
          */
         if (this.options.movable) {
-            this.movable = new Cuic.Movable({
+            this.movable = new Movable({
                 constraintToParent: true,
                 enabled: this.options.movable,
                 element: this.node(),
@@ -138,10 +150,10 @@ Cuic.Dialog = class extends Cuic.Component {
 
         /**
          * Resizable interface
-         * @type {Cuic.Resizable}
+         * @type {Resizable}
          */
         if (this.options.resizable) {
-            this.resizable = new Cuic.Resizable({
+            this.resizable = new Resizable({
                 enabled: this.options.resizable,
                 element: this.node()
             });
@@ -152,7 +164,7 @@ Cuic.Dialog = class extends Cuic.Component {
          * @type {{close: *}}
          */
         this.shortcuts = {
-            close: new Cuic.Shortcut({
+            close: new Shortcut({
                 element: this,
                 keyCode: Cuic.keys.ESC,
                 callback: () => {
@@ -162,15 +174,15 @@ Cuic.Dialog = class extends Cuic.Component {
         };
 
         // Close dialog when fader is clicked
-        this.fader.on('click', () => {
+        this.fader.on("click", () => {
             if (this.options.autoClose) {
                 this.close();
             }
         });
 
-        this.on('click', (ev) => {
+        this.on("click", (ev) => {
             // Close button
-            if (Cuic.element(ev.target).hasClass('btn-close')) {
+            if (Cuic.element(ev.target).hasClass("btn-close")) {
                 ev.preventDefault();
                 this.close();
             }
@@ -196,13 +208,13 @@ Cuic.Dialog = class extends Cuic.Component {
             let zIndex = Math.max(this.options.zIndex, Cuic.dialogs.getCurrentZIndex() + 1);
 
             // Find current top dialog z-index
-            this.css({'z-index': zIndex});
+            this.css({"z-index": zIndex});
             this.resizeContent();
 
             // Open fader
             if (this.options.modal) {
-                this.css({'z-index': zIndex + 1});
-                this.fader.css({'z-index': zIndex});
+                this.css({"z-index": zIndex + 1});
+                this.fader.css({"z-index": zIndex});
                 this.fader.open();
             }
 
@@ -224,11 +236,11 @@ Cuic.Dialog = class extends Cuic.Component {
         // Called when dialog is opened
         this.onOpened((ev) => {
             // // todo wait images to be loaded to resize content
-            // let images = this.find('img');
+            // let images = this.find("img");
             //
             // if (images.length > 0) {
             //     // Position the dialog when images are loaded
-            //     images.off(ns('load')).on(ns('load'), () => {
+            //     images.off(ns("load")).on(ns("load"), () => {
             //         this.resizeContent();
             //     });
             // } else {
@@ -249,25 +261,25 @@ Cuic.Dialog = class extends Cuic.Component {
     /**
      * Adds a button to the dialog
      * @param button
-     * @return {Cuic.Button}
+     * @return {Button}
      */
     addButton(button) {
-        if (!(button instanceof Cuic.Button)) {
+        if (!(button instanceof Button)) {
             const callback = button.callback;
 
             // Create button
-            button = new Cuic.Button({
-                className: 'btn btn-default',
+            button = new Button({
+                className: "btn btn-default",
                 label: button.label
             });
 
             // Set button callback
-            if (typeof callback === 'function') {
-                button.on('click', (ev) => {
+            if (typeof callback === "function") {
+                button.on("click", (ev) => {
                     callback.call(this, ev);
                 });
-            } else if (callback === 'close') {
-                button.on('click', () => {
+            } else if (callback === "close") {
+                button.on("click", () => {
                     this.close();
                 });
             }
@@ -281,7 +293,7 @@ Cuic.Dialog = class extends Cuic.Component {
     /**
      * Returns the content
      * @deprecated
-     * @return {Cuic.Element}
+     * @return {Element}
      */
     getBody() {
         return this.content;
@@ -289,7 +301,7 @@ Cuic.Dialog = class extends Cuic.Component {
 
     /**
      * Returns the content
-     * @return {Cuic.Element}
+     * @return {Element}
      */
     getContent() {
         return this.content;
@@ -297,7 +309,7 @@ Cuic.Dialog = class extends Cuic.Component {
 
     /**
      * Returns the footer
-     * @return {Cuic.Element}
+     * @return {Element}
      */
     getFooter() {
         return this.footer;
@@ -305,7 +317,7 @@ Cuic.Dialog = class extends Cuic.Component {
 
     /**
      * Returns the header
-     * @return {Cuic.Element}
+     * @return {Element}
      */
     getHeader() {
         return this.header;
@@ -313,7 +325,7 @@ Cuic.Dialog = class extends Cuic.Component {
 
     /**
      * Resizes the content
-     * @return {Cuic.Dialog}
+     * @return {Dialog}
      */
     resizeContent() {
         // Calculate available space
@@ -321,33 +333,33 @@ Cuic.Dialog = class extends Cuic.Component {
 
         // Set dialog max dimensions
         this.css({
-            'max-height': available.height,
-            'max-width': available.width
+            "max-height": available.height,
+            "max-width": available.width
         });
 
         // Calculate content max height
         let maxHeight = available.height;
 
         // Subtract header height
-        if (this.header instanceof Cuic.Element) {
+        if (this.header instanceof Element) {
             maxHeight -= this.header.outerHeight(true);
         }
         // Subtract footer height
-        if (this.footer instanceof Cuic.Element) {
+        if (this.footer instanceof Element) {
             maxHeight -= this.footer.outerHeight(true);
         }
         // Subtract content margin
         maxHeight -= this.content.margin().vertical;
 
         // Set content max height
-        this.content.css({'max-height': maxHeight});
+        this.content.css({"max-height": maxHeight});
         return this;
     }
 
     /**
      * Sets dialog content
      * @param html
-     * @return {Cuic.Dialog}
+     * @return {Dialog}
      */
     setContent(html) {
         this.content.html(html);
@@ -357,7 +369,7 @@ Cuic.Dialog = class extends Cuic.Component {
     /**
      * Sets dialog footer
      * @param html
-     * @return {Cuic.Dialog}
+     * @return {Dialog}
      */
     setFooter(html) {
         this.footer.html(html);
@@ -367,38 +379,38 @@ Cuic.Dialog = class extends Cuic.Component {
     /**
      * Sets dialog title
      * @param html
-     * @return {Cuic.Dialog}
+     * @return {Dialog}
      */
     setTitle(html) {
         this.title.html(html);
         return this;
     }
-};
+}
 
-Cuic.Dialog.prototype.options = {
+Dialog.prototype.options = {
     autoClose: false,
     autoRemove: true,
     autoResize: true,
     buttons: [],
     closable: true,
     closeButton: null,
-    closeButtonClass: 'glyphicon glyphicon-remove-sign',
+    closeButtonClass: "glyphicon glyphicon-remove-sign",
     content: null,
     contentHeight: null,
     contentWidth: null,
     movable: true,
     maximized: false,
     modal: true,
-    namespace: 'dialog',
+    namespace: "dialog",
     opened: false,
     parent: document.body,
-    position: 'center',
+    position: "center",
     resizable: false,
     title: null,
     zIndex: 10
 };
 
-Cuic.dialogs = new Cuic.Collection();
+Cuic.dialogs = new Collection();
 
 /**
  * Returns the z-index of the highest dialog
@@ -408,7 +420,7 @@ Cuic.dialogs.getCurrentZIndex = function () {
     let zIndex = 0;
 
     Cuic.dialogs.each((dialog) => {
-        const index = parseInt(dialog.css('z-index'));
+        const index = parseInt(dialog.css("z-index"));
 
         if (index > zIndex) {
             zIndex = index;

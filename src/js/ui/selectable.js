@@ -23,26 +23,29 @@
  *
  */
 
-Cuic.Selectable = class extends Cuic.Element {
+import Cuic from "../cuic";
+import {Element} from "./element";
+
+export class Selectable extends Element {
 
     constructor(options) {
         // Set default options
-        options = Cuic.extend({}, Cuic.Selectable.prototype.options, options);
+        options = Cuic.extend({}, Selectable.prototype.options, options);
 
         // Create element
-        super('div', {className: options.className}, options);
+        super("div", {className: options.className}, options);
 
         // Add component class
-        this.addClass('selectable');
+        this.addClass("selectable");
 
         // Add selected class
         if (this.options.selected) {
-            this.addClass('selected');
+            this.addClass("selected");
         }
 
         // Add or remove selected class
-        this.on('click', () => {
-            if (this.hasClass('selected')) {
+        this.on("click", () => {
+            if (this.hasClass("selected")) {
                 this.deselect();
             } else {
                 this.select();
@@ -53,15 +56,15 @@ Cuic.Selectable = class extends Cuic.Element {
     /**
      * Deselect element
      * @param callback
-     * @return {Cuic.Selectable}
+     * @return {Selectable}
      */
     deselect(callback) {
-        this.removeClass('selected');
-        this.once('transitionend', (ev) => {
+        this.removeClass("selected");
+        this.once("transitionend", (ev) => {
             if (!this.isSelected()) {
-                this.events.trigger('deselected', ev);
+                this.events.trigger("deselected", ev);
 
-                if (typeof callback === 'function') {
+                if (typeof callback === "function") {
                     callback.call(this, ev);
                 }
             }
@@ -74,49 +77,49 @@ Cuic.Selectable = class extends Cuic.Element {
      * @return {boolean}
      */
     isSelected() {
-        return (this.hasClass('selected') || this.attr('selected')) === true;
+        return (this.hasClass("selected") || this.attr("selected")) === true;
     }
 
     /**
      * Called when element is deselected
      * @param callback
-     * @return {Cuic.Selectable}
+     * @return {Selectable}
      */
     onDeselected(callback) {
-        this.events.on('deselected', callback);
+        this.events.on("deselected", callback);
         return this;
     }
 
     /**
      * Called when element is selected
      * @param callback
-     * @return {Cuic.Selectable}
+     * @return {Selectable}
      */
     onSelected(callback) {
-        this.events.on('selected', callback);
+        this.events.on("selected", callback);
         return this;
     }
 
     /**
      * Select element
      * @param callback
-     * @return {Cuic.Selectable}
+     * @return {Selectable}
      */
     select(callback) {
-        this.addClass('selected');
-        this.once('transitionend', (ev) => {
+        this.addClass("selected");
+        this.once("transitionend", (ev) => {
             if (this.isSelected()) {
-                this.events.trigger('selected', ev);
+                this.events.trigger("selected", ev);
 
-                if (typeof callback === 'function') {
+                if (typeof callback === "function") {
                     callback.call(this, ev);
                 }
             }
         });
         return this;
     }
-};
+}
 
-Cuic.Selectable.prototype.options = {
-    namespace: 'selectable'
+Selectable.prototype.options = {
+    namespace: "selectable"
 };

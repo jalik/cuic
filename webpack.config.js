@@ -23,43 +23,42 @@
  *
  */
 
-import Cuic from "../cuic";
-import {Component} from "../ui/component";
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const path = require("path");
+const Package = require("./package.json");
+const isProd = process.argv.indexOf("-p") !== -1;
+const filename = Package.name + (isProd ? ".min" : "");
 
-export class Button extends Component {
-
-    constructor(options) {
-        // Set default options
-        options = Cuic.extend({}, Button.prototype.options, options, {
-            mainClass: "btn"
-        });
-
-        // Create element
-        super("button", {
-            className: options.className,
-            disabled: false,
-            html: options.label,
-            title: options.title,
-            type: options.type
-        }, options);
-
-        // Create shortcut
-        if (typeof options.shortcut === "number") {
-            this.shortcut = new Cuic.Shortcut({
-                keyCode: options.shortcut,
-                target: this.element,
-                callback() {
-                    this.node().click();
-                }
-            });
-        }
-    }
-}
-
-Button.prototype.options = {
-    className: "btn-default",
-    disabled: false,
-    shortcut: null,
-    title: null,
-    type: "button"
+module.exports = {
+    entry: {
+        bundle: path.join(__dirname, "src", "js", `${Package.name}.js`)
+    },
+    output: {
+        libraryTarget: "umd",
+        path: path.join(__dirname, "dist"),
+        filename: `${filename}.js`
+    },
+    resolve: {
+        extensions: [".js"],
+        modules: [path.join(__dirname, "src"), "node_modules"]
+    },
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: "babel-loader"
+            },
+            {
+                test: /\.css$/,
+                use: ExtractTextPlugin.extract({
+                    fallback: "style-loader",
+                    use: "css-loader"
+                })
+            }
+        ]
+    },
+    plugins: [
+        new ExtractTextPlugin("styles.css"),
+    ]
 };

@@ -23,25 +23,29 @@
  *
  */
 
-Cuic.Movable = class extends Cuic.Element {
+import Cuic from "../cuic";
+import {Element} from "./element";
+import {Collection} from "../utils/collection";
+
+export class Movable extends Element {
 
     constructor(options) {
         // Set default options
-        options = Cuic.extend({}, Cuic.Movable.prototype.options, options);
+        options = Cuic.extend({}, Movable.prototype.options, options);
 
         // Create element
-        super('div', {className: options.className}, options);
+        super("div", {className: options.className}, options);
 
         // Add component class
-        this.addClass('movable');
+        this.addClass("movable");
 
         // Force the target to be the relative parent
         if (this.isStatic()) {
-            this.css({position: 'relative'});
+            this.css({position: "relative"});
         }
 
         // Group handles
-        this.handles = new Cuic.Collection();
+        this.handles = new Collection();
 
         // Set the moving area
         this.addMoveHandle(options.handle || this.node());
@@ -50,7 +54,7 @@ Cuic.Movable = class extends Cuic.Element {
     /**
      * Sets the moving area
      * @param handle
-     * @return {Cuic.Component}
+     * @return {Movable}
      */
     addMoveHandle(handle) {
         handle = Cuic.element(handle);
@@ -58,21 +62,21 @@ Cuic.Movable = class extends Cuic.Element {
         this.handles.add(handle);
 
         // Add the handle class
-        handle.addClass('movable-handle');
+        handle.addClass("movable-handle");
 
         // Start moving
-        Cuic.on('mousedown', handle, (ev) => {
+        Cuic.on("mousedown", handle, (ev) => {
             // Ignore moving if the target is not the root
             if (this.options.rootOnly && ev.target !== ev.currentTarget) return;
 
             // Execute callback
-            if (this.events.trigger('moveStart', ev) === false) return;
+            if (this.events.trigger("moveStart", ev) === false) return;
 
             // Prevent text selection
             ev.preventDefault();
 
             // Add moving class
-            this.addClass('moving');
+            this.addClass("moving");
 
             const startPosition = this.position();
             const startX = ev.clientX;
@@ -80,7 +84,7 @@ Cuic.Movable = class extends Cuic.Element {
 
             const onMouseMove = (ev) => {
                 // Execute callback
-                if (this.events.trigger('move', ev) === false)  return;
+                if (this.events.trigger("move", ev) === false) return;
 
                 let prop = {};
 
@@ -88,14 +92,14 @@ Cuic.Movable = class extends Cuic.Element {
                 if (this.options.horizontal) {
                     const diffX = ev.clientX - startX;
                     prop.left = startPosition.left + diffX;
-                    prop.right = '';
+                    prop.right = "";
                 }
 
                 // Move vertically
                 if (this.options.vertical) {
                     const diffY = ev.clientY - startY;
                     prop.top = startPosition.top + diffY;
-                    prop.bottom = '';
+                    prop.bottom = "";
                 }
 
                 // Limit position to parent available position
@@ -110,13 +114,13 @@ Cuic.Movable = class extends Cuic.Element {
             };
 
             // Moving
-            Cuic.on('mousemove', document, onMouseMove);
+            Cuic.on("mousemove", document, onMouseMove);
 
             // Stop moving
-            Cuic.once('mouseup', document, (ev) => {
-                Cuic.off('mousemove', document, onMouseMove);
-                this.removeClass('moving');
-                this.events.trigger('moveEnd', ev);
+            Cuic.once("mouseup", document, (ev) => {
+                Cuic.off("mousemove", document, onMouseMove);
+                this.removeClass("moving");
+                this.events.trigger("moveEnd", ev);
             });
         });
         return this;
@@ -125,40 +129,40 @@ Cuic.Movable = class extends Cuic.Element {
     /**
      * Called when moving
      * @param callback
-     * @return {Cuic.Movable}
+     * @return {Movable}
      */
     onMove(callback) {
-        this.events.on('move', callback);
+        this.events.on("move", callback);
         return this;
     }
 
     /**
      * Called when move end
      * @param callback
-     * @return {Cuic.Movable}
+     * @return {Movable}
      */
     onMoveEnd(callback) {
-        this.events.on('moveEnd', callback);
+        this.events.on("moveEnd", callback);
         return this;
     }
 
     /**
      * Called when move start
      * @param callback
-     * @return {Cuic.Movable}
+     * @return {Movable}
      */
     onMoveStart(callback) {
-        this.events.on('moveStart', callback);
+        this.events.on("moveStart", callback);
         return this;
     }
-};
+}
 
-Cuic.Movable.prototype.options = {
+Movable.prototype.options = {
     handle: null,
-    handleClassName: 'movable-handle',
+    handleClassName: "movable-handle",
     constraintToParent: true,
     horizontal: true,
-    namespace: 'movable',
+    namespace: "movable",
     rootOnly: true,
     vertical: true
 };

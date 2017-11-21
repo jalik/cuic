@@ -23,32 +23,35 @@
  *
  */
 
-Cuic.Hook = class extends Cuic.Element {
+import Cuic from "../cuic";
+import {Element} from "./element";
+
+export class Hook extends Element {
 
     constructor(options) {
         // Set default options
-        options = Cuic.extend({}, Cuic.Hook.prototype.options, options);
+        options = Cuic.extend({}, Hook.prototype.options, options);
 
         // Create element
-        super('div', {className: options.className}, options);
+        super("div", {className: options.className}, options);
 
         // Add component classes
-        this.addClass('hook');
+        this.addClass("hook");
 
         // This is a fix to avoid offsetTop > 0
         this.css({
-            position: 'relative',
-            top: '',
-            width: ''
+            position: "relative",
+            top: "",
+            width: ""
         });
 
         // Create the spacer item that will replace
         // the bar when it is scrolled
-        this.space = new Cuic.Element('div', {
-            className: 'hook-space'
+        this.space = new Element("div", {
+            className: "hook-space"
         });
 
-        // Get the element's offset
+        // Get the element"s offset
         let offset = this.offset();
 
         const onScroll = () => {
@@ -88,9 +91,7 @@ Cuic.Hook = class extends Cuic.Element {
      * Hooks the element
      */
     hook() {
-        console.log('hook')
-
-        if (this.css('position') !== 'fixed') {
+        if (this.css("position") !== "fixed") {
             const offset = this.offset();
             const margin = this.margin();
 
@@ -100,28 +101,28 @@ Cuic.Hook = class extends Cuic.Element {
 
             // Replace element with invisible space
             this.space.css({
-                display: this.css('display'),
-                float: this.css('float'),
+                display: this.css("display"),
+                float: this.css("float"),
                 height: this.outerHeight(),
                 width: this.outerWidth(),
-                'margin-bottom': margin.bottom,
-                'margin-left': margin.left,
-                'margin-right': margin.right,
-                'margin-top': margin.top
+                "margin-bottom": margin.bottom,
+                "margin-left": margin.left,
+                "margin-right": margin.right,
+                "margin-top": margin.top
             });
             this.insertBefore(this.space);
             this.space.show();
 
             // Make element scroll
             this.css({
-                position: 'fixed',
+                position: "fixed",
                 left: offset.left,
                 top: this.options.offsetTop,
                 height: this.space.height(),
                 width: this.space.width(),
                 zIndex: this.options.zIndex
             });
-            this.addClass('hooked');
+            this.addClass("hooked");
 
             // Execute the hooked listener
             this.onHook(this);
@@ -140,7 +141,7 @@ Cuic.Hook = class extends Cuic.Element {
      * @return {*|boolean}
      */
     isHooked() {
-        return this.hasClass('hooked');
+        return this.hasClass("hooked");
     }
 
     onHook() {
@@ -153,29 +154,27 @@ Cuic.Hook = class extends Cuic.Element {
      * Unhooks the element
      */
     unhook() {
-        console.log('unhook')
-
-        if (this.css('position') !== 'relative') {
+        if (this.css("position") !== "relative") {
             this.space.hide();
             this.css({
-                position: 'relative',
-                bottom: '',
-                left: '',
-                right: '',
-                top: '',
-                width: ''
+                position: "relative",
+                bottom: "",
+                left: "",
+                right: "",
+                top: "",
+                width: ""
             });
-            this.removeClass('hooked');
+            this.removeClass("hooked");
 
             // Execute the unhooked listener
             this.onUnhook(this);
         }
     }
-};
+}
 
-Cuic.Hook.prototype.options = {
+Hook.prototype.options = {
     fixed: true,
-    hookedClass: 'hooked',
+    hookedClass: "hooked",
     // offsetBottom: 0,
     // offsetLeft: 0,
     // offsetRight: 0,

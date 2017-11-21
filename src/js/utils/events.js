@@ -23,7 +23,7 @@
  *
  */
 
-Cuic.Events = class {
+export class Events {
 
     constructor(context) {
         this.callbacks = {};
@@ -99,4 +99,4 @@ Cuic.Events = class {
             }
         }
     }
-};
+}

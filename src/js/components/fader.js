@@ -23,19 +23,22 @@
  *
  */
 
-Cuic.Fader = class extends Cuic.Component {
+import Cuic from "../cuic";
+import {Component} from "../ui/component";
+
+export class Fader extends Component {
 
     constructor(options) {
         // Set default options
-        options = Cuic.extend({}, Cuic.Fader.prototype.options, options, {
-            mainClass: 'fader'
+        options = Cuic.extend({}, Fader.prototype.options, options, {
+            mainClass: "fader"
         });
 
         // Create element
-        super('div', {className: options.className}, options);
+        super("div", {className: options.className}, options);
 
         // Auto close when fader is clicked
-        this.on('click', () => {
+        this.on("click", () => {
             if (this.options.autoClose) {
                 this.close();
             }
@@ -48,12 +51,12 @@ Cuic.Fader = class extends Cuic.Component {
             }
         });
     }
-};
+}
 
-Cuic.Fader.prototype.options = {
+Fader.prototype.options = {
     autoClose: false,
     autoRemove: false,
-    namespace: 'fader',
+    namespace: "fader",
     opened: false,
     zIndex: 1
 };

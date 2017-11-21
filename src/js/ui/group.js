@@ -23,37 +23,42 @@
  *
  */
 
-Cuic.Group = class extends Cuic.Component {
+import Cuic from "../cuic";
+import {Component} from "./component";
+import {Collection} from "../utils/collection";
+import {Element} from "./element";
+
+export class Group extends Component {
 
     constructor(node, attributes, options) {
         // Set default options
-        options = Cuic.extend({}, Cuic.Group.prototype.options, options);
+        options = Cuic.extend({}, Group.prototype.options, options);
 
         // Create element
         super(node, Cuic.extend({
             className: options.className,
-            role: 'group'
+            role: "group"
         }, attributes), options);
 
         // Add component classes
-        this.addClass('component-group');
+        this.addClass("component-group");
 
         // Prepare components collection
-        this.components = new Cuic.Collection();
+        this.components = new Collection();
     }
 
     /**
      * Add the component to the group
      * @param component
-     * @return {Cuic.Group}
+     * @return {Group}
      */
     addComponent(component) {
-        if (!(component instanceof Cuic.Element)) {
+        if (!(component instanceof Element)) {
             throw new TypeError(`Cannot add object to the group.`);
         }
-        this.events.trigger('addComponent', component);
+        this.events.trigger("addComponent", component);
 
-        if (this.isAligned('top')) {
+        if (this.isAligned("top")) {
             component.prependTo(this);
         } else {
             component.appendTo(this);
@@ -65,17 +70,17 @@ Cuic.Group = class extends Cuic.Component {
     /**
      * Called before adding a component
      * @param callback
-     * @return {Cuic.Group}
+     * @return {Group}
      */
     onAddComponent(callback) {
-        this.events.on('addComponent', callback);
+        this.events.on("addComponent", callback);
         return this;
     }
 
     /**
      * Called when a component is added
      * @param callback
-     * @return {Cuic.Group}
+     * @return {Group}
      */
     onComponentAdded(callback) {
         this.components.onAdded(callback);
@@ -85,7 +90,7 @@ Cuic.Group = class extends Cuic.Component {
     /**
      * Called when a component is removed
      * @param callback
-     * @return {Cuic.Group}
+     * @return {Group}
      */
     onComponentRemoved(callback) {
         this.components.onRemoved(callback);
@@ -95,25 +100,25 @@ Cuic.Group = class extends Cuic.Component {
     /**
      * Called before removing a component
      * @param callback
-     * @return {Cuic.Group}
+     * @return {Group}
      */
     onRemoveComponent(callback) {
-        this.events.on('removeComponent', callback);
+        this.events.on("removeComponent", callback);
         return this;
     }
 
     /**
      * Removes the component from the group
      * @param component
-     * @return {Cuic.Group}
+     * @return {Group}
      */
     removeComponent(component) {
-        this.events.trigger('removeComponent', component);
+        this.events.trigger("removeComponent", component);
         this.components.remove(component);
         return this;
     }
-};
+}
 
-Cuic.Group.prototype.options = {
-    namespace: 'group'
+Group.prototype.options = {
+    namespace: "group"
 };

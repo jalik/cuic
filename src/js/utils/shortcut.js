@@ -23,18 +23,20 @@
  *
  */
 
-Cuic.Shortcut = class {
+import Cuic from "../cuic";
+
+export class Shortcut {
 
     constructor(options) {
         // Set default options
-        options = Cuic.extend({}, Cuic.Shortcut.prototype.options, options);
+        options = Cuic.extend({}, Shortcut.prototype.options, options);
         this.options = options;
 
         // Get the element
         this.options.element = Cuic.node(options.element);
 
         // Check options
-        if (typeof this.options.callback !== 'function') {
+        if (typeof this.options.callback !== "function") {
             throw new TypeError(`Shortcut.options.callback is not a function.`);
         }
 
@@ -77,9 +79,9 @@ Cuic.Shortcut = class {
     node() {
         return Cuic.node(this.options.element);
     }
-};
+}
 
-Cuic.Shortcut.prototype.options = {
+Shortcut.prototype.options = {
     active: true,
     altKey: false,
     callback: null,

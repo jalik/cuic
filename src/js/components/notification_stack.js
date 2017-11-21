@@ -23,16 +23,20 @@
  *
  */
 
-Cuic.NotificationStack = class extends Cuic.Group {
+import Cuic from "../cuic";
+import {Group} from "../ui/group";
+import {Notification} from "./notification";
+
+export class NotificationStack extends Group {
 
     constructor(options) {
         // Set default options
-        options = Cuic.extend({}, Cuic.NotificationStack.prototype.options, options, {
-            mainClass: 'notification-stack'
+        options = Cuic.extend({}, NotificationStack.prototype.options, options, {
+            mainClass: "notification-stack"
         });
 
         // Create element
-        super('div', {className: options.className}, options);
+        super("div", {className: options.className}, options);
 
         // Set position
         if (this.options.position) {
@@ -41,7 +45,7 @@ Cuic.NotificationStack = class extends Cuic.Group {
 
         // Display the notification when it's added to the stack
         this.onComponentAdded((component) => {
-            if (component instanceof Cuic.Notification) {
+            if (component instanceof Notification) {
                 // fixme Not using a timeout to open blocks the animation
                 setTimeout(function () {
                     component.open();
@@ -51,15 +55,15 @@ Cuic.NotificationStack = class extends Cuic.Group {
 
         // Display the notification when it's added to the stack
         this.onComponentRemoved((component) => {
-            if (component instanceof Cuic.Notification) {
+            if (component instanceof Notification) {
                 component.close();
             }
         });
     }
-};
+}
 
-Cuic.NotificationStack.prototype.options = {
-    namespace: 'notification-stack',
-    position: 'right top',
+NotificationStack.prototype.options = {
+    namespace: "notification-stack",
+    position: "right top",
     zIndex: 10
 };

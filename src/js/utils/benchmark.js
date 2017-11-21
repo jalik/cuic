@@ -23,7 +23,7 @@
  *
  */
 
-Cuic.Benchmark = class {
+export class Benchmark {
 
     constructor() {
         let startTime = null;
@@ -51,7 +51,7 @@ Cuic.Benchmark = class {
          * @returns {boolean}
          */
         this.isStarted = () => {
-            return typeof startTime === 'number';
+            return typeof startTime === "number";
         };
 
         /**
@@ -81,4 +81,4 @@ Cuic.Benchmark = class {
             stopTime = Date.now();
         };
     }
-};
+}

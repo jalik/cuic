@@ -23,16 +23,20 @@
  *
  */
 
-Cuic.Switcher = class extends Cuic.Component {
+import Cuic from "../cuic";
+import {Collection} from "../utils/collection";
+import {Component} from "../ui/component";
+
+export class Switcher extends Component {
 
     constructor(options) {
         // Set default options
-        options = Cuic.extend({}, Cuic.Switcher.prototype.options, options, {
-            mainClass: 'switcher'
+        options = Cuic.extend({}, Switcher.prototype.options, options, {
+            mainClass: "switcher"
         });
 
         // Create element
-        super('div', {
+        super("div", {
             className: options.className,
             html: options.content
         }, options);
@@ -63,7 +67,7 @@ Cuic.Switcher = class extends Cuic.Component {
 
     /**
      * Returns the active element
-     * @return {Cuic.Element}
+     * @return {Element}
      */
     getActiveElement() {
         return this.activeElement;
@@ -72,7 +76,7 @@ Cuic.Switcher = class extends Cuic.Component {
     /**
      * Returns the element at the specified index
      * @param index
-     * @return {Cuic.Element}
+     * @return {Element}
      */
     getElementAt(index) {
         return this.children().eq(index);
@@ -114,18 +118,18 @@ Cuic.Switcher = class extends Cuic.Component {
                 let child = Cuic.element(children[i]);
 
                 if (this.index === i) {
-                    child.addClass('visible');
-                    child.removeClass('hidden');
+                    child.addClass("visible");
+                    child.removeClass("hidden");
                 } else {
-                    child.addClass('hidden');
-                    child.removeClass('visible');
+                    child.addClass("hidden");
+                    child.removeClass("visible");
                 }
             }
 
             // Get the visible element
             this.activeElement = children.eq(this.index);
-            this.activeElement.addClass('visible');
-            this.activeElement.removeClass('hidden');
+            this.activeElement.addClass("visible");
+            this.activeElement.removeClass("hidden");
 
             // Show the active element
             if (started) {
@@ -183,13 +187,13 @@ Cuic.Switcher = class extends Cuic.Component {
             this.timer = null;
         }
     }
-};
+}
 
-Cuic.Switcher.prototype.options = {
+Switcher.prototype.options = {
     autoStart: true,
     delay: 3000,
-    namespace: 'switcher',
+    namespace: "switcher",
     repeat: true
 };
 
-Cuic.switchers = new Cuic.Collection();
+Cuic.switchers = new Collection();

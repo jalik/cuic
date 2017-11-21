@@ -23,52 +23,57 @@
  *
  */
 
-Cuic.Panel = class extends Cuic.Component {
+import Cuic from "../cuic";
+import {Collection} from "../utils/collection";
+import {Component} from "../ui/component";
+import {Element} from "../ui/element";
+
+export class Panel extends Component {
 
     constructor(options) {
         // Set default options
-        options = Cuic.extend({}, Cuic.Panel.prototype.options, options, {
-            mainClass: 'panel'
+        options = Cuic.extend({}, Panel.prototype.options, options, {
+            mainClass: "panel"
         });
 
         // Create element
-        super('div', {className: options.className}, options);
+        super("div", {className: options.className}, options);
 
         if (options.element) {
-            this.header = this.find('.panel-header').eq(0);
-            this.title = this.find('.panel-title').eq(0);
-            this.content = this.find('.panel-content').eq(0);
-            this.footer = this.find('.panel-footer').eq(0);
-            this.closeButton = this.find('.panel-header .btn-close').eq(0);
+            this.header = this.find(".panel-header").eq(0);
+            this.title = this.find(".panel-title").eq(0);
+            this.content = this.find(".panel-content").eq(0);
+            this.footer = this.find(".panel-footer").eq(0);
+            this.closeButton = this.find(".panel-header .btn-close").eq(0);
         }
         else {
             // Add the header
-            this.header = new Cuic.Element('header', {
-                className: 'panel-header'
+            this.header = new Element("header", {
+                className: "panel-header"
             }).prependTo(this);
 
             // Add the title
-            this.title = new Cuic.Element('h5', {
-                className: 'panel-title',
+            this.title = new Element("h5", {
+                className: "panel-title",
                 html: options.title
             }).appendTo(this.header);
 
             // Add close button
-            this.closeButton = new Cuic.Element('span', {
+            this.closeButton = new Element("span", {
                 className: this.options.closeButtonClass,
                 html: this.options.closeButton,
-                role: 'button'
-            }).addClass('btn-close').appendTo(this.header);
+                role: "button"
+            }).addClass("btn-close").appendTo(this.header);
 
             // Add the body
-            this.content = new Cuic.Element('section', {
-                className: 'panel-content',
+            this.content = new Element("section", {
+                className: "panel-content",
                 html: options.content
             }).appendTo(this);
 
             // Add the footer
-            this.footer = new Cuic.Element('footer', {
-                className: 'panel-footer',
+            this.footer = new Element("footer", {
+                className: "panel-footer",
                 html: options.footer
             }).appendTo(this);
 
@@ -91,7 +96,7 @@ Cuic.Panel = class extends Cuic.Component {
         // To hide the panel in the container,
         // the container must have a hidden overflow
         if (this.hasParent()) {
-            this.parent().css({overflow: 'hidden'});
+            this.parent().css({overflow: "hidden"});
         }
 
         const autoClose = (ev) => {
@@ -103,14 +108,14 @@ Cuic.Panel = class extends Cuic.Component {
         };
 
         // todo avoid closing panel if button is from another component
-        this.on('click', (ev) => {
+        this.on("click", (ev) => {
             // Close button
-            if (Cuic.element(ev.target).hasClass('btn-close')) {
+            if (Cuic.element(ev.target).hasClass("btn-close")) {
                 ev.preventDefault();
                 this.close();
             }
             // Toggle button
-            if (Cuic.element(ev.target).hasClass('btn-toggle')) {
+            if (Cuic.element(ev.target).hasClass("btn-toggle")) {
                 ev.preventDefault();
                 this.toggle();
             }
@@ -122,23 +127,23 @@ Cuic.Panel = class extends Cuic.Component {
             let prop = {};
 
             // Horizontal position
-            if (this.isAligned('right')) {
+            if (this.isAligned("right")) {
                 prop.right = -width;
-                prop.left = '';
+                prop.left = "";
             }
-            else if (this.isAligned('left')) {
+            else if (this.isAligned("left")) {
                 prop.left = -width;
-                prop.right = '';
+                prop.right = "";
             }
 
             // Vertical position
-            if (this.isAligned('bottom')) {
+            if (this.isAligned("bottom")) {
                 prop.bottom = -height;
-                prop.top = '';
+                prop.top = "";
             }
-            else if (this.isAligned('top')) {
+            else if (this.isAligned("top")) {
                 prop.top = -height;
-                prop.bottom = '';
+                prop.bottom = "";
             }
 
             // Animate panel
@@ -146,7 +151,7 @@ Cuic.Panel = class extends Cuic.Component {
         });
 
         this.onClosed(() => {
-            Cuic.off('click', document, autoClose);
+            Cuic.off("click", document, autoClose);
         });
 
         this.onMaximized(() => {
@@ -155,22 +160,22 @@ Cuic.Panel = class extends Cuic.Component {
                 let prop = {};
 
                 // Horizontal position
-                if (this.isAligned('left')) {
+                if (this.isAligned("left")) {
                     prop.left = -this.outerWidth(true);
-                    prop.right = '';
+                    prop.right = "";
                 }
-                else if (this.isAligned('right')) {
+                else if (this.isAligned("right")) {
                     prop.right = -this.outerWidth(true);
-                    prop.left = '';
+                    prop.left = "";
                 }
                 // Vertical position
-                if (this.isAligned('bottom')) {
+                if (this.isAligned("bottom")) {
                     prop.bottom = -this.outerHeight(true);
-                    prop.top = '';
+                    prop.top = "";
                 }
-                else if (this.isAligned('top')) {
+                else if (this.isAligned("top")) {
                     prop.top = -this.outerHeight(true);
-                    prop.bottom = '';
+                    prop.bottom = "";
                 }
                 this.css(prop);
             }
@@ -182,22 +187,22 @@ Cuic.Panel = class extends Cuic.Component {
                 let prop = {};
 
                 // Horizontal position
-                if (this.isAligned('left')) {
+                if (this.isAligned("left")) {
                     prop.left = -this.outerWidth(true);
-                    prop.right = '';
+                    prop.right = "";
                 }
-                else if (this.isAligned('right')) {
+                else if (this.isAligned("right")) {
                     prop.right = -this.outerWidth(true);
-                    prop.left = '';
+                    prop.left = "";
                 }
                 // Vertical position
-                if (this.isAligned('bottom')) {
+                if (this.isAligned("bottom")) {
                     prop.bottom = -this.outerHeight(true);
-                    prop.top = '';
+                    prop.top = "";
                 }
-                else if (this.isAligned('top')) {
+                else if (this.isAligned("top")) {
                     prop.top = -this.outerHeight(true);
-                    prop.bottom = '';
+                    prop.bottom = "";
                 }
                 this.css(prop);
             }
@@ -210,7 +215,7 @@ Cuic.Panel = class extends Cuic.Component {
 
         this.onOpened(() => {
             // Close the panel when the user clicks outside of it
-            Cuic.on('click', document, autoClose);
+            Cuic.on("click", document, autoClose);
         });
 
         // Add element to collection
@@ -220,7 +225,7 @@ Cuic.Panel = class extends Cuic.Component {
     /**
      * Returns the content
      * @deprecated
-     * @return {Cuic.Element}
+     * @return {Element}
      */
     getBody() {
         return this.content;
@@ -228,7 +233,7 @@ Cuic.Panel = class extends Cuic.Component {
 
     /**
      * Returns the content
-     * @return {Cuic.Element}
+     * @return {Element}
      */
     getContent() {
         return this.content;
@@ -236,7 +241,7 @@ Cuic.Panel = class extends Cuic.Component {
 
     /**
      * Returns the footer
-     * @return {Cuic.Element}
+     * @return {Element}
      */
     getFooter() {
         return this.footer;
@@ -244,7 +249,7 @@ Cuic.Panel = class extends Cuic.Component {
 
     /**
      * Returns the header
-     * @return {Cuic.Element}
+     * @return {Element}
      */
     getHeader() {
         return this.header;
@@ -252,7 +257,7 @@ Cuic.Panel = class extends Cuic.Component {
 
     /**
      * Resizes the content
-     * @return {Cuic.Panel}
+     * @return {Panel}
      */
     resizeContent() {
         // Calculate available space
@@ -260,33 +265,33 @@ Cuic.Panel = class extends Cuic.Component {
 
         // Set panel max dimensions
         this.css({
-            'max-height': available.height,
-            'max-width': available.width
+            "max-height": available.height,
+            "max-width": available.width
         });
 
         // Calculate content max height
         let maxHeight = available.height;
 
         // Subtract header height
-        if (this.header instanceof Cuic.Element) {
+        if (this.header instanceof Element) {
             maxHeight -= this.header.outerHeight(true);
         }
         // Subtract footer height
-        if (this.footer instanceof Cuic.Element) {
+        if (this.footer instanceof Element) {
             maxHeight -= this.footer.outerHeight(true);
         }
         // Subtract content margin
         maxHeight -= this.content.margin().vertical;
 
         // Set content max height
-        this.content.css({'max-height': maxHeight});
+        this.content.css({"max-height": maxHeight});
         return this;
     }
 
     /**
      * Sets panel content
      * @param html
-     * @return {Cuic.Panel}
+     * @return {Panel}
      */
     setContent(html) {
         this.content.html(html);
@@ -296,7 +301,7 @@ Cuic.Panel = class extends Cuic.Component {
     /**
      * Sets panel footer
      * @param html
-     * @return {Cuic.Panel}
+     * @return {Panel}
      */
     setFooter(html) {
         this.footer.html(html);
@@ -306,32 +311,32 @@ Cuic.Panel = class extends Cuic.Component {
     /**
      * Sets panel title
      * @param html
-     * @return {Cuic.Panel}
+     * @return {Panel}
      */
     setTitle(html) {
         this.title.html(html);
         this.header.show();
         return this;
     }
-};
+}
 
-Cuic.Panel.prototype.options = {
+Panel.prototype.options = {
     autoClose: false,
     closable: true,
     closeButton: null,
-    closeButtonClass: 'glyphicon glyphicon-remove-sign',
+    closeButtonClass: "glyphicon glyphicon-remove-sign",
     content: null,
     footer: null,
     maximized: false,
-    namespace: 'panel',
+    namespace: "panel",
     opened: false,
     parent: null,
-    position: 'left top',
+    position: "left top",
     title: null,
     zIndex: 1
 };
 
-Cuic.panels = new Cuic.Collection();
+Cuic.panels = new Collection();
 
 Cuic.onWindowResized(() => {
     Cuic.panels.each((panel) => {

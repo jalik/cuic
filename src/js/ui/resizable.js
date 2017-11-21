@@ -23,38 +23,42 @@
  *
  */
 
-Cuic.Resizable = class extends Cuic.Element {
+import Cuic from "../cuic";
+import {Element} from "./element";
+import {Collection} from "../utils/collection";
+
+export class Resizable extends Element {
 
     constructor(options) {
         // Set default options
-        options = Cuic.extend({}, Cuic.Resizable.prototype.options, options);
+        options = Cuic.extend({}, Resizable.prototype.options, options);
 
         // Create element
-        super('div', {className: options.className}, options);
+        super("div", {className: options.className}, options);
 
         // Add component classes
-        this.addClass('resizable');
+        this.addClass("resizable");
 
         // Force the target to be the relative parent
         if (this.isStatic()) {
-            this.css('position', 'relative');
+            this.css("position", "relative");
         }
 
         // Add Bottom handle
-        this.bottomHandle = new Cuic.Element('div', {
-            className: 'resize-handle resize-handle-s',
+        this.bottomHandle = new Element("div", {
+            className: "resize-handle resize-handle-s",
             css: {height: options.handleSize}
         }).appendTo(this);
 
         // Add Right handler
-        this.rightHandle = new Cuic.Element('div', {
-            className: 'resize-handle resize-handle-e',
+        this.rightHandle = new Element("div", {
+            className: "resize-handle resize-handle-e",
             css: {width: options.handleSize}
         }).appendTo(this);
 
         // Add Bottom-Right handler
-        this.bottomRightHandle = new Cuic.Element('div', {
-            className: 'resize-handle resize-handle-se',
+        this.bottomRightHandle = new Element("div", {
+            className: "resize-handle resize-handle-se",
             css: {
                 height: options.handleSize,
                 width: options.handleSize
@@ -62,35 +66,35 @@ Cuic.Resizable = class extends Cuic.Element {
         }).appendTo(this);
 
         // Group handles
-        this.handles = new Cuic.Collection([
+        this.handles = new Collection([
             this.rightHandle,
             this.bottomHandle,
             this.bottomRightHandle
         ]);
 
         // Group horizontal handles
-        this.horizontalHandles = new Cuic.Collection([
+        this.horizontalHandles = new Collection([
             this.rightHandle,
             this.bottomRightHandle
         ]);
 
         // Group vertical handles
-        this.verticalHandles = new Cuic.Collection([
+        this.verticalHandles = new Collection([
             this.bottomHandle,
             this.bottomRightHandle
         ]);
 
         this.handles.each((handle) => {
             // Start resizing
-            handle.on('mousedown', (ev) => {
+            handle.on("mousedown", (ev) => {
                 // Execute callback
-                if (this.events.trigger('resizeStart', ev) === false) return;
+                if (this.events.trigger("resizeStart", ev) === false) return;
 
                 // Prevent text selection
                 ev.preventDefault();
 
                 // Add resizing class
-                this.addClass('resizing');
+                this.addClass("resizing");
 
                 const startX = ev.clientX;
                 const startY = ev.clientY;
@@ -103,7 +107,7 @@ Cuic.Resizable = class extends Cuic.Element {
 
                 const onMouseMove = (ev) => {
                     // Execute callback
-                    if (this.events.trigger('resize', ev) === false) return;
+                    if (this.events.trigger("resize", ev) === false) return;
 
                     let prop = {};
 
@@ -159,13 +163,13 @@ Cuic.Resizable = class extends Cuic.Element {
                 };
 
                 // Resizing
-                Cuic.on('mousemove', document, onMouseMove);
+                Cuic.on("mousemove", document, onMouseMove);
 
                 // Stop resizing
-                Cuic.once('mouseup', document, (ev) => {
-                    Cuic.off('mousemove', document, onMouseMove);
-                    this.removeClass('resizing');
-                    this.events.trigger('resizeEnd', ev);
+                Cuic.once("mouseup", document, (ev) => {
+                    Cuic.off("mousemove", document, onMouseMove);
+                    this.removeClass("resizing");
+                    this.events.trigger("resizeEnd", ev);
                 });
             });
         });
@@ -174,35 +178,35 @@ Cuic.Resizable = class extends Cuic.Element {
     /**
      * Called when resizing
      * @param callback
-     * @return {Cuic.Resizable}
+     * @return {Resizable}
      */
     onResize(callback) {
-        this.events.on('resize', callback);
+        this.events.on("resize", callback);
         return this;
     }
 
     /**
      * Called when resize end
      * @param callback
-     * @return {Cuic.Resizable}
+     * @return {Resizable}
      */
     onResizeEnd(callback) {
-        this.events.on('resizeEnd', callback);
+        this.events.on("resizeEnd", callback);
         return this;
     }
 
     /**
      * Called when resize start
      * @param callback
-     * @return {Cuic.Resizable}
+     * @return {Resizable}
      */
     onResizeStart(callback) {
-        this.events.on('resizeStart', callback);
+        this.events.on("resizeStart", callback);
         return this;
     }
-};
+}
 
-Cuic.Resizable.prototype.options = {
+Resizable.prototype.options = {
     handleSize: 10,
     horizontal: true,
     keepRatio: false,
@@ -210,6 +214,6 @@ Cuic.Resizable.prototype.options = {
     maxWidth: null,
     minHeight: 1,
     minWidth: 1,
-    namespace: 'resizable',
+    namespace: "resizable",
     vertical: true
 };

@@ -1,0 +1,9 @@
+.babelrc
+.idea
+docs
+node_modules
+src
+test
+.gitignore
+*.iml
+webpack.config.js

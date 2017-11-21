@@ -23,48 +23,53 @@
  *
  */
 
-Cuic.Notification = class extends Cuic.Component {
+import Cuic from "../cuic";
+import {Collection} from "../utils/collection";
+import {Component} from "../ui/component";
+import {Element} from "../ui/element";
+
+export class Notification extends Component {
 
     constructor(options) {
         // Set default options
-        options = Cuic.extend({}, Cuic.Notification.prototype.options, options, {
-            mainClass: 'notification'
+        options = Cuic.extend({}, Notification.prototype.options, options, {
+            mainClass: "notification"
         });
 
         // Create element
-        super('div', {className: options.className}, options);
+        super("div", {className: options.className}, options);
 
         // Public attributes
         this.closeTimer = null;
 
         // Add content
-        this.content = new Cuic.Element('div', {
-            className: 'notification-content',
+        this.content = new Element("div", {
+            className: "notification-content",
             html: options.content
         }).appendTo(this);
 
         // Add close button
-        this.closeButton = new Cuic.Element('span', {
+        this.closeButton = new Element("span", {
             className: this.options.closeButtonClass,
             html: this.options.closeButton,
-            role: 'button'
-        }).addClass('btn-close').appendTo(this);
+            role: "button"
+        }).addClass("btn-close").appendTo(this);
 
         // Avoid closing notification when mouse is over
-        this.on('mouseenter', (ev) => {
+        this.on("mouseenter", (ev) => {
             clearTimeout(this.closeTimer);
         });
 
         // Close notification when mouse is out
-        this.on('mouseleave', (ev) => {
+        this.on("mouseleave", (ev) => {
             if (ev.currentTarget === this.node()) {
                 this.autoClose();
             }
         });
 
-        this.on('click', (ev) => {
+        this.on("click", (ev) => {
             // Close button
-            if (Cuic.element(ev.target).hasClass('btn-close')) {
+            if (Cuic.element(ev.target).hasClass("btn-close")) {
                 ev.preventDefault();
                 this.close();
             }
@@ -110,35 +115,35 @@ Cuic.Notification = class extends Cuic.Component {
     /**
      * Sets notification content
      * @param html
-     * @return {Cuic.Notification}
+     * @return {Notification}
      */
     setContent(html) {
         this.content.html(html);
         return this;
     }
-};
+}
 
-Cuic.Notification.prototype.options = {
+Notification.prototype.options = {
     autoClose: true,
     autoRemove: true,
     closable: true,
     closeButton: null,
-    closeButtonClass: 'glyphicon glyphicon-remove-sign',
+    closeButtonClass: "glyphicon glyphicon-remove-sign",
     content: null,
     duration: 2000,
-    namespace: 'notification',
+    namespace: "notification",
     opened: false,
     parent: document.body,
-    position: 'center',
+    position: "center",
     zIndex: 100
 };
 
-Cuic.notifications = new Cuic.Collection();
+Cuic.notifications = new Collection();
 
 Cuic.onWindowResized(() => {
-    Cuic.notifications.each((notif) => {
-        if (notif.isInDOM()) {
-            notif.align();
+    Cuic.notifications.each((n) => {
+        if (n.isInDOM()) {
+            n.align();
         }
     });
 });

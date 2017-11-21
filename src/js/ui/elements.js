@@ -23,7 +23,9 @@
  *
  */
 
-Cuic.Elements = class {
+import Cuic from "../cuic";
+
+export class Elements {
 
     constructor(elements, context, selector) {
         let i;
@@ -43,7 +45,7 @@ Cuic.Elements = class {
     /**
      * Adds class to all elements
      * @param className
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     addClass(className) {
         return this.each((el) => {
@@ -54,7 +56,7 @@ Cuic.Elements = class {
     /**
      * Aligns all elements
      * @param position
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     align(position) {
         return this.each((el) => {
@@ -67,7 +69,7 @@ Cuic.Elements = class {
      * @param position
      * @param anchorPoint
      * @param target
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     anchor(position, anchorPoint, target) {
         return this.each((el) => {
@@ -78,7 +80,7 @@ Cuic.Elements = class {
     /**
      * Appends one or more elements
      * @param element
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     append(element) {
         return this.each((el) => {
@@ -90,7 +92,7 @@ Cuic.Elements = class {
      * Defines attribute for all elements
      * @param name
      * @param value
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     attr(name, value) {
         return this.each((el) => {
@@ -100,7 +102,7 @@ Cuic.Elements = class {
 
     /**
      * Triggers a click event on elements
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     click() {
         return this.each((el) => {
@@ -111,7 +113,7 @@ Cuic.Elements = class {
     /**
      * Removes all elements
      * @param styles
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     css(styles) {
         return this.each((el) => {
@@ -122,7 +124,7 @@ Cuic.Elements = class {
     /**
      * Executes a callback on each elements
      * @param callback
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     each(callback) {
         for (let i = 0; i < this.length; i += 1) {
@@ -133,7 +135,7 @@ Cuic.Elements = class {
 
     /**
      * Removes elements content
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     empty() {
         return this.each((el) => {
@@ -144,7 +146,7 @@ Cuic.Elements = class {
     /**
      * Returns the element at the specified index
      * @param index
-     * @return {Cuic.Element}
+     * @return {Element}
      */
     eq(index) {
         return this[index];
@@ -153,42 +155,42 @@ Cuic.Elements = class {
     /**
      * Returns elements from the list matching the selector
      * @param selector
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     filter(selector) {
         const elements = [];
 
-        if (typeof selector === 'string') {
+        if (typeof selector === "string") {
             this.each((el) => {
                 if (el.node().matches(selector)) {
                     elements.push(el);
                 }
             });
         }
-        return new Cuic.Elements(elements, this.context, selector);
+        return new Elements(elements, this.context, selector);
     }
 
     /**
      * Returns elements matching the selector
      * @param selector
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     find(selector) {
         const elements = [];
 
-        if (typeof selector === 'string') {
+        if (typeof selector === "string") {
             this.each((el) => {
                 el.find(selector).each((el2) => {
                     elements.push(el2);
                 });
             });
         }
-        return new Cuic.Elements(elements, this.context, selector);
+        return new Elements(elements, this.context, selector);
     }
 
     /**
      * Returns the first element in the list
-     * @return {Cuic.Element|null}
+     * @return {Element|null}
      */
     first() {
         return this.length ? this[0] : null;
@@ -205,7 +207,7 @@ Cuic.Elements = class {
 
     /**
      * Hides all elements
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     hide() {
         return this.each((el) => {
@@ -216,7 +218,7 @@ Cuic.Elements = class {
     /**
      * Sets elements content as HTML
      * @param html
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     html(html) {
         return this.each((el) => {
@@ -240,7 +242,7 @@ Cuic.Elements = class {
 
     /**
      * Returns the last element in the list
-     * @return {Cuic.Element|null}
+     * @return {Element|null}
      */
     last() {
         return this.length ? this[this.length - 1] : null;
@@ -249,26 +251,26 @@ Cuic.Elements = class {
     /**
      * Returns elements from the list not matching the selector
      * @param selector
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     not(selector) {
         const elements = [];
 
-        if (typeof selector === 'string') {
+        if (typeof selector === "string") {
             this.each((el) => {
                 if (!el.node().matches(selector)) {
                     elements.push(el);
                 }
             });
         }
-        return new Cuic.Elements(elements, this.context);
+        return new Elements(elements, this.context);
     }
 
     /**
      * Removes an event listener from elements
      * @param event
      * @param callback
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     off(event, callback) {
         return this.each((el) => {
@@ -280,7 +282,7 @@ Cuic.Elements = class {
      * Adds a unique event listener to elements
      * @param event
      * @param callback
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     once(event, callback) {
         return this.each((el) => {
@@ -292,7 +294,7 @@ Cuic.Elements = class {
      * Adds an event listener to elements
      * @param event
      * @param callback
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     on(event, callback) {
         return this.each((el) => {
@@ -303,7 +305,7 @@ Cuic.Elements = class {
     /**
      * Prepends one or more elements
      * @param element
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     prepend(element) {
         return this.each((el) => {
@@ -313,7 +315,7 @@ Cuic.Elements = class {
 
     /**
      * Removes all elements
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     remove() {
         return this.each((el) => {
@@ -324,7 +326,7 @@ Cuic.Elements = class {
     /**
      * Removes class from all elements
      * @param className
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     removeClass(className) {
         return this.each((el) => {
@@ -334,7 +336,7 @@ Cuic.Elements = class {
 
     /**
      * Shows all elements
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     show() {
         return this.each((el) => {
@@ -345,7 +347,7 @@ Cuic.Elements = class {
     /**
      * Sets elements content as raw text
      * @param text
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     text(text) {
         return this.each((el) => {
@@ -356,7 +358,7 @@ Cuic.Elements = class {
     /**
      * Toggles class from all elements
      * @param className
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     toggleClass(className) {
         return this.each((el) => {
@@ -367,7 +369,7 @@ Cuic.Elements = class {
     /**
      * Sets elements value
      * @param value
-     * @return {Cuic.Elements}
+     * @return {Elements}
      */
     val(value) {
         if (value !== undefined) {
@@ -379,4 +381,4 @@ Cuic.Elements = class {
             return this.eq(0).val();
         }
     }
-};
+}
