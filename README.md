@@ -430,6 +430,20 @@ tooltip.updateTail();
 
 ## Changelog
 
+### v0.9.1
+- Fixes movable components aligned to bottom
+- Renames option `vertical` to `vertically` for `Movable` and `Resizable` components
+- Renames option `horizontal` to `horizontally` for `Movable` and `Resizable` components
+- Renames `Fader` component to `Overlay`
+- Returns `Element` inside `click` method of every components
+- Adds `Closable` component
+- Adds `Dialog.setHeader(html)`
+- Adds `Notification.getContent()`
+- Adds `Panel.setHeader(html)`
+- Adds `Popup.getContent()`
+- Adds `Tooltip.getContent()`
+- Adds default option `selected: false` to `Selectable` component
+
 ### v0.9.0
 - Uses ES6 import/export syntax
 
