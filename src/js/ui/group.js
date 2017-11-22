@@ -24,11 +24,11 @@
  */
 
 import Cuic from "../cuic";
-import {Component} from "./component";
+import {Closable} from "./closable";
 import {Collection} from "../utils/collection";
 import {Element} from "./element";
 
-export class Group extends Component {
+export class Group extends Closable {
 
     constructor(node, attributes, options) {
         // Set default options

@@ -24,12 +24,12 @@
  */
 
 import Cuic from "../cuic";
+import {Closable} from "./closable";
 import {Collection} from "../utils/collection";
-import {Component} from "../ui/component";
-import {Element} from "../ui/element";
+import {Element} from "./element";
 import {Shortcut} from "../utils/shortcut";
 
-export class Popup extends Component {
+export class Popup extends Closable {
 
     constructor(options) {
         // Set default options

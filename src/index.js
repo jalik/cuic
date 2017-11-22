@@ -27,8 +27,8 @@ import "./js/polyfill";
 import Cuic from "./js/cuic";
 import {Benchmark} from "./js/utils/benchmark";
 import {Button} from "./js/ui/button";
+import {Closable} from "./js/ui/closable";
 import {Collection} from "./js/utils/collection";
-import {Component} from "./js/ui/component";
 import {Dialog} from "./js/ui/dialog";
 import {Element} from "./js/ui/element";
 import {Elements} from "./js/ui/elements";
@@ -49,7 +49,7 @@ import {Tooltip} from "./js/ui/tooltip";
 
 // Add components to global var
 Cuic.Button = Button;
-Cuic.Component = Component;
+Cuic.Closable = Closable;
 Cuic.Dialog = Dialog;
 Cuic.Element = Element;
 Cuic.Elements = Elements;

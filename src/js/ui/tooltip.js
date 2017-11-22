@@ -24,11 +24,11 @@
  */
 
 import Cuic from "../cuic";
+import {Closable} from "./closable";
 import {Collection} from "../utils/collection";
-import {Component} from "../ui/component";
-import {Element} from "../ui/element";
+import {Element} from "./element";
 
-export class Tooltip extends Component {
+export class Tooltip extends Closable {
 
     constructor(options) {
         // Set default options

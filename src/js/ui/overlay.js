@@ -24,9 +24,9 @@
  */
 
 import Cuic from "../cuic";
-import {Component} from "../ui/component";
+import {Closable} from "./closable";
 
-export class Overlay extends Component {
+export class Overlay extends Closable {
 
     constructor(options) {
         // Set default options

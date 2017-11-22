@@ -24,8 +24,8 @@
  */
 
 import Cuic from "../cuic";
-import {Element} from "./element";
 import {Collection} from "../utils/collection";
+import {Element} from "./element";
 
 export class Movable extends Element {
 

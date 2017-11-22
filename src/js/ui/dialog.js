@@ -25,16 +25,16 @@
 
 import Cuic from "../cuic";
 import {Button} from "./button";
+import {Closable} from "./closable";
 import {Collection} from "../utils/collection";
-import {Component} from "../ui/component";
-import {Element} from "../ui/element";
+import {Element} from "./element";
 import {Overlay} from "./overlay";
-import {Group} from "../ui/group";
-import {Movable} from "../ui/movable";
-import {Resizable} from "../ui/resizable";
+import {Group} from "./group";
+import {Movable} from "./movable";
+import {Resizable} from "./resizable";
 import {Shortcut} from "../utils/shortcut";
 
-export class Dialog extends Component {
+export class Dialog extends Closable {
 
     constructor(options) {
         // Set default options

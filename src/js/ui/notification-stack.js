@@ -24,7 +24,7 @@
  */
 
 import Cuic from "../cuic";
-import {Group} from "../ui/group";
+import {Group} from "./group";
 import {Notification} from "./notification";
 
 export class NotificationStack extends Group {

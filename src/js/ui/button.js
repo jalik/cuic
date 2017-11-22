@@ -24,9 +24,9 @@
  */
 
 import Cuic from "../cuic";
-import {Component} from "../ui/component";
+import {Element} from "./element";
 
-export class Button extends Component {
+export class Button extends Element {
 
     constructor(options) {
         // Set default options

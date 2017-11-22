@@ -26,11 +26,11 @@
 import Cuic from "../cuic";
 import {Element} from "./element";
 
-export class Component extends Element {
+export class Closable extends Element {
 
     constructor(node, attributes, options) {
         // Set default options
-        options = Cuic.extend({}, Component.prototype.options, options);
+        options = Cuic.extend({}, Closable.prototype.options, options);
 
         super(node, attributes, options);
 
@@ -58,7 +58,7 @@ export class Component extends Element {
     /**
      * Closes the component
      * @param callback
-     * @return {Component}
+     * @return {Closable}
      */
     close(callback) {
         this.debug("close");
@@ -122,7 +122,7 @@ export class Component extends Element {
     /**
      * Opens the component
      * @param callback
-     * @return {Component}
+     * @return {Closable}
      */
     open(callback) {
         this.debug("open");
@@ -146,7 +146,7 @@ export class Component extends Element {
     /**
      * Toggles the component
      * @param callback
-     * @return {Component}
+     * @return {Closable}
      */
     toggle(callback) {
         if (this.isOpened()) {
@@ -158,7 +158,7 @@ export class Component extends Element {
     }
 }
 
-Component.prototype.options = {
+Closable.prototype.options = {
     closable: false,
     opened: true
 };

@@ -59,36 +59,11 @@ element.open(Function);
 element.toggle(Function);
 ```
 
-### Component
-
-This is a generic component with opening and closing capabilities`.
-
-This component inherits from `Element`.
-
-```js
-import {Component} from "cuit/dist/ui/component";
-
-const component = new Component({
-    closable: false,
-    opened: true
-});
-
-// Component methods
-component.close(Function);
-component.isOpened();
-component.onClose(Function);
-component.onClosed(Function);
-component.onOpen(Function);
-component.onOpened(Function);
-component.open(Function);
-component.toggle(Function);
-```
-
 ### Button
 
 A basic clickable button.
 
-This component inherits from `Component`.
+This component inherits from `Element`.
 
 ```js
 import {Button} from "cuit/dist/ui/button";
@@ -106,11 +81,36 @@ button.on("click", () => {
 });
 ```
 
+### Closable
+
+This is a generic component with opening and closing capabilities.
+
+This component inherits from `Element`.
+
+```js
+import {Closable} from "cuit/dist/ui/component";
+
+const component = new Closable({
+    closable: false,
+    opened: true
+});
+
+// Closable methods
+component.close(Function);
+component.isOpened();
+component.onClose(Function);
+component.onClosed(Function);
+component.onOpen(Function);
+component.onOpened(Function);
+component.open(Function);
+component.toggle(Function);
+```
+
 ### Dialog
 
 A dialog can be configured with a header and title, a body and a footer with buttons.
 
-This component inherits from `Component`.
+This component inherits from `Closable`.
 
 ```js
 import {Dialog} from "cuit/dist/ui/dialog";
@@ -156,7 +156,7 @@ dialog.setTitle(String);
 
 A generic component that can be moved with the mouse.
 
-This component inherits from `Component`.
+This component inherits from `Element`.
 
 ```js
 import {Element} from "cuit/dist/ui/element";
@@ -183,7 +183,7 @@ movable.onMoveStart(Function);
 
 A simple notification where you can put anything inside.
 
-This component inherits from `Component`.
+This component inherits from `Closable`.
 
 ```js
 import {Notification} from "cuit/dist/ui/notification";
@@ -232,7 +232,7 @@ stack.open(Function);
 
 An overlay is used to cover areas with a screen.
 
-This component inherits from `Component`.
+This component inherits from `Closable`.
 
 ```js
 import {Overlay} from "cuit/dist/ui/overlay";
@@ -253,7 +253,7 @@ overlay.open(Function);
 
 A panel can be configured with a header and title, a body and a footer.
 
-This component inherits from `Component`.
+This component inherits from `Closable`.
 
 ```js
 import {Panel} from "cuit/dist/ui/panel";
@@ -290,7 +290,7 @@ panel.setTitle(String);
 
 A popup can be used to display things that are hidden by default.
 
-This component inherits from `Component`.
+This component inherits from `Closable`.
 
 ```js
 import {Popup} from "cuit/dist/ui/popup";
@@ -317,7 +317,7 @@ popup.updateTail();
 
 A generic component that can be resized.
 
-This component inherits from `Component`.
+This component inherits from `Element`.
 
 ```js
 import {Resizable} from "cuit/dist/ui/resizable";
@@ -344,7 +344,7 @@ resizable.onResizeStart(Function);
 
 A generic component that can be selected.
 
-This component inherits from `Component`.
+This component inherits from `Element`.
 
 ```js
 import {Selectable} from "cuit/dist/ui/selectable";
@@ -365,7 +365,7 @@ selectable.select(Function);
 
 A switcher simply loops through its children, it can be used as a slider.
 
-This component inherits from `Component`.
+This component inherits from `Closable`.
 
 ```js
 import {Switcher} from "cuit/dist/ui/switcher";
@@ -394,7 +394,7 @@ switcher.stop();
 
 A tooltip is used to display text near the pointer, it can be static or it can follow the pointer.
 
-This component inherits from `Component`.
+This component inherits from `Closable`.
 
 ```js
 import {Tooltip} from "cuit/dist/ui/tooltip";

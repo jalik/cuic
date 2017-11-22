@@ -24,10 +24,10 @@
  */
 
 import Cuic from "../cuic";
+import {Closable} from "./closable";
 import {Collection} from "../utils/collection";
-import {Component} from "../ui/component";
 
-export class Switcher extends Component {
+export class Switcher extends Closable {
 
     constructor(options) {
         // Set default options

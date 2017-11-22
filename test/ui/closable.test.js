@@ -23,11 +23,11 @@
  *
  */
 
-import {Component} from "../../src/js/ui/component";
+import {Closable} from "../../src/js/ui/closable";
 
-describe(`Component`, () => {
+describe(`Closable`, () => {
 
     it(`should be importable from package`, () => {
-        expect(typeof Component).toEqual("function");
+        expect(typeof Closable).toEqual("function");
     });
 });

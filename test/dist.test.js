@@ -25,7 +25,7 @@
 
 import Cuic from "../dist/cuic";
 import {Button} from "../dist/ui/button";
-import {Component} from "../dist/ui/component";
+import {Closable} from "../dist/ui/component";
 import {Dialog} from "../dist/ui/dialog";
 import {Element} from "../dist/ui/element";
 import {Elements} from "../dist/ui/elements";
@@ -52,8 +52,8 @@ describe(`dist files`, () => {
         expect(typeof Button).toEqual("function");
     });
 
-    it(`Component should be importable from package`, () => {
-        expect(typeof Component).toEqual("function");
+    it(`Closable should be importable from package`, () => {
+        expect(typeof Closable).toEqual("function");
     });
 
     it(`Dialog should be importable from package`, () => {
