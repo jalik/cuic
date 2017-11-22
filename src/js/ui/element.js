@@ -908,9 +908,11 @@ export class Element {
 
     /**
      * Triggers a click event on the element
+     * @return {Element}
      */
     click() {
         this.node().click();
+        return this;
     }
 
     /**

@@ -113,6 +113,14 @@ export class Popup extends Component {
     }
 
     /**
+     * Returns the content
+     * @return {Element}
+     */
+    getContent() {
+        return this.content;
+    }
+
+    /**
      * Sets popup content
      * @param html
      * @return {Popup}

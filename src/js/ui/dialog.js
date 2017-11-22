@@ -28,7 +28,7 @@ import {Button} from "./button";
 import {Collection} from "../utils/collection";
 import {Component} from "../ui/component";
 import {Element} from "../ui/element";
-import {Fader} from "./fader";
+import {Overlay} from "./overlay";
 import {Group} from "../ui/group";
 import {Movable} from "../ui/movable";
 import {Resizable} from "../ui/resizable";
@@ -53,9 +53,9 @@ export class Dialog extends Component {
             this.css({position: "absolute"});
         }
 
-        // Create the fader
-        this.fader = new Fader({
-            className: "fader dialog-fader",
+        // Create the overlay
+        this.overlay = new Overlay({
+            className: "overlay dialog-overlay",
             autoClose: false,
             autoRemove: false,
             opened: false
@@ -172,8 +172,8 @@ export class Dialog extends Component {
             })
         };
 
-        // Close dialog when fader is clicked
-        this.fader.on("click", () => {
+        // Close dialog when overlay is clicked
+        this.overlay.on("click", () => {
             if (this.options.autoClose) {
                 this.close();
             }
@@ -189,15 +189,15 @@ export class Dialog extends Component {
 
         // Called when dialog is closing
         this.onClose(() => {
-            this.fader.options.autoRemove = this.options.autoRemove;
-            this.fader.close();
+            this.overlay.options.autoRemove = this.options.autoRemove;
+            this.overlay.close();
         });
 
         // Called when dialog is closed
         this.onClosed(() => {
             if (this.options.autoRemove) {
                 this.remove();
-                this.fader.remove();
+                this.overlay.remove();
             }
         });
 
@@ -210,11 +210,11 @@ export class Dialog extends Component {
             this.css({"z-index": zIndex});
             this.resizeContent();
 
-            // Open fader
+            // Open overlay
             if (this.options.modal) {
                 this.css({"z-index": zIndex + 1});
-                this.fader.css({"z-index": zIndex});
-                this.fader.open();
+                this.overlay.css({"z-index": zIndex});
+                this.overlay.open();
             }
 
             // Maximize or position the dialog
@@ -356,7 +356,7 @@ export class Dialog extends Component {
     }
 
     /**
-     * Sets dialog content
+     * Sets the content
      * @param html
      * @return {Dialog}
      */
@@ -366,12 +366,22 @@ export class Dialog extends Component {
     }
 
     /**
-     * Sets dialog footer
+     * Sets the footer
      * @param html
      * @return {Dialog}
      */
     setFooter(html) {
         this.footer.html(html);
+        return this;
+    }
+
+    /**
+     * Sets the header
+     * @param html
+     * @return {Dialog}
+     */
+    setHeader(html) {
+        this.header.html(html);
         return this;
     }
 

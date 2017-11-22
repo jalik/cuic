@@ -113,6 +113,14 @@ export class Notification extends Component {
     }
 
     /**
+     * Returns the content
+     * @return {Element}
+     */
+    getContent() {
+        return this.content;
+    }
+
+    /**
      * Sets notification content
      * @param html
      * @return {Notification}

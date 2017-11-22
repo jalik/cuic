@@ -29,7 +29,7 @@ import {Component} from "../dist/ui/component";
 import {Dialog} from "../dist/ui/dialog";
 import {Element} from "../dist/ui/element";
 import {Elements} from "../dist/ui/elements";
-import {Fader} from "../dist/ui/fader";
+import {Overlay} from "../dist/ui/overlay";
 import {Group} from "../dist/ui/group";
 import {Hook} from "../dist/ui/hook";
 import {Movable} from "../dist/ui/movable";
@@ -68,10 +68,6 @@ describe(`dist files`, () => {
         expect(typeof Elements).toEqual("function");
     });
 
-    it(`Fader should be importable from package`, () => {
-        expect(typeof Fader).toEqual("function");
-    });
-
     it(`Group should be importable from package`, () => {
         expect(typeof Group).toEqual("function");
     });
@@ -90,6 +86,10 @@ describe(`dist files`, () => {
 
     it(`NotificationStack should be importable from package`, () => {
         expect(typeof NotificationStack).toEqual("function");
+    });
+
+    it(`Overlay should be importable from package`, () => {
+        expect(typeof Overlay).toEqual("function");
     });
 
     it(`Panel should be importable from package`, () => {

@@ -160,6 +160,14 @@ export class Tooltip extends Component {
     }
 
     /**
+     * Returns the content
+     * @return {Element}
+     */
+    getContent() {
+        return this.content;
+    }
+
+    /**
      * Sets tooltip content
      * @param html
      * @return {Tooltip}

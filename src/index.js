@@ -25,27 +25,27 @@
 
 import "./js/polyfill";
 import Cuic from "./js/cuic";
+import {Benchmark} from "./js/utils/benchmark";
 import {Button} from "./js/ui/button";
+import {Collection} from "./js/utils/collection";
 import {Component} from "./js/ui/component";
 import {Dialog} from "./js/ui/dialog";
 import {Element} from "./js/ui/element";
 import {Elements} from "./js/ui/elements";
-import {Fader} from "./js/ui/fader";
+import {Events} from "./js/utils/events";
 import {Group} from "./js/ui/group";
 import {Hook} from "./js/ui/hook";
 import {Movable} from "./js/ui/movable";
 import {Notification} from "./js/ui/notification";
 import {NotificationStack} from "./js/ui/notification-stack";
+import {Overlay} from "./js/ui/overlay";
 import {Panel} from "./js/ui/panel";
 import {Popup} from "./js/ui/popup";
 import {Resizable} from "./js/ui/resizable";
 import {Selectable} from "./js/ui/selectable";
+import {Shortcut} from "./js/utils/shortcut";
 import {Switcher} from "./js/ui/switcher";
 import {Tooltip} from "./js/ui/tooltip";
-import {Benchmark} from "./js/utils/benchmark";
-import {Collection} from "./js/utils/collection";
-import {Events} from "./js/utils/events";
-import {Shortcut} from "./js/utils/shortcut";
 
 // Add components to global var
 Cuic.Button = Button;
@@ -53,12 +53,12 @@ Cuic.Component = Component;
 Cuic.Dialog = Dialog;
 Cuic.Element = Element;
 Cuic.Elements = Elements;
-Cuic.Fader = Fader;
 Cuic.Group = Group;
 Cuic.Hook = Hook;
 Cuic.Movable = Movable;
 Cuic.Notification = Notification;
 Cuic.NotificationStack = NotificationStack;
+Cuic.Overlay = Overlay;
 Cuic.Panel = Panel;
 Cuic.Popup = Popup;
 Cuic.Resizable = Resizable;

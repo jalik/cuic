@@ -48,8 +48,8 @@ export class Button extends Component {
             this.shortcut = new Cuic.Shortcut({
                 keyCode: options.shortcut,
                 target: this.element,
-                callback() {
-                    this.node().click();
+                callback: () => {
+                    this.click();
                 }
             });
         }

@@ -23,40 +23,11 @@
  *
  */
 
-import Cuic from "../cuic";
-import {Component} from "../ui/component";
+import {Overlay} from "../../src/js/ui/overlay";
 
-export class Fader extends Component {
+describe(`Overlay`, () => {
 
-    constructor(options) {
-        // Set default options
-        options = Cuic.extend({}, Fader.prototype.options, options, {
-            mainClass: "fader"
-        });
-
-        // Create element
-        super("div", {className: options.className}, options);
-
-        // Auto close when fader is clicked
-        this.on("click", () => {
-            if (this.options.autoClose) {
-                this.close();
-            }
-        });
-
-        // Called when fader is closed
-        this.onClosed(() => {
-            if (this.options.autoRemove) {
-                this.remove();
-            }
-        });
-    }
-}
-
-Fader.prototype.options = {
-    autoClose: false,
-    autoRemove: false,
-    namespace: "fader",
-    opened: false,
-    zIndex: 1
-};
+    it(`should be importable from package`, () => {
+        expect(typeof Overlay).toEqual("function");
+    });
+});

@@ -115,6 +115,9 @@ gulp.task("doc", ["doc:css", "doc:js"]);
 // Concat + compress files
 gulp.task("default", ["build", "compress", "doc"]);
 
+// Concat + compress files
+gulp.task("prepublish", ["build", "compress"]);
+
 // Automatic rebuild
 gulp.task("watch", function () {
     gulp.watch(["src/**/*.less"], ["build:css"]);

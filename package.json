@@ -1,6 +1,6 @@
 {
   "name": "cuic",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Common user interface components.",
   "license": "MIT",
   "keywords": [
@@ -8,7 +8,7 @@
     "component",
     "dialog",
     "element",
-    "fader",
+    "overlay",
     "group",
     "hook",
     "moveable",
@@ -37,7 +37,7 @@
   "main": "dist/cuic.js",
   "scripts": {
     "build": "./node_modules/.bin/gulp build && ./node_modules/.bin/webpack --config webpack.config.js",
-    "build:prod": "./node_modules/.bin/gulp build && ./node_modules/.bin/webpack --config webpack.config.js -p",
+    "build:prod": "./node_modules/.bin/gulp prepublish && ./node_modules/.bin/webpack --config webpack.config.js -p",
     "prepublish": "npm run build && npm run build:prod && npm test",
     "test": "jest",
     "watch": "./node_modules/.bin/webpack --config webpack.config.js --watch"

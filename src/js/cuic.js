@@ -386,7 +386,9 @@ const Cuic = {
      * @return {boolean}
      */
     isJQuery(obj) {
-        return this.isInstanceOf(jQuery, obj);
+        return typeof jQuery !== "undefined"
+            && jQuery !== null
+            && obj instanceof jQuery;
     },
 
     /**
@@ -396,8 +398,7 @@ const Cuic = {
      */
     isNode(obj) {
         return (
-            typeof Node === "object" ? obj instanceof Node :
-                obj
+            typeof Node === "object" ? obj instanceof Node : obj
                 && typeof obj === "object"
                 && typeof obj.nodeType === "number"
                 && typeof obj.nodeName === "string"
@@ -481,7 +482,9 @@ const Cuic = {
             console.info(event, element);
             throw new TypeError(`Cannot add event listener on unsupported element.`);
         }
-        const browserEvent = this.whichEvent(event);
+
+        // Get browser event name
+        const browserEvent = this.whichEvent(event, element);
 
         // Check if event is supported
         if (!browserEvent) {
@@ -527,7 +530,9 @@ const Cuic = {
             console.info(event, element);
             throw new TypeError(`Cannot add event listener on unsupported element.`);
         }
-        const browserEvent = this.whichEvent(event);
+
+        // Get browser event name
+        const browserEvent = this.whichEvent(event, element);
 
         // Check if event is supported
         if (!browserEvent) {
@@ -573,7 +578,9 @@ const Cuic = {
             console.info(event, element);
             throw new TypeError(`Cannot add event listener on unsupported element.`);
         }
-        const browserEvent = this.whichEvent(event);
+
+        // Get browser event name
+        const browserEvent = this.whichEvent(event, element);
 
         // Check if event is supported
         if (!browserEvent) {
@@ -742,11 +749,11 @@ const Cuic = {
     /**
      * Returns the event supported by the current environment
      * @param event
+     * @param element
      * @return {*}
      */
-    whichEvent(event) {
+    whichEvent(event, element) {
         let ev;
-        let el = document.createElement("div");
         let resolver = {};
 
         switch (event) {
@@ -760,18 +767,35 @@ const Cuic = {
                 break;
 
         }
+
         // Check in resolver
         for (ev in resolver) {
-            if (el.style[ev] !== undefined) {
+            if (element.style[ev] !== undefined) {
                 return resolver[ev];
             }
         }
-        // Check in document
-        if (document[event] !== undefined || document[`on${event}`] !== undefined) {
+
+        // Check in element
+        if (element[event] !== undefined) {
             return event;
         }
+        if (element[`on${event}`] !== undefined) {
+            return event;
+        }
+
+        // Check in document
+        if (document[event] !== undefined) {
+            return event;
+        }
+        if (document[`on${event}`] !== undefined) {
+            return event;
+        }
+
         // Check in window
-        if (window[event] !== undefined || window[`on${event}`] !== undefined) {
+        if (window[event] !== undefined) {
+            return event;
+        }
+        if (window[`on${event}`] !== undefined) {
             return event;
         }
     },

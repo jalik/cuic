@@ -289,7 +289,7 @@ export class Panel extends Component {
     }
 
     /**
-     * Sets panel content
+     * Sets the content
      * @param html
      * @return {Panel}
      */
@@ -299,12 +299,22 @@ export class Panel extends Component {
     }
 
     /**
-     * Sets panel footer
+     * Sets the footer
      * @param html
      * @return {Panel}
      */
     setFooter(html) {
         this.footer.html(html);
+        return this;
+    }
+
+    /**
+     * Sets the header
+     * @param html
+     * @return {Panel}
+     */
+    setHeader(html) {
+        this.header.html(html);
         return this;
     }
 

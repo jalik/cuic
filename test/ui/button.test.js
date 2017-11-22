@@ -24,10 +24,23 @@
  */
 
 import {Button} from "../../src/js/ui/button";
+// Load polyfill
+import "../../src/js/polyfill";
 
 describe(`Button`, () => {
 
     it(`should be importable from package`, () => {
         expect(typeof Button).toEqual("function");
+    });
+
+    describe(`on("click")`, () => {
+
+        it(`should execute callback when button is clicked`, () => {
+            let count = 0;
+            new Button().appendTo(document.body).on("click", () => {
+                count += 1;
+            }).click().click();
+            expect(count).toEqual(2);
+        });
     });
 });

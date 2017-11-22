@@ -121,5 +121,6 @@ export class Selectable extends Element {
 }
 
 Selectable.prototype.options = {
-    namespace: "selectable"
+    namespace: "selectable",
+    selected: false
 };
