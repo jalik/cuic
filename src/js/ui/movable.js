@@ -78,6 +78,9 @@ export class Movable extends Component {
             // Add moving class
             this.addClass("moving");
 
+            // Removes alignment classes
+            this.removeClass("aligned-left aligned-right aligned-top aligned-bottom");
+
             const startPosition = this.position();
             const startX = ev.clientX;
             const startY = ev.clientY;
@@ -89,14 +92,14 @@ export class Movable extends Component {
                 let prop = {bottom: "auto"};
 
                 // Move horizontally
-                if (this.options.horizontal) {
+                if (this.options.horizontally) {
                     const diffX = ev.clientX - startX;
                     prop.left = startPosition.left + diffX;
                     prop.right = "auto";
                 }
 
                 // Move vertically
-                if (this.options.vertical) {
+                if (this.options.vertically) {
                     const diffY = ev.clientY - startY;
                     prop.top = startPosition.top + diffY;
                     prop.bottom = "auto";
@@ -161,8 +164,8 @@ Movable.prototype.options = {
     constraintToParent: true,
     handle: null,
     handleClassName: "movable-handle",
-    horizontal: true,
+    horizontally: true,
     namespace: "movable",
     rootOnly: true,
-    vertical: true
+    vertically: true
 };

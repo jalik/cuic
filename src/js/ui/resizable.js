@@ -113,7 +113,7 @@ export class Resizable extends Component {
                     let prop = {};
 
                     // Resize horizontally
-                    if (this.options.horizontal) {
+                    if (this.options.horizontally) {
                         for (let i = 0; i < this.horizontalHandles.length; i += 1) {
                             if (this.horizontalHandles.get(i).node() === handleTarget) {
                                 const diffX = ev.clientX - startX;
@@ -130,7 +130,7 @@ export class Resizable extends Component {
                     }
 
                     // Resize vertically
-                    if (this.options.vertical) {
+                    if (this.options.vertically) {
                         for (let i = 0; i < this.verticalHandles.length; i += 1) {
                             if (this.verticalHandles.get(i).node() === handleTarget) {
                                 const diffY = ev.clientY - startY;
@@ -209,12 +209,12 @@ export class Resizable extends Component {
 
 Resizable.prototype.options = {
     handleSize: 10,
-    horizontal: true,
+    horizontally: true,
     keepRatio: false,
     maxHeight: null,
     maxWidth: null,
     minHeight: 1,
     minWidth: 1,
     namespace: "resizable",
-    vertical: true
+    vertically: true
 };

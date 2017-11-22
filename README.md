@@ -178,10 +178,10 @@ const movable = new Movable({
     handle: null,
     handleClassName: "movable-handle",
     constraintToParent: true,
-    horizontal: true,
+    horizontally: true,
     namespace: "movable",
     rootOnly: true,
-    vertical: true
+    vertically: true
 });
 
 // Resizable methods
@@ -336,14 +336,14 @@ import {Resizable} from "cuit/dist/ui/resizable";
 
 const resizable = new Resizable({
     handleSize: 10,
-    horizontal: true,
+    horizontally: true,
     keepRatio: false,
     maxHeight: null,
     maxWidth: null,
     minHeight: 1,
     minWidth: 1,
     namespace: "resizable",
-    vertical: true
+    vertically: true
 });
 
 // Resizable methods

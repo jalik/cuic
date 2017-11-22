@@ -213,15 +213,15 @@
                                     title: sandbox.find("[name=title]").eq(0).node().checked ? 'Header & title' : null,
                                     content: 'This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p>',
                                     buttons: sandbox.find("[name=buttons]").eq(0).node().checked ? [
-                                            {
-                                                label: 'Accept',
-                                                callback: 'close'
-                                            },
-                                            {
-                                                label: 'Close',
-                                                callback: 'close'
-                                            }
-                                        ] : null
+                                        {
+                                            label: 'Accept',
+                                            callback: 'close'
+                                        },
+                                        {
+                                            label: 'Close',
+                                            callback: 'close'
+                                        }
+                                    ] : null
                                 });
                                 dialog.open();
                             });
@@ -754,6 +754,18 @@
                     <div class="sandbox">
                         <div class="row">
                             <form class="col-md-2 settings">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="horizontally" checked>
+                                        <span>horizontally</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="vertically" checked>
+                                        <span>vertically</span>
+                                    </label>
+                                </div>
                                 <div class="form-group">
                                     <label>X</label>
                                     <div class="input-group">
@@ -793,17 +805,29 @@
                             var x = form.find('[name="x"]').eq(0);
                             var y = form.find('[name="y"]').eq(0);
                             var state = form.find('[name="state"]').eq(0);
+                            var horizontally = form.find('[name="horizontally"]').eq(0);
+                            var vertically = form.find('[name="vertically"]').eq(0);
 
                             window.movable = new Cuic.Movable({
                                 element: testBoxA,
-                                horizontal: true,
-                                vertical: true
+                                horizontally: horizontally.node().checked,
+                                vertically: vertically.node().checked
                             });
 
                             window.movableB = new Cuic.Movable({
                                 element: testBoxB,
-                                horizontal: true,
-                                vertical: true
+                                horizontally: horizontally.node().checked,
+                                vertically: vertically.node().checked
+                            });
+
+                            horizontally.on("change", function (ev) {
+                                movable.options.horizontally = ev.target.checked;
+                                movableB.options.horizontally = ev.target.checked;
+                            });
+
+                            vertically.on("change", function (ev) {
+                                movable.options.vertically = ev.target.checked;
+                                movableB.options.vertically = ev.target.checked;
                             });
 
                             var movables = [movable, movableB];
@@ -843,6 +867,18 @@
                     <div class="sandbox">
                         <div class="row">
                             <form class="col-md-2 settings">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="horizontally" checked>
+                                        <span>horizontally</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="vertically" checked>
+                                        <span>vertically</span>
+                                    </label>
+                                </div>
                                 <div class="form-group">
                                     <label>width</label>
                                     <div class="input-group">
@@ -869,7 +905,7 @@
                             <div class="col-md-10">
                                 <div class="blueprint">
                                     <div class="testbox testbox-a" style="position: relative;">Relative</div>
-                                    <div class="testbox testbox-b" style="position: absolute; bottom: 0; right: 0;">
+                                    <div class="testbox testbox-b" style="position: absolute; left: 50%;">
                                         Absolute
                                     </div>
                                 </div>
@@ -885,16 +921,32 @@
                             var height = sandbox.find('[name="height"]').eq(0);
                             var hratio = sandbox.find('[name="hratio"]').eq(0);
                             var vratio = sandbox.find('[name="vratio"]').eq(0);
+                            var horizontally = sandbox.find('[name="horizontally"]').eq(0);
+                            var vertically = sandbox.find('[name="vertically"]').eq(0);
 
                             window.resizable = new Cuic.Resizable({
                                 debug: true,
                                 element: sandbox.find('.testbox-a').eq(0),
-                                keepRatio: false
+                                keepRatio: false,
+                                horizontally: horizontally.node().checked,
+                                vertically: vertically.node().checked
                             });
                             window.resizableB = new Cuic.Resizable({
                                 debug: true,
                                 element: sandbox.find('.testbox-b').eq(0),
-                                keepRatio: false
+                                keepRatio: false,
+                                horizontally: horizontally.node().checked,
+                                vertically: vertically.node().checked
+                            });
+
+                            horizontally.on("change", function (ev) {
+                                resizable.options.horizontally = ev.target.checked;
+                                resizableB.options.horizontally = ev.target.checked;
+                            });
+
+                            vertically.on("change", function (ev) {
+                                resizable.options.vertically = ev.target.checked;
+                                resizableB.options.vertically = ev.target.checked;
                             });
 
                             resizable.onResizeStart(function (ev) {
