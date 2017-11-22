@@ -49,14 +49,92 @@ const element = new Element({
 });
 
 // Element methods
-element.close(Function);
-element.isOpened();
-element.onClose(Function);
-element.onClosed(Function);
-element.onOpen(Function);
-element.onOpened(Function);
-element.open(Function);
-element.toggle(Function);
+element.align(String);
+element.alignInParent();
+element.alignInScreen();
+element.anchor(String, String, Element);
+element.append(Element);
+element.appendTo(Element);
+element.attr(String, Object);
+element.autoFit();
+element.autoResize();
+element.border();
+element.children(String);
+element.click();
+element.clone();
+element.closest(String);
+element.css(Object);
+element.data(String, Object);
+element.debug();
+element.disable();
+element.empty();
+element.enable();
+element.enterFullScreen();
+element.find(String);
+element.getClasses();
+element.hasClass(String);
+element.hasParent();
+element.height();
+element.hide();
+element.html(html);
+element.innerHeight();
+element.innerWidth();
+element.insertAfter(Element);
+element.insertBefore(Element);
+element.isAbsolute();
+element.isAligned(String);
+element.isAnchored(String);
+element.isChildOf(Element);
+element.isDisabled();
+element.isEnabled();
+element.isFixed();
+element.isHidden();
+element.isInDOM();
+element.isMaximized();
+element.isMaximizedX();
+element.isMaximizedY();
+element.isMinimized();
+element.isPosition(String);
+element.isRelative();
+element.isRemoved();
+element.isShown();
+element.isStatic();
+element.margin();
+element.maximize(Function);
+element.maximizeX(Function);
+element.maximizeY(Function);
+element.minimize(Function);
+element.node();
+element.off(String, Function);
+element.offset();
+element.offsetParent();
+element.offsetParentNode();
+element.on(String, Function);
+element.once(String, Function);
+element.onAligned(Function);
+element.onAnchored(Function);
+element.onMaximize(Function);
+element.onMaximized(Function);
+element.onMinimize(Function);
+element.onMinimized(Function);
+element.onRemoved(Function);
+element.outerHeight(Boolean);
+element.outerWidth(Boolean);
+element.padding();
+element.parent();
+element.parentNode();
+element.position();
+element.positionOnScreen();
+element.prepend(Element);
+element.prependTo(Element);
+element.remove();
+element.removeClass(String);
+element.scrollLeft();
+element.scrollTop();
+element.show();
+element.text(String);
+element.val(Object);
+element.width();
 ```
 
 ### Component
@@ -430,7 +508,7 @@ tooltip.updateTail();
 
 ## Changelog
 
-### v0.9.1
+### v0.9.2
 - Fixes movable components aligned to bottom
 - Renames option `vertical` to `vertically` for `Movable` and `Resizable` components
 - Renames option `horizontal` to `horizontally` for `Movable` and `Resizable` components
