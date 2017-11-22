@@ -12,7 +12,7 @@ However for old classic applications, you can still load a single file that cont
 // Load uncompressed lib
 import Cuic from "cuic/dist/cuic-aio";
 
-// Load uncompressed lib
+// Load compressed lib
 import Cuic2 from "cuic/dist/cuic-aio.min";
 ```
 
