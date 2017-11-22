@@ -159,8 +159,6 @@ export class Component extends Element {
 }
 
 Component.prototype.options = {
-    opened: true,
-    maximized: false,
-    maximizedX: false,
-    maximizedY: false
+    closable: false,
+    opened: true
 };

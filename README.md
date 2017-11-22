@@ -41,6 +41,9 @@ const element = new Element({
     className: null,
     css: null,
     debug: false,
+    maximized: false,
+    maximizedX: false,
+    maximizedY: false,
     namespace: null,
     parent: null
 });
@@ -66,10 +69,8 @@ This component inherits from `Element`.
 import {Component} from "cuit/dist/ui/component";
 
 const component = new Component({
-    opened: true,
-    maximized: false,
-    maximizedX: false,
-    maximizedY: false
+    closable: false,
+    opened: true
 });
 
 // Component methods

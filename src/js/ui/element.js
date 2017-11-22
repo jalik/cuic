@@ -2008,6 +2008,9 @@ Element.prototype.options = {
     className: null,
     css: null,
     debug: false,
+    maximized: false,
+    maximizedX: false,
+    maximizedY: false,
     namespace: null,
     parent: null
 };
