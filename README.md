@@ -59,11 +59,23 @@ element.open(Function);
 element.toggle(Function);
 ```
 
+### Component
+
+This is a generic component that most components inherit from, it only adds the `component` CSS class.
+
+This component inherits from `Element`.
+
+```js
+import {Component} from "cuit/dist/ui/component";
+
+const component = new Component();
+```
+
 ### Button
 
 A basic clickable button.
 
-This component inherits from `Element`.
+This component inherits from `Component`.
 
 ```js
 import {Button} from "cuit/dist/ui/button";
@@ -85,10 +97,10 @@ button.on("click", () => {
 
 This is a generic component with opening and closing capabilities.
 
-This component inherits from `Element`.
+This component inherits from `Component`.
 
 ```js
-import {Closable} from "cuit/dist/ui/component";
+import {Closable} from "cuit/dist/ui/closable";
 
 const component = new Closable({
     closable: false,
@@ -156,7 +168,7 @@ dialog.setTitle(String);
 
 A generic component that can be moved with the mouse.
 
-This component inherits from `Element`.
+This component inherits from `Component`.
 
 ```js
 import {Element} from "cuit/dist/ui/element";
@@ -317,7 +329,7 @@ popup.updateTail();
 
 A generic component that can be resized.
 
-This component inherits from `Element`.
+This component inherits from `Component`.
 
 ```js
 import {Resizable} from "cuit/dist/ui/resizable";
@@ -344,7 +356,7 @@ resizable.onResizeStart(Function);
 
 A generic component that can be selected.
 
-This component inherits from `Element`.
+This component inherits from `Component`.
 
 ```js
 import {Selectable} from "cuit/dist/ui/selectable";

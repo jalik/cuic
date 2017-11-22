@@ -24,10 +24,11 @@
  */
 
 import Cuic from "../cuic";
-import {Element} from "./element";
 import {Collection} from "../utils/collection";
+import {Component} from "./component";
+import {Element} from "./element";
 
-export class Resizable extends Element {
+export class Resizable extends Component {
 
     constructor(options) {
         // Set default options

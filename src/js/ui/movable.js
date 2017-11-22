@@ -25,9 +25,9 @@
 
 import Cuic from "../cuic";
 import {Collection} from "../utils/collection";
-import {Element} from "./element";
+import {Component} from "./component";
 
-export class Movable extends Element {
+export class Movable extends Component {
 
     constructor(options) {
         // Set default options

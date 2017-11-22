@@ -24,43 +24,19 @@
  */
 
 import Cuic from "../cuic";
-import {Component} from "./component";
+import {Element} from "./element";
 
-export class Button extends Component {
+export class Component extends Element {
 
-    constructor(options) {
+    constructor(node, attributes, options) {
         // Set default options
-        options = Cuic.extend({}, Button.prototype.options, options, {
-            mainClass: "btn"
-        });
+        options = Cuic.extend({}, Component.prototype.options, options);
 
-        // Create element
-        super("button", {
-            className: options.className,
-            disabled: false,
-            html: options.label,
-            title: options.title,
-            type: options.type
-        }, options);
+        super(node, attributes, options);
 
-        // Create shortcut
-        if (typeof options.shortcut === "number") {
-            this.shortcut = new Cuic.Shortcut({
-                keyCode: options.shortcut,
-                target: this.element,
-                callback: () => {
-                    this.click();
-                }
-            });
-        }
+        // Add component class
+        this.addClass("component");
     }
 }
 
-Button.prototype.options = {
-    className: "btn-default",
-    disabled: false,
-    label: null,
-    shortcut: null,
-    title: null,
-    type: "button"
-};
+Component.prototype.options = {};

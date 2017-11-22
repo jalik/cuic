@@ -25,8 +25,9 @@
 
 import Cuic from "../cuic";
 import {Element} from "./element";
+import {Component} from "./component";
 
-export class Hook extends Element {
+export class Hook extends Component {
 
     constructor(options) {
         // Set default options

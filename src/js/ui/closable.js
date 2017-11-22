@@ -24,9 +24,9 @@
  */
 
 import Cuic from "../cuic";
-import {Element} from "./element";
+import {Component} from "./component";
 
-export class Closable extends Element {
+export class Closable extends Component {
 
     constructor(node, attributes, options) {
         // Set default options
@@ -34,17 +34,12 @@ export class Closable extends Element {
 
         super(node, attributes, options);
 
-        // Add component classes
-        this.addClass("component");
-
         // Add closable class
         if (this.options.closable) {
             this.addClass("closable");
         }
 
-        // Set the panel visibility
-        // Since the visible option is used to check if the panel is visible
-        // we force the panel to show or hide by setting visible to the inverse value.
+        // Open or hide the component
         if (this.options.opened !== undefined) {
             if (this.options.opened) {
                 this.open();

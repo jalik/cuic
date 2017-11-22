@@ -23,18 +23,18 @@
  *
  */
 
-.resizable {
+.component.resizable {
   position: relative;
 }
 
-.resizable.resizing {
+.component.resizable.resizing {
   transition-property: height, width;
   transition-duration: 0s;
 }
 
 // Handles
 
-.resizable .resize-handle {
+.component.resizable .resize-handle {
   cursor: nwse-resize;
   display: none;
   min-height: 5px;
@@ -43,65 +43,65 @@
   z-index: 1;
 }
 
-.resizable.debug .resize-handle {
+.component.resizable.debug .resize-handle {
   background-color: rgba(255, 0, 0, 0.3);
 }
 
-.resizable.resizing .resize-handle,
-.resizable:hover .resize-handle {
+.component.resizable.resizing .resize-handle,
+.component.resizable:hover .resize-handle {
   display: block;
 }
 
-.resizable .resize-handle-e {
+.component.resizable .resize-handle-e {
   cursor: e-resize;
   height: 100%;
   right: 0;
   top: 0;
 }
 
-.resizable .resize-handle-n {
+.component.resizable .resize-handle-n {
   cursor: n-resize;
   left: 0;
   top: 0;
   width: 100%;
 }
 
-.resizable .resize-handle-ne {
+.component.resizable .resize-handle-ne {
   cursor: ne-resize;
   right: 0;
   top: 0;
   z-index: 2;
 }
 
-.resizable .resize-handle-nw {
+.component.resizable .resize-handle-nw {
   cursor: nw-resize;
   left: 0;
   top: 0;
   z-index: 2;
 }
 
-.resizable .resize-handle-s {
+.component.resizable .resize-handle-s {
   cursor: s-resize;
   bottom: 0;
   left: 0;
   width: 100%;
 }
 
-.resizable .resize-handle-se {
+.component.resizable .resize-handle-se {
   cursor: se-resize;
   bottom: 0;
   right: 0;
   z-index: 2;
 }
 
-.resizable .resize-handle-sw {
+.component.resizable .resize-handle-sw {
   cursor: sw-resize;
   bottom: 0;
   left: 0;
   z-index: 2;
 }
 
-.resizable .resize-handle-w {
+.component.resizable .resize-handle-w {
   cursor: w-resize;
   height: 100%;
   left: 0;

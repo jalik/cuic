@@ -57,7 +57,7 @@ export class Element {
             this.element = node.get(0);
         }
         // Use the first node of a jQuery object
-        else if (node instanceof jQuery) {
+        else if (Cuic.isJQuery(node)) {
             this.element = node.get(0);
         }
         else {
@@ -627,15 +627,11 @@ export class Element {
      * @param position
      * @return {Element}
      */
-    align(position) {
-        if (this.isInDOM() && (position || this.options.position)) {
+    align(position = this.options.position) {
+        if (this.isInDOM() && position) {
             const pos = this.css("position");
 
             if (["absolute", "fixed"].indexOf(pos) !== -1) {
-                // Use default position
-                if (position === undefined) {
-                    position = this.options.position;
-                }
                 this.debug("align", position);
                 this.css(this._calculateAlign(position));
                 this.addPositionClass(position, "aligned");
@@ -789,7 +785,7 @@ export class Element {
                 node.append(el.node());
             });
         }
-        else if (element instanceof jQuery) {
+        else if (Cuic.isJQuery(element)) {
             element.each(function () {
                 node.append(this);
             });
@@ -1181,7 +1177,7 @@ export class Element {
                     this.empty();
                     this.append(html.node());
                 }
-                else if (html instanceof jQuery) {
+                else if (Cuic.isJQuery(html)) {
                     this.empty();
                     this.append(html.get(0));
                 }
@@ -1859,7 +1855,7 @@ export class Element {
                 node.prepend(el.node());
             });
         }
-        else if (element instanceof jQuery) {
+        else if (Cuic.isJQuery(element)) {
             element.each(function () {
                 node.prepend(this);
             });

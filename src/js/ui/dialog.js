@@ -221,7 +221,7 @@ export class Dialog extends Closable {
             if (this.options.maximized) {
                 this.maximize();
             } else {
-                this.align();
+                this.align(this.options.position);
             }
 
             // Focus the last button

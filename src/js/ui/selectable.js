@@ -24,9 +24,9 @@
  */
 
 import Cuic from "../cuic";
-import {Element} from "./element";
+import {Component} from "./component";
 
-export class Selectable extends Element {
+export class Selectable extends Component {
 
     constructor(options) {
         // Set default options

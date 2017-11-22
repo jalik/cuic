@@ -30,4 +30,9 @@ describe(`Element`, () => {
     it(`should be importable from package`, () => {
         expect(typeof Element).toEqual("function");
     });
+
+    it(`should create the specified node`, () => {
+        const element = new Element("span");
+        expect(element.node().localName).toEqual("span");
+    });
 });

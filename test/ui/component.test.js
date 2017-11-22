@@ -23,44 +23,16 @@
  *
  */
 
-import Cuic from "../cuic";
-import {Component} from "./component";
+import {Component} from "../../src/js/ui/component";
 
-export class Button extends Component {
+describe(`Component`, () => {
 
-    constructor(options) {
-        // Set default options
-        options = Cuic.extend({}, Button.prototype.options, options, {
-            mainClass: "btn"
-        });
+    it(`should be importable from package`, () => {
+        expect(typeof Component).toEqual("function");
+    });
 
-        // Create element
-        super("button", {
-            className: options.className,
-            disabled: false,
-            html: options.label,
-            title: options.title,
-            type: options.type
-        }, options);
-
-        // Create shortcut
-        if (typeof options.shortcut === "number") {
-            this.shortcut = new Cuic.Shortcut({
-                keyCode: options.shortcut,
-                target: this.element,
-                callback: () => {
-                    this.click();
-                }
-            });
-        }
-    }
-}
-
-Button.prototype.options = {
-    className: "btn-default",
-    disabled: false,
-    label: null,
-    shortcut: null,
-    title: null,
-    type: "button"
-};
+    it(`should have the CSS class "component"`, () => {
+        const component = new Component("div");
+        expect(component.hasClass("component")).toEqual(true);
+    });
+});

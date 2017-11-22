@@ -25,7 +25,7 @@
 
 import Cuic from "../dist/cuic";
 import {Button} from "../dist/ui/button";
-import {Closable} from "../dist/ui/component";
+import {Closable} from "../dist/ui/closable";
 import {Dialog} from "../dist/ui/dialog";
 import {Element} from "../dist/ui/element";
 import {Elements} from "../dist/ui/elements";
