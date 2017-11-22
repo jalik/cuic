@@ -86,20 +86,20 @@ export class Movable extends Component {
                 // Execute callback
                 if (this.events.trigger("move", ev) === false) return;
 
-                let prop = {};
+                let prop = {bottom: "auto"};
 
                 // Move horizontally
                 if (this.options.horizontal) {
                     const diffX = ev.clientX - startX;
                     prop.left = startPosition.left + diffX;
-                    prop.right = "";
+                    prop.right = "auto";
                 }
 
                 // Move vertically
                 if (this.options.vertical) {
                     const diffY = ev.clientY - startY;
                     prop.top = startPosition.top + diffY;
-                    prop.bottom = "";
+                    prop.bottom = "auto";
                 }
 
                 // Limit position to parent available position
@@ -158,9 +158,9 @@ export class Movable extends Component {
 }
 
 Movable.prototype.options = {
+    constraintToParent: true,
     handle: null,
     handleClassName: "movable-handle",
-    constraintToParent: true,
     horizontal: true,
     namespace: "movable",
     rootOnly: true,
