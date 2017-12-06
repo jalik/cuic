@@ -145,6 +145,11 @@ export class Dialog extends Closable {
                 handle: this.header,
                 rootOnly: false
             });
+            this.movable.onMoveStart((ev) => {
+                if (Cuic.element(ev.target).hasClass("btn-close")) {
+                    return false;
+                }
+            });
         }
 
         /**
@@ -227,26 +232,27 @@ export class Dialog extends Closable {
             // Focus the last button
             const buttons = this.buttons.children();
 
+            // todo select button with attribute "focused"
             if (buttons.length > 0) {
                 buttons.last().node().focus();
             }
         });
 
         // Called when dialog is opened
-        this.onOpened((ev) => {
-            // // todo wait images to be loaded to resize content
-            // let images = this.find("img");
-            //
-            // if (images.length > 0) {
-            //     // Position the dialog when images are loaded
-            //     images.off(ns("load")).on(ns("load"), () => {
-            //         this.resizeContent();
-            //     });
-            // } else {
-            //     // Position the dialog in the wrapper
-            //     this.resizeContent();
-            // }
-        });
+        // this.onOpened((ev) => {
+        // // todo wait images to be loaded to resize content
+        // let images = this.find("img");
+        //
+        // if (images.length > 0) {
+        //     // Position the dialog when images are loaded
+        //     images.off(ns("load")).on(ns("load"), () => {
+        //         this.resizeContent();
+        //     });
+        // } else {
+        //     // Position the dialog in the wrapper
+        //     this.resizeContent();
+        // }
+        // });
 
         // Remove dialog from list
         this.onRemoved(() => {
@@ -340,11 +346,11 @@ export class Dialog extends Closable {
         let maxHeight = available.height;
 
         // Subtract header height
-        if (this.header instanceof Element) {
+        if (this.header instanceof Element && this.header.isShown()) {
             maxHeight -= this.header.outerHeight(true);
         }
         // Subtract footer height
-        if (this.footer instanceof Element) {
+        if (this.footer instanceof Element && this.footer.isShown()) {
             maxHeight -= this.footer.outerHeight(true);
         }
         // Subtract content margin

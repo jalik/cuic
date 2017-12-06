@@ -508,6 +508,11 @@ tooltip.updateTail();
 
 ## Changelog
 
+### v0.9.3
+- Fixes dialog closing origin animation
+- Fixes dialog content size when footer is hidden
+- Fixes method `Events.trigger()` to allow returning value
+
 ### v0.9.2
 - Fixes movable components aligned to bottom
 - Renames option `vertical` to `vertically` for `Movable` and `Resizable` components

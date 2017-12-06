@@ -79,7 +79,7 @@ export class Movable extends Component {
             this.addClass("moving");
 
             // Removes alignment classes
-            this.removeClass("aligned-left aligned-right aligned-top aligned-bottom");
+            // this.removeClass("aligned-left aligned-right aligned-top aligned-bottom");
 
             const startPosition = this.position();
             const startX = ev.clientX;

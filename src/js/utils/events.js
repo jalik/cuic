@@ -91,12 +91,14 @@ export class Events {
      */
     trigger(event) {
         if (this.callbacks[event] instanceof Array) {
+            let result;
             const cb = this.callbacks[event];
             const args = Array.prototype.slice.call(arguments, 1);
 
             for (let i = 0; i < cb.length; i += 1) {
-                cb[i].apply(this.context, args);
+                result = cb[i].apply(this.context, args);
             }
+            return result;
         }
     }
 }
