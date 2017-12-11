@@ -38,6 +38,8 @@ export class Guide {
 
         // Create guide popup
         this.popup = new Popup(Cuic.extend({}, options, {
+            autoClose: false,
+            autoRemove: false,
             mainClass: "guide",
             className: "guide guide-popup"
         }));
@@ -48,6 +50,13 @@ export class Guide {
 
         this.step = -1;
         this.steps = [];
+
+        // Add steps
+        if (this.options.steps instanceof Array) {
+            for (let i = 0; i < this.options.steps.length; i += 1) {
+                this.addStep(this.options.steps[i]);
+            }
+        }
 
         // Auto start guide
         if (this.options.autoStart) {
@@ -132,9 +141,12 @@ export class Guide {
 
             // Move popup to step target
             const target = Cuic.element(step.target);
-            const anchor = target.data("anchor") || this.options.anchor;
-            const anchorPoint = target.data("anchor-point") || this.options.anchorPoint;
-            this.popup.anchor(anchor, anchorPoint, target);
+            const anchor = step.anchor || target.data("anchor") || this.options.anchor;
+            const anchorPoint = step.anchorPoint || target.data("anchor-point") || this.options.anchorPoint;
+            this.popup.options.target = target;
+            this.popup.options.anchor = anchor;
+            this.popup.options.anchorPoint = anchorPoint;
+            // this.popup.anchor(anchor, anchorPoint, target);
             this.popup.open();
             this.events.trigger("stepChanged", this.step, step);
         }
@@ -208,12 +220,13 @@ export class Guide {
 
 Guide.prototype.options = {
     anchor: "top",
-    autoClose: true,
+    autoClose: false,
     autoRemove: false,
     autoStart: false,
     content: null,
     duration: 5000,
     namespace: "guide",
     opened: false,
+    steps: null,
     zIndex: 9
 };

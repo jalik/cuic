@@ -4420,6 +4420,12 @@ var Guide = exports.Guide = function () {
         this.step = -1;
         this.steps = [];
 
+        if (this.options.steps instanceof Array) {
+            for (var i = 0; i < this.options.steps.length; i += 1) {
+                this.addStep(this.options.steps[i]);
+            }
+        }
+
         if (this.options.autoStart) {
             this.start();
         }
@@ -4484,9 +4490,12 @@ var Guide = exports.Guide = function () {
                 }
 
                 var target = _cuic2.default.element(step.target);
-                var anchor = target.data("anchor") || this.options.anchor;
-                var anchorPoint = target.data("anchor-point") || this.options.anchorPoint;
-                this.popup.anchor(anchor, anchorPoint, target);
+                var anchor = step.anchor || target.data("anchor") || this.options.anchor;
+                var anchorPoint = step.anchorPoint || target.data("anchor-point") || this.options.anchorPoint;
+                this.popup.options.target = target;
+                this.popup.options.anchor = anchor;
+                this.popup.options.anchorPoint = anchorPoint;
+
                 this.popup.open();
                 this.events.trigger("stepChanged", this.step, step);
             }
@@ -4542,13 +4551,14 @@ var Guide = exports.Guide = function () {
 
 Guide.prototype.options = {
     anchor: "top",
-    autoClose: true,
+    autoClose: false,
     autoRemove: false,
     autoStart: false,
     content: null,
     duration: 5000,
     namespace: "guide",
     opened: false,
+    steps: null,
     zIndex: 9
 };
 

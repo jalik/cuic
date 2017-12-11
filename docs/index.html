@@ -378,7 +378,7 @@
                                          style="position: absolute; bottom: 0; right: 0;">
                                         STEP 3
                                     </div>
-                                    <div class="testbox step4" data-anchor="top"
+                                    <div class="testbox step4"
                                          style="position: absolute; bottom: 0; left: 0;">
                                         STEP 4
                                     </div>
@@ -395,53 +395,53 @@
                             window.guide = new Cuic.Guide({
                                 autoClose: false,
                                 autoRemove: false,
-                                autoStart: false,
-                            });
-
-                            window.guide.addStep({
-                                title: "Step 1",
-                                content: "Welcome to a simple and quick guide, click on 'next' button to go to step 2 !",
-                                target: "#ui-guide .steps .step1",
-                                buttons: [
+                                autoStart: true,
+                                steps: [
                                     {
-                                        label: "Skip",
-                                        callback() {
-                                            this.guide.stop();
-                                        }
+                                        title: "Step 1",
+                                        content: "Welcome to a simple and quick guide, click on 'next' button to go to step 2 !",
+                                        target: "#ui-guide .steps .step1",
+                                        buttons: [
+                                            {
+                                                label: "Skip",
+                                                callback() {
+                                                    this.guide.stop();
+                                                }
+                                            },
+                                            {
+                                                className: "btn-primary",
+                                                label: "Next",
+                                                callback() {
+                                                    this.guide.next();
+                                                }
+                                            }
+                                        ]
                                     },
                                     {
-                                        className: "btn-primary",
-                                        label: "Next",
-                                        callback() {
-                                            this.guide.next();
-                                        }
-                                    }
-                                ]
-                            });
-
-                            window.guide.addStep({
-                                title: "Step 2",
-                                content: "Nice, now click on 'next' button to go to step 3 !",
-                                target: "#ui-guide .steps .step2",
-                                buttons: [
-                                    {
-                                        label: "Skip",
-                                        callback() {
-                                            this.guide.stop();
-                                        }
-                                    },
-                                    {
-                                        label: "Back",
-                                        callback() {
-                                            this.guide.previous();
-                                        }
-                                    },
-                                    {
-                                        className: "btn-primary",
-                                        label: "Next",
-                                        callback() {
-                                            this.guide.next();
-                                        }
+                                        title: "Step 2",
+                                        content: "Nice, now click on 'next' button to go to step 3 !",
+                                        target: "#ui-guide .steps .step2",
+                                        buttons: [
+                                            {
+                                                label: "Skip",
+                                                callback() {
+                                                    this.guide.stop();
+                                                }
+                                            },
+                                            {
+                                                label: "Back",
+                                                callback() {
+                                                    this.guide.previous();
+                                                }
+                                            },
+                                            {
+                                                className: "btn-primary",
+                                                label: "Next",
+                                                callback() {
+                                                    this.guide.next();
+                                                }
+                                            }
+                                        ]
                                     }
                                 ]
                             });
@@ -477,6 +477,7 @@
                                 title: "Step 4",
                                 content: "Alright, finally click on 'finish' button to finish this guide !",
                                 target: "#ui-guide .steps .step4",
+                                anchor: "top",
                                 buttons: [
                                     {
                                         label: "Back",

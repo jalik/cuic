@@ -192,7 +192,7 @@ const dialog = new Dialog({
     autoClose: false,
     autoRemove: true,
     autoResize: true,
-    buttons: [],
+    buttons: [Button],
     closable: true,
     closeButton: null,
     closeButtonClass: "glyphicon glyphicon-remove-sign",
@@ -238,6 +238,7 @@ const guide = new Guide({
     autoRemove: false,
     content: null,
     opened: false,
+    steps: [Button],
     target: null,
     zIndex: 9
 });
@@ -404,6 +405,7 @@ const popup = new Popup({
     anchor: "top",
     autoClose: true,
     autoRemove: false,
+    buttons: [],
     content: null,
     opened: false,
     target: null,
@@ -528,6 +530,11 @@ tooltip.updateTail();
 ```
 
 ## Changelog
+
+### v0.10.1
+- Fixes `Guide` auto close issue
+- Fixes `Guide` animations
+- Allows to pass `steps` option in `Guide` options to make `autoStart` option working
 
 ### v0.10.0
 - Adds `Guide` component
