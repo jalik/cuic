@@ -7,11 +7,8 @@ Cuic stands for **Common User Interface Components** and aims to offer various U
 Cuic has a default styling that you must load to display components correctly.
 
 ```js
-// Load uncompressed styles
+// Load styles
 import cuicStyles from "cuic/dist/cuic.css";
-
-// Load compressed styles
-import cuicStyles2 from "cuic/dist/cuic.css";
 ```
 
 ## Components
