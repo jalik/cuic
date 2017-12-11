@@ -95,7 +95,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 14);
+/******/ 	return __webpack_require__(__webpack_require__.s = 15);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -593,7 +593,7 @@ var _cuic = __webpack_require__(0);
 
 var _cuic2 = _interopRequireDefault(_cuic);
 
-var _elements = __webpack_require__(8);
+var _elements = __webpack_require__(9);
 
 var _events = __webpack_require__(5);
 
@@ -1189,14 +1189,14 @@ var Element = function () {
 
             if (element instanceof _elements.Elements) {
                 element.each(function (el) {
-                    node.append(el.node());
+                    node.appendChild(el.node());
                 });
             } else if (_cuic2.default.isJQuery(element)) {
                 element.each(function () {
-                    node.append(this);
+                    node.appendChild(this);
                 });
             } else {
-                node.append(_cuic2.default.node(element));
+                node.appendChild(_cuic2.default.node(element));
             }
             return this;
         }
@@ -1204,7 +1204,7 @@ var Element = function () {
         key: "appendTo",
         value: function appendTo(element) {
             this.debug("appendTo", element);
-            _cuic2.default.node(element).append(this.node());
+            _cuic2.default.node(element).appendChild(this.node());
             return this;
         }
     }, {
@@ -1537,18 +1537,18 @@ var Element = function () {
         key: "insertAfter",
         value: function insertAfter(element) {
             this.debug("insertAfter", element);
-            element = _cuic2.default.node(element);
-            var parent = this.node().parentNode;
-            parent.insertBefore(element, this.node().nextSibling);
+            var node = _cuic2.default.node(element);
+            var parentNode = this.parentNode();
+            parentNode.insertBefore(node, this.node().nextSibling);
             return this;
         }
     }, {
         key: "insertBefore",
         value: function insertBefore(element) {
             this.debug("insertBefore", element);
-            element = _cuic2.default.node(element);
-            var parent = this.node().parentNode;
-            parent.insertBefore(element, this.node());
+            var node = _cuic2.default.node(element);
+            var parentNode = this.parentNode();
+            parentNode.insertBefore(node, this.node());
             return this;
         }
     }, {
@@ -1993,19 +1993,20 @@ var Element = function () {
     }, {
         key: "prepend",
         value: function prepend(element) {
-            var node = this.node();
+            var self = this;
+
             this.debug("prepend", element);
 
             if (element instanceof _elements.Elements) {
                 element.each(function (el) {
-                    node.prepend(el.node());
+                    el.preprendTo(self);
                 });
             } else if (_cuic2.default.isJQuery(element)) {
                 element.each(function () {
-                    node.prepend(this);
+                    _cuic2.default.element(this).preprendTo(self);
                 });
             } else {
-                node.prepend(_cuic2.default.node(element));
+                _cuic2.default.element(element).preprendTo(self);
             }
             return this;
         }
@@ -2013,7 +2014,14 @@ var Element = function () {
         key: "prependTo",
         value: function prependTo(element) {
             this.debug("prependTo", element);
-            _cuic2.default.node(element).prepend(this.node());
+            var el = _cuic2.default.element(element);
+
+            if (el.children().length) {
+                el.children().first().insertBefore(this.node());
+            } else {
+                el.append(this);
+            }
+
             return this;
         }
     }, {
@@ -2468,12 +2476,14 @@ var Events = exports.Events = function () {
         key: "trigger",
         value: function trigger(event) {
             if (this.callbacks[event] instanceof Array) {
+                var result = void 0;
                 var cb = this.callbacks[event];
                 var args = Array.prototype.slice.call(arguments, 1);
 
                 for (var i = 0; i < cb.length; i += 1) {
-                    cb[i].apply(this.context, args);
+                    result = cb[i].apply(this.context, args);
                 }
+                return result;
             }
         }
     }]);
@@ -2598,6 +2608,74 @@ Group.prototype.options = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.Button = undefined;
+
+var _cuic = __webpack_require__(0);
+
+var _cuic2 = _interopRequireDefault(_cuic);
+
+var _component = __webpack_require__(4);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Button = exports.Button = function (_Component) {
+    _inherits(Button, _Component);
+
+    function Button(options) {
+        _classCallCheck(this, Button);
+
+        options = _cuic2.default.extend({}, Button.prototype.options, options, {
+            mainClass: "btn"
+        });
+
+        var _this = _possibleConstructorReturn(this, (Button.__proto__ || Object.getPrototypeOf(Button)).call(this, "button", {
+            className: options.className,
+            disabled: false,
+            html: options.label,
+            title: options.title,
+            type: options.type
+        }, options));
+
+        if (typeof options.shortcut === "number") {
+            _this.shortcut = new _cuic2.default.Shortcut({
+                keyCode: options.shortcut,
+                target: _this.element,
+                callback: function callback() {
+                    _this.click();
+                }
+            });
+        }
+        return _this;
+    }
+
+    return Button;
+}(_component.Component);
+
+Button.prototype.options = {
+    className: "btn-default",
+    disabled: false,
+    label: null,
+    shortcut: null,
+    title: null,
+    type: "button"
+};
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 exports.Shortcut = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -2688,7 +2766,7 @@ _cuic2.default.keys = {
 };
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2958,74 +3036,6 @@ var Elements = function () {
 exports.Elements = Elements;
 
 /***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.Button = undefined;
-
-var _cuic = __webpack_require__(0);
-
-var _cuic2 = _interopRequireDefault(_cuic);
-
-var _component = __webpack_require__(4);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Button = exports.Button = function (_Component) {
-    _inherits(Button, _Component);
-
-    function Button(options) {
-        _classCallCheck(this, Button);
-
-        options = _cuic2.default.extend({}, Button.prototype.options, options, {
-            mainClass: "btn"
-        });
-
-        var _this = _possibleConstructorReturn(this, (Button.__proto__ || Object.getPrototypeOf(Button)).call(this, "button", {
-            className: options.className,
-            disabled: false,
-            html: options.label,
-            title: options.title,
-            type: options.type
-        }, options));
-
-        if (typeof options.shortcut === "number") {
-            _this.shortcut = new _cuic2.default.Shortcut({
-                keyCode: options.shortcut,
-                target: _this.element,
-                callback: function callback() {
-                    _this.click();
-                }
-            });
-        }
-        return _this;
-    }
-
-    return Button;
-}(_component.Component);
-
-Button.prototype.options = {
-    className: "btn-default",
-    disabled: false,
-    label: null,
-    shortcut: null,
-    title: null,
-    type: "button"
-};
-
-/***/ }),
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3160,8 +3170,6 @@ var Movable = exports.Movable = function (_Component) {
                 ev.preventDefault();
 
                 _this2.addClass("moving");
-
-                _this2.removeClass("aligned-left aligned-right aligned-top aligned-bottom");
 
                 var startPosition = _this2.position();
                 var startX = ev.clientX;
@@ -3430,6 +3438,288 @@ Resizable.prototype.options = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.Popup = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _cuic = __webpack_require__(0);
+
+var _cuic2 = _interopRequireDefault(_cuic);
+
+var _closable = __webpack_require__(3);
+
+var _collection = __webpack_require__(2);
+
+var _element = __webpack_require__(1);
+
+var _shortcut = __webpack_require__(8);
+
+var _group = __webpack_require__(6);
+
+var _button = __webpack_require__(7);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Popup = exports.Popup = function (_Closable) {
+    _inherits(Popup, _Closable);
+
+    function Popup(options) {
+        _classCallCheck(this, Popup);
+
+        options = _cuic2.default.extend({}, Popup.prototype.options, options, {
+            mainClass: "popup"
+        });
+
+        var _this = _possibleConstructorReturn(this, (Popup.__proto__ || Object.getPrototypeOf(Popup)).call(this, "div", { className: options.className }, options));
+
+        _this.tail = new _element.Element("span", {
+            className: "popup-tail"
+        }).appendTo(_this);
+
+        _this.header = new _element.Element("header", {
+            className: "popup-header",
+            css: { display: !!_this.options.title ? "block" : "none" }
+        }).appendTo(_this);
+
+        _this.title = new _element.Element("h5", {
+            className: "popup-title",
+            html: _this.options.title
+        }).appendTo(_this.header);
+
+        _this.content = new _element.Element("div", {
+            className: "popup-content",
+            html: options.content
+        }).appendTo(_this);
+
+        _this.footer = new _element.Element("footer", {
+            className: "popup-footer",
+            css: { display: !!_this.options.buttons ? "block" : "none" }
+        }).appendTo(_this);
+
+        _this.buttons = new _group.Group("div", {
+            className: "btn-group guide-buttons"
+        }).appendTo(_this.footer);
+
+        _this.buttons.onComponentAdded(function () {
+            if (_this.buttons.components.length > 0) {
+                _this.footer.show();
+            }
+        });
+
+        _this.buttons.onComponentRemoved(function () {
+            if (_this.buttons.components.length < 1) {
+                _this.footer.hide();
+            }
+        });
+
+        if (_this.options.buttons instanceof Array) {
+            for (var i = 0; i < _this.options.buttons.length; i += 1) {
+                _this.addButton(_this.options.buttons[i]);
+            }
+        }
+
+        if (!(_this.options.buttons instanceof Array) || _this.options.buttons.length < 1) {
+            _this.footer.hide();
+        }
+
+        _this.shortcuts = {
+            close: new _shortcut.Shortcut({
+                element: _this,
+                keyCode: _cuic2.default.keys.ESC,
+                callback: function callback() {
+                    _this.close();
+                }
+            })
+        };
+
+        var autoClose = function autoClose(ev) {
+            if (_this.isOpened() && _this.options.autoClose) {
+                if (ev.target !== _this.node() && !_cuic2.default.element(ev.target).isChildOf(_this)) {
+                    _this.close();
+                }
+            }
+        };
+
+        _this.on("click", function (ev) {
+
+            if (_cuic2.default.element(ev.target).hasClass("btn-close")) {
+                ev.preventDefault();
+                _this.close();
+            }
+        });
+
+        _this.onAnchored(function () {
+            _this.updateTail();
+        });
+
+        _this.onClosed(function () {
+            _cuic2.default.off("click", document, autoClose);
+
+            if (_this.options.autoRemove) {
+                _this.remove();
+            }
+        });
+
+        _this.onOpen(function () {
+            var target = _cuic2.default.element(_this.options.target);
+            _this.appendTo(target.parent());
+
+            var anchor = target.data("anchor") || _this.options.anchor;
+            var anchorPoint = target.data("anchor-point") || _this.options.anchorPoint;
+            _this.anchor(anchor, anchorPoint, target);
+        });
+
+        _this.onOpened(function () {
+
+            _cuic2.default.on("click", document, autoClose);
+        });
+
+        _cuic2.default.popups.add(_this);
+        return _this;
+    }
+
+    _createClass(Popup, [{
+        key: "addButton",
+        value: function addButton(button) {
+            var _this2 = this;
+
+            if (!(button instanceof _button.Button)) {
+                var callback = button.callback;
+
+                button = new _button.Button(_cuic2.default.extend({
+                    className: "btn btn-default " + button.className,
+                    label: button.label
+                }, button));
+
+                if (typeof callback === "function") {
+                    button.on("click", function (ev) {
+                        callback.call(_this2, ev);
+                    });
+                }
+            }
+
+            this.buttons.addComponent(button);
+            return button;
+        }
+    }, {
+        key: "getContent",
+        value: function getContent() {
+            return this.content;
+        }
+    }, {
+        key: "getFooter",
+        value: function getFooter() {
+            return this.footer;
+        }
+    }, {
+        key: "getHeader",
+        value: function getHeader() {
+            return this.header;
+        }
+    }, {
+        key: "setContent",
+        value: function setContent(html) {
+            this.content.html(html);
+            return this;
+        }
+    }, {
+        key: "setFooter",
+        value: function setFooter(html) {
+            this.footer.html(html);
+            return this;
+        }
+    }, {
+        key: "setHeader",
+        value: function setHeader(html) {
+            this.header.html(html);
+            return this;
+        }
+    }, {
+        key: "setTitle",
+        value: function setTitle(html) {
+            this.title.html(html);
+
+            if (html !== null) {
+                this.header.show();
+            }
+            return this;
+        }
+    }, {
+        key: "updateTail",
+        value: function updateTail() {
+            var prop = {
+                bottom: "",
+                left: "",
+                right: "",
+                top: ""
+            };
+
+            this.tail.removeClass("popup-tail-bottom popup-tail-left popup-tail-right popup-tail-top");
+
+            if (this.isAnchored("bottom")) {
+                this.tail.addClass("popup-tail-top");
+            }
+
+            if (this.isAnchored("top")) {
+                this.tail.addClass("popup-tail-bottom");
+            }
+
+            if (this.isAnchored("left")) {
+                this.tail.addClass("popup-tail-right");
+            }
+
+            if (this.isAnchored("right")) {
+                this.tail.addClass("popup-tail-left");
+            }
+
+            this.tail.css(prop);
+
+            return this;
+        }
+    }]);
+
+    return Popup;
+}(_closable.Closable);
+
+Popup.prototype.options = {
+    anchor: "top",
+    autoClose: true,
+    autoRemove: false,
+    content: null,
+    namespace: "popup",
+    opened: false,
+    target: null,
+    zIndex: 9
+};
+
+_cuic2.default.popups = new _collection.Collection();
+
+_cuic2.default.onWindowResized(function () {
+    _cuic2.default.popups.each(function (popup) {
+        if (popup.isInDOM() && popup.isShown()) {
+            popup._disableTransitions();
+            popup.anchor();
+            popup._enableTransitions();
+        }
+    });
+});
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 exports.Notification = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -3573,7 +3863,7 @@ _cuic2.default.onWindowResized(function () {
 });
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3583,15 +3873,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-__webpack_require__(15);
-
 var _cuic = __webpack_require__(0);
 
 var _cuic2 = _interopRequireDefault(_cuic);
 
 var _benchmark = __webpack_require__(16);
 
-var _button = __webpack_require__(9);
+var _button = __webpack_require__(7);
 
 var _closable = __webpack_require__(3);
 
@@ -3601,31 +3889,33 @@ var _dialog = __webpack_require__(17);
 
 var _element = __webpack_require__(1);
 
-var _elements = __webpack_require__(8);
+var _elements = __webpack_require__(9);
 
 var _events = __webpack_require__(5);
 
 var _group = __webpack_require__(6);
 
-var _hook = __webpack_require__(18);
+var _guide = __webpack_require__(18);
+
+var _hook = __webpack_require__(19);
 
 var _movable = __webpack_require__(11);
 
-var _notification = __webpack_require__(13);
+var _notification = __webpack_require__(14);
 
-var _notificationStack = __webpack_require__(19);
+var _notificationStack = __webpack_require__(20);
 
 var _overlay = __webpack_require__(10);
 
-var _panel = __webpack_require__(20);
+var _panel = __webpack_require__(21);
 
-var _popup = __webpack_require__(21);
+var _popup = __webpack_require__(13);
 
 var _resizable = __webpack_require__(12);
 
 var _selectable = __webpack_require__(22);
 
-var _shortcut = __webpack_require__(7);
+var _shortcut = __webpack_require__(8);
 
 var _switcher = __webpack_require__(23);
 
@@ -3639,6 +3929,7 @@ _cuic2.default.Dialog = _dialog.Dialog;
 _cuic2.default.Element = _element.Element;
 _cuic2.default.Elements = _elements.Elements;
 _cuic2.default.Group = _group.Group;
+_cuic2.default.Guide = _guide.Guide;
 _cuic2.default.Hook = _hook.Hook;
 _cuic2.default.Movable = _movable.Movable;
 _cuic2.default.Notification = _notification.Notification;
@@ -3657,86 +3948,6 @@ _cuic2.default.Events = _events.Events;
 _cuic2.default.Shortcut = _shortcut.Shortcut;
 
 exports.default = _cuic2.default;
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-if (!Element.prototype.matches) {
-    Element.prototype.matches = Element.prototype.matchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.oMatchesSelector || Element.prototype.webkitMatchesSelector || function (s) {
-        var matches = (this.document || this.ownerDocument).querySelectorAll(s);
-        var i = matches.length;
-        while (--i >= 0 && matches.item(i) !== this) {}
-        return i > -1;
-    };
-}
-
-if (!Element.prototype.remove) {
-    Element.prototype.remove = function () {
-        if (this.parentNode) {
-            this.parentNode.removeChild(this);
-        }
-    };
-}
-
-(function (arr) {
-    arr.forEach(function (item) {
-        if (item.hasOwnProperty('append')) {
-            return;
-        }
-        Object.defineProperty(item, 'append', {
-            configurable: true,
-            enumerable: true,
-            writable: true,
-            value: function append() {
-                var argArr = Array.prototype.slice.call(arguments);
-                var docFrag = document.createDocumentFragment();
-
-                argArr.forEach(function (argItem) {
-                    var isNode = argItem instanceof Node;
-                    docFrag.appendChild(isNode ? argItem : document.createTextNode(String(argItem)));
-                });
-                this.appendChild(docFrag);
-            }
-        });
-    });
-})([Element.prototype, Document.prototype, DocumentFragment.prototype]);
-
-(function (arr) {
-    arr.forEach(function (item) {
-        if (item.hasOwnProperty('prepend')) {
-            return;
-        }
-        Object.defineProperty(item, 'prepend', {
-            configurable: true,
-            enumerable: true,
-            writable: true,
-            value: function prepend() {
-                var argArr = Array.prototype.slice.call(arguments);
-                var docFrag = document.createDocumentFragment();
-
-                argArr.forEach(function (argItem) {
-                    var isNode = argItem instanceof Node;
-                    docFrag.appendChild(isNode ? argItem : document.createTextNode(String(argItem)));
-                });
-
-                this.insertBefore(docFrag, this.firstChild);
-            }
-        });
-    });
-})([Element.prototype, Document.prototype, DocumentFragment.prototype]);
-
-(function (arr) {
-    arr.forEach(function (item) {
-        if (console.hasOwnProperty(item)) {
-            return;
-        }
-        console[item] = console.log.bind(console);
-    });
-})(["debug", "info", "warn"]);
 
 /***/ }),
 /* 16 */
@@ -3807,7 +4018,7 @@ var _cuic = __webpack_require__(0);
 
 var _cuic2 = _interopRequireDefault(_cuic);
 
-var _button = __webpack_require__(9);
+var _button = __webpack_require__(7);
 
 var _closable = __webpack_require__(3);
 
@@ -3823,7 +4034,7 @@ var _movable = __webpack_require__(11);
 
 var _resizable = __webpack_require__(12);
 
-var _shortcut = __webpack_require__(7);
+var _shortcut = __webpack_require__(8);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3927,6 +4138,11 @@ var Dialog = exports.Dialog = function (_Closable) {
                 handle: _this.header,
                 rootOnly: false
             });
+            _this.movable.onMoveStart(function (ev) {
+                if (_cuic2.default.element(ev.target).hasClass("btn-close")) {
+                    return false;
+                }
+            });
         }
 
         if (_this.options.resizable) {
@@ -3998,8 +4214,6 @@ var Dialog = exports.Dialog = function (_Closable) {
             }
         });
 
-        _this.onOpened(function (ev) {});
-
         _this.onRemoved(function () {
             _cuic2.default.dialogs.remove(_this);
         });
@@ -4016,10 +4230,10 @@ var Dialog = exports.Dialog = function (_Closable) {
             if (!(button instanceof _button.Button)) {
                 var callback = button.callback;
 
-                button = new _button.Button({
-                    className: "btn btn-default",
+                button = new _button.Button(_cuic2.default.extend({
+                    className: "btn btn-default " + button.className,
                     label: button.label
-                });
+                }, button));
 
                 if (typeof callback === "function") {
                     button.on("click", function (ev) {
@@ -4068,11 +4282,11 @@ var Dialog = exports.Dialog = function (_Closable) {
 
             var maxHeight = available.height;
 
-            if (this.header instanceof _element.Element) {
+            if (this.header instanceof _element.Element && this.header.isShown()) {
                 maxHeight -= this.header.outerHeight(true);
             }
 
-            if (this.footer instanceof _element.Element) {
+            if (this.footer instanceof _element.Element && this.footer.isShown()) {
                 maxHeight -= this.footer.outerHeight(true);
             }
 
@@ -4103,6 +4317,10 @@ var Dialog = exports.Dialog = function (_Closable) {
         key: "setTitle",
         value: function setTitle(html) {
             this.title.html(html);
+
+            if (html !== null) {
+                this.header.show();
+            }
             return this;
         }
     }]);
@@ -4158,6 +4376,184 @@ _cuic2.default.onWindowResized(function () {
 
 /***/ }),
 /* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.Guide = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _cuic = __webpack_require__(0);
+
+var _cuic2 = _interopRequireDefault(_cuic);
+
+var _popup = __webpack_require__(13);
+
+var _events = __webpack_require__(5);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Guide = exports.Guide = function () {
+    function Guide(options) {
+        _classCallCheck(this, Guide);
+
+        this.options = _cuic2.default.extend({}, Guide.prototype.options, options, {
+            mainClass: "guide",
+            className: "guide guide-popup"
+        });
+
+        this.popup = new _popup.Popup(_cuic2.default.extend({}, options, {
+            mainClass: "guide",
+            className: "guide guide-popup"
+        }));
+        this.popup.guide = this;
+
+        this.events = new _events.Events(this);
+
+        this.step = -1;
+        this.steps = [];
+
+        if (this.options.autoStart) {
+            this.start();
+        }
+    }
+
+    _createClass(Guide, [{
+        key: "addStep",
+        value: function addStep(options) {
+
+            if (!options.target) {
+                throw new TypeError("Guide.addStep(options) must have a 'target' option");
+            }
+            if (!options.title) {
+                throw new TypeError("Guide.addStep(options) must have a 'title' option");
+            }
+            if (!options.content) {
+                throw new TypeError("Guide.addStep(options) must have a 'content' option");
+            }
+
+            this.steps.push(_cuic2.default.extend({
+                title: null,
+                content: null,
+                buttons: null
+            }, options));
+
+            return this;
+        }
+    }, {
+        key: "getCurrentStep",
+        value: function getCurrentStep() {
+            return this.step >= this.steps.length ? this.steps[this.step] : null;
+        }
+    }, {
+        key: "getPopup",
+        value: function getPopup() {
+            return this.popup;
+        }
+    }, {
+        key: "getSteps",
+        value: function getSteps() {
+            return this.steps;
+        }
+    }, {
+        key: "goTo",
+        value: function goTo(number) {
+            var _this = this;
+
+            number = Number.parseInt(number);
+
+            if (typeof number === "number" && !isNaN(number) && number >= 0 && number < this.steps.length) {
+                this.step = Number.parseInt(number);
+                var step = this.steps[this.step];
+
+                this.popup.setTitle(step.title);
+                this.popup.setContent(step.content);
+                this.popup.buttons.empty();
+
+                if (step.buttons instanceof Array) {
+                    step.buttons.forEach(function (button) {
+                        _this.popup.addButton(button);
+                    });
+                }
+
+                var target = _cuic2.default.element(step.target);
+                var anchor = target.data("anchor") || this.options.anchor;
+                var anchorPoint = target.data("anchor-point") || this.options.anchorPoint;
+                this.popup.anchor(anchor, anchorPoint, target);
+                this.popup.open();
+                this.events.trigger("stepChanged", this.step, step);
+            }
+            return this;
+        }
+    }, {
+        key: "next",
+        value: function next() {
+            if (this.step + 1 >= this.steps.length) {
+                return this.stop();
+            } else {
+                return this.goTo(this.step + 1);
+            }
+        }
+    }, {
+        key: "onStepChanged",
+        value: function onStepChanged(callback) {
+            this.events.on("stepChanged", callback);
+        }
+    }, {
+        key: "onStarted",
+        value: function onStarted(callback) {
+            this.events.on("started", callback);
+        }
+    }, {
+        key: "onStopped",
+        value: function onStopped(callback) {
+            this.events.on("stopped", callback);
+        }
+    }, {
+        key: "previous",
+        value: function previous() {
+            return this.goTo(this.step - 1);
+        }
+    }, {
+        key: "start",
+        value: function start() {
+            this.goTo(0);
+            this.events.trigger("started");
+            return this;
+        }
+    }, {
+        key: "stop",
+        value: function stop() {
+            this.popup.close();
+            this.events.trigger("stopped");
+            return this;
+        }
+    }]);
+
+    return Guide;
+}();
+
+Guide.prototype.options = {
+    anchor: "top",
+    autoClose: true,
+    autoRemove: false,
+    autoStart: false,
+    content: null,
+    duration: 5000,
+    namespace: "guide",
+    opened: false,
+    zIndex: 9
+};
+
+/***/ }),
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4320,7 +4716,7 @@ Hook.prototype.options = {
 };
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4337,7 +4733,7 @@ var _cuic2 = _interopRequireDefault(_cuic);
 
 var _group = __webpack_require__(6);
 
-var _notification = __webpack_require__(13);
+var _notification = __webpack_require__(14);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4390,7 +4786,7 @@ NotificationStack.prototype.options = {
 };
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4694,188 +5090,6 @@ _cuic2.default.onWindowResized(function () {
         if (panel.isInDOM()) {
             panel.align();
             panel.resizeContent();
-        }
-    });
-});
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.Popup = undefined;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _cuic = __webpack_require__(0);
-
-var _cuic2 = _interopRequireDefault(_cuic);
-
-var _closable = __webpack_require__(3);
-
-var _collection = __webpack_require__(2);
-
-var _element = __webpack_require__(1);
-
-var _shortcut = __webpack_require__(7);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Popup = exports.Popup = function (_Closable) {
-    _inherits(Popup, _Closable);
-
-    function Popup(options) {
-        _classCallCheck(this, Popup);
-
-        options = _cuic2.default.extend({}, Popup.prototype.options, options, {
-            mainClass: "popup"
-        });
-
-        var _this = _possibleConstructorReturn(this, (Popup.__proto__ || Object.getPrototypeOf(Popup)).call(this, "div", { className: options.className }, options));
-
-        _this.content = new _element.Element("div", {
-            className: "popup-content",
-            html: options.content
-        }).appendTo(_this);
-
-        _this.tail = new _element.Element("span", {
-            className: "popup-tail"
-        }).appendTo(_this);
-
-        _this.shortcuts = {
-            close: new _shortcut.Shortcut({
-                element: _this,
-                keyCode: _cuic2.default.keys.ESC,
-                callback: function callback() {
-                    _this.close();
-                }
-            })
-        };
-
-        var autoClose = function autoClose(ev) {
-            if (_this.isOpened() && _this.options.autoClose) {
-                if (ev.target !== _this.node() && !_cuic2.default.element(ev.target).isChildOf(_this)) {
-                    _this.close();
-                }
-            }
-        };
-
-        _this.on("click", function (ev) {
-
-            if (_cuic2.default.element(ev.target).hasClass("btn-close")) {
-                ev.preventDefault();
-                _this.close();
-            }
-        });
-
-        _this.onAnchored(function () {
-            _this.updateTail();
-        });
-
-        _this.onClosed(function () {
-            _cuic2.default.off("click", document, autoClose);
-
-            if (_this.options.autoRemove) {
-                _this.remove();
-            }
-        });
-
-        _this.onOpen(function () {
-            var target = _cuic2.default.element(_this.options.target);
-            _this.appendTo(target.parent());
-
-            var anchor = target.data("anchor") || _this.options.anchor;
-            var anchorPoint = target.data("anchor-point") || _this.options.anchorPoint;
-            _this.anchor(anchor, anchorPoint, target);
-        });
-
-        _this.onOpened(function () {
-
-            _cuic2.default.on("click", document, autoClose);
-        });
-
-        _cuic2.default.popups.add(_this);
-        return _this;
-    }
-
-    _createClass(Popup, [{
-        key: "getContent",
-        value: function getContent() {
-            return this.content;
-        }
-    }, {
-        key: "setContent",
-        value: function setContent(html) {
-            this.content.html(html);
-            return this;
-        }
-    }, {
-        key: "updateTail",
-        value: function updateTail() {
-            var prop = {
-                bottom: "",
-                left: "",
-                right: "",
-                top: ""
-            };
-
-            this.tail.removeClass("popup-tail-bottom popup-tail-left popup-tail-right popup-tail-top");
-
-            if (this.isAnchored("bottom")) {
-                this.tail.addClass("popup-tail-top");
-            }
-
-            if (this.isAnchored("top")) {
-                this.tail.addClass("popup-tail-bottom");
-            }
-
-            if (this.isAnchored("left")) {
-                this.tail.addClass("popup-tail-right");
-            }
-
-            if (this.isAnchored("right")) {
-                this.tail.addClass("popup-tail-left");
-            }
-
-            this.tail.css(prop);
-
-            return this;
-        }
-    }]);
-
-    return Popup;
-}(_closable.Closable);
-
-Popup.prototype.options = {
-    anchor: "top",
-    autoClose: true,
-    autoRemove: false,
-    content: null,
-    namespace: "popup",
-    opened: false,
-    target: null,
-    zIndex: 9
-};
-
-_cuic2.default.popups = new _collection.Collection();
-
-_cuic2.default.onWindowResized(function () {
-    _cuic2.default.popups.each(function (popup) {
-        if (popup.isInDOM() && popup.isShown()) {
-            popup._disableTransitions();
-            popup.anchor();
-            popup._enableTransitions();
         }
     });
 });

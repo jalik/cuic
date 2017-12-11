@@ -782,16 +782,16 @@ export class Element {
 
         if (element instanceof Elements) {
             element.each((el) => {
-                node.append(el.node());
+                node.appendChild(el.node());
             });
         }
         else if (Cuic.isJQuery(element)) {
             element.each(function () {
-                node.append(this);
+                node.appendChild(this);
             });
         }
         else {
-            node.append(Cuic.node(element));
+            node.appendChild(Cuic.node(element));
         }
         return this;
     }
@@ -803,7 +803,7 @@ export class Element {
      */
     appendTo(element) {
         this.debug("appendTo", element);
-        Cuic.node(element).append(this.node());
+        Cuic.node(element).appendChild(this.node());
         return this;
     }
 
@@ -1230,28 +1230,28 @@ export class Element {
     }
 
     /**
-     * Inserts an element after
+     * Inserts the element after node
      * @param element
      * @return {Element}
      */
     insertAfter(element) {
         this.debug("insertAfter", element);
-        element = Cuic.node(element);
-        const parent = this.node().parentNode;
-        parent.insertBefore(element, this.node().nextSibling);
+        const node = Cuic.node(element);
+        const parentNode = this.parentNode();
+        parentNode.insertBefore(node, this.node().nextSibling);
         return this;
     }
 
     /**
-     * Inserts an element before
+     * Inserts the element before node
      * @param element
      * @return {Element}
      */
     insertBefore(element) {
         this.debug("insertBefore", element);
-        element = Cuic.node(element);
-        const parent = this.node().parentNode;
-        parent.insertBefore(element, this.node());
+        const node = Cuic.node(element);
+        const parentNode = this.parentNode();
+        parentNode.insertBefore(node, this.node());
         return this;
     }
 
@@ -1377,7 +1377,7 @@ export class Element {
     isMaximized() {
         return this.hasClass("maximized")
             || this.hasClass("maximized-x maximized-y")
-            || (this.css("width") === "100%" && this.css("height") === "100%" );
+            || (this.css("width") === "100%" && this.css("height") === "100%");
     }
 
     /**
@@ -1847,21 +1847,26 @@ export class Element {
      * @return {Element}
      */
     prepend(element) {
-        const node = this.node();
+        const self = this;
+        // const node = this.node();
+        // const parent = this.parent();
         this.debug("prepend", element);
 
         if (element instanceof Elements) {
             element.each((el) => {
-                node.prepend(el.node());
+                el.preprendTo(self);
+                // node.prepend(el.node());
             });
         }
         else if (Cuic.isJQuery(element)) {
             element.each(function () {
-                node.prepend(this);
+                Cuic.element(this).preprendTo(self);
+                // node.prepend(this);
             });
         }
         else {
-            node.prepend(Cuic.node(element));
+            Cuic.element(element).preprendTo(self);
+            // node.prepend(Cuic.node(element));
         }
         return this;
     }
@@ -1873,7 +1878,14 @@ export class Element {
      */
     prependTo(element) {
         this.debug("prependTo", element);
-        Cuic.node(element).prepend(this.node());
+        const el = Cuic.element(element);
+
+        if (el.children().length) {
+            el.children().first().insertBefore(this.node());
+        } else {
+            el.append(this);
+        }
+        // Cuic.node(element).prepend(this.node());
         return this;
     }
 

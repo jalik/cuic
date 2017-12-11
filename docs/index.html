@@ -31,13 +31,13 @@
 
     <!-- CSS -->
     <link href="./css/bootstrap.min.css" rel="stylesheet" type="text/css">
-    <link href="./css/cuic.min.css" rel="stylesheet" type="text/css">
+    <link href="./css/cuic.css" rel="stylesheet" type="text/css">
     <link href="./css/styles.css" rel="stylesheet" type="text/css">
 
     <!-- JS -->
     <script src="./js/jquery-2.1.1.min.js"></script>
     <script src="./js/bootstrap.min.js"></script>
-    <script src="/cuic-aio.js"></script>
+    <script src="./js/cuic-aio.js"></script>
 
     <script type="application/javascript">
         Cuic.ready(function () {
@@ -85,6 +85,7 @@
             <ul class="menu">
                 <li><a href="#ui-dialog">Dialog</a></li>
                 <!--<li><a href="#ui-grid">Grid</a></li>-->
+                <li><a href="#ui-guide">Guide</a></li>
                 <li><a href="#ui-notification">Notification</a></li>
                 <li><a href="#ui-notification-stack">NotificationStack</a></li>
                 <li><a href="#ui-panel">Panel</a></li>
@@ -152,7 +153,7 @@
                                 </div>
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" name="fullscreen" checked>
+                                        <input type="checkbox" name="fullscreen">
                                         <span>fullscreen</span>
                                     </label>
                                 </div>
@@ -337,6 +338,180 @@
                 <!--//                        });-->
                 <!--</script>-->
                 <!--</div>-->
+
+                <!-- GUIDE -->
+
+                <section id="ui-guide">
+                    <h2><a href="#ui-guide">Cuic.Guide</a></h2>
+
+                    <div class="sandbox">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <button class="btn btn-primary btn-block btn-start" type="button">
+                                    <span class="glyphicon glyphicon-play"></span>
+                                    <span>Start</span>
+                                </button>
+                                <button class="btn btn-default btn-block btn-previous-step" type="button">
+                                    <span class="glyphicon glyphicon-backward"></span>
+                                    <span>Previous</span>
+                                </button>
+                                <button class="btn btn-default btn-block btn-next-step" type="button">
+                                    <span class="glyphicon glyphicon-forward"></span>
+                                    <span>Next</span>
+                                </button>
+                                <button class="btn btn-default btn-block btn-stop" type="button">
+                                    <span class="glyphicon glyphicon-pause"></span>
+                                    <span>Stop</span>
+                                </button>
+                            </div>
+                            <div class="col-md-10">
+                                <div class="blueprint steps">
+                                    <div class="testbox step1" data-anchor="right"
+                                         style="position: absolute; top: 0; left: 0;">
+                                        STEP 1
+                                    </div>
+                                    <div class="testbox step2" data-anchor="left"
+                                         style="position: absolute; top: 0; right: 0;">
+                                        STEP 2
+                                    </div>
+                                    <div class="testbox step3" data-anchor="left"
+                                         style="position: absolute; bottom: 0; right: 0;">
+                                        STEP 3
+                                    </div>
+                                    <div class="testbox step4" data-anchor="top"
+                                         style="position: absolute; bottom: 0; left: 0;">
+                                        STEP 4
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        Cuic.ready(function () {
+                            var section = Cuic.element('#ui-guide');
+                            var sandbox = section.find('.sandbox').eq(0);
+                            var blueprint = sandbox.find('.blueprint').eq(0);
+
+                            window.guide = new Cuic.Guide({
+                                autoClose: false,
+                                autoRemove: false,
+                                autoStart: false,
+                            });
+
+                            window.guide.addStep({
+                                title: "Step 1",
+                                content: "Welcome to a simple and quick guide, click on 'next' button to go to step 2 !",
+                                target: "#ui-guide .steps .step1",
+                                buttons: [
+                                    {
+                                        label: "Skip",
+                                        callback() {
+                                            this.guide.stop();
+                                        }
+                                    },
+                                    {
+                                        className: "btn-primary",
+                                        label: "Next",
+                                        callback() {
+                                            this.guide.next();
+                                        }
+                                    }
+                                ]
+                            });
+
+                            window.guide.addStep({
+                                title: "Step 2",
+                                content: "Nice, now click on 'next' button to go to step 3 !",
+                                target: "#ui-guide .steps .step2",
+                                buttons: [
+                                    {
+                                        label: "Skip",
+                                        callback() {
+                                            this.guide.stop();
+                                        }
+                                    },
+                                    {
+                                        label: "Back",
+                                        callback() {
+                                            this.guide.previous();
+                                        }
+                                    },
+                                    {
+                                        className: "btn-primary",
+                                        label: "Next",
+                                        callback() {
+                                            this.guide.next();
+                                        }
+                                    }
+                                ]
+                            });
+
+                            window.guide.addStep({
+                                title: "Step 3",
+                                content: "Oh yeaaah, you are awesome, click on 'next' button to go to step 4 !",
+                                target: "#ui-guide .steps .step3",
+                                buttons: [
+                                    {
+                                        label: "Skip",
+                                        callback() {
+                                            this.guide.stop();
+                                        }
+                                    },
+                                    {
+                                        label: "Back",
+                                        callback() {
+                                            this.guide.previous();
+                                        }
+                                    },
+                                    {
+                                        className: "btn-primary",
+                                        label: "Next",
+                                        callback() {
+                                            this.guide.next();
+                                        }
+                                    }
+                                ]
+                            });
+
+                            window.guide.addStep({
+                                title: "Step 4",
+                                content: "Alright, finally click on 'finish' button to finish this guide !",
+                                target: "#ui-guide .steps .step4",
+                                buttons: [
+                                    {
+                                        label: "Back",
+                                        callback() {
+                                            this.guide.previous();
+                                        }
+                                    },
+                                    {
+                                        className: "btn-primary",
+                                        label: "Finish",
+                                        callback() {
+                                            this.guide.stop();
+                                        }
+                                    }
+                                ]
+                            });
+
+                            section.find('.btn-start').on("click", function (ev) {
+                                window.guide.start();
+                            });
+
+                            section.find('.btn-next-step').on("click", function (ev) {
+                                window.guide.next();
+                            });
+
+                            section.find('.btn-previous-step').on("click", function (ev) {
+                                window.guide.previous();
+                            });
+
+                            section.find('.btn-stop').on("click", function (ev) {
+                                window.guide.stop();
+                            });
+                        });
+                    </script>
+                </section>
 
                 <!-- NOTIFICATION -->
 

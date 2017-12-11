@@ -199,7 +199,7 @@ tr {
     box-sizing: border-box;
     height: 400px;
     min-height: 400px;
-    overflow: auto;
+    /*overflow: auto;*/
     padding: 10px;
     position: relative;
 }

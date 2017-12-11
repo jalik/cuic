@@ -264,7 +264,7 @@ export class Dialog extends Closable {
     }
 
     /**
-     * Adds a button to the dialog
+     * Adds a button to the footer
      * @param button
      * @return {Button}
      */
@@ -273,10 +273,10 @@ export class Dialog extends Closable {
             const callback = button.callback;
 
             // Create button
-            button = new Button({
-                className: "btn btn-default",
+            button = new Button(Cuic.extend({
+                className: "btn btn-default " + button.className,
                 label: button.label
-            });
+            }, button));
 
             // Set button callback
             if (typeof callback === "function") {
@@ -398,6 +398,10 @@ export class Dialog extends Closable {
      */
     setTitle(html) {
         this.title.html(html);
+
+        if (html !== null) {
+            this.header.show();
+        }
         return this;
     }
 }

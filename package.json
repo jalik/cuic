@@ -1,6 +1,6 @@
 {
   "name": "cuic",
-  "version": "0.9.3",
+  "version": "0.10.0",
   "description": "Common user interface components.",
   "license": "MIT",
   "keywords": [
@@ -11,6 +11,7 @@
     "element",
     "overlay",
     "group",
+    "guide",
     "hook",
     "moveable",
     "notification",

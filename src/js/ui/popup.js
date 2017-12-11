@@ -28,6 +28,8 @@ import {Closable} from "./closable";
 import {Collection} from "../utils/collection";
 import {Element} from "./element";
 import {Shortcut} from "../utils/shortcut";
+import {Group} from "./group";
+import {Button} from "./button";
 
 export class Popup extends Closable {
 
@@ -40,16 +42,65 @@ export class Popup extends Closable {
         // Create element
         super("div", {className: options.className}, options);
 
+        // Add tail
+        this.tail = new Element("span", {
+            className: "popup-tail"
+        }).appendTo(this);
+
+        // Add header
+        this.header = new Element("header", {
+            className: "popup-header",
+            css: {display: !!this.options.title ? "block" : "none"}
+        }).appendTo(this);
+
+        // Add title
+        this.title = new Element("h5", {
+            className: "popup-title",
+            html: this.options.title
+        }).appendTo(this.header);
+
         // Add content
         this.content = new Element("div", {
             className: "popup-content",
             html: options.content
         }).appendTo(this);
 
-        // Add tail
-        this.tail = new Element("span", {
-            className: "popup-tail"
+        // Add footer
+        this.footer = new Element("footer", {
+            className: "popup-footer",
+            css: {display: !!this.options.buttons ? "block" : "none"}
         }).appendTo(this);
+
+        // Add buttons group
+        this.buttons = new Group("div", {
+            className: "btn-group guide-buttons"
+        }).appendTo(this.footer);
+
+        // Show footer if not empty
+        this.buttons.onComponentAdded(() => {
+            if (this.buttons.components.length > 0) {
+                this.footer.show();
+            }
+        });
+
+        // Hide footer if empty
+        this.buttons.onComponentRemoved(() => {
+            if (this.buttons.components.length < 1) {
+                this.footer.hide();
+            }
+        });
+
+        // Add buttons
+        if (this.options.buttons instanceof Array) {
+            for (let i = 0; i < this.options.buttons.length; i += 1) {
+                this.addButton(this.options.buttons[i]);
+            }
+        }
+
+        // Hide footer if no buttons
+        if (!(this.options.buttons instanceof Array) || this.options.buttons.length < 1) {
+            this.footer.hide();
+        }
 
         /**
          * Popup shortcuts
@@ -113,6 +164,34 @@ export class Popup extends Closable {
     }
 
     /**
+     * Adds a button to the footer
+     * @param button
+     * @return {Button}
+     */
+    addButton(button) {
+        if (!(button instanceof Button)) {
+            const callback = button.callback;
+
+            // Create button
+            button = new Button(Cuic.extend({
+                className: "btn btn-default " + button.className,
+                label: button.label
+            }, button));
+
+            // Set button callback
+            if (typeof callback === "function") {
+                button.on("click", (ev) => {
+                    callback.call(this, ev);
+                });
+            }
+        }
+
+        // Add button in footer
+        this.buttons.addComponent(button);
+        return button;
+    }
+
+    /**
      * Returns the content
      * @return {Element}
      */
@@ -121,12 +200,62 @@ export class Popup extends Closable {
     }
 
     /**
-     * Sets popup content
+     * Returns the footer
+     * @return {Element}
+     */
+    getFooter() {
+        return this.footer;
+    }
+
+    /**
+     * Returns the header
+     * @return {Element}
+     */
+    getHeader() {
+        return this.header;
+    }
+
+    /**
+     * Sets the content
      * @param html
      * @return {Popup}
      */
     setContent(html) {
         this.content.html(html);
+        return this;
+    }
+
+    /**
+     * Sets the footer
+     * @param html
+     * @return {Popup}
+     */
+    setFooter(html) {
+        this.footer.html(html);
+        return this;
+    }
+
+    /**
+     * Sets the header
+     * @param html
+     * @return {Popup}
+     */
+    setHeader(html) {
+        this.header.html(html);
+        return this;
+    }
+
+    /**
+     * Sets dialog title
+     * @param html
+     * @return {Popup}
+     */
+    setTitle(html) {
+        this.title.html(html);
+
+        if (html !== null) {
+            this.header.show();
+        }
         return this;
     }
 

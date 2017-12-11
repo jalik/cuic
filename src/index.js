@@ -23,7 +23,7 @@
  *
  */
 
-import "./js/polyfill";
+// import "./js/polyfill";
 import Cuic from "./js/cuic";
 import {Benchmark} from "./js/utils/benchmark";
 import {Button} from "./js/ui/button";
@@ -34,6 +34,7 @@ import {Element} from "./js/ui/element";
 import {Elements} from "./js/ui/elements";
 import {Events} from "./js/utils/events";
 import {Group} from "./js/ui/group";
+import {Guide} from "./js/ui/guide";
 import {Hook} from "./js/ui/hook";
 import {Movable} from "./js/ui/movable";
 import {Notification} from "./js/ui/notification";
@@ -54,6 +55,7 @@ Cuic.Dialog = Dialog;
 Cuic.Element = Element;
 Cuic.Elements = Elements;
 Cuic.Group = Group;
+Cuic.Guide = Guide;
 Cuic.Hook = Hook;
 Cuic.Movable = Movable;
 Cuic.Notification = Notification;

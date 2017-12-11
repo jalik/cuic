@@ -2,20 +2,6 @@
 
 Cuic stands for **Common User Interface Components** and aims to offer various UI components like dialogs, popups, notifications, tooltips, etc.
 
-## All-In-One (AIO) lib
-
-The recommended way to load Cuic components is to load them using `import` syntax, the benefit is that you will only load what you actually use in your application.
-
-However for old classic applications, you can still load a single file that contains everything, this is the all-in-one lib. When you use this method, all components will be available in the `Cuic` namespace (example: `Cuic.Button` instead of `Button`).
-
-```js
-// Load uncompressed lib
-import Cuic from "cuic/dist/cuic-aio";
-
-// Load compressed lib
-import Cuic2 from "cuic/dist/cuic-aio.min";
-```
-
 ## Styling
 
 Cuic has a default styling that you must load to display components correctly.
@@ -242,6 +228,38 @@ dialog.setHeader(String);
 dialog.setTitle(String);
 ```
 
+### Guide
+
+A guide is used to assist users, to explain things in an interactive way like "click here, then here...".
+
+```js
+import {Guide} from "cuit/dist/ui/guide";
+
+const guide = new Guide({
+    anchor: "top",
+    autoClose: true,
+    autoRemove: false,
+    content: null,
+    opened: false,
+    target: null,
+    zIndex: 9
+});
+
+// Guide methods
+guide.addStep(Object);
+guide.getCurrentStep();
+guide.getPopup();
+guide.getSteps();
+guide.goTo(Number);
+guide.next();
+guide.onStarted(Function);
+guide.onStepChanged(Function);
+guide.onStopped(Function);
+guide.previous();
+guide.start();
+guide.stop();
+```
+
 ### Movable
 
 A generic component that can be moved with the mouse.
@@ -396,10 +414,16 @@ const popup = new Popup({
 });
 
 // Popup methods
+popup.addButton(Button);
 popup.close(Function);
 popup.getContent();
+popup.getFooter();
+popup.getHeader();
 popup.open(Function);
 popup.setContent(String);
+popup.setFooter(String);
+popup.setHeader(String);
+popup.setTitle(String);
 popup.updateTail();
 ```
 
@@ -507,6 +531,17 @@ tooltip.updateTail();
 ```
 
 ## Changelog
+
+### v0.10.0
+- Adds `Guide` component
+- Adds `Popup.addButton(Object)`
+- Adds `Popup.getFooter()`
+- Adds `Popup.getHeader()`
+- Adds `Popup.setHeader(String)`
+- Adds `Popup.setHeader(String)`
+- Adds `Popup.setTitle(String)`
+- Allows to pass all valid button options to `Dialog.addButton(Object)` 
+- Fixes `Cuic.append()`, `Cuic.prepend()` and `Cuic.prependTo()` with old browsers using compatible syntax not requiring polyfills
 
 ### v0.9.3
 - Fixes dialog closing origin animation
