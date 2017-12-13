@@ -35,14 +35,14 @@ module.exports = {
     },
     output: {
         libraryTarget: "umd",
-        path: path.join(__dirname, "dist"),
+        path: path.join(__dirname, "aio"),
         filename: `${filename}.js`
     },
     devServer: {
         hot: true,
         host: "0.0.0.0",
         port: isHTTPS ? 3443 : 3000,
-        contentBase: path.join(__dirname, "docs"),
+        contentBase: path.join(__dirname, "aio"),
         publicPath: `/`,
         watchContentBase: true
     },

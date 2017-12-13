@@ -1,6 +1,6 @@
 .babelrc
 .idea
-docs
+aio
 node_modules
 src
 test

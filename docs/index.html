@@ -30,29 +30,15 @@
     <title>Cuic.js - Examples</title>
 
     <!-- CSS -->
-    <link href="./css/bootstrap.min.css" rel="stylesheet" type="text/css">
-    <link href="./css/cuic.css" rel="stylesheet" type="text/css">
-    <link href="./css/styles.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/bundle.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/styles.css" rel="stylesheet" type="text/css">
 
     <!-- JS -->
-    <script src="./js/jquery-2.1.1.min.js"></script>
-    <script src="./js/bootstrap.min.js"></script>
-    <script src="./js/cuic-aio.js"></script>
-
-    <script type="application/javascript">
-        Cuic.ready(function () {
-            var resize = function () {
-                var navbar = Cuic.element('.navbar');
-                var sidebar = Cuic.find('#sidebar');
-                var content = Cuic.find('#content');
-                var maxHeight = Cuic.element(window).height() - navbar.outerHeight(true);
-                sidebar.css({'max-height': maxHeight});
-                content.css({'max-height': maxHeight});
-            };
-            Cuic.onWindowResized(resize);
-            resize();
-        });
-    </script>
+    <script src="assets/js/jquery-2.1.1.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/cuic-aio.js"></script>
+    <script src="assets/js/bundle.js"></script>
 </head>
 <body>
 
@@ -82,7 +68,7 @@
 
         <aside id="sidebar" class="col-sm-3 col-md-2">
             <h4 class="menu-title">Components</h4>
-            <ul class="menu">
+            <ul class="menu" id="components-menu">
                 <li><a href="#ui-dialog">Dialog</a></li>
                 <!--<li><a href="#ui-grid">Grid</a></li>-->
                 <li><a href="#ui-guide">Guide</a></li>
@@ -97,14 +83,14 @@
                 <!--<li><a href="#ui-tree">Tree</a></li>-->
             </ul>
             <h4 class="menu-title">Events</h4>
-            <ul class="menu">
+            <ul class="menu" id="events-menu">
                 <!--<li><a href="#ui-hook">Hook</a></li>-->
                 <li><a href="#ui-movable">Movable</a></li>
                 <li><a href="#ui-resizable">Resizable</a></li>
                 <li><a href="#ui-selectable">Selectable</a></li>
             </ul>
             <h4 class="menu-title">Utils</h4>
-            <ul class="menu">
+            <ul class="menu" id="utils-menu">
                 <li><a href="#ui-utils">Common</a></li>
             </ul>
         </aside>
@@ -197,46 +183,6 @@
                             </div>
                         </div>
                     </div>
-                    <script>
-                        Cuic.ready(function () {
-                            var sandbox = Cuic.element('#ui-dialog .sandbox');
-                            var blueprint = sandbox.find('.blueprint').eq(0);
-                            var modal = sandbox.find('[name=modal]').eq(0);
-                            var title = sandbox.find("[name=title]").eq(0);
-                            var parent = sandbox.find('[name="parent"]').eq(0);
-                            var fullscreen = sandbox.find('[name="fullscreen"]').eq(0);
-                            var css = sandbox.find('[name="css"]').eq(0);
-                            var position = sandbox.find('[name="position"]').eq(0);
-                            var autoClose = sandbox.find('[name="autoClose"]').eq(0);
-
-                            sandbox.find('form').on('submit', function (ev) {
-                                ev.preventDefault();
-                                window.dialog = new Cuic.Dialog({
-//                                    debug: true,
-                                    autoClose: autoClose.node().checked,
-                                    autoRemove: false,
-                                    maximized: fullscreen.node().checked,
-                                    css: css.val(),
-                                    modal: modal.node().checked,
-                                    parent: parent.node().checked ? blueprint : document.body,
-                                    position: position.val(),
-                                    title: title.node().checked ? 'Header & title' : null,
-                                    content: 'This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p><br>This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p><br>This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p><br>This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p><br>This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p><br>This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p><br>This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p><br>This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p><br>This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p><br>This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p><br>This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p><br>This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p><br>This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p><br>This is a <b>simple dialog</b>.<p>Vivamus efficitur, ipsum sit amet blandit accumsan, tortor erat pharetra elit, a elementum urna ligula at diam. Etiam id eros ut leo aliquam bibendum ac id lectus. Donec elementum libero at ullamcorper mattis. Pellentesque sed ante nec nunc varius consectetur.</p><br>',
-                                    buttons: sandbox.find("[name=buttons]").eq(0).node().checked ? [
-                                        {
-                                            label: 'Accept',
-                                            callback: 'close'
-                                        },
-                                        {
-                                            label: 'Close',
-                                            callback: 'close'
-                                        }
-                                    ] : null
-                                });
-                                dialog.open();
-                            });
-                        });
-                    </script>
                 </section>
 
                 <!-- GRID -->
@@ -386,132 +332,6 @@
                             </div>
                         </div>
                     </div>
-                    <script>
-                        Cuic.ready(function () {
-                            var section = Cuic.element('#ui-guide');
-                            var sandbox = section.find('.sandbox').eq(0);
-                            var blueprint = sandbox.find('.blueprint').eq(0);
-
-                            window.guide = new Cuic.Guide({
-                                autoClose: false,
-                                autoRemove: false,
-                                autoStart: true,
-                                steps: [
-                                    {
-                                        title: "Step 1",
-                                        content: "Welcome to a simple and quick guide, click on 'next' button to go to step 2 !",
-                                        target: "#ui-guide .steps .step1",
-                                        buttons: [
-                                            {
-                                                label: "Skip",
-                                                callback() {
-                                                    this.guide.stop();
-                                                }
-                                            },
-                                            {
-                                                className: "btn-primary",
-                                                label: "Next",
-                                                callback() {
-                                                    this.guide.next();
-                                                }
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        title: "Step 2",
-                                        content: "Nice, now click on 'next' button to go to step 3 !",
-                                        target: "#ui-guide .steps .step2",
-                                        buttons: [
-                                            {
-                                                label: "Skip",
-                                                callback() {
-                                                    this.guide.stop();
-                                                }
-                                            },
-                                            {
-                                                label: "Back",
-                                                callback() {
-                                                    this.guide.previous();
-                                                }
-                                            },
-                                            {
-                                                className: "btn-primary",
-                                                label: "Next",
-                                                callback() {
-                                                    this.guide.next();
-                                                }
-                                            }
-                                        ]
-                                    }
-                                ]
-                            });
-
-                            window.guide.addStep({
-                                title: "Step 3",
-                                content: "Oh yeaaah, you are awesome, click on 'next' button to go to step 4 !",
-                                target: "#ui-guide .steps .step3",
-                                buttons: [
-                                    {
-                                        label: "Skip",
-                                        callback() {
-                                            this.guide.stop();
-                                        }
-                                    },
-                                    {
-                                        label: "Back",
-                                        callback() {
-                                            this.guide.previous();
-                                        }
-                                    },
-                                    {
-                                        className: "btn-primary",
-                                        label: "Next",
-                                        callback() {
-                                            this.guide.next();
-                                        }
-                                    }
-                                ]
-                            });
-
-                            window.guide.addStep({
-                                title: "Step 4",
-                                content: "Alright, finally click on 'finish' button to finish this guide !",
-                                target: "#ui-guide .steps .step4",
-                                anchor: "top",
-                                buttons: [
-                                    {
-                                        label: "Back",
-                                        callback() {
-                                            this.guide.previous();
-                                        }
-                                    },
-                                    {
-                                        className: "btn-primary",
-                                        label: "Finish",
-                                        callback() {
-                                            this.guide.stop();
-                                        }
-                                    }
-                                ]
-                            });
-
-                            section.find('.btn-start').on("click", function (ev) {
-                                window.guide.start();
-                            });
-
-                            section.find('.btn-next-step').on("click", function (ev) {
-                                window.guide.next();
-                            });
-
-                            section.find('.btn-previous-step').on("click", function (ev) {
-                                window.guide.previous();
-                            });
-
-                            section.find('.btn-stop').on("click", function (ev) {
-                                window.guide.stop();
-                            });
-                        });
-                    </script>
                 </section>
 
                 <!-- NOTIFICATION -->
@@ -565,39 +385,6 @@
                             </div>
                         </div>
                     </div>
-                    <script>
-                        Cuic.ready(function () {
-                            var sandbox = Cuic.element('#ui-notification .sandbox');
-                            var blueprint = sandbox.find('.blueprint').eq(0);
-                            var autoClose = sandbox.find('[name=autoClose]').eq(0);
-                            var parent = sandbox.find('[name=parent]').eq(0);
-                            var duration = sandbox.find('[name=duration]').eq(0);
-                            var position = sandbox.find('[name=position]').eq(0);
-
-                            sandbox.find('form').on('submit', function (ev) {
-                                ev.preventDefault();
-                                window.notification = new Cuic.Notification({
-                                    autoClose: autoClose.node().checked,
-                                    autoRemove: true,
-                                    closable: true,
-                                    debug: false,
-                                    parent: parent.node().checked ? blueprint : document.body,
-                                    content: 'Notification from <b>' + position.val() + '</b>',
-                                    duration: duration.val(),
-                                    position: position.val()
-                                }).open();
-
-                                autoClose.on("change", function () {
-                                    notification.options.autoClose = autoClose.node().checked;
-                                });
-                                position.off('change').on("change", function () {
-                                    if (!notification.isRemoved()) {
-                                        notification.align(position.val(), parent.node().checked ? blueprint : document.body);
-                                    }
-                                });
-                            });
-                        });
-                    </script>
                 </section>
 
                 <!-- NOTIFICATION STACK -->
@@ -634,28 +421,6 @@
                             </div>
                         </div>
                     </div>
-                    <script>
-                        Cuic.ready(function () {
-                            var sandbox = Cuic.element('#ui-notification-stack');
-                            var blueprint = sandbox.find('.blueprint').eq(0);
-                            var position = sandbox.find('[name=position]').eq(0);
-
-                            window.notificationStack = new Cuic.NotificationStack({
-                                parent: blueprint,
-                                position: position.val()
-                            });
-
-                            position.on("change", function () {
-                                notificationStack.align(position.val());
-                            });
-                            sandbox.find('[name="add-notif"]').on('click', function (ev) {
-                                notificationStack.addComponent(new Cuic.Notification({
-                                    autoClose: false,
-                                    content: "Custom event at <em>" + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds() + "</em>"
-                                }));
-                            });
-                        });
-                    </script>
                 </section>
 
                 <!-- PANEL -->
@@ -729,50 +494,6 @@
                             </div>
                         </div>
                     </div>
-                    <script>
-                        Cuic.ready(function () {
-                            var sandbox = Cuic.element('#ui-panel .sandbox');
-                            var blueprint = sandbox.find('.blueprint').eq(0);
-                            var autoClose = sandbox.find('[name=autoClose]').eq(0);
-                            var parent = sandbox.find('[name=parent]').eq(0);
-                            var position = sandbox.find('[name=position]').eq(0);
-                            var maximized = sandbox.find('[name=maximized]').eq(0);
-                            var opened = sandbox.find('[name=opened]').eq(0);
-
-                            window.panel = new Cuic.Panel({
-                                css: {'min-width': '200px'},
-                                autoClose: autoClose.node().checked,
-                                element: blueprint.find('.panel').eq(0),
-                                maximized: maximized.node().checked,
-                                opened: opened.node().checked,
-                                parent: parent.node().checked ? blueprint : document.body,
-                                position: position.val()
-                            });
-
-                            sandbox.find('.fn-close').on('click', function () {
-                                panel.close();
-                            });
-                            sandbox.find('.fn-open').on('click', function () {
-                                panel.open();
-                            });
-                            sandbox.find('.fn-toggle').on('click', function () {
-                                panel.toggle();
-                            });
-                            autoClose.on("change", function () {
-                                panel.options.autoClose = autoClose.node().checked;
-                            });
-                            maximized.on("change", function () {
-                                if (maximized.node().checked) {
-                                    panel.maximize();
-                                } else {
-                                    panel.minimize();
-                                }
-                            });
-                            position.on("change", function () {
-                                panel.align(position.val());
-                            });
-                        });
-                    </script>
                 </section>
 
                 <!-- POPUP -->
@@ -840,11 +561,6 @@
                                         <span>Middle Right</span>
                                     </button>
                                     <button class="btn btn-default" type="button"
-                                            style="position: absolute; left: 50%; top: 50%; margin-top: -17px; margin-left: -50px"
-                                            data-anchor="middle center">
-                                        <span>Middle Center</span>
-                                    </button>
-                                    <button class="btn btn-default" type="button"
                                             style="position: absolute; right: 0; top: 50%; margin-top: -17px"
                                             data-anchor="middle left">
                                         <span>Middle Left</span>
@@ -870,40 +586,6 @@
                             </div>
                         </div>
                     </div>
-                    <script>
-                        Cuic.ready(function () {
-                            var section = Cuic.element("#ui-popup");
-                            var sandbox = section.find('.sandbox').eq(0);
-                            var blueprint = sandbox.find('.blueprint').eq(0);
-                            var anchor = sandbox.find("[name=anchor]").eq(0);
-                            var anchorPoint = sandbox.find("[name=anchorPoint]").eq(0);
-
-                            window.popups = [];
-
-                            blueprint.find('button').each(function (el, i) {
-                                window.popups[i] = new Cuic.Popup({
-                                    anchor: anchor.val(),
-                                    autoClose: false,
-                                    autoRemove: false,
-                                    closable: true,
-                                    content: "This is a popup",
-                                    target: el
-                                });
-
-                                anchor.on("change", function () {
-                                    window.popups[i].anchor(anchor.val(), anchorPoint.val());
-                                });
-                                anchorPoint.on("change", function () {
-                                    window.popups[i].anchor(anchor.val(), anchorPoint.val());
-                                });
-                                el.on("click", function () {
-                                    popups[i].setContent("Clicked at <em>" + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds() + "</em>");
-                                    popups[i].toggle();
-                                });
-                                el.click();
-                            });
-                        });
-                    </script>
                 </section>
 
                 <!-- HOOK -->
@@ -980,68 +662,6 @@
                             </div>
                         </div>
                     </div>
-                    <script>
-                        Cuic.ready(function () {
-                            var section = Cuic.element('#ui-movable');
-                            var form = section.find('form').eq(0);
-                            var sandbox = section.find('.sandbox').eq(0);
-                            var testBoxA = sandbox.find('.testbox-a').eq(0);
-                            var testBoxB = sandbox.find('.testbox-b').eq(0);
-                            var x = form.find('[name="x"]').eq(0);
-                            var y = form.find('[name="y"]').eq(0);
-                            var state = form.find('[name="state"]').eq(0);
-                            var horizontally = form.find('[name="horizontally"]').eq(0);
-                            var vertically = form.find('[name="vertically"]').eq(0);
-
-                            window.movable = new Cuic.Movable({
-                                element: testBoxA,
-                                horizontally: horizontally.node().checked,
-                                vertically: vertically.node().checked
-                            });
-
-                            window.movableB = new Cuic.Movable({
-                                element: testBoxB,
-                                horizontally: horizontally.node().checked,
-                                vertically: vertically.node().checked
-                            });
-
-                            horizontally.on("change", function (ev) {
-                                movable.options.horizontally = ev.target.checked;
-                                movableB.options.horizontally = ev.target.checked;
-                            });
-
-                            vertically.on("change", function (ev) {
-                                movable.options.vertically = ev.target.checked;
-                                movableB.options.vertically = ev.target.checked;
-                            });
-
-                            var movables = [movable, movableB];
-
-                            for (var i = 0; i < movables.length; i += 1) {
-                                movables[i].onMove(function (ev) {
-                                    state.val('onMove');
-                                    const position = this.position();
-                                    x.val(position.left);
-                                    y.val(position.top);
-//                                Cuic.debug('moving', position);
-                                });
-                                movables[i].onMoveStart(function (ev) {
-                                    state.val('onMoveStart');
-                                    const position = this.position();
-                                    x.val(position.left);
-                                    y.val(position.top);
-//                                Cuic.debug('move start', ev);
-                                });
-                                movables[i].onMoveEnd(function (ev) {
-                                    state.val('onMoveEnd');
-                                    const position = this.position();
-                                    x.val(position.left);
-                                    y.val(position.top);
-//                                Cuic.debug('move stop', ev);
-                                });
-                            }
-                        });
-                    </script>
                 </section>
 
                 <!-- RESIZABLE -->
@@ -1097,58 +717,6 @@
                             </div>
                         </div>
                     </div>
-                    <script>
-                        Cuic.ready(function () {
-                            var section = Cuic.element('#ui-resizable');
-                            var sandbox = section.find('.sandbox').eq(0);
-                            var blueprint = sandbox.find('.blueprint').eq(0);
-                            var width = sandbox.find('[name="width"]').eq(0);
-                            var height = sandbox.find('[name="height"]').eq(0);
-                            var hratio = sandbox.find('[name="hratio"]').eq(0);
-                            var vratio = sandbox.find('[name="vratio"]').eq(0);
-                            var horizontally = sandbox.find('[name="horizontally"]').eq(0);
-                            var vertically = sandbox.find('[name="vertically"]').eq(0);
-
-                            window.resizable = new Cuic.Resizable({
-                                debug: true,
-                                element: sandbox.find('.testbox-a').eq(0),
-                                keepRatio: false,
-                                horizontally: horizontally.node().checked,
-                                vertically: vertically.node().checked
-                            });
-                            window.resizableB = new Cuic.Resizable({
-                                debug: true,
-                                element: sandbox.find('.testbox-b').eq(0),
-                                keepRatio: false,
-                                horizontally: horizontally.node().checked,
-                                vertically: vertically.node().checked
-                            });
-
-                            horizontally.on("change", function (ev) {
-                                resizable.options.horizontally = ev.target.checked;
-                                resizableB.options.horizontally = ev.target.checked;
-                            });
-
-                            vertically.on("change", function (ev) {
-                                resizable.options.vertically = ev.target.checked;
-                                resizableB.options.vertically = ev.target.checked;
-                            });
-
-                            resizable.onResizeStart(function (ev) {
-//                                console.log('onResizeStart', ev.clientX, ev.clientY);
-                            });
-                            resizable.onResizeEnd(function (ev) {
-//                                console.log('onResizeEnd', ev.clientX, ev.clientY);
-                            });
-                            resizable.onResize(function (ev) {
-//                                console.log('resize', ev)
-                                width.val(resizable.width());
-                                height.val(resizable.height());
-                                hratio.val(Math.round(resizable.width() / resizable.height() * 100) / 100);
-                                vratio.val(Math.round(resizable.height() / resizable.width() * 100) / 100);
-                            });
-                        });
-                    </script>
                 </section>
 
                 <!-- SELECTABLE -->
@@ -1169,19 +737,6 @@
                             </div>
                         </div>
                     </div>
-                    <script>
-                        Cuic.ready(function () {
-                            var section = Cuic.element('#ui-selectable');
-                            var sandbox = section.find('.sandbox').eq(0);
-                            var blueprint = sandbox.find('.blueprint').eq(0);
-
-                            Cuic.find('.testbox', blueprint).each(function (box) {
-                                window.selectable = new Cuic.Selectable({
-                                    element: box
-                                });
-                            });
-                        });
-                    </script>
                 </section>
 
                 <!-- SWITCHER -->
@@ -1242,31 +797,6 @@
                             </div>
                         </div>
                     </div>
-                    <script>
-                        Cuic.ready(function () {
-                            var section = Cuic.element('#ui-switcher');
-                            var sandbox = section.find('.sandbox').eq(0);
-
-                            window.switcher = new Cuic.Switcher({
-                                autoStart: false,
-                                delay: 1000,
-                                element: sandbox.find('.switcher').eq(0),
-                                repeat: sandbox.find('[name=repeat]').eq(0).node().checked
-                            });
-
-                            // Options
-                            sandbox.find('[name=repeat]').on('change', function (ev) {
-                                ev.preventDefault();
-                                switcher.repeat = ev.currentTarget.checked;
-                            });
-
-                            // Methods
-                            sandbox.find('[name="method"]').on('click', function (ev) {
-                                ev.preventDefault();
-                                switcher[ev.currentTarget.value]();
-                            });
-                        });
-                    </script>
                 </section>
 
                 <!-- TABLE -->
@@ -1492,38 +1022,6 @@
                             </div>
                         </div>
                     </div>
-                    <script>
-                        Cuic.ready(function () {
-                            var sandbox = Cuic.element('#ui-tooltip .sandbox');
-                            var anchor = sandbox.find("[name=anchor]").eq(0);
-                            var followPointer = sandbox.find("[name=followPointer]").eq(0);
-
-                            window.tooltip = new Cuic.Tooltip({
-                                anchor: anchor.val(),
-                                attribute: "title",
-                                followPointer: followPointer.node().checked,
-                                selector: '.group1 [title]'
-                            });
-
-                            window.tooltipBlue = new Cuic.Tooltip({
-                                anchor: anchor.val(),
-                                attribute: "title",
-                                css: {background: 'rgba(93,190,221,0.9)'},
-                                followPointer: followPointer.node().checked,
-                                selector: '.group2 [title]'
-                            });
-
-                            anchor.on("change", function () {
-                                window.tooltip.anchor(anchor.val());
-                                window.tooltipBlue.anchor(anchor.val());
-                            });
-
-                            followPointer.on("change", function () {
-                                window.tooltip.options.followPointer = followPointer.node().checked;
-                                window.tooltipBlue.options.followPointer = followPointer.node().checked;
-                            });
-                        });
-                    </script>
                 </section>
 
                 <!-- TREE -->
@@ -1628,27 +1126,6 @@
                             </div>
                         </div>
                     </div>
-                    <script>
-                        Cuic.ready(function () {
-                            var section = Cuic.element('#ui-utils');
-                            var sandbox = section.find('.sandbox').eq(0);
-                            var blueprint = section.find('.blueprint').eq(0);
-                            var target = blueprint.find('.target').eq(0);
-                            var form = section.find('form').eq(0);
-                            var field = section.find('[name="value"]').eq(0);
-
-                            form.find('[name="method"]').on('click', function (ev) {
-                                var button = ev.currentTarget;
-                                var value = null;
-
-                                if (typeof Cuic.Element.prototype[button.value] === 'function') {
-                                    value = Cuic.element(target)[button.value]();
-                                }
-                                field.val(value);
-                                console.log(button.value, value);
-                            });
-                        });
-                    </script>
                 </section>
             </div>
         </div>
