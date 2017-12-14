@@ -1,6 +1,6 @@
 {
   "name": "cuic",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "description": "Common user interface components.",
   "license": "MIT",
   "keywords": [
@@ -40,10 +40,10 @@
   "scripts": {
     "build": "./node_modules/.bin/gulp build && ./node_modules/.bin/webpack --config webpack.config.js",
     "build:prod": "./node_modules/.bin/gulp prepublish && ./node_modules/.bin/webpack --config webpack.config.js -p",
-    "dev": "./node_modules/.bin/webpack-dev-server --hot --watch",
+    "dev": "./node_modules/.bin/webpack-dev-server --config webpack.config.js --hot --watch",
     "prepublish": "npm run build && npm run build:prod && npm test",
     "test": "jest",
-    "watch": "./node_modules/.bin/webpack --config webpack.config.js --watch"
+    "watch": "./node_modules/.bin/gulp watch"
   },
   "homepage": "https://github.com/jalik/cuic.js#readme",
   "devDependencies": {

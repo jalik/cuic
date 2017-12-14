@@ -24,7 +24,7 @@
  */
 
 @popup-background-color: @background-color-inverse;
-@popup-tail-size: 6px;
+@popup-tail-size: 8px;
 
 .popup {
   background-color: @popup-background-color;
@@ -32,7 +32,7 @@
   box-shadow: @shadow;
   color: @color-inverse;
   display: inline-block;
-  margin: @margin;
+  margin: @popup-tail-size;
   padding: @padding;
   position: absolute;
   transition-property: background, opacity, height, width, bottom, left, right, top, transform;

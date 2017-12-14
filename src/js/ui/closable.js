@@ -120,8 +120,8 @@ export class Closable extends Component {
      * @return {Closable}
      */
     open(callback) {
-        this.debug("open");
         this.show();
+        this.debug("open");
         this.events.trigger("open");
         this.removeClass("closed");
         this.addClass("opened");

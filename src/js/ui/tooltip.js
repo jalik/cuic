@@ -117,16 +117,6 @@ export class Tooltip extends Closable {
             }
         };
 
-        // Keep tooltip open when mouse is over
-        this.on("mouseover", () => {
-            this.open();
-        });
-
-        // Close tooltip open when mouse leave it
-        this.on("mouseleave", () => {
-            this.close();
-        });
-
         // Reposition tail when tooltip position change
         this.onAnchored(() => {
             this.updateTail();

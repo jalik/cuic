@@ -531,6 +531,30 @@ tooltip.updateTail();
 
 ## Changelog
 
+### v0.10.2
+- Adds `Cuic.body()`
+- Adds `Cuic.calculateScrollbarWidth()`
+- Adds `Cuic.screenHeight()`
+- Adds `Cuic.screenWidth()`
+- Adds `Cuic.scrollTo()`
+- Adds `Cuic.scrollX()`
+- Adds `Cuic.scrollY()`
+- Adds `Element.calculatePosition()`
+- Adds `Element.calculatePositionOnScreen()`
+- Adds `Element.isDirectChildOf()`
+- Adds `Guide.getCurrentStepIndex()`
+- Adds `Guide.getLastStep()`
+- Adds `Guide.getStep()`
+- Adds `Guide.getStepById()`
+- Adds `Guide.getStepIndex()`
+- Adds `Guide.resume()`
+- Adds option `autoScroll` to `Guide` component
+- Fixes `Element._disableTransitions()` to hide element
+- Fixes `Element._enableTransitions()` to show element
+- Fixes `Element.anchor()` to animate changes only when element is in the same parent node then the target
+- Fixes `Element.isInDOM()`
+- Fixes `Element.offsetParent()` to return null if no parent is found
+
 ### v0.10.1
 - Fixes `Guide` auto close issue
 - Fixes `Guide` animations

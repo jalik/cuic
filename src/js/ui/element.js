@@ -168,12 +168,12 @@ export class Element {
 
             // Use body as parent
             if (parent.node().nodeName === "HTML") {
-                parent = Cuic.element(document.body);
+                parent = Cuic.body();
             }
         }
         else {
             // Use parent node if no parent defined
-            parent = this.offsetParent();
+            parent = this.offsetParent() || Cuic.body();
         }
 
         let elHeight = this.outerHeight(true);
@@ -289,6 +289,12 @@ export class Element {
             top: ""
         };
 
+        // TODO REMOVE
+        // this.debug("attach to:", anchor, ", with tail at:", anchorPoint);
+        this.debug("elSize:", {width: elWidth, height: elHeight});
+        this.debug("targetOffset:", targetOffset);
+        // this.debug("width:", elWidth, ", height:", elHeight);
+
         if (anchorPoint) {
             // Vertical positioning
             if (anchor.indexOf("top") !== -1) {
@@ -351,11 +357,61 @@ export class Element {
             }
         }
 
+        // TODO aligner dans la zone visible d l'écran
+        // const targetPosition = target.calculatePositionOnScreen();
+        // this.debug("targetPosition:", targetPosition);
+        // const targetPositionScroll = target.calculatePositionOnScreen();
+        // this.debug("targetPositionScroll:", targetPositionScroll);
+        // new Element("div").css({
+        //     position: "absolute",
+        //     top: targetPositionScroll.top,
+        //     left: targetPositionScroll.left,
+        //     background: "rgba(255,0,0,0.2)",
+        //     height: targetHeight,
+        //     width: targetWidth,
+        //     zIndex: 1000
+        // }).appendTo(document.body);
+
+        // let diffX = Math.abs(Math.min(0, window.screen.width - (targetPosition.left - Math.abs(prop.left - targetOffset.left) + elWidth)));
+        //
+        // // Fit element to right
+        // if (diffX > 0) {
+        //     prop.left -= diffX;
+        //     // todo limit width
+        // }
+        // // Fit element to left
+        // else {
+        //     diffX = Math.abs(Math.min(0, targetPosition.left - (targetOffset.left - prop.left)));
+        //
+        //     if (diffX > 0) {
+        //         prop.left += diffX;
+        //         // todo limit width
+        //     }
+        // }
+        //
+        // let diffY = Math.abs(Math.min(0, window.screen.height - (targetPosition.top - Math.abs(prop.top - targetOffset.top) + elHeight)));
+        //
+        // // Fit element to bottom
+        // if (diffY > 0) {
+        //     prop.top -= diffY;
+        //     // todo limit height
+        // }
+        // // Fit element to top
+        // else {
+        //     diffY = Math.abs(Math.min(0, targetPosition.top - (targetOffset.top - prop.top)));
+        //
+        //     if (diffY > 0) {
+        //         prop.top += diffY;
+        //         // todo limit height
+        //     }
+        // }
+
         // Use window for positioning
         if (this.isFixed()) {
             prop.left -= window.scrollX;
             prop.top -= window.scrollY;
         }
+        // this.debug("css =", prop);
         return prop;
     }
 
@@ -366,7 +422,7 @@ export class Element {
      * @protected
      */
     _calculateAvailablePosition(parent) {
-        parent = parent ? Cuic.element(parent) : this.offsetParent();
+        parent = parent ? Cuic.element(parent) : this.offsetParent() || Cuic.body();
 
         let prop = {
             minX: 0,
@@ -398,7 +454,7 @@ export class Element {
      * @protected
      */
     _calculateAvailableSpace(parent) {
-        parent = parent ? Cuic.element(parent) : this.offsetParent();
+        parent = parent ? Cuic.element(parent) : this.offsetParent() || Cuic.body();
         const elMargin = this.margin();
 
         let prop = {
@@ -430,7 +486,7 @@ export class Element {
      * @protected
      */
     _calculateMaximize() {
-        const parent = this.offsetParent();
+        const parent = this.offsetParent() || Cuic.body();
         const parentPadding = parent.padding();
         const elMargin = this.margin();
         let prop = {
@@ -502,7 +558,7 @@ export class Element {
      * @protected
      */
     _disableTransitions() {
-        this.addClass("no-transition");
+        this.addClass("no-transition").hide();
         return this;
     }
 
@@ -534,7 +590,7 @@ export class Element {
      * @protected
      */
     _enableTransitions() {
-        this.removeClass("no-transition");
+        this.removeClass("no-transition").show();
         return this;
     }
 
@@ -696,10 +752,10 @@ export class Element {
             const elHeight = this.outerHeight(true);
 
             // todo
-            // console.log("screen", screen);
-            // console.log("rect", rect);
-            // console.log("prop", prop);
-            // console.log("size", {width: elWidth, height: elHeight});
+            // this.debug("screen", screen);
+            // this.debug("rect", rect);
+            // this.debug("prop", prop);
+            // this.debug("size", {width: elWidth, height: elHeight});
 
             for (let i = 0; i < alignments.length; i += 1) {
                 const location = alignments[i];
@@ -713,24 +769,24 @@ export class Element {
                     // positive
                     else if (["bottom", "top"].indexOf(location) !== -1) {
                         if (screenPos + elHeight > screen.maxY) {
-                            // console.log(location + ": " + (screenPos + elHeight) + " > " + available.maxY);
+                            // this.debug(location + ": " + (screenPos + elHeight) + " > " + available.maxY);
                             // const extraSpace = Math.abs(available.maxY - Math.abs(prop[location]) - elHeight);
                             const extraSpace = Math.abs(screen.maxY - Math.abs(rect[location]) - elHeight);
                             prop[location] -= extraSpace;
-                            // console.log(available.maxY + "-" + extraSpace + " = ", prop[location]);
+                            // this.debug(available.maxY + "-" + extraSpace + " = ", prop[location]);
                         }
                     }
                     else if (["left", "right"].indexOf(location) !== -1) {
                         if (screenPos + elWidth > screen.maxX) {
-                            // console.log(location + ": " + (screenPos + elWidth) + " > " + available.maxX);
+                            // this.debug(location + ": " + (screenPos + elWidth) + " > " + available.maxX);
                             const extraSpace = Math.abs(screen.maxX - Math.abs(rect[location]) - elWidth);
                             prop[location] -= extraSpace;
-                            // console.log(available.maxX + "-" + extraSpace + " = ", prop[location]);
+                            // this.debug(available.maxX + "-" + extraSpace + " = ", prop[location]);
                         }
                     }
                 }
             }
-            // console.log("prop", prop);
+            // this.debug("prop", prop);
 
             // Apply alignment
             this.css(prop);
@@ -746,7 +802,7 @@ export class Element {
      * @return {Element}
      */
     anchor(anchor, anchorPoint, target) {
-        if (this.isInDOM() && (anchor || this.options.anchor)) {
+        if (anchor || this.options.anchor) {
             // Use default anchor
             if (anchor === undefined) {
                 anchor = this.options.anchor;
@@ -759,10 +815,22 @@ export class Element {
             if (target === undefined) {
                 target = this.options.target;
             }
-            target = Cuic.element(target);
+            // Allow target to be a coordinate
+            // else convert as element.
+            else if (target instanceof Array) {
+                target = Cuic.element(target);
+            }
             this.debug("anchor", anchor, target);
-            this.css(this._calculateAnchor(anchor, anchorPoint, target));
+
+            const targetParent = target instanceof Array ? document.body : target.offsetParent();
+            const disableTransition = this.isInDOM() && !this.isDirectChildOf(targetParent);
+            disableTransition && this._disableTransitions();
+            this.appendTo(targetParent);
+            const props = this._calculateAnchor(anchor, anchorPoint, target);
+            this.css(props);
             this.addPositionClass(anchor, "anchored");
+            disableTransition && this._enableTransitions();
+
             this.options.anchor = anchor;
             this.options.anchorPoint = anchorPoint;
             this.options.target = target;
@@ -881,6 +949,71 @@ export class Element {
             top: top,
             vertical: bottom + top
         };
+    }
+
+    calculatePosition() {
+        const pos = this.offset();
+
+        if (this.isInDOM()) {
+            let parent;
+            let ref = this;
+
+            do {
+                parent = ref.offsetParent();
+
+                if (parent) {
+                    // this.debug("-- parent:", offsetParent.node());
+                    const parentPos = parent.offset();
+                    // this.debug("        ->", parentPos);
+                    pos.top += parentPos.top;
+                    pos.left += parentPos.left;
+                    ref = parent;
+                }
+            } while (parent);
+        }
+        return pos;
+    }
+
+    calculatePositionOnScreen() {
+        const pos = this.offset();
+
+        if (this.isInDOM()) {
+            let parent;
+            let ref = this;
+
+            do {
+                parent = ref.offsetParent();
+
+                if (parent) {
+                    // this.debug("-- parent:", offsetParent.node());
+                    const parentPos = parent.offset();
+                    // this.debug("        ->", parentPos);
+                    pos.top += parentPos.top;
+                    pos.left += parentPos.left;
+                    ref = parent;
+                }
+            } while (parent);
+
+            ref = this;
+            do {
+                parent = ref.parent();
+
+                if (parent) {
+                    // Subtract scrolling
+                    const scrollTop = parent.scrollTop();
+                    const scrollLeft = parent.scrollLeft();
+
+                    if (typeof scrollTop === "number" && !isNaN(scrollTop)) {
+                        pos.top -= scrollTop;
+                    }
+                    if (typeof scrollLeft === "number" && !isNaN(scrollLeft)) {
+                        pos.left -= scrollLeft;
+                    }
+                    ref = parent;
+                }
+            } while (parent);
+        }
+        return pos;
     }
 
     /**
@@ -1021,7 +1154,7 @@ export class Element {
      * Displays debug message if debug mode is active
      */
     debug() {
-        if (Cuic.options.debug || this.options.debug) {
+        if (this.options.debug || Cuic.options.debug) {
             const args = Array.prototype.slice.call(arguments);
             (console.debug || console.log).apply(this, args);
         }
@@ -1337,6 +1470,15 @@ export class Element {
     }
 
     /**
+     * Checks if the element is parent of the current element
+     * @param element
+     * @return {boolean}
+     */
+    isDirectChildOf(element) {
+        return this.parentNode() === Cuic.node(element);
+    }
+
+    /**
      * Checks if the element is enabled
      * @return {boolean}
      */
@@ -1367,7 +1509,7 @@ export class Element {
      * @return {boolean}
      */
     isInDOM() {
-        return document.body.contains(this.node()) || !!this.offsetParent();
+        return document.body.contains(this.node()) || !!this.node().offsetParent;//todo check if method is valid
     }
 
     /**
@@ -1636,7 +1778,7 @@ export class Element {
      */
     offsetParentNode() {
         this._display();
-        const parent = this.node().offsetParent || document.body;
+        const parent = this.node().offsetParent;
         this._restoreDisplay();
         return parent;
     }

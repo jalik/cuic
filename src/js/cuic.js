@@ -119,6 +119,46 @@ const Cuic = {
     },
 
     /**
+     * Returns the document body
+     * @return {*}
+     */
+    body() {
+        return this.element(document.body);
+    },
+
+    /**
+     * Returns the scrollbar width
+     * @return {number}
+     */
+    calculateScrollbarWidth() {
+        const inner = document.createElement("div");
+        inner.style.width = "100%";
+        inner.style.height = "200px";
+
+        const outer = document.createElement("div");
+        outer.style.position = "absolute";
+        outer.style.top = "0px";
+        outer.style.left = "0px";
+        outer.style.visibility = "hidden";
+        outer.style.width = "200px";
+        outer.style.height = "150px";
+        outer.style.overflow = "hidden";
+        outer.appendChild(inner);
+        document.body.appendChild(outer);
+
+        const w1 = inner.offsetWidth;
+        outer.style.overflow = "scroll";
+        let w2 = inner.offsetWidth;
+
+        if (w1 === w2) {
+            w2 = outer.clientWidth;
+        }
+        document.body.removeChild(outer);
+
+        return (w1 - w2);
+    },
+
+    /**
      * Calls the function with arguments
      * @return {*}
      */
@@ -460,8 +500,7 @@ const Cuic = {
         if (typeof element === "string") {
             return this.find(element).get(0);
         }
-        console.info(element);
-        throw new TypeError(`cannot get HTMLElement from element.`);
+        console.error(`cannot get HTMLElement from element.`, element);
     },
 
     /**
@@ -676,6 +715,58 @@ const Cuic = {
         }
         else if (typeof element.detachEvent === "function") {
             return element.detachEvent(event, listener);
+        }
+    },
+
+    /**
+     * Returns screen height
+     * @return {number}
+     */
+    screenHeight() {
+        return window.screen.height;
+    },
+
+
+    /**
+     * Returns screen width
+     * @return {number}
+     */
+    screenWidth() {
+        return window.screen.width;
+    },
+
+    /**
+     * Sets of returns the window horizontal scroll
+     * @param x
+     * @param y
+     */
+    scrollTo(x, y) {
+        window.scrollTo(x, y);
+    },
+
+    /**
+     * Sets of returns the window horizontal scroll
+     * @param x
+     * @return {number}
+     */
+    scrollX(x) {
+        if (typeof x === "undefined") {
+            return window.scrollX;
+        } else {
+            window.scrollTo(x, window.scrollY);
+        }
+    },
+
+    /**
+     * Sets of returns the window vertical scroll
+     * @param y
+     * @return {number}
+     */
+    scrollY(y) {
+        if (typeof y === "undefined") {
+            return window.scrollY;
+        } else {
+            window.scrollTo(window.scrollX, y);
         }
     },
 

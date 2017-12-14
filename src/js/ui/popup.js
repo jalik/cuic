@@ -147,7 +147,6 @@ export class Popup extends Closable {
 
         this.onOpen(() => {
             const target = Cuic.element(this.options.target);
-            this.appendTo(target.parent());
             // Get anchor from data attribute
             const anchor = target.data("anchor") || this.options.anchor;
             const anchorPoint = target.data("anchor-point") || this.options.anchorPoint;

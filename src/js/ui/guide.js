@@ -36,6 +36,9 @@ export class Guide {
             className: "guide guide-popup"
         });
 
+        // Add debug method
+        this.debug = Cuic.debug;
+
         // Create guide popup
         this.popup = new Popup(Cuic.extend({}, options, {
             autoClose: false,
@@ -62,6 +65,29 @@ export class Guide {
         if (this.options.autoStart) {
             this.start();
         }
+
+        this.popup.onAnchored(() => {
+            if (this.popup.isShown() && this.options.autoScroll) {
+                const position = this.popup.calculatePosition();
+
+                if (position.top + this.popup.outerHeight(true) > Cuic.screenHeight()
+                    || position.top < window.scrollY) {
+                    Cuic.scrollY(position.top);
+                }
+            }
+        });
+
+        this.popup.onOpened(() => {
+            if (this.options.autoScroll) {
+                const position = this.popup.calculatePosition();
+
+                if (position.top + this.popup.outerHeight(true) > Cuic.screenHeight()) {
+                    window.scrollTo(window.scrollX, position.top);
+                } else if (position.top < window.scrollY) {
+                    window.scrollTo(window.scrollX, position.top);
+                }
+            }
+        });
     }
 
     /**
@@ -81,6 +107,8 @@ export class Guide {
             throw new TypeError(`Guide.addStep(options) must have a 'content' option`);
         }
 
+        // todo parse buttons
+
         // Add the step
         this.steps.push(Cuic.extend({
             title: null,
@@ -96,7 +124,23 @@ export class Guide {
      * @return {null|object}
      */
     getCurrentStep() {
-        return this.step >= this.steps.length ? this.steps[this.step] : null;
+        return this.getStep(this.step);
+    }
+
+    /**
+     * Returns current step
+     * @return {null|number}
+     */
+    getCurrentStepIndex() {
+        return this.step;
+    }
+
+    /**
+     * Returns the last step
+     * @return {null}
+     */
+    getLastStep() {
+        return typeof this.lastStep === "number" ? this.getStep(this.lastStep) : null;
     }
 
     /**
@@ -105,6 +149,58 @@ export class Guide {
      */
     getPopup() {
         return this.popup;
+    }
+
+    /**
+     * Returns the step by index
+     * @param number
+     * @return {*}
+     */
+    getStep(number) {
+        if (typeof number !== "number") {
+            throw new TypeError("number must be a number");
+        }
+        return this.steps[number];
+    }
+
+    /**
+     * Returns the step by ID
+     * @param id
+     * @return {*}
+     */
+    getStepById(id) {
+        let step = null;
+
+        if (typeof id !== "string") {
+            throw new TypeError("id must be a string");
+        }
+        for (let i = 0; i < this.steps.length; i += 1) {
+            if (this.steps[i].id === id) {
+                step = this.steps[i];
+                break;
+            }
+        }
+        return step;
+    }
+
+    /**
+     * Returns the step index
+     * @param id
+     * @return {number}
+     */
+    getStepIndex(id) {
+        let index = null;
+
+        if (typeof id !== "string") {
+            throw new TypeError("id must be a string");
+        }
+        for (let i = 0; i < this.steps.length; i += 1) {
+            if (this.steps[i].id === id) {
+                index = i;
+                break;
+            }
+        }
+        return index;
     }
 
     /**
@@ -117,15 +213,24 @@ export class Guide {
 
     /**
      * Go to a specific step
-     * @param number
+     * @param idOrNumber
      * @return {Guide}
      */
-    goTo(number) {
-        number = Number.parseInt(number);
+    goTo(idOrNumber) {
+        let step = null;
 
-        if (typeof number === "number" && !isNaN(number) && number >= 0 && number < this.steps.length) {
-            this.step = Number.parseInt(number);
-            const step = this.steps[this.step];
+        if (typeof idOrNumber === "number") {
+            step = this.getStep(idOrNumber);
+        } else if (typeof idOrNumber === "string") {
+            step = this.getStepById(idOrNumber);
+        } else {
+            throw new TypeError("idOrNumber must be a number or string");
+        }
+
+        // Continue if step is valid and different
+        if (step && (this.step !== this.steps.indexOf(step) || !this.popup.isOpened())) {
+            this.lastStep = this.step;
+            this.step = Number.parseInt(idOrNumber);
 
             // Update popup content
             this.popup.setTitle(step.title);
@@ -141,14 +246,19 @@ export class Guide {
 
             // Move popup to step target
             const target = Cuic.element(step.target);
-            const anchor = step.anchor || target.data("anchor") || this.options.anchor;
-            const anchorPoint = step.anchorPoint || target.data("anchor-point") || this.options.anchorPoint;
-            this.popup.options.target = target;
-            this.popup.options.anchor = anchor;
-            this.popup.options.anchorPoint = anchorPoint;
-            // this.popup.anchor(anchor, anchorPoint, target);
-            this.popup.open();
-            this.events.trigger("stepChanged", this.step, step);
+
+            if (target) {
+                const anchor = step.anchor || target.data("anchor") || this.options.anchor;
+                const anchorPoint = step.anchorPoint || target.data("anchor-point") || this.options.anchorPoint;
+                this.popup.options.target = target;
+                this.popup.options.anchor = anchor;
+                this.popup.options.anchorPoint = anchorPoint;
+                this.popup.open();
+                this.debug("stepChanged", step, target);
+                this.events.trigger("stepChanged", step, target);
+            } else {
+                console.error("Invalid step target:", step.target);
+            }
         }
         return this;
     }
@@ -194,7 +304,24 @@ export class Guide {
      * @return {Guide}
      */
     previous() {
-        return this.goTo(this.step - 1);
+        if (this.step > 0) {
+            if (this.step === (this.steps.length - 1) && !this.popup.isOpened()) {
+                return this.goTo(this.step);
+            } else {
+                return this.goTo(this.step - 1);
+            }
+        }
+    }
+
+    /**
+     * Resumes the guide from the last step
+     * @return {Guide}
+     */
+    resume() {
+        if (this.step >= 0) {
+            this.goTo(this.step);
+        }
+        return this;
     }
 
     /**
@@ -204,6 +331,7 @@ export class Guide {
     start() {
         this.goTo(0);
         this.events.trigger("started");
+        this.debug("started");
         return this;
     }
 
@@ -212,8 +340,11 @@ export class Guide {
      * @return {Guide}
      */
     stop() {
-        this.popup.close();
-        this.events.trigger("stopped");
+        if (this.popup.isOpened()) {
+            this.popup.close();
+            this.events.trigger("stopped");
+            this.debug("stopped");
+        }
         return this;
     }
 }
@@ -222,6 +353,7 @@ Guide.prototype.options = {
     anchor: "top",
     autoClose: false,
     autoRemove: false,
+    autoScroll: true,
     autoStart: false,
     content: null,
     duration: 5000,
