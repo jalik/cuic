@@ -426,9 +426,7 @@ const Cuic = {
      * @return {boolean}
      */
     isJQuery(obj) {
-        return typeof jQuery !== "undefined"
-            && jQuery !== null
-            && obj instanceof jQuery;
+        return typeof obj === "object" && obj && obj["jquery"];
     },
 
     /**
