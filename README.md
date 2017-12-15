@@ -548,12 +548,17 @@ tooltip.updateTail();
 - Adds `Guide.getStepById()`
 - Adds `Guide.getStepIndex()`
 - Adds `Guide.resume()`
+- Adds `Switcher.onIndexChanged()`
+- Adds `Switcher.onStarted()`
+- Adds `Switcher.onStopped()`
 - Adds option `autoScroll` to `Guide` component
+- Fixes notifications animation in `NotificationStack`
 - Fixes `Element._disableTransitions()` to hide element
 - Fixes `Element._enableTransitions()` to show element
 - Fixes `Element.anchor()` to animate changes only when element is in the same parent node then the target
 - Fixes `Element.isInDOM()`
 - Fixes `Element.offsetParent()` to return null if no parent is found
+- Fixes `Cuic.isJQuery()` causing webpack error: "module not found 'jquery'"
 
 ### v0.10.1
 - Fixes `Guide` auto close issue
