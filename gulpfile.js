@@ -33,7 +33,6 @@ const watch = require("gulp-watch");
 
 const pkg = require("./package.json");
 const distDir = "dist";
-const docsDir = "docs";
 const distFile = `${pkg.name}`;
 
 // Compile CSS files
@@ -58,26 +57,11 @@ gulp.task("build:js", function () {
         .pipe(gulp.dest(`${distDir}`));
 });
 
-// Copy compiled CSS to docs
-gulp.task("doc:css", function () {
-    return gulp.src(`${distDir}/*.css`)
-        .pipe(gulp.dest(`${docsDir}/css`));
-});
-
-// Copy compiled JS to docs
-gulp.task("doc:js", function () {
-    return gulp.src(`${distDir}/*.min.js`)
-        .pipe(gulp.dest(`${docsDir}/js`));
-});
-
 // Concat + compile files
 gulp.task("build", ["build:css", "build:js"]);
 
-// Add compiled files to docs
-gulp.task("doc", ["doc:css", "doc:js"]);
-
 // Concat + compress files
-gulp.task("default", ["build", "doc"]);
+gulp.task("default", ["build"]);
 
 // Concat + compress files
 gulp.task("prepublish", ["build"]);
@@ -86,6 +70,4 @@ gulp.task("prepublish", ["build"]);
 gulp.task("watch", function () {
     gulp.watch(["src/**/*.less"], ["build:css"]);
     gulp.watch(["src/**/*.js"], ["build:js"]);
-    gulp.watch([`${distDir}/**/*.css`, `!${distDir}/**/*.min.css`], ["doc:css"]);
-    gulp.watch([`${distDir}/**/*.js`, `!${distDir}/**/*.min.js`], ["doc:js"]);
 });

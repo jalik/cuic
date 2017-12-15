@@ -89,7 +89,7 @@ export class Panel extends Closable {
         }
 
         if (this.isOpened()) {
-            this.align();
+            this.align(this.options.position);
             this.resizeContent();
         }
 
@@ -209,8 +209,8 @@ export class Panel extends Closable {
         });
 
         this.onOpen(() => {
+            this.align(this.options.position);
             this.resizeContent();
-            this.align();
         });
 
         this.onOpened(() => {
@@ -351,8 +351,10 @@ Cuic.panels = new Collection();
 Cuic.onWindowResized(() => {
     Cuic.panels.each((panel) => {
         if (panel.isInDOM()) {
-            panel.align();
+            // panel._disableTransitions();
             panel.resizeContent();
+            panel.align(panel.options.position);
+            // panel._enableTransitions();
         }
     });
 });

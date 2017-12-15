@@ -31,10 +31,7 @@ export class Guide {
 
     constructor(options) {
         // Set default options
-        this.options = Cuic.extend({}, Guide.prototype.options, options, {
-            mainClass: "guide",
-            className: "guide guide-popup"
-        });
+        this.options = Cuic.extend({}, Guide.prototype.options, options, {});
 
         // Add debug method
         this.debug = Cuic.debug;
@@ -121,7 +118,7 @@ export class Guide {
 
     /**
      * Returns current step
-     * @return {null|object}
+     * @return {*}
      */
     getCurrentStep() {
         return this.getStep(this.step);
@@ -129,7 +126,7 @@ export class Guide {
 
     /**
      * Returns current step
-     * @return {null|number}
+     * @return {number}
      */
     getCurrentStepIndex() {
         return this.step;
@@ -137,7 +134,7 @@ export class Guide {
 
     /**
      * Returns the last step
-     * @return {null}
+     * @return {*}
      */
     getLastStep() {
         return typeof this.lastStep === "number" ? this.getStep(this.lastStep) : null;
@@ -269,34 +266,41 @@ export class Guide {
      */
     next() {
         if (this.step + 1 >= this.steps.length) {
-            return this.stop();
+            this.stop();
         } else {
-            return this.goTo(this.step + 1);
+            this.goTo(this.step + 1);
         }
-    }
-
-    /**
-     * Called when step changed
-     * @param callback
-     */
-    onStepChanged(callback) {
-        this.events.on("stepChanged", callback);
+        return this;
     }
 
     /**
      * Called when guide is started
      * @param callback
+     * @return {Guide}
      */
     onStarted(callback) {
         this.events.on("started", callback);
+        return this;
+    }
+
+    /**
+     * Called when step changed
+     * @param callback
+     * @return {Guide}
+     */
+    onStepChanged(callback) {
+        this.events.on("stepChanged", callback);
+        return this;
     }
 
     /**
      * Called when guide is stopped
      * @param callback
+     * @return {Guide}
      */
     onStopped(callback) {
         this.events.on("stopped", callback);
+        return this;
     }
 
     /**
@@ -306,11 +310,12 @@ export class Guide {
     previous() {
         if (this.step > 0) {
             if (this.step === (this.steps.length - 1) && !this.popup.isOpened()) {
-                return this.goTo(this.step);
+                this.goTo(this.step);
             } else {
-                return this.goTo(this.step - 1);
+                this.goTo(this.step - 1);
             }
         }
+        return this;
     }
 
     /**

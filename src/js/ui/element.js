@@ -134,7 +134,7 @@ export class Element {
 
         // Position the element
         if (this.options.position && this.hasParent()) {
-            this.align();
+            // this.align(this.options.position);//todo maybe remove this line that causes bad animations
         }
 
         if (this.hasParent()) {
@@ -290,7 +290,6 @@ export class Element {
         };
 
         // TODO REMOVE
-        // this.debug("attach to:", anchor, ", with tail at:", anchorPoint);
         this.debug("elSize:", {width: elWidth, height: elHeight});
         this.debug("targetOffset:", targetOffset);
         // this.debug("width:", elWidth, ", height:", elHeight);
@@ -316,7 +315,37 @@ export class Element {
             else {
                 prop.left = targetOffset.left - elCenterX + targetCenterX;
             }
+
+            // Vertical anchor point
+            if (anchorPoint.indexOf("top") !== -1) {
+                prop.top += elCenterY;
+            }
+            else if (anchorPoint.indexOf("bottom") !== -1) {
+                prop.top -= elCenterY;
+            }
+            // Horizontal anchor point
+            if (anchorPoint.indexOf("left") !== -1) {
+                prop.left += elCenterX;
+            }
+            else if (anchorPoint.indexOf("right") !== -1) {
+                prop.left -= elCenterX;
+            }
         } else {
+            // console.log("elHtml", this.html());
+            // console.log("elHeight", elHeight);
+            // console.log("elWidth", elWidth);
+            // console.log("targetHeight", targetHeight);
+            // console.log("targetWidth", targetWidth);
+
+            // new Element("div", {html: JSON.stringify(targetOffset)}).css({
+            //     background: "rgba(200,0,0,0.3)",
+            //     position: "absolute",
+            //     left: 0,
+            //     top: 0,
+            //     height: targetOffset.top,
+            //     width: targetOffset.left
+            // }).appendTo(target.offsetParent());
+
             // Vertical positioning
             if (anchor.indexOf("bottom") !== -1) {
                 prop.top = targetOffset.top + targetHeight;
@@ -338,73 +367,6 @@ export class Element {
                 prop.left = targetOffset.left + targetCenterX - elCenterX;
             }
         }
-
-        // Calculate anchor point
-        if (anchorPoint) {
-            // Vertical anchor point
-            if (anchorPoint.indexOf("top") !== -1) {
-                prop.top += elCenterY;
-            }
-            else if (anchorPoint.indexOf("bottom") !== -1) {
-                prop.top -= elCenterY;
-            }
-            // Horizontal anchor point
-            if (anchorPoint.indexOf("left") !== -1) {
-                prop.left += elCenterX;
-            }
-            else if (anchorPoint.indexOf("right") !== -1) {
-                prop.left -= elCenterX;
-            }
-        }
-
-        // TODO aligner dans la zone visible d l'écran
-        // const targetPosition = target.calculatePositionOnScreen();
-        // this.debug("targetPosition:", targetPosition);
-        // const targetPositionScroll = target.calculatePositionOnScreen();
-        // this.debug("targetPositionScroll:", targetPositionScroll);
-        // new Element("div").css({
-        //     position: "absolute",
-        //     top: targetPositionScroll.top,
-        //     left: targetPositionScroll.left,
-        //     background: "rgba(255,0,0,0.2)",
-        //     height: targetHeight,
-        //     width: targetWidth,
-        //     zIndex: 1000
-        // }).appendTo(document.body);
-
-        // let diffX = Math.abs(Math.min(0, window.screen.width - (targetPosition.left - Math.abs(prop.left - targetOffset.left) + elWidth)));
-        //
-        // // Fit element to right
-        // if (diffX > 0) {
-        //     prop.left -= diffX;
-        //     // todo limit width
-        // }
-        // // Fit element to left
-        // else {
-        //     diffX = Math.abs(Math.min(0, targetPosition.left - (targetOffset.left - prop.left)));
-        //
-        //     if (diffX > 0) {
-        //         prop.left += diffX;
-        //         // todo limit width
-        //     }
-        // }
-        //
-        // let diffY = Math.abs(Math.min(0, window.screen.height - (targetPosition.top - Math.abs(prop.top - targetOffset.top) + elHeight)));
-        //
-        // // Fit element to bottom
-        // if (diffY > 0) {
-        //     prop.top -= diffY;
-        //     // todo limit height
-        // }
-        // // Fit element to top
-        // else {
-        //     diffY = Math.abs(Math.min(0, targetPosition.top - (targetOffset.top - prop.top)));
-        //
-        //     if (diffY > 0) {
-        //         prop.top += diffY;
-        //         // todo limit height
-        //     }
-        // }
 
         // Use window for positioning
         if (this.isFixed()) {
@@ -456,8 +418,7 @@ export class Element {
     _calculateAvailableSpace(parent) {
         parent = parent ? Cuic.element(parent) : this.offsetParent() || Cuic.body();
         const elMargin = this.margin();
-
-        let prop = {
+        const prop = {
             height: parent.height(),
             width: parent.width()
         };
@@ -558,7 +519,7 @@ export class Element {
      * @protected
      */
     _disableTransitions() {
-        this.addClass("no-transition").hide();
+        this.addClass("no-transition");
         return this;
     }
 
@@ -590,7 +551,7 @@ export class Element {
      * @protected
      */
     _enableTransitions() {
-        this.removeClass("no-transition").show();
+        this.removeClass("no-transition");
         return this;
     }
 
@@ -683,8 +644,8 @@ export class Element {
      * @param position
      * @return {Element}
      */
-    align(position = this.options.position) {
-        if (this.isInDOM() && position) {
+    align(position) {
+        if (this.isInDOM() && position && position !== "") {
             const pos = this.css("position");
 
             if (["absolute", "fixed"].indexOf(pos) !== -1) {
@@ -757,6 +718,55 @@ export class Element {
             // this.debug("prop", prop);
             // this.debug("size", {width: elWidth, height: elHeight});
 
+            // TODO aligner dans la zone visible d l'écran
+            // const targetPosition = target.calculatePositionOnScreen();
+            // this.debug("targetPosition:", targetPosition);
+            // const targetPositionScroll = target.calculatePositionOnScreen();
+            // this.debug("targetPositionScroll:", targetPositionScroll);
+            // new Element("div").css({
+            //     position: "absolute",
+            //     top: targetPositionScroll.top,
+            //     left: targetPositionScroll.left,
+            //     background: "rgba(255,0,0,0.2)",
+            //     height: targetHeight,
+            //     width: targetWidth,
+            //     zIndex: 1000
+            // }).appendTo(document.body);
+
+            // let diffX = Math.abs(Math.min(0, window.screen.width - (targetPosition.left - Math.abs(prop.left - targetOffset.left) + elWidth)));
+            //
+            // // Fit element to right
+            // if (diffX > 0) {
+            //     prop.left -= diffX;
+            //     // todo limit width
+            // }
+            // // Fit element to left
+            // else {
+            //     diffX = Math.abs(Math.min(0, targetPosition.left - (targetOffset.left - prop.left)));
+            //
+            //     if (diffX > 0) {
+            //         prop.left += diffX;
+            //         // todo limit width
+            //     }
+            // }
+            //
+            // let diffY = Math.abs(Math.min(0, window.screen.height - (targetPosition.top - Math.abs(prop.top - targetOffset.top) + elHeight)));
+            //
+            // // Fit element to bottom
+            // if (diffY > 0) {
+            //     prop.top -= diffY;
+            //     // todo limit height
+            // }
+            // // Fit element to top
+            // else {
+            //     diffY = Math.abs(Math.min(0, targetPosition.top - (targetOffset.top - prop.top)));
+            //
+            //     if (diffY > 0) {
+            //         prop.top += diffY;
+            //         // todo limit height
+            //     }
+            // }
+
             for (let i = 0; i < alignments.length; i += 1) {
                 const location = alignments[i];
                 const screenPos = rect[location];
@@ -802,27 +812,16 @@ export class Element {
      * @return {Element}
      */
     anchor(anchor, anchorPoint, target) {
-        if (anchor || this.options.anchor) {
-            // Use default anchor
-            if (anchor === undefined) {
-                anchor = this.options.anchor;
-            }
-            // Use default anchor point
-            if (anchorPoint === undefined) {
-                anchorPoint = this.options.anchorPoint;
-            }
-            // Use default target
-            if (target === undefined) {
-                target = this.options.target;
-            }
-            // Allow target to be a coordinate
-            // else convert as element.
-            else if (target instanceof Array) {
+        if (anchor && anchor !== "") {
+            const isPixelCoordinate = target instanceof Array;
+
+            // Anchor can be an array of pixel coordinates
+            if (!isPixelCoordinate) {
                 target = Cuic.element(target);
             }
             this.debug("anchor", anchor, target);
 
-            const targetParent = target instanceof Array ? document.body : target.offsetParent();
+            const targetParent = isPixelCoordinate ? document.body : target.offsetParent();
             const disableTransition = this.isInDOM() && !this.isDirectChildOf(targetParent);
             disableTransition && this._disableTransitions();
             this.appendTo(targetParent);
@@ -1286,7 +1285,6 @@ export class Element {
      */
     hide() {
         this.debug("hide");
-        // this.css({display: "none"});
         this.addClass("hidden");
         this.events.trigger("hidden");
         return this;

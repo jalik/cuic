@@ -24,6 +24,7 @@
  */
 
 import Cuic from "../cuic";
+import {Collection} from "../utils/collection";
 import {Group} from "./group";
 import {Notification} from "./notification";
 
@@ -39,17 +40,15 @@ export class NotificationStack extends Group {
         super("div", {className: options.className}, options);
 
         // Set position
-        if (this.options.position) {
-            this.align();
-        }
+        this.align(this.options.position);
+
+        // Set max height
+        this.resize();
 
         // Display the notification when it's added to the stack
         this.onComponentAdded((component) => {
             if (component instanceof Notification) {
-                // fixme Not using a timeout to open blocks the animation
-                setTimeout(function () {
-                    component.open();
-                }, 10);
+                component.open();
             }
         });
 
@@ -59,6 +58,19 @@ export class NotificationStack extends Group {
                 component.close();
             }
         });
+
+        // Remove element from list
+        this.onRemoved(() => {
+            Cuic.notificationStacks.remove(this);
+        });
+
+        // Add element to collection
+        Cuic.notificationStacks.add(this);
+    }
+
+    resize() {
+        const availableSpace = this._calculateAvailableSpace(this.offsetParent());
+        this.css({"max-height": availableSpace.height});
     }
 }
 
@@ -67,3 +79,14 @@ NotificationStack.prototype.options = {
     position: "right top",
     zIndex: 10
 };
+
+Cuic.notificationStacks = new Collection();
+
+Cuic.onWindowResized(() => {
+    Cuic.notificationStacks.each((n) => {
+        if (n.isInDOM()) {
+            n.resize();
+            n.align(n.options.position);
+        }
+    });
+});

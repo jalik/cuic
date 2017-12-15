@@ -60,9 +60,11 @@ export class Switcher extends Closable {
 
     /**
      * Displays the first element
+     * @return {Switcher}
      */
     first() {
         this.goTo(0);
+        return this;
     }
 
     /**
@@ -92,21 +94,22 @@ export class Switcher extends Closable {
 
     /**
      * Displays the element at the specified index
-     * @param position
+     * @param index
+     * @return {Switcher}
      */
-    goTo(position) {
+    goTo(index) {
         const children = this.children();
         const repeat = this.options.repeat;
 
         // Go to first element if end of list
-        if (position >= children.length) {
+        if (index >= children.length) {
             this.index = repeat ? 0 : children.length - 1;
         }
-        else if (position < 0) {
+        else if (index < 0) {
             this.index = repeat ? children.length - 1 : 0;
         }
         else {
-            this.index = position;
+            this.index = index;
         }
 
         if (this.index !== this.getIndex()) {
@@ -131,11 +134,15 @@ export class Switcher extends Closable {
             this.activeElement.addClass("visible");
             this.activeElement.removeClass("hidden");
 
+            this.debug("indexChanged", this.index, this.activeElement);
+            this.events.trigger("indexChanged", this.index, this.activeElement);
+
             // Show the active element
             if (started) {
                 this.start();
             }
         }
+        return this;
     }
 
     /**
@@ -148,44 +155,88 @@ export class Switcher extends Closable {
 
     /**
      * Displays the last element
+     * @return {Switcher}
      */
     last() {
         this.goTo(this.children().length - 1);
+        return this;
     }
 
     /**
      * Displays the next element
+     * @return {Switcher}
      */
     next() {
         this.goTo(this.index + 1);
+        return this;
+    }
+
+    /**
+     * Called when index changed
+     * @param callback
+     * @return {Switcher}
+     */
+    onIndexChanged(callback) {
+        this.events.on("indexChanged", callback);
+        return this;
+    }
+
+    /**
+     * Called when switcher is started
+     * @param callback
+     * @return {Switcher}
+     */
+    onStarted(callback) {
+        this.events.on("started", callback);
+        return this;
+    }
+
+    /**
+     * Called when switcher is stopped
+     * @param callback
+     * @return {Switcher}
+     */
+    onStopped(callback) {
+        this.events.on("stopped", callback);
+        return this;
     }
 
     /**
      * Displays the previous element
+     * @return {Switcher}
      */
     previous() {
         this.goTo(this.index - 1);
+        return this;
     }
 
     /**
-     * Starts the started
+     * Starts the switcher
+     * @return {Switcher}
      */
     start() {
         if (!this.isStarted()) {
             this.timer = setInterval(() => {
                 this.next();
             }, this.options.delay);
+            this.events.trigger("started");
+            this.debug("started");
         }
+        return this;
     }
 
     /**
-     * Stops the started
+     * Stops the switcher
+     * @return {Switcher}
      */
     stop() {
         if (this.isStarted()) {
             clearInterval(this.timer);
             this.timer = null;
+            this.events.trigger("stopped");
+            this.debug("stopped");
         }
+        return this;
     }
 }
 

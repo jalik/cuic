@@ -316,9 +316,10 @@ Cuic.popups = new Collection();
 Cuic.onWindowResized(() => {
     Cuic.popups.each((popup) => {
         if (popup.isInDOM() && popup.isShown()) {
-            popup._disableTransitions();
-            popup.anchor();
-            popup._enableTransitions();
+            // popup._disableTransitions();
+            const options = popup.options;
+            popup.anchor(options.anchor, options.anchorPoint, options.target);
+            // popup._enableTransitions();
         }
     });
 });

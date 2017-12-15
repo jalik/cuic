@@ -82,16 +82,14 @@ export class Notification extends Closable {
         });
 
         this.onOpen(() => {
-            if (this.options.position) {
-                this.align();
-            }
+            this.align(this.options.position);
         });
 
         this.onOpened(() => {
             this.autoClose();
         });
 
-        // Remove dialog from list
+        // Remove element from list
         this.onRemoved(() => {
             Cuic.notifications.remove(this);
         });
@@ -151,7 +149,9 @@ Cuic.notifications = new Collection();
 Cuic.onWindowResized(() => {
     Cuic.notifications.each((n) => {
         if (n.isInDOM()) {
-            n.align();
+            // n._disableTransitions();
+            n.align(n.options.position);
+            // n._enableTransitions();
         }
     });
 });
