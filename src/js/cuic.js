@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Karl STEIN
+ * Copyright (c) 2018 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -907,7 +907,8 @@ Cuic.ready(() => {
     // Make root nodes fit screen,
     // that allow dialogs and other floating elements
     // to be positioned on all the screen.
-    Cuic.find("html,body").css({height: "100%", minHeight: "100%"});
+    Cuic.find("html,body").css({minHeight: "100%"});
+
     // Make body the reference for positioning
     Cuic.find("body").css({position: "relative"});
 });

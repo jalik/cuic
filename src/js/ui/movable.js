@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Karl STEIN
+ * Copyright (c) 2018 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -109,7 +109,7 @@ export class Movable extends Component {
                 if (this.options.constraintToParent) {
                     const available = this._calculateAvailablePosition();
                     prop = Cuic.constraintPosition(prop, available);
-                    this.alignInParent();
+                    this.alignInParent();//todo useful ?
                 }
 
                 // Move element

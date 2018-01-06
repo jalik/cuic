@@ -32,6 +32,8 @@ const element = new Element({
 });
 
 // Element methods
+element.addClass(String);
+element.addPositionClass(String, String);
 element.align(String);
 element.alignInParent();
 element.alignInScreen();
@@ -54,6 +56,7 @@ element.empty();
 element.enable();
 element.enterFullScreen();
 element.find(String);
+element.focus();
 element.getClasses();
 element.hasClass(String);
 element.hasParent();
@@ -69,6 +72,7 @@ element.isAligned(String);
 element.isAnchored(String);
 element.isChildOf(Element);
 element.isDisabled();
+element.isDirectChildOf(Element);
 element.isEnabled();
 element.isFixed();
 element.isHidden();
@@ -112,8 +116,10 @@ element.prepend(Element);
 element.prependTo(Element);
 element.remove();
 element.removeClass(String);
+element.scrollHeight();
 element.scrollLeft();
 element.scrollTop();
+element.scrollWidth();
 element.show();
 element.text(String);
 element.val(Object);
@@ -186,6 +192,7 @@ A dialog can be configured with a header and title, a body and a footer with but
 This component inherits from `Closable`.
 
 ```js
+import {Button} from "cuit/dist/ui/button";
 import {Dialog} from "cuit/dist/ui/dialog";
 
 const dialog = new Dialog({
@@ -230,6 +237,7 @@ dialog.setTitle(String);
 A guide is used to assist users, to explain things in an interactive way like "click here, then here...".
 
 ```js
+import {Button} from "cuit/dist/ui/button";
 import {Guide} from "cuit/dist/ui/guide";
 
 const guide = new Guide({
@@ -531,6 +539,20 @@ tooltip.updateTail();
 
 ## Changelog
 
+### v0.11.0
+- Adds `options` argument to method `Element._calculateAlign(position, options)`
+- Adds `options` argument to method `Element.align(position, options)`
+- Adds `Element.focus()`
+- Adds `Element.scrollHeight()`
+- Adds `Element.scrollWidth()`
+- Adds option `inScreen: Boolean` to `Element.align(position, options)`
+- Auto-focuses the last button with `autofocus` attribute in `Dialog`
+- Fixes `Element._calculateAlign()` with scrolling
+- Fixes `Element._calculateAvailablePosition()` with scrolling
+- Fixes `Element._calculateMaximize()` with scrolling
+- Fixes `Element.scrollLeft()` on body and window
+- Fixes `Element.scrollTop()` on body and window
+
 ### v0.10.2
 - Adds `Cuic.body()`
 - Adds `Cuic.calculateScrollbarWidth()`
@@ -551,7 +573,7 @@ tooltip.updateTail();
 - Adds `Switcher.onIndexChanged()`
 - Adds `Switcher.onStarted()`
 - Adds `Switcher.onStopped()`
-- Adds option `autoScroll` to `Guide` component
+- Adds option `autoScroll: Boolean` to `Guide`
 - Fixes notifications animation in `NotificationStack`
 - Fixes `Element._disableTransitions()` to hide element
 - Fixes `Element._enableTransitions()` to show element
@@ -563,7 +585,7 @@ tooltip.updateTail();
 ### v0.10.1
 - Fixes `Guide` auto close issue
 - Fixes `Guide` animations
-- Allows to pass `steps` option in `Guide` options to make `autoStart` option working
+- Adds option `steps: Array` in `Guide` to work with `autoStart: Boolean` option
 
 ### v0.10.0
 - Adds `Guide` component
@@ -582,18 +604,18 @@ tooltip.updateTail();
 - Fixes method `Events.trigger()` to allow returning value
 
 ### v0.9.2
-- Fixes movable components aligned to bottom
-- Renames option `vertical` to `vertically` for `Movable` and `Resizable` components
-- Renames option `horizontal` to `horizontally` for `Movable` and `Resizable` components
-- Renames `Fader` component to `Overlay`
-- Returns `Element` inside `click` method of every components
 - Adds `Closable` component
 - Adds `Dialog.setHeader(html)`
 - Adds `Notification.getContent()`
 - Adds `Panel.setHeader(html)`
 - Adds `Popup.getContent()`
 - Adds `Tooltip.getContent()`
-- Adds default option `selected: false` to `Selectable` component
+- Adds option `selected: false` to `Selectable` component
+- Renames option `vertical` to `vertically` for `Movable` and `Resizable` components
+- Renames option `horizontal` to `horizontally` for `Movable` and `Resizable` components
+- Renames `Fader` component to `Overlay`
+- Returns `Element` inside `click` method of every components
+- Fixes movable components aligned to bottom
 
 ### v0.9.0
 - Uses ES6 import/export syntax

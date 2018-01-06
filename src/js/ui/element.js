@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Karl STEIN
+ * Copyright (c) 2018 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -154,14 +154,22 @@ export class Element {
     /**
      * Calculates the alignment of the element inside its parent
      * @param position
-     * @param parent
+     * @param options
      * @return {{bottom: string, left: string, right: string, top: string}}
-     * @protected
      */
-    _calculateAlign(position, parent) {
+    _calculateAlign(position, options) {
         if (!position || !position.length) {
             throw new TypeError(`Cannot calculate alignment if no position defined`);
         }
+
+        // Default options
+        options = Cuic.extend({
+            inScreen: false,
+            parent: null
+        }, options);
+
+        let parent = options.parent;
+        const windowElement = Cuic.element(window);
 
         if (parent) {
             parent = Cuic.element(parent);
@@ -180,10 +188,10 @@ export class Element {
         let elWidth = this.outerWidth(true);
         let parentHeight = parent.height();
         let parentWidth = parent.width();
-        let relativeLeft = parent.scrollLeft();
-        let relativeTop = parent.scrollTop();
-        let relativeBottom = -relativeTop;
-        let relativeRight = -relativeLeft;
+        let scrollLeft = parent.scrollLeft();
+        let scrollTop = parent.scrollTop();
+        let scrollBottom = -scrollTop;
+        let scrollRight = -scrollLeft;
         let prop = {
             bottom: "",
             left: "",
@@ -194,18 +202,24 @@ export class Element {
         // If the target is fixed, we use the window as parent
         switch (this.css("position")) {
             case "fixed":
-                parent = Cuic.element(window);
+                parent = windowElement;
                 parentHeight = parent.innerHeight();
                 parentWidth = parent.innerWidth();
-                relativeLeft = 0;
-                relativeTop = 0;
-                relativeBottom = 0;
-                relativeRight = 0;
+                scrollLeft = 0;
+                scrollTop = 0;
+                scrollBottom = 0;
+                scrollRight = 0;
                 break;
         }
 
-        const centerX = relativeLeft + Math.max(0, parent.innerWidth() / 2 - elWidth / 2);
-        const centerY = relativeTop + Math.max(0, parent.innerHeight() / 2 - elHeight / 2);
+        let centerX = scrollLeft + Math.max(0, parent.innerWidth() / 2 - elWidth / 2);
+        let centerY = scrollTop + Math.max(0, parent.innerHeight() / 2 - elHeight / 2);
+
+        // Align element in screen if parent is body
+        if (options.inScreen && parent.node() instanceof HTMLBodyElement) {
+            centerX = scrollLeft + Math.max(0, windowElement.width() / 2 - elWidth / 2);
+            centerY = scrollTop + Math.max(0, windowElement.height() / 2 - elHeight / 2);
+        }
 
         // Vertical position
         if (position.indexOf("top") !== -1) {
@@ -248,7 +262,6 @@ export class Element {
      * @param anchorPoint
      * @param target
      * @return {{bottom, left, right, top}}
-     * @protected
      */
     _calculateAnchor(anchor, anchorPoint, target) {
         if (!anchor || !anchor.length) {
@@ -381,22 +394,23 @@ export class Element {
      * Returns the available position inside a container
      * @param parent
      * @return {{minX: number, minY: number, maxX: number, maxY: number}}
-     * @protected
      */
     _calculateAvailablePosition(parent) {
         parent = parent ? Cuic.element(parent) : this.offsetParent() || Cuic.body();
 
-        let prop = {
+        const prop = {
             minX: 0,
             minY: 0,
             maxX: Math.max(0, parent.width() - this.outerWidth(true)),
             maxY: Math.max(0, parent.height() - this.outerHeight(true))
         };
 
+        const body = Cuic.body();
+
         // Adjust limits depending of element position
         switch (this.css("position")) {
+
             case "absolute":
-            case "fixed":
                 const prPadding = parent.padding();
                 // const elMargin = this.margin();
                 prop.maxX += prPadding.horizontal;
@@ -404,6 +418,16 @@ export class Element {
                 // prop.maxX -= elMargin.horizontal;
                 // prop.maxY -= elMargin.vertical;
                 // fixme max is wrong sometimes
+
+                if (parent.node() instanceof HTMLBodyElement) {
+                    prop.maxX = body.scrollWidth();
+                    prop.maxY = body.scrollHeight();
+                }
+                break;
+
+            case "fixed":
+                prop.maxX = body.scrollWidth();
+                prop.maxY = body.scrollHeight();
                 break;
         }
         return prop;
@@ -413,7 +437,6 @@ export class Element {
      * Returns the available space inside a container
      * @param parent
      * @return {{height, width}}
-     * @protected
      */
     _calculateAvailableSpace(parent) {
         parent = parent ? Cuic.element(parent) : this.offsetParent() || Cuic.body();
@@ -444,13 +467,13 @@ export class Element {
     /**
      * Calculates maximized properties
      * @return {{bottom: string, height: number, left: string, right: string, top: string, width: number}}
-     * @protected
      */
     _calculateMaximize() {
         const parent = this.offsetParent() || Cuic.body();
+        const windowElement = Cuic.element(window);
         const parentPadding = parent.padding();
         const elMargin = this.margin();
-        let prop = {
+        const prop = {
             bottom: "",
             left: "",
             right: "",
@@ -458,6 +481,12 @@ export class Element {
             height: parent.innerHeight() - parentPadding.vertical,
             width: parent.innerWidth() - parentPadding.horizontal
         };
+
+        // Maximize to screen size
+        if (parent.node() instanceof HTMLBodyElement) {
+            prop.height = windowElement.innerHeight();
+            prop.width = windowElement.innerWidth();
+        }
 
         // Adjust dimensions
         switch (this.css("position")) {
@@ -480,13 +509,25 @@ export class Element {
             prop.right = 0;
         } else {
             prop.left = 0;
+
+            // Position with horizontal scroll
+            if (parent.node() instanceof HTMLBodyElement) {
+                prop.left = windowElement.scrollLeft();
+            }
         }
+
         // Vertical position
         if (this.isAligned("bottom")) {
             prop.bottom = 0;
         } else {
             prop.top = 0;
+
+            // Position with vertical scroll
+            if (parent.node() instanceof HTMLBodyElement) {
+                prop.top = windowElement.scrollTop();
+            }
         }
+
         return prop;
     }
 
@@ -494,7 +535,6 @@ export class Element {
      * Calculates minimized properties
      * @param position
      * @return {{height, width}}
-     * @protected
      */
     _calculateMinimize(position) {
         position = position || "";
@@ -516,7 +556,6 @@ export class Element {
     /**
      * Disables transitions
      * @return {Element}
-     * @protected
      */
     _disableTransitions() {
         this.addClass("no-transition");
@@ -526,7 +565,6 @@ export class Element {
     /**
      * Displays element for calculation (positioning, parenting...)
      * @return {Element}
-     * @protected
      */
     _display() {
         if (!this.hasClass("computing")) {
@@ -548,7 +586,6 @@ export class Element {
     /**
      * Enables transitions
      * @return {Element}
-     * @protected
      */
     _enableTransitions() {
         this.removeClass("no-transition");
@@ -558,7 +595,6 @@ export class Element {
     /**
      * Restores element previous display state
      * @return {Element}
-     * @protected
      */
     _restoreDisplay() {
         if (this.hasClass("computing")) {
@@ -642,15 +678,16 @@ export class Element {
     /**
      * Sets the position of the element inside its parent
      * @param position
+     * @param options
      * @return {Element}
      */
-    align(position) {
+    align(position, options) {
         if (this.isInDOM() && position && position !== "") {
             const pos = this.css("position");
 
             if (["absolute", "fixed"].indexOf(pos) !== -1) {
                 this.debug("align", position);
-                this.css(this._calculateAlign(position));
+                this.css(this._calculateAlign(position, options));
                 this.addPositionClass(position, "aligned");
                 this.options.position = position;
                 this.events.trigger("aligned", position);
@@ -1221,6 +1258,15 @@ export class Element {
         const context = this.node();
         const elements = context.querySelectorAll(selector);
         return new Elements(elements, context, selector);
+    }
+
+    /**
+     * Triggers a focus event on the element
+     * @return {Element}
+     */
+    focus() {
+        this.node().focus();
+        return this;
     }
 
     /**
@@ -2062,11 +2108,33 @@ export class Element {
     }
 
     /**
+     * Returns element scroll height
+     * @return {number|*}
+     */
+    scrollHeight() {
+        const node = this.node();
+        let scroll = node.scrollHeight;
+
+        // Use document scroll height instead
+        if (node instanceof Window) {
+            scroll = document.body.scrollHeight;
+        }
+        return scroll;
+    }
+
+    /**
      * Returns element scroll left
      * @return {number|*}
      */
     scrollLeft() {
-        return this.node().scrollLeft;
+        const node = this.node();
+        let scroll = node.scrollLeft;
+
+        // Use window scrolling instead
+        if (node instanceof HTMLBodyElement || node instanceof Window) {
+            scroll = Cuic.scrollX();
+        }
+        return scroll;
     }
 
     /**
@@ -2074,7 +2142,31 @@ export class Element {
      * @return {number|*}
      */
     scrollTop() {
-        return this.node().scrollTop;
+        const node = this.node();
+        let scroll = node.scrollTop;
+
+        // Use window scrolling instead
+        if (node instanceof HTMLBodyElement || node instanceof Window) {
+            scroll = Cuic.scrollY();
+        }
+        return scroll;
+    }
+
+    /**
+     * Returns element scroll width
+     * @return {number|*}
+     */
+    scrollWidth() {
+        const node = this.node();
+        let scroll = node.scrollWidth;
+
+        // Use document scroll width instead
+        if (node instanceof Window) {
+            scroll = document.body.scrollWidth;
+        } else if (node instanceof Window) {
+            scroll = 0;
+        }
+        return scroll;
     }
 
     /**

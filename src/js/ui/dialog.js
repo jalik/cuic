@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Karl STEIN
+ * Copyright (c) 2018 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -146,6 +146,7 @@ export class Dialog extends Closable {
                 rootOnly: false
             });
             this.movable.onMoveStart((ev) => {
+                // Avoid moving if button is clicked
                 if (Cuic.element(ev.target).hasClass("btn-close")) {
                     return false;
                 }
@@ -209,9 +210,9 @@ export class Dialog extends Closable {
         // Called when dialog is opening
         this.onOpen(() => {
             // Calculate z-index
-            let zIndex = Math.max(this.options.zIndex, Cuic.dialogs.getCurrentZIndex() + 1);
+            const zIndex = Math.max(this.options.zIndex, Cuic.dialogs.getCurrentZIndex() + 1);
 
-            // Find current top dialog z-index
+            // Set dialog z-index and resize content
             this.css({"z-index": zIndex});
             this.resizeContent();
 
@@ -222,19 +223,28 @@ export class Dialog extends Closable {
                 this.overlay.open();
             }
 
-            // Maximize or position the dialog
+            // Maximize or align the dialog
             if (this.options.maximized) {
                 this.maximize();
             } else {
-                this.align(this.options.position);
+                this.align(this.options.position, {
+                    inScreen: true
+                });
             }
 
             // Focus the last button
             const buttons = this.buttons.children();
 
-            // todo select button with attribute "focused"
             if (buttons.length > 0) {
-                buttons.last().node().focus();
+                const autoFocusButtons = buttons.find("[autofocus]");
+
+                if (autoFocusButtons.length) {
+                    // Focus the last button with "autofocus" attribute
+                    autoFocusButtons.last().node().focus();
+                } else {
+                    // Focus the last button
+                    buttons.last().node().focus();
+                }
             }
         });
 
