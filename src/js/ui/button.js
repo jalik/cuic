@@ -36,8 +36,9 @@ export class Button extends Component {
 
         // Create element
         super("button", {
+            autofocus: options.autofocus,
             className: options.className,
-            disabled: false,
+            disabled: options.disabled,
             html: options.label,
             title: options.title,
             type: options.type

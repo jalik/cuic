@@ -367,6 +367,19 @@ export class Elements {
     }
 
     /**
+     * Returns elements as array
+     * @return {Array}
+     */
+    toArray() {
+        const array = [];
+
+        for (let i = 0; i < this.length; i += 1) {
+            array.push(this.get(i));
+        }
+        return array;
+    }
+
+    /**
      * Sets elements value
      * @param value
      * @return {Elements}

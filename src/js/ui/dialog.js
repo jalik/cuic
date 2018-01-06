@@ -236,14 +236,14 @@ export class Dialog extends Closable {
             const buttons = this.buttons.children();
 
             if (buttons.length > 0) {
-                const autoFocusButtons = buttons.find("[autofocus]");
+                // Focus the last button
+                buttons.last().node().focus();
 
-                if (autoFocusButtons.length) {
-                    // Focus the last button with "autofocus" attribute
-                    autoFocusButtons.last().node().focus();
-                } else {
-                    // Focus the last button
-                    buttons.last().node().focus();
+                for (let i = 0; i < buttons.length; i += 1) {
+                    if (buttons.eq(i).attr("autofocus")) {
+                        // Focus the last button with "autofocus" attribute
+                        buttons.eq(i).node().focus();
+                    }
                 }
             }
         });
@@ -284,7 +284,7 @@ export class Dialog extends Closable {
 
             // Create button
             button = new Button(Cuic.extend({
-                className: "btn btn-default " + button.className,
+                className: "btn btn-default " + (button.className || ""),
                 label: button.label
             }, button));
 
