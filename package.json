@@ -38,11 +38,12 @@
   },
   "main": "dist/cuic.js",
   "scripts": {
-    "build": "./node_modules/.bin/gulp build && ./node_modules/.bin/webpack --config webpack.config.js",
-    "build:prod": "./node_modules/.bin/gulp prepublish && ./node_modules/.bin/webpack --config webpack.config.js -p",
+    "build": "./node_modules/.bin/gulp build",
+    "build:prod": "./node_modules/.bin/gulp prepublish",
     "dev": "./node_modules/.bin/webpack-dev-server --config webpack.config.js --hot --watch",
-    "prepublish": "npm run build && npm run build:prod && npm test",
-    "prepublishOnly": "npm run build && npm run build:prod && npm test",
+    "package": "./node_modules/.bin/webpack && ./node_modules/.bin/webpack -p",
+    "prepare": "npm run build:prod && npm test",
+    "prepublishOnly": "npm test",
     "test": "jest",
     "watch": "./node_modules/.bin/gulp watch"
   },
