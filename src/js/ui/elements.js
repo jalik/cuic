@@ -385,7 +385,7 @@ export class Elements {
      * @return {Elements}
      */
     val(value) {
-        if (value !== undefined) {
+        if (typeof value !== "undefined") {
             return this.each((el) => {
                 el.val(value);
             });

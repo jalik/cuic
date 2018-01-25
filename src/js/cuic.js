@@ -226,7 +226,7 @@ const Cuic = {
      * Displays a message in the console
      */
     debug() {
-        if (this.options.debug && console !== undefined) {
+        if (this.options.debug && typeof console !== "undefined") {
             const args = Array.prototype.slice.call(arguments);
             (console.debug || console.log).apply(this, args);
         }
@@ -288,18 +288,18 @@ const Cuic = {
         for (let i = 0; i < args.length; i += 1) {
             const b = args[i];
 
-            if (typeof b === "object" && b !== null && b !== undefined
-                && typeof a === "object" && a !== null && a !== undefined) {
+            if (typeof b === "object" && b !== null && typeof b !== "undefined"
+                && typeof a === "object" && a !== null && typeof a !== "undefined") {
                 for (let key in b) {
                     if (b.hasOwnProperty(key)) {
-                        if (recursive && typeof b[key] === "object" && b[key] !== null && b[key] !== undefined) {
+                        if (recursive && typeof b[key] === "object" && b[key] !== null && typeof b[key] !== "undefined") {
                             a[key] = this.extend(a[key], b[key]);
                         } else {
                             a[key] = b[key];
                         }
                     }
                 }
-            } else if (b !== null && b !== undefined) {
+            } else if (b !== null && typeof b !== "undefined") {
                 a = b;
             }
         }
@@ -859,32 +859,32 @@ const Cuic = {
 
         // Check in resolver
         for (ev in resolver) {
-            if (element.style[ev] !== undefined) {
+            if (typeof element.style[ev] !== "undefined") {
                 return resolver[ev];
             }
         }
 
         // Check in element
-        if (element[event] !== undefined) {
+        if (typeof element[event] !== "undefined") {
             return event;
         }
-        if (element[`on${event}`] !== undefined) {
+        if (typeof element[`on${event}`] !== "undefined") {
             return event;
         }
 
         // Check in document
-        if (document[event] !== undefined) {
+        if (typeof document[event] !== "undefined") {
             return event;
         }
-        if (document[`on${event}`] !== undefined) {
+        if (typeof document[`on${event}`] !== "undefined") {
             return event;
         }
 
         // Check in window
-        if (window[event] !== undefined) {
+        if (typeof window[event] !== "undefined") {
             return event;
         }
-        if (window[`on${event}`] !== undefined) {
+        if (typeof window[`on${event}`] !== "undefined") {
             return event;
         }
     },
@@ -893,7 +893,7 @@ const Cuic = {
 export default Cuic;
 
 // Expose lib as global
-if (window !== undefined) {
+if (typeof window !== "undefined") {
     window.Cuic = Cuic;
 }
 

@@ -150,7 +150,7 @@ export class Switcher extends Closable {
      * @return {boolean}
      */
     isStarted() {
-        return this.timer !== null && this.timer !== undefined;
+        return this.timer !== null && typeof this.timer !== "undefined";
     }
 
     /**

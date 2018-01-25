@@ -70,7 +70,7 @@ export class Element {
             if (attributes.hasOwnProperty(attr)) {
                 const value = attributes[attr];
 
-                if (value !== null && value !== undefined) {
+                if (value !== null && typeof value !== "undefined") {
                     // Do not override classes
                     if (attr === "className") {
                         this.addClass(value);
@@ -90,7 +90,7 @@ export class Element {
                     }
 
                     // Set attribute
-                    if (this.element[attr] !== undefined) {
+                    if (typeof this.element[attr] !== "undefined") {
                         this.element[attr] = value;
                     }
                     else if (attr === "html") {
@@ -920,7 +920,7 @@ export class Element {
     attr(name, value) {
         const node = this.node();
 
-        if (value !== undefined) {
+        if (typeof value !== "undefined") {
             if (name in node) {
                 node[name] = value;
             }
@@ -1164,7 +1164,7 @@ export class Element {
         this.debug("data", key, value);
         const dataSet = this.node().dataset;
 
-        if (value !== undefined) {
+        if (typeof value !== "undefined") {
             dataSet[Cuic.toCamelCase(key)] = value;
             return this;
         }
@@ -1342,7 +1342,7 @@ export class Element {
      * @return {Element|string}
      */
     html(html) {
-        if (html !== undefined) {
+        if (typeof html !== "undefined") {
             // Get HTML from object
             if (html && typeof html === "object") {
                 if (Cuic.isNode(html)) {
@@ -1632,7 +1632,7 @@ export class Element {
      */
     isRemoved() {
         const parent = this.node().parentNode;
-        return parent === null || parent === undefined;
+        return parent === null || typeof parent === "undefined";
     }
 
     /**
@@ -2190,8 +2190,8 @@ export class Element {
         const node = this.node();
         this.debug("text", text);
 
-        if (text !== undefined) {
-            if (node.innerText !== undefined) {
+        if (typeof text !== "undefined") {
+            if (typeof node.innerText !== "undefined") {
                 node.innerText = text;
             } else {
                 node.textContent = text;
@@ -2214,7 +2214,7 @@ export class Element {
     val(value) {
         this.debug("val", value);
 
-        if (value !== undefined) {
+        if (typeof value !== "undefined") {
             this.node().value = value;
             return this;
         } else {

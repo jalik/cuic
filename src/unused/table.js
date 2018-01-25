@@ -26,7 +26,7 @@
 (function ($) {
     'use strict';
 
-    var ns = Cuic.namespace('table');
+    let ns = Cuic.namespace('table');
 
     /**
      * Enables interactions on a table
@@ -47,7 +47,7 @@
         }, options);
 
         // Get target
-        var table = $(options.target);
+        let table = $(options.target);
 
         if (table.length > 1) {
             throw 'Only one table is expected as target';
@@ -62,9 +62,9 @@
         }
 
         // Get the table zones
-        var thead = table.children('thead');
-        var tbody = table.children('tbody');
-        var tfoot = table.children('tfoot');
+        let thead = table.children('thead');
+        let tbody = table.children('tbody');
+        let tfoot = table.children('tfoot');
 
         // Mark selected rows when clicked
         if (options.selectRowOnClick) {
@@ -81,7 +81,7 @@
          * @param order
          */
         table.sort = function (index, order) {
-            var rows = [];
+            let rows = [];
 
             // Get all rows
             tbody.children('tr').each(function () {
@@ -89,7 +89,7 @@
             });
 
             // Removes order from other columns
-            var column = thead.find('tr > th').eq(index);
+            let column = thead.find('tr > th').eq(index);
             thead.find('tr > th').not(column).removeClass('ascendant descendant sorted');
 
             // Add the sorted class to the column
@@ -102,9 +102,10 @@
             if (rows.length > 1) {
                 // Sort the rows
                 rows.sort(function (row1, row2) {
-                    if (row1 !== undefined && row1 !== null && row2 !== undefined && row2 !== null) {
-                        var value1 = row1.children('td').eq(index).html();
-                        var value2 = row2.children('td').eq(index).html();
+                    if (typeof row1 !== "undefined" && row1 !== null
+                        && typeof row2 !== "undefined" && row2 !== null) {
+                        let value1 = row1.children('td').eq(index).html();
+                        let value2 = row2.children('td').eq(index).html();
 
                         if (typeof value1 === 'string') {
                             value1 = value1.toLowerCase();
@@ -131,7 +132,7 @@
                 }
 
                 // Sort all rows
-                for (var i = 0; i < rows.length; i += 1) {
+                for (let i = 0; i < rows.length; i += 1) {
                     rows[i].appendTo(tbody);
                 }
 
@@ -143,7 +144,7 @@
         };
 
         // Sort the table
-        var defaultColumn = thead.find('.default');
+        let defaultColumn = thead.find('.default');
         defaultColumn = defaultColumn.length === 1 ? defaultColumn : thead.find('.sortable:first');
 
         table.sort(defaultColumn.index(), defaultColumn.hasClass('descendant') ? 'desc' : 'asc');
@@ -151,9 +152,9 @@
         // Handle clicks on sortable columns
         thead.find('tr > .' + options.sortableClass).off(ns('click')).on(ns('click'), function (ev) {
             if (ev.currentTarget === ev.target) {
-                var column = $(this);
-                var index = column.index();
-                var order;
+                let column = $(this);
+                let index = column.index();
+                let order;
 
                 if (column.hasClass('ascendant')) {
                     column.removeClass('ascendant');

@@ -40,7 +40,7 @@ export class Closable extends Component {
         }
 
         // Open or hide the component
-        if (this.options.opened !== undefined) {
+        if (typeof this.options.opened !== "undefined") {
             if (this.options.opened) {
                 this.open();
             } else {
