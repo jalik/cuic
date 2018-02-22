@@ -539,6 +539,9 @@ tooltip.updateTail();
 
 ## Changelog
 
+### v0.11.1
+- Adds default class `btn-secondary` to `Button` component to support Bootstrap v4
+
 ### v0.11.0
 - Adds `options` argument to method `Element._calculateAlign(position, options)`
 - Adds `options` argument to method `Element.align(position, options)`

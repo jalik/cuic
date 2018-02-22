@@ -58,7 +58,7 @@ export class Button extends Component {
 }
 
 Button.prototype.options = {
-    className: "btn-default",
+    className: "btn-default btn-secondary",
     disabled: false,
     label: null,
     shortcut: null,

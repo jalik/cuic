@@ -173,7 +173,7 @@ export class Popup extends Closable {
 
             // Create button
             button = new Button(Cuic.extend({
-                className: "btn btn-default " + button.className,
+                className: "btn btn-default btn-secondary " + button.className,
                 label: button.label
             }, button));
 
