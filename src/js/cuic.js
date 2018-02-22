@@ -288,11 +288,11 @@ const Cuic = {
         for (let i = 0; i < args.length; i += 1) {
             const b = args[i];
 
-            if (typeof b === "object" && b !== null && typeof b !== "undefined"
-                && typeof a === "object" && a !== null && typeof a !== "undefined") {
+            if (typeof b === "object" && b !== null
+                && typeof a === "object" && a !== null) {
                 for (let key in b) {
                     if (b.hasOwnProperty(key)) {
-                        if (recursive && typeof b[key] === "object" && b[key] !== null && typeof b[key] !== "undefined") {
+                        if (recursive && typeof b[key] === "object" && b[key] !== null) {
                             a[key] = this.extend(a[key], b[key]);
                         } else {
                             a[key] = b[key];
@@ -373,9 +373,8 @@ const Cuic = {
     isElement(obj) {
         return (
             typeof HTMLElement === "object" ? obj instanceof HTMLElement : //DOM2
-                obj
+                obj !== null
                 && typeof obj === "object"
-                && obj !== null
                 && obj.nodeType === 1
                 && typeof obj.nodeName === "string"
         );
@@ -386,7 +385,7 @@ const Cuic = {
      * @return {boolean}
      */
     isFirefox() {
-        return typeof InstallTrigger !== "undefined";
+        return typeof window.InstallTrigger !== "undefined";
     },
 
     /**
@@ -827,10 +826,8 @@ const Cuic = {
      * @return {*}
      */
     valueOf(value, context) {
-        switch (typeof value) {
-            case "function":
-                value = value.call(context);
-                break;
+        if (typeof value === "function") {
+            value = value.call(context);
         }
         return value;
     },
@@ -887,7 +884,7 @@ const Cuic = {
         if (typeof window[`on${event}`] !== "undefined") {
             return event;
         }
-    },
+    }
 };
 
 export default Cuic;
@@ -903,12 +900,4 @@ Cuic.ready(() => {
         Cuic.mouseX = ev.clientX;
         Cuic.mouseY = ev.clientY;
     });
-
-    // Make root nodes fit screen,
-    // that allow dialogs and other floating elements
-    // to be positioned on all the screen.
-    Cuic.find("html,body").css({minHeight: "100%"});
-
-    // Make body the reference for positioning
-    Cuic.find("body").css({position: "relative"});
 });
