@@ -36,7 +36,7 @@ export class Closable extends Component {
 
         // Add closable class
         if (this.options.closable) {
-            this.addClass("closable");
+            this.addClass("cc-closable");
         }
 
         // Open or hide the component

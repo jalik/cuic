@@ -40,8 +40,8 @@ export class Guide {
         this.popup = new Popup(Cuic.extend({}, options, {
             autoClose: false,
             autoRemove: false,
-            mainClass: "guide",
-            className: "guide guide-popup"
+            mainClass: "cc-guide",
+            className: "cc-guide cc-guide-popup"
         }));
         this.popup.guide = this;
 

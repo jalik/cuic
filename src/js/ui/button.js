@@ -31,7 +31,7 @@ export class Button extends Component {
     constructor(options) {
         // Set default options
         options = Cuic.extend({}, Button.prototype.options, options, {
-            mainClass: "btn"
+            mainClass: "cc-button"
         });
 
         // Create element
@@ -58,7 +58,7 @@ export class Button extends Component {
 }
 
 Button.prototype.options = {
-    className: "btn-default btn-secondary",
+    className: "btn btn-default btn-secondary",
     disabled: false,
     label: null,
     shortcut: null,

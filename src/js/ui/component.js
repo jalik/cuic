@@ -40,7 +40,7 @@ export class Component extends Element {
         super(node, attributes, options);
 
         // Add component class
-        this.addClass("component");
+        this.addClass("cc-component");
     }
 }
 

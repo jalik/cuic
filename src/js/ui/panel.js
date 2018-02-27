@@ -33,28 +33,28 @@ export class Panel extends Closable {
     constructor(options) {
         // Set default options
         options = Cuic.extend({}, Panel.prototype.options, options, {
-            mainClass: "panel"
+            mainClass: "cc-panel"
         });
 
         // Create element
         super("div", {className: options.className}, options);
 
         if (options.element) {
-            this.header = this.find(".panel-header").eq(0);
-            this.title = this.find(".panel-title").eq(0);
-            this.content = this.find(".panel-content").eq(0);
-            this.footer = this.find(".panel-footer").eq(0);
-            this.closeButton = this.find(".panel-header .btn-close").eq(0);
+            this.header = this.find(".cc-panel-header").first();
+            this.title = this.find(".cc-panel-title").first();
+            this.content = this.find(".cc-panel-content").first();
+            this.footer = this.find(".cc-panel-footer").first();
+            this.closeButton = this.find(".cc-panel-header .btn-close").first();
         }
         else {
             // Add the header
             this.header = new Element("header", {
-                className: "panel-header"
+                className: "cc-panel-header"
             }).prependTo(this);
 
             // Add the title
             this.title = new Element("h5", {
-                className: "panel-title",
+                className: "cc-panel-title",
                 html: options.title
             }).appendTo(this.header);
 
@@ -67,13 +67,13 @@ export class Panel extends Closable {
 
             // Add the body
             this.content = new Element("section", {
-                className: "panel-content",
+                className: "cc-panel-content",
                 html: options.content
             }).appendTo(this);
 
             // Add the footer
             this.footer = new Element("footer", {
-                className: "panel-footer",
+                className: "cc-panel-footer",
                 html: options.footer
             }).appendTo(this);
 

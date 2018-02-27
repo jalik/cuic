@@ -41,7 +41,7 @@ export class Group extends Closable {
         }, attributes), options);
 
         // Add component classes
-        this.addClass("component-group");
+        this.addClass("cc-group");
 
         // Prepare components collection
         this.components = new Collection();

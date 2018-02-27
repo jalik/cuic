@@ -23,10 +23,7 @@
  *
  */
 
-@popup-background-color: @background-color-inverse;
-@popup-tail-size: 8px;
-
-.popup {
+.cc-popup {
   background-color: @popup-background-color;
   border-radius: @border-radius;
   box-shadow: @shadow;
@@ -39,53 +36,53 @@
   z-index: 9;
 }
 
-.popup.closed {
+.cc-popup.closed {
   opacity: 0;
   transform: scale(0);
 }
 
-.popup.opened {
+.cc-popup.opened {
   opacity: 1;
   transform: scale(1);
 }
 
-.popup-content {
+.cc-popup-content {
   line-height: @text-line-height;
 }
 
-.popup .btn-close:focus,
-.popup .btn-close:hover {
+.cc-popup .btn-close:focus,
+.cc-popup .btn-close:hover {
   color: rgba(255, 255, 255, 0.7);
 }
 
 // POPUP POSITION
 
-.popup.anchored-bottom.anchored-left {
+.cc-popup.anchored-bottom.anchored-left {
   border-radius: @border-radius 0 @border-radius @border-radius;
 }
 
-.popup.anchored-bottom.anchored-right {
+.cc-popup.anchored-bottom.anchored-right {
   border-radius: 0 @border-radius @border-radius @border-radius;
 }
 
-.popup.anchored-top.anchored-left {
+.cc-popup.anchored-top.anchored-left {
   border-radius: @border-radius @border-radius 0 @border-radius;
 }
 
-.popup.anchored-top.anchored-right {
+.cc-popup.anchored-top.anchored-right {
   border-radius: @border-radius @border-radius @border-radius 0;
 }
 
 // POPUP TAIL
 
-.popup-tail {
+.cc-popup-tail {
   display: inline-block;
   height: 0;
   width: 0;
   position: absolute;
 }
 
-.popup-tail-bottom {
+.cc-popup-tail-bottom {
   border-left: solid @popup-tail-size transparent;
   border-right: solid @popup-tail-size transparent;
   border-top: solid @popup-tail-size @popup-background-color;
@@ -96,7 +93,7 @@
   top: auto;
 }
 
-.popup-tail-left {
+.cc-popup-tail-left {
   border-bottom: solid @popup-tail-size transparent !important;
   border-top: solid @popup-tail-size transparent !important;
   border-right: solid @popup-tail-size @popup-background-color;
@@ -107,7 +104,7 @@
   top: 50%;
 }
 
-.popup-tail-right {
+.cc-popup-tail-right {
   border-bottom: solid @popup-tail-size transparent !important;
   border-top: solid @popup-tail-size transparent !important;
   border-left: solid @popup-tail-size @popup-background-color;
@@ -118,7 +115,7 @@
   top: 50%;
 }
 
-.popup-tail-top {
+.cc-popup-tail-top {
   border-left: solid @popup-tail-size transparent !important;
   border-right: solid @popup-tail-size transparent !important;
   border-bottom: solid @popup-tail-size @popup-background-color;
@@ -129,9 +126,9 @@
   top: 0;
 }
 
-.popup-tail-bottom.popup-tail-left,
-.popup-tail-bottom.popup-tail-right,
-.popup-tail-top.popup-tail-left,
-.popup-tail-top.popup-tail-right {
+.cc-popup-tail-bottom.cc-popup-tail-left,
+.cc-popup-tail-bottom.cc-popup-tail-right,
+.cc-popup-tail-top.cc-popup-tail-left,
+.cc-popup-tail-top.cc-popup-tail-right {
   display: none;
 }

@@ -540,6 +540,7 @@ tooltip.updateTail();
 ## Changelog
 
 ### v0.11.1
+- Renames all component CSS class name with the prefix `cc-`
 - Adds default class `btn-secondary` to `Button` component to support Bootstrap v4
 
 ### v0.11.0

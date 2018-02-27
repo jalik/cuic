@@ -32,7 +32,7 @@ export class Switcher extends Closable {
     constructor(options) {
         // Set default options
         options = Cuic.extend({}, Switcher.prototype.options, options, {
-            mainClass: "switcher"
+            mainClass: "cc-switcher"
         });
 
         // Create element

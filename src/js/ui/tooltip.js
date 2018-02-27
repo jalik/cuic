@@ -33,7 +33,7 @@ export class Tooltip extends Closable {
     constructor(options) {
         // Set default options
         options = Cuic.extend({}, Tooltip.prototype.options, options, {
-            mainClass: "tooltip"
+            mainClass: "cc-tooltip"
         });
 
         // Create element
@@ -44,12 +44,12 @@ export class Tooltip extends Closable {
 
         // Add content
         this.content = new Element("div", {
-            className: "tooltip-content"
+            className: "cc-tooltip-content"
         }).appendTo(this);
 
         // Add tail
         this.tail = new Element("span", {
-            className: "tooltip-tail"
+            className: "cc-tooltip-tail"
         }).appendTo(this);
 
         Cuic.element(document).on("mouseover", (ev) => {
@@ -183,23 +183,23 @@ export class Tooltip extends Closable {
         // prop["border-color"] = this.css("background-color");
 
         // Remove previous classes
-        this.tail.removeClass("tooltip-tail-bottom tooltip-tail-left tooltip-tail-right tooltip-tail-top");
+        this.tail.removeClass("cc-tooltip-tail-bottom cc-tooltip-tail-left cc-tooltip-tail-right cc-tooltip-tail-top");
 
         // Top tail
         if (this.isAnchored("bottom")) {
-            this.tail.addClass("tooltip-tail-top");
+            this.tail.addClass("cc-tooltip-tail-top");
         }
         // Bottom tail
         if (this.isAnchored("top")) {
-            this.tail.addClass("tooltip-tail-bottom");
+            this.tail.addClass("cc-tooltip-tail-bottom");
         }
         // Right tail
         if (this.isAnchored("left")) {
-            this.tail.addClass("tooltip-tail-right");
+            this.tail.addClass("cc-tooltip-tail-right");
         }
         // Left tail
         if (this.isAnchored("right")) {
-            this.tail.addClass("tooltip-tail-left");
+            this.tail.addClass("cc-tooltip-tail-left");
         }
 
         // Apply CSS

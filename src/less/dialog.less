@@ -23,7 +23,7 @@
  *
  */
 
-.dialog {
+.cc-dialog {
   background-color: @background-color;
   border-radius: @border-radius;
   box-shadow: @shadow;
@@ -34,48 +34,48 @@
   z-index: 10;
 }
 
-body > .dialog {
+body > .cc-dialog {
   position: fixed;
 }
 
-.dialog.closed {
+.cc-dialog.closed {
   opacity: 0;
   transform: scale(0);
 }
 
-.dialog.movable {
+.cc-dialog.cc-movable {
   position: absolute !important;
 }
 
-.dialog.opened {
+.cc-dialog.opened {
   opacity: 1;
   transform: scale(1);
 }
 
-.dialog-content {
+.cc-dialog-content {
   line-height: @text-line-height;
   overflow: auto;
   margin: @text-padding 0;
   padding: 0 @text-padding;
 }
 
-.dialog-footer {
+.cc-dialog-footer {
   border-top: solid 1px #eee;
   padding: @text-padding;
   text-align: right;
 }
 
-.dialog-header {
+.cc-dialog-header {
   border-bottom: solid 1px #eee;
   min-height: 56px;
   padding: @text-padding;
 }
 
-.dialog.closable .dialog-header {
+.cc-dialog.cc-closable .cc-dialog-header {
   padding-right: 56px;
 }
 
-.dialog-header .btn-close {
+.cc-dialog-header .btn-close {
   color: rgba(0, 0, 0, 0.4);
   cursor: pointer;
   //font-size: 1.6em;
@@ -85,12 +85,12 @@ body > .dialog {
   padding: @text-padding;
 }
 
-.dialog-header .btn-close:focus,
-.dialog-header .btn-close:hover {
+.cc-dialog-header .btn-close:focus,
+.cc-dialog-header .btn-close:hover {
   color: rgba(0, 0, 0, 0.6);
 }
 
-.dialog-title {
+.cc-dialog-title {
   font-size: 1.1em;
   font-weight: bold;
   margin: 0;

@@ -36,7 +36,7 @@ export class Popup extends Closable {
     constructor(options) {
         // Set default options
         options = Cuic.extend({}, Popup.prototype.options, options, {
-            mainClass: "popup"
+            mainClass: "cc-popup"
         });
 
         // Create element
@@ -44,36 +44,36 @@ export class Popup extends Closable {
 
         // Add tail
         this.tail = new Element("span", {
-            className: "popup-tail"
+            className: "cc-popup-tail"
         }).appendTo(this);
 
         // Add header
         this.header = new Element("header", {
-            className: "popup-header",
+            className: "cc-popup-header",
             css: {display: !!this.options.title ? "block" : "none"}
         }).appendTo(this);
 
         // Add title
         this.title = new Element("h5", {
-            className: "popup-title",
+            className: "cc-popup-title",
             html: this.options.title
         }).appendTo(this.header);
 
         // Add content
         this.content = new Element("div", {
-            className: "popup-content",
+            className: "cc-popup-content",
             html: options.content
         }).appendTo(this);
 
         // Add footer
         this.footer = new Element("footer", {
-            className: "popup-footer",
+            className: "cc-popup-footer",
             css: {display: !!this.options.buttons ? "block" : "none"}
         }).appendTo(this);
 
         // Add buttons group
         this.buttons = new Group("div", {
-            className: "btn-group guide-buttons"
+            className: "btn-group cc-guide-buttons"
         }).appendTo(this.footer);
 
         // Show footer if not empty
@@ -274,23 +274,23 @@ export class Popup extends Closable {
         // prop["border-color"] = this.css("background-color");
 
         // Remove previous classes
-        this.tail.removeClass("popup-tail-bottom popup-tail-left popup-tail-right popup-tail-top");
+        this.tail.removeClass("cc-popup-tail-bottom cc-popup-tail-left cc-popup-tail-right cc-popup-tail-top");
 
         // Top tail
         if (this.isAnchored("bottom")) {
-            this.tail.addClass("popup-tail-top");
+            this.tail.addClass("cc-popup-tail-top");
         }
         // Bottom tail
         if (this.isAnchored("top")) {
-            this.tail.addClass("popup-tail-bottom");
+            this.tail.addClass("cc-popup-tail-bottom");
         }
         // Right tail
         if (this.isAnchored("left")) {
-            this.tail.addClass("popup-tail-right");
+            this.tail.addClass("cc-popup-tail-right");
         }
         // Left tail
         if (this.isAnchored("right")) {
-            this.tail.addClass("popup-tail-left");
+            this.tail.addClass("cc-popup-tail-left");
         }
 
         // Apply CSS

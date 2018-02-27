@@ -37,7 +37,7 @@ export class Hook extends Component {
         super("div", {className: options.className}, options);
 
         // Add component classes
-        this.addClass("hook");
+        this.addClass("cc-hook");
 
         // This is a fix to avoid offsetTop > 0
         this.css({
@@ -49,7 +49,7 @@ export class Hook extends Component {
         // Create the spacer item that will replace
         // the bar when it is scrolled
         this.space = new Element("div", {
-            className: "hook-space"
+            className: "cc-hook-space"
         });
 
         // Get the element"s offset

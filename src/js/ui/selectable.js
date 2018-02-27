@@ -36,7 +36,7 @@ export class Selectable extends Component {
         super("div", {className: options.className}, options);
 
         // Add component class
-        this.addClass("selectable");
+        this.addClass("cc-selectable");
 
         // Add selected class
         if (this.options.selected) {

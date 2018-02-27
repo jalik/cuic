@@ -23,7 +23,7 @@
  *
  */
 
-.notification {
+.cc-notification {
   background-color: @background-color-inverse;
   border-radius: @border-radius;
   box-shadow: @shadow;
@@ -37,33 +37,33 @@
   z-index: 100;
 }
 
-body > .notification {
+body > .cc-notification {
   position: fixed;
 }
 
-.notification.closed {
+.cc-notification.closed {
   opacity: 0;
   transform: scale(0);
 }
 
-.notification.opened {
+.cc-notification.opened {
   opacity: 1;
   transform: scale(1);
 }
 
-.notification.opened:hover {
+.cc-notification.opened:hover {
   background-color: rgba(50, 50, 50, 0.9);
 }
 
-.notification-content {
+.cc-notification-content {
   line-height: @text-line-height;
 }
 
-.notification.closable .notification-content {
+.cc-notification.cc-closable .cc-notification-content {
   margin-right: @margin * 2.5;
 }
 
-.notification .btn-close {
+.cc-notification .btn-close {
   cursor: pointer;
   margin: @margin;
   position: absolute;
@@ -71,7 +71,7 @@ body > .notification {
   right: 0;
 }
 
-.notification .btn-close:focus,
-.notification .btn-close:hover {
+.cc-notification .btn-close:focus,
+.cc-notification .btn-close:hover {
   //color: rgba(255, 255, 255, 0.7);
 }

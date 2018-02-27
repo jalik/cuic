@@ -33,7 +33,7 @@ export class Notification extends Closable {
     constructor(options) {
         // Set default options
         options = Cuic.extend({}, Notification.prototype.options, options, {
-            mainClass: "notification"
+            mainClass: "cc-notification"
         });
 
         // Create element
@@ -44,7 +44,7 @@ export class Notification extends Closable {
 
         // Add content
         this.content = new Element("div", {
-            className: "notification-content",
+            className: "cc-notification-content",
             html: options.content
         }).appendTo(this);
 

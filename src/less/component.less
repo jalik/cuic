@@ -23,7 +23,7 @@
  *
  */
 
-.component {
+.cc-component {
   display: inline-block;
   font-size: 1rem;
   font-style: normal;
@@ -31,8 +31,12 @@
   position: relative;
 }
 
-.component.computing,
-.component.no-transition {
+.cc-component:focus {
+  outline: none;
+}
+
+.cc-component.computing,
+.cc-component.no-transition {
   //display: none;
   -webkit-transition: none !important;
   -moz-transition: none !important;
@@ -40,7 +44,7 @@
   transition: none !important;
 }
 
-.component.hidden {
+.cc-component.hidden {
   display: none;
   -webkit-transition: none !important;
   -moz-transition: none !important;
@@ -48,7 +52,7 @@
   transition: none !important;
 }
 
-.component.maximized {
+.cc-component.maximized {
   height: 100%;
   width: 100%;
   max-height: 100%;
@@ -56,21 +60,21 @@
   transition-timing-function: ease-out;
 }
 
-.component.maximized-x {
+.cc-component.maximized-x {
   width: 100%;
   left: 0;
   right: 0;
   transition-timing-function: ease-out;
 }
 
-.component.maximized-y {
+.cc-component.maximized-y {
   height: 100%;
   bottom: 0;
   top: 0;
   transition-timing-function: ease-out;
 }
 
-.component.minimized {
+.cc-component.minimized {
   height: auto;
   width: auto;
   transition-timing-function: ease-out;

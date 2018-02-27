@@ -39,7 +39,7 @@ export class Dialog extends Closable {
     constructor(options) {
         // Set default options
         options = Cuic.extend({}, Dialog.prototype.options, options, {
-            mainClass: "dialog"
+            mainClass: "cc-dialog"
         });
 
         // Create element
@@ -55,7 +55,7 @@ export class Dialog extends Closable {
 
         // Create the overlay
         this.overlay = new Overlay({
-            className: "overlay dialog-overlay",
+            className: "cc-overlay cc-dialog-overlay",
             autoClose: false,
             autoRemove: false,
             opened: false
@@ -63,25 +63,25 @@ export class Dialog extends Closable {
 
         // Add header
         this.header = new Element("header", {
-            className: "dialog-header",
+            className: "cc-dialog-header",
             css: {display: !!this.options.title ? "block" : "none"}
         }).appendTo(this);
 
         // Add title
         this.title = new Element("h3", {
-            className: "dialog-title",
+            className: "cc-dialog-title",
             html: this.options.title
         }).appendTo(this.header);
 
         // Add content
         this.content = new Element("section", {
-            className: "dialog-content",
+            className: "cc-dialog-content",
             html: this.options.content
         }).appendTo(this);
 
         // Add footer
         this.footer = new Element("footer", {
-            className: "dialog-footer",
+            className: "cc-dialog-footer",
             css: {display: !!this.options.buttons ? "block" : "none"}
         }).appendTo(this);
 

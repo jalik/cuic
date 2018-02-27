@@ -251,7 +251,7 @@ const Cuic = {
             return new Element(element.get(0));
         }
         if (typeof element === "string") {
-            return this.find(element).eq(0);
+            return this.find(element).first();
         }
         return element;
     },

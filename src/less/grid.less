@@ -23,14 +23,14 @@
  *
  */
 
-.grid {
+.cc-grid {
   background-color: #eee;
   border: solid 1px #ccc;
   border-radius: 3px;
   display: block;
 }
 
-.grid > .widget {
+.cc-grid > .cc-widget {
   background-color: #fff;
   border: solid 1px #ccc;
   margin: 2em;
@@ -39,20 +39,20 @@
   transition: background 200ms, border 200ms, opacity 200ms, box-shadow 200ms;
 }
 
-.grid > .widget:hover {
+.cc-grid > .cc-widget:hover {
   border: solid 1px #65d0f3;
 }
 
-.grid > .widget * {
+.cc-grid > .cc-widget * {
   cursor: auto;
 }
 
-.grid > .preview {
+.cc-grid > .cc-preview {
   background-color: transparent;
   border: dotted 3px #65d0f3;
 }
 
-.grid > .dragging {
+.cc-grid > .dragging {
   background-color: #57a0be !important;
   box-shadow: @shadow;
   border-color: #65d0f3;
@@ -60,7 +60,7 @@
   opacity: 0.7;
 }
 
-.grid > .resizing {
+.cc-grid > .resizing {
   background-color: #57a0be !important;
   box-shadow: @shadow;
   border-color: #65d0f3;

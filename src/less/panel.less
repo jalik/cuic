@@ -23,7 +23,7 @@
  *
  */
 
-.panel {
+.cc-panel {
   background-color: @background-color;
   border: solid 1px #ccc;
   box-shadow: @shadow;
@@ -33,36 +33,35 @@
   z-index: 1;
 }
 
-body > .panel {
+body > .cc-panel {
   position: fixed;
 }
 
-.panel.closed {
+.cc-panel.closed {
 }
 
-.panel.opened {
+.cc-panel.opened {
 }
 
-.panel-content {
+.cc-panel-content {
   line-height: @text-line-height;
   overflow: auto;
   margin: @text-padding 0;
   padding: 0 @text-padding;
 }
 
-.panel-footer {
+.cc-panel-footer {
   color: #888;
   //font-size: 0.8em;
   padding: @text-padding;
 }
 
-.panel-header,
-.panel-heading {
+.cc-panel-header {
   border-bottom: solid 3px #57a0be;
   padding: @text-padding;
 }
 
-.panel-header .btn-close {
+.cc-panel-header .btn-close {
   color: rgba(0, 0, 0, 0.4);
   cursor: pointer;
   //font-size: 1.6em;
@@ -72,12 +71,12 @@ body > .panel {
   padding: @text-padding;
 }
 
-.panel-header .btn-close:focus,
-.panel-header .btn-close:hover {
+.cc-panel-header .btn-close:focus,
+.cc-panel-header .btn-close:hover {
   color: rgba(0, 0, 0, 0.6);
 }
 
-.panel-title {
+.cc-panel-title {
   font-weight: bold;
   margin: 0;
 }

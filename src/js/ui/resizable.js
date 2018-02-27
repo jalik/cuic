@@ -38,7 +38,7 @@ export class Resizable extends Component {
         super("div", {className: options.className}, options);
 
         // Add component classes
-        this.addClass("resizable");
+        this.addClass("cc-resizable");
 
         // Force the target to be the relative parent
         if (this.isStatic()) {
@@ -47,19 +47,19 @@ export class Resizable extends Component {
 
         // Add Bottom handle
         this.bottomHandle = new Element("div", {
-            className: "resize-handle resize-handle-s",
+            className: "cc-resize-handle cc-resize-handle-s",
             css: {height: options.handleSize}
         }).appendTo(this);
 
         // Add Right handler
         this.rightHandle = new Element("div", {
-            className: "resize-handle resize-handle-e",
+            className: "cc-resize-handle cc-resize-handle-e",
             css: {width: options.handleSize}
         }).appendTo(this);
 
         // Add Bottom-Right handler
         this.bottomRightHandle = new Element("div", {
-            className: "resize-handle resize-handle-se",
+            className: "cc-resize-handle cc-resize-handle-se",
             css: {
                 height: options.handleSize,
                 width: options.handleSize

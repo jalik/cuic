@@ -23,7 +23,7 @@
  *
  */
 
-.notification-stack {
+.cc-notification-stack {
   overflow: auto;
   padding-bottom: @shadow-y;
   position: absolute;
@@ -31,19 +31,19 @@
   z-index: 10;
 }
 
-body > .notification-stack {
+body > .cc-notification-stack {
   position: fixed;
 }
 
-.notification-stack.closed {
+.cc-notification-stack.closed {
   opacity: 0;
 }
 
-.notification-stack.opened {
+.cc-notification-stack.opened {
   opacity: 1;
 }
 
-.notification-stack .notification {
+.cc-notification-stack .cc-notification {
   display: block;
   position: relative;
   bottom: auto;
@@ -54,34 +54,34 @@ body > .notification-stack {
 
 // NOTIFICATIONS IN STACK
 
-.notification-stack.aligned-bottom .notification {
+.cc-notification-stack.aligned-bottom .cc-notification {
   transform-origin: bottom center;
 }
 
-.notification-stack.aligned-bottom.aligned-left .notification {
+.cc-notification-stack.aligned-bottom.aligned-left .cc-notification {
   transform-origin: bottom left;
 }
 
-.notification-stack.aligned-bottom.aligned-right .notification {
+.cc-notification-stack.aligned-bottom.aligned-right .cc-notification {
   transform-origin: bottom right;
 }
 
-.notification-stack.aligned-left .notification {
+.cc-notification-stack.aligned-left .cc-notification {
   transform-origin: left center;
 }
 
-.notification-stack.aligned-right .notification {
+.cc-notification-stack.aligned-right .cc-notification {
   transform-origin: right center;
 }
 
-.notification-stack.aligned-top .notification {
+.cc-notification-stack.aligned-top .cc-notification {
   transform-origin: top center;
 }
 
-.notification-stack.aligned-top.aligned-left .notification {
+.cc-notification-stack.aligned-top.aligned-left .cc-notification {
   transform-origin: top left;
 }
 
-.notification-stack.aligned-top.aligned-right .notification {
+.cc-notification-stack.aligned-top.aligned-right .cc-notification {
   transform-origin: top right;
 }

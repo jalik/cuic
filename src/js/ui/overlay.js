@@ -31,7 +31,7 @@ export class Overlay extends Closable {
     constructor(options) {
         // Set default options
         options = Cuic.extend({}, Overlay.prototype.options, options, {
-            mainClass: "overlay"
+            mainClass: "cc-overlay"
         });
 
         // Create element

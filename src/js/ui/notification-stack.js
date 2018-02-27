@@ -33,7 +33,7 @@ export class NotificationStack extends Group {
     constructor(options) {
         // Set default options
         options = Cuic.extend({}, NotificationStack.prototype.options, options, {
-            mainClass: "notification-stack"
+            mainClass: "cc-notification-stack"
         });
 
         // Create element

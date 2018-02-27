@@ -37,7 +37,7 @@ export class Movable extends Component {
         super("div", {className: options.className}, options);
 
         // Add component class
-        this.addClass("movable");
+        this.addClass("cc-movable");
 
         // Force the target to be the relative parent
         if (this.isStatic()) {
@@ -62,7 +62,7 @@ export class Movable extends Component {
         this.handles.add(handle);
 
         // Add the handle class
-        handle.addClass("movable-handle");
+        handle.addClass("cc-movable-handle");
 
         // Start moving
         Cuic.on("mousedown", handle, (ev) => {
@@ -163,7 +163,7 @@ export class Movable extends Component {
 Movable.prototype.options = {
     constraintToParent: true,
     handle: null,
-    handleClassName: "movable-handle",
+    handleClassName: "cc-movable-handle",
     horizontally: true,
     namespace: "movable",
     rootOnly: true,

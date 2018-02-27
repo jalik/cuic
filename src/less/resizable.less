@@ -23,18 +23,18 @@
  *
  */
 
-.component.resizable {
+.cc-component.cc-resizable {
   position: relative;
 }
 
-.component.resizable.resizing {
+.cc-component.cc-resizable.resizing {
   transition-property: height, width;
   transition-duration: 0s;
 }
 
 // Handles
 
-.component.resizable .resize-handle {
+.cc-component.cc-resizable .cc-resize-handle {
   cursor: nwse-resize;
   display: none;
   min-height: 5px;
@@ -43,65 +43,65 @@
   z-index: 1;
 }
 
-.component.resizable.debug .resize-handle {
+.cc-component.cc-resizable.debugging .cc-resize-handle {
   background-color: rgba(255, 0, 0, 0.3);
 }
 
-.component.resizable.resizing .resize-handle,
-.component.resizable:hover .resize-handle {
+.cc-component.cc-resizable.resizing .cc-resize-handle,
+.cc-component.cc-resizable:hover .cc-resize-handle {
   display: block;
 }
 
-.component.resizable .resize-handle-e {
+.cc-component.cc-resizable .cc-resize-handle-e {
   cursor: e-resize;
   height: 100%;
   right: 0;
   top: 0;
 }
 
-.component.resizable .resize-handle-n {
+.cc-component.cc-resizable .cc-resize-handle-n {
   cursor: n-resize;
   left: 0;
   top: 0;
   width: 100%;
 }
 
-.component.resizable .resize-handle-ne {
+.cc-component.cc-resizable .cc-resize-handle-ne {
   cursor: ne-resize;
   right: 0;
   top: 0;
   z-index: 2;
 }
 
-.component.resizable .resize-handle-nw {
+.cc-component.cc-resizable .cc-resize-handle-nw {
   cursor: nw-resize;
   left: 0;
   top: 0;
   z-index: 2;
 }
 
-.component.resizable .resize-handle-s {
+.cc-component.cc-resizable .cc-resize-handle-s {
   cursor: s-resize;
   bottom: 0;
   left: 0;
   width: 100%;
 }
 
-.component.resizable .resize-handle-se {
+.cc-component.cc-resizable .cc-resize-handle-se {
   cursor: se-resize;
   bottom: 0;
   right: 0;
   z-index: 2;
 }
 
-.component.resizable .resize-handle-sw {
+.cc-component.cc-resizable .cc-resize-handle-sw {
   cursor: sw-resize;
   bottom: 0;
   left: 0;
   z-index: 2;
 }
 
-.component.resizable .resize-handle-w {
+.cc-component.cc-resizable .cc-resize-handle-w {
   cursor: w-resize;
   height: 100%;
   left: 0;
