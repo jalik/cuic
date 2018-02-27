@@ -115,7 +115,7 @@ export class Element {
 
         // Add debug class
         if (this.options.debug) {
-            this.addClass("debug");
+            this.addClass("debugging");
         }
 
         // Add main class

@@ -55,10 +55,10 @@ const Cuic = {
      */
     addEventListener(element, event, listener) {
         if (typeof element.addEventListener === "function") {
-            return element.addEventListener(event, listener);
+            return element.addEventListener(event, listener, false);
         }
         else if (typeof element.attachEvent === "function") {
-            return element.attachEvent(event, listener);
+            return element.attachEvent(event, listener, false);
         }
     },
 
@@ -532,7 +532,7 @@ const Cuic = {
             const duration = this.prefixStyle("animation-duration");
 
             // Execute callback now
-            if (!browserEvent && !("animation" in element.style) || getComputedStyle(element)[duration] === "0s") {
+            if (!browserEvent && !("animation" in element.style) || this.getComputedStyle(element)[duration] === "0s") {
                 this.apply(callback, element);
             }
         }
@@ -541,7 +541,7 @@ const Cuic = {
             const duration = this.prefixStyle("transition-duration");
 
             // Execute callback now
-            if (!browserEvent && !("transition" in element.style) || getComputedStyle(element)[duration] === "0s") {
+            if (!browserEvent && !("transition" in element.style) || this.getComputedStyle(element)[duration] === "0s") {
                 this.apply(callback, element);
             }
         }
@@ -580,7 +580,7 @@ const Cuic = {
             const duration = this.prefixStyle("animation-duration");
 
             // Execute callback now
-            if (!browserEvent && !("animation" in element.style) || getComputedStyle(element)[duration] === "0s") {
+            if (!browserEvent && !("animation" in element.style) || this.getComputedStyle(element)[duration] === "0s") {
                 this.apply(callback, element);
             }
         }
@@ -589,7 +589,7 @@ const Cuic = {
             const duration = this.prefixStyle("transition-duration");
 
             // Execute callback now
-            if (!browserEvent && !("transition" in element.style) || getComputedStyle(element)[duration] === "0s") {
+            if (!browserEvent && !("transition" in element.style) || this.getComputedStyle(element)[duration] === "0s") {
                 this.apply(callback, element);
             }
         }
@@ -628,7 +628,7 @@ const Cuic = {
             const duration = this.prefixStyle("animation-duration");
 
             // Execute callback now
-            if (!browserEvent && !("animation" in element.style) || getComputedStyle(element)[duration] === "0s") {
+            if (!browserEvent && !("animation" in element.style) || this.getComputedStyle(element)[duration] === "0s") {
                 this.apply(callback, element);
             }
         }
@@ -637,14 +637,16 @@ const Cuic = {
             const duration = this.prefixStyle("transition-duration");
 
             // Execute callback now
-            if (!browserEvent && !("transition" in element.style) || getComputedStyle(element)[duration] === "0s") {
+            if (!browserEvent && !("transition" in element.style) || this.getComputedStyle(element)[duration] === "0s") {
                 this.apply(callback, element);
             }
         }
+
         const listener = (ev) => {
             this.removeEventListener(element, browserEvent, listener);
             this.apply(callback, element, Array.prototype.slice.call(ev));
         };
+
         return this.addEventListener(element, browserEvent, listener);
     },
 
@@ -843,6 +845,16 @@ const Cuic = {
         let resolver = {};
 
         switch (event) {
+
+            case "animationend":
+                resolver = {
+                    "animation": "animationend",
+                    "OAnimation": "oAnimationEnd",
+                    "MozAnimation": "animationend",
+                    "WebkitAnimation": "webkitAnimationEnd"
+                };
+                break;
+
             case "transitionend":
                 resolver = {
                     "transition": "transitionend",

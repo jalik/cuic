@@ -541,6 +541,10 @@ tooltip.updateTail();
 
 ### v0.11.1
 - Renames all component CSS class name with the prefix `cc-`
+- Renames class `debug` to `debugging`
+- Fixes calls to `cuic.getComputedStyle()`
+- Disables transitions for elements with `hidden` CSS class
+- Adds resolvers for `animationend` in `cuic.whichEvent()`
 - Adds default class `btn-secondary` to `Button` component to support Bootstrap v4
 
 ### v0.11.0
