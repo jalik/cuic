@@ -32,6 +32,11 @@ export class Component extends Element {
         // Set default options
         options = Cuic.extend({}, Component.prototype.options, options);
 
+        // Set default attributes
+        attributes = Cuic.extend({
+            tabIndex: 0
+        }, attributes);
+
         super(node, attributes, options);
 
         // Add component class
