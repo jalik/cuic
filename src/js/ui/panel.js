@@ -219,7 +219,7 @@ export class Panel extends Closable {
         });
 
         // Add element to collection
-        Cuic.panels.add(this);
+        Panels.add(this);
     }
 
     /**
@@ -346,10 +346,10 @@ Panel.prototype.options = {
     zIndex: 1
 };
 
-Cuic.panels = new Collection();
+export const Panels = new Collection();
 
 Cuic.onWindowResized(() => {
-    Cuic.panels.each((panel) => {
+    Panels.each((panel) => {
         if (panel.isInDOM()) {
             // panel._disableTransitions();
             panel.resizeContent();
