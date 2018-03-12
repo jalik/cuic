@@ -2,6 +2,8 @@
 
 Cuic stands for **Common User Interface Components** and aims to offer various UI components like dialogs, popups, notifications, tooltips, etc.
 
+**The code is tested against bugs**.
+
 ## Styling
 
 Cuic has a default styling that you must load to display components correctly.

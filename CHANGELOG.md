@@ -1,6 +1,9 @@
 # Changelog
 
 ## UNRELEASED
+- Adds prefixes to style passed to `getComputedStyle()`
+- Adds resolvers for `animationend` in `cuic.whichEvent()`
+- Adds default class `btn-secondary` to `Button` component to support Bootstrap v4
 - Changes dialog transitions
 - Changes closing transitions speed
 - Closes dialog overlay only when needed
@@ -10,9 +13,6 @@
 - Fixes overlay opening transition
 - Fixes calls to `cuic.getComputedStyle()`
 - Disables transitions for elements with `hidden` CSS class
-- Adds prefixes to style passed to `getComputedStyle()`
-- Adds resolvers for `animationend` in `cuic.whichEvent()`
-- Adds default class `btn-secondary` to `Button` component to support Bootstrap v4
 
 ## v0.11.0
 - Adds `options` argument to method `Element._calculateAlign(position, options)`
