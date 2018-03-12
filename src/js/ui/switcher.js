@@ -55,7 +55,7 @@ export class Switcher extends Closable {
         }
 
         // Add element to collection
-        Cuic.switchers.add(this);
+        Switchers.add(this);
     }
 
     /**
@@ -247,6 +247,6 @@ Switcher.prototype.options = {
     repeat: true
 };
 
-Cuic.switchers = new Collection();
+export const Switchers = new Collection();
 
 export default Switcher;

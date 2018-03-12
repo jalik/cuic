@@ -47,6 +47,7 @@ import Resizable from "./js/ui/resizable";
 import Selectable from "./js/ui/selectable";
 import Shortcut from "./js/utils/shortcut";
 import Switcher from "./js/ui/switcher";
+import {Switchers} from "./js/ui/switcher";
 import Tooltip from "./js/ui/tooltip";
 import {Tooltips} from "./js/ui/tooltip";
 
@@ -70,6 +71,7 @@ Cuic.Popup = Popup;
 Cuic.Resizable = Resizable;
 Cuic.Selectable = Selectable;
 Cuic.Switcher = Switcher;
+Cuic.Switchers = Switchers;
 Cuic.Tooltip = Tooltip;
 Cuic.Tooltips = Tooltips;
 
