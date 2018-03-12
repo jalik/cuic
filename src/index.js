@@ -23,13 +23,13 @@
  *
  */
 
-// import "./js/polyfill";
 import Cuic from "./js/cuic";
 import Benchmark from "./js/utils/benchmark";
 import Button from "./js/ui/button";
 import Closable from "./js/ui/closable";
 import Collection from "./js/utils/collection";
 import Dialog from "./js/ui/dialog";
+import {Dialogs} from "./js/ui/dialog";
 import Element from "./js/ui/element";
 import Elements from "./js/ui/elements";
 import Events from "./js/utils/events";
@@ -52,6 +52,7 @@ import Tooltip from "./js/ui/tooltip";
 Cuic.Button = Button;
 Cuic.Closable = Closable;
 Cuic.Dialog = Dialog;
+Cuic.Dialogs = Dialogs;
 Cuic.Element = Element;
 Cuic.Elements = Elements;
 Cuic.Group = Group;

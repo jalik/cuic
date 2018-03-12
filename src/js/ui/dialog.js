@@ -213,7 +213,7 @@ export class Dialog extends Closable {
         // Called when dialog is opening
         this.onOpen(() => {
             // Calculate z-index
-            const zIndex = Math.max(this.options.zIndex, Cuic.dialogs.getCurrentZIndex() + 1);
+            const zIndex = Math.max(this.options.zIndex, Dialogs.getCurrentZIndex() + 1);
 
             // Set dialog z-index and resize content
             this.css({"z-index": zIndex});
@@ -269,11 +269,11 @@ export class Dialog extends Closable {
 
         // Remove dialog from list
         this.onRemoved(() => {
-            Cuic.dialogs.remove(this);
+            Dialogs.remove(this);
         });
 
         // Add element to collection
-        Cuic.dialogs.add(this);
+        Dialogs.add(this);
     }
 
     /**
@@ -442,16 +442,16 @@ Dialog.prototype.options = {
     zIndex: 10
 };
 
-Cuic.dialogs = new Collection();
+export const Dialogs = new Collection();
 
 /**
  * Returns the z-index of the highest dialog
  * @return {number}
  */
-Cuic.dialogs.getCurrentZIndex = function () {
+Dialogs.getCurrentZIndex = function () {
     let zIndex = 0;
 
-    Cuic.dialogs.each((dialog) => {
+    Dialogs.each((dialog) => {
         const index = parseInt(dialog.css("z-index"));
 
         if (index > zIndex) {
@@ -462,7 +462,7 @@ Cuic.dialogs.getCurrentZIndex = function () {
 };
 
 Cuic.onWindowResized(() => {
-    Cuic.dialogs.each((dialog) => {
+    Dialogs.each((dialog) => {
         if (dialog.isInDOM()) {
             dialog.resizeContent();
         }
