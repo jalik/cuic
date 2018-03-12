@@ -91,11 +91,11 @@ export class Notification extends Closable {
 
         // Remove element from list
         this.onRemoved(() => {
-            Cuic.notifications.remove(this);
+            Notifications.remove(this);
         });
 
         // Add element to collection
-        Cuic.notifications.add(this);
+        Notifications.add(this);
     }
 
     /**
@@ -133,7 +133,7 @@ Notification.prototype.options = {
     autoClose: true,
     autoRemove: true,
     closable: true,
-    closeButton: null,
+    closeButton: "",
     closeButtonClass: "glyphicon glyphicon-remove-sign",
     content: null,
     duration: 2000,
@@ -144,10 +144,10 @@ Notification.prototype.options = {
     zIndex: 100
 };
 
-Cuic.notifications = new Collection();
+export const Notifications = new Collection();
 
 Cuic.onWindowResized(() => {
-    Cuic.notifications.each((n) => {
+    Notifications.each((n) => {
         if (n.isInDOM()) {
             // n._disableTransitions();
             n.align(n.options.position);
