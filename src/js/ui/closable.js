@@ -44,7 +44,6 @@ export class Closable extends Component {
             if (this.options.opened) {
                 this.open();
             } else {
-                this.hide();// Hide to avoid animations
                 this.close();
             }
         }

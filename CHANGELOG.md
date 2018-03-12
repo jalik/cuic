@@ -1,13 +1,16 @@
 # Changelog
 
 ## UNRELEASED
+- Changes dialog transitions
+- Changes closing transitions speed
 - Closes dialog overlay only when needed
-- Auto prefixes style passed to `getComputedStyle()`
 - Exports all classes using `export default` ES6 syntax
 - Renames all component CSS class name with the prefix `cc-`
 - Renames class `debug` to `debugging`
+- Fixes overlay opening transition
 - Fixes calls to `cuic.getComputedStyle()`
 - Disables transitions for elements with `hidden` CSS class
+- Adds prefixes to style passed to `getComputedStyle()`
 - Adds resolvers for `animationend` in `cuic.whichEvent()`
 - Adds default class `btn-secondary` to `Button` component to support Bootstrap v4
 
