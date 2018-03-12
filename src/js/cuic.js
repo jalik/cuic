@@ -325,7 +325,18 @@ const Cuic = {
      */
     getComputedStyle(element, style) {
         element = this.node(element);
-        return window.getComputedStyle(element, null).getPropertyValue(style);
+        const experimentalStyles = [
+            "animation",
+            "border-radius",
+            "box-shadow",
+            "transition"
+        ];
+
+        // Prefix style with browser name
+        if (!element.style[style] && style.indexOf(experimentalStyles) !== -1) {
+            style = this.prefixStyle(style);
+        }
+        return window.getComputedStyle(element, null)[style];
     },
 
     /**
@@ -334,20 +345,20 @@ const Cuic = {
      */
     getStylePrefix() {
         const element = document.createElement("div");
+        const style = element.style;
 
         // Check with animation
-        if (element.WebkitAnimation == "") return "-webkit-";
-        if (element.MozAnimation == "") return "-moz-";
-        if (element.OAnimation == "") return "-o-";
+        if (typeof style.MozAnimation === "string") return "-moz-";
+        if (typeof style.OAnimation === "string") return "-o-";
+        if (typeof style.WebkitAnimation === "string") return "-webkit-";
 
         // Check with transition
-        if (element.WebkitTransition == "") return "-webkit-";
-        if (element.MozTransition == "") return "-moz-";
-        if (element.OTransition == "") return "-o-";
+        if (typeof style.MozTransition === "string") return "-moz-";
+        if (typeof style.OTransition === "string") return "-o-";
+        if (typeof style.WebkitTransition === "string") return "-webkit-";
 
         return "";
     },
-
 
     /**
      * Checks if the browser is Chrome 1+
@@ -508,6 +519,8 @@ const Cuic = {
      * @return {*}
      */
     off(event, element, callback) {
+        let duration = 0;
+
         if (element instanceof Element) {
             element = element.node();
         }
@@ -527,21 +540,21 @@ const Cuic = {
             console.warn(`Event "${event}" is not supported by this browser.`);
         }
 
-        // Event is a animation
+        // Event is an animation
         if (event.indexOf("animation") !== -1) {
-            const duration = this.prefixStyle("animation-duration");
+            duration = this.getComputedStyle(element, "animation-duration");
 
             // Execute callback now
-            if (!browserEvent && !("animation" in element.style) || this.getComputedStyle(element)[duration] === "0s") {
+            if (!browserEvent && !("animation" in element.style) || duration === "0s") {
                 this.apply(callback, element);
             }
         }
         // Event is a transition
         else if (event.indexOf("transition") !== -1) {
-            const duration = this.prefixStyle("transition-duration");
+            duration = this.getComputedStyle(element, "transition-duration");
 
             // Execute callback now
-            if (!browserEvent && !("transition" in element.style) || this.getComputedStyle(element)[duration] === "0s") {
+            if (!browserEvent && !("transition" in element.style) || duration === "0s") {
                 this.apply(callback, element);
             }
         }
@@ -556,6 +569,8 @@ const Cuic = {
      * @return {*}
      */
     on(event, element, callback) {
+        let duration = 0;
+
         if (element instanceof Element) {
             element = element.node();
         }
@@ -575,21 +590,21 @@ const Cuic = {
             console.warn(`Event "${event}" is not supported by this browser.`);
         }
 
-        // Event is a animation
+        // Event is an animation
         if (event.indexOf("animation") !== -1) {
-            const duration = this.prefixStyle("animation-duration");
+            duration = this.getComputedStyle(element, "animation-duration");
 
             // Execute callback now
-            if (!browserEvent && !("animation" in element.style) || this.getComputedStyle(element)[duration] === "0s") {
+            if (!browserEvent && !("animation" in element.style) || duration === "0s") {
                 this.apply(callback, element);
             }
         }
         // Event is a transition
         else if (event.indexOf("transition") !== -1) {
-            const duration = this.prefixStyle("transition-duration");
+            duration = this.getComputedStyle(element, "transition-duration");
 
             // Execute callback now
-            if (!browserEvent && !("transition" in element.style) || this.getComputedStyle(element)[duration] === "0s") {
+            if (!browserEvent && !("transition" in element.style) || duration === "0s") {
                 this.apply(callback, element);
             }
         }
@@ -604,6 +619,8 @@ const Cuic = {
      * @return {*}
      */
     once(event, element, callback) {
+        let duration = 0;
+
         if (element instanceof Element) {
             element = element.node();
         }
@@ -623,29 +640,33 @@ const Cuic = {
             console.warn(`Event "${event}" is not supported by this browser.`);
         }
 
-        // Event is a animation
+        // Event is an animation
         if (event.indexOf("animation") !== -1) {
-            const duration = this.prefixStyle("animation-duration");
+            duration = this.getComputedStyle(element, "animation-duration");
 
             // Execute callback now
-            if (!browserEvent && !("animation" in element.style) || this.getComputedStyle(element)[duration] === "0s") {
+            if (!browserEvent && !("animation" in element.style) || duration === "0s") {
                 this.apply(callback, element);
             }
         }
         // Event is a transition
         else if (event.indexOf("transition") !== -1) {
-            const duration = this.prefixStyle("transition-duration");
+            duration = this.getComputedStyle(element, "transition-duration");
 
             // Execute callback now
-            if (!browserEvent && !("transition" in element.style) || this.getComputedStyle(element)[duration] === "0s") {
+            if (!browserEvent && !("transition" in element.style) || duration === "0s") {
                 this.apply(callback, element);
             }
         }
 
         const listener = (ev) => {
-            this.debug(`event ${event} took ${ev.elapsedTime}s`, element);
-            this.removeEventListener(element, browserEvent, listener);
-            this.apply(callback, element, Array.prototype.slice.call(ev));
+            const isTransitionOrAnimation = (event.indexOf("animation") !== -1 || event.indexOf("transition") !== -1);
+
+            if (!isTransitionOrAnimation || ev.target === element) {
+                this.debug(`event ${event} took ${ev.elapsedTime}s`, element);
+                this.removeEventListener(element, browserEvent, listener);
+                this.apply(callback, element, Array.prototype.slice.call(ev));
+            }
         };
 
         return this.addEventListener(element, browserEvent, listener);
@@ -685,13 +706,34 @@ const Cuic = {
     },
 
     /**
+     * Returns parsed duration in milliseconds
+     * @param duration
+     * @return {number}
+     */
+    parseDuration(duration) {
+        let ms = Number.parseFloat(duration);
+
+        // Convert seconds to milliseconds
+        if (/[0-9]s$/.test(duration)) {
+            ms *= 1000;
+        }
+        return ms;
+    },
+
+    /**
      * Returns the prefixed style
      * @param style
      * @return {string}
      */
     prefixStyle(style) {
-        const prefix = this.getStylePrefix();
-        return typeof prefix === "string" && prefix.length ? prefix + style : style;
+        if (!style.startsWith("-")) {
+            const prefix = this.getStylePrefix();
+
+            if (typeof prefix === "string" && prefix.length > 0) {
+                style = prefix + style;
+            }
+        }
+        return style;
     },
 
     /**

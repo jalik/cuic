@@ -196,7 +196,10 @@ export class Dialog extends Closable {
         // Called when dialog is closing
         this.onClose(() => {
             this.overlay.options.autoRemove = this.options.autoRemove;
-            this.overlay.close();
+
+            if (this.overlay.isOpened()) {
+                this.overlay.close();
+            }
         });
 
         // Called when dialog is closed

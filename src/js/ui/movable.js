@@ -65,7 +65,7 @@ export class Movable extends Component {
         handle.addClass("cc-movable-handle");
 
         // Start moving
-        Cuic.on("mousedown", handle, (ev) => {
+        handle.on("mousedown", (ev) => {
             // Ignore moving if the target is not the root
             if (this.options.rootOnly && ev.target !== ev.currentTarget) return;
 

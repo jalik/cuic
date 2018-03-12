@@ -36,8 +36,11 @@
 }
 
 .cc-component.computing,
+.cc-component.no-animation,
 .cc-component.no-transition {
-  //display: none;
+  -webkit-animation: none !important;
+  -o-animation: none !important;
+  animation: none !important;
   -webkit-transition: none !important;
   -moz-transition: none !important;
   -o-transition: none !important;
