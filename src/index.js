@@ -48,6 +48,7 @@ import Selectable from "./js/ui/selectable";
 import Shortcut from "./js/utils/shortcut";
 import Switcher from "./js/ui/switcher";
 import Tooltip from "./js/ui/tooltip";
+import {Tooltips} from "./js/ui/tooltip";
 
 // Add components to global var
 Cuic.Button = Button;
@@ -70,6 +71,7 @@ Cuic.Resizable = Resizable;
 Cuic.Selectable = Selectable;
 Cuic.Switcher = Switcher;
 Cuic.Tooltip = Tooltip;
+Cuic.Tooltips = Tooltips;
 
 // Add utils to global var
 Cuic.Benchmark = Benchmark;

@@ -146,7 +146,7 @@ export class Tooltip extends Closable {
         });
 
         // Add element to collection
-        Cuic.tooltips.add(this);
+        Tooltips.add(this);
     }
 
     /**
@@ -219,6 +219,6 @@ Tooltip.prototype.options = {
     zIndex: 100
 };
 
-Cuic.tooltips = new Collection();
+export const Tooltips = new Collection();
 
 export default Tooltip;
