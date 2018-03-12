@@ -18,7 +18,7 @@ import cuicStyles from "cuic/dist/cuic.css";
 This is the most generic component that contains all the logic of any component, all components inherit from `Element`.
 
 ```js
-import {Element} from "cuit/dist/ui/element";
+import Element from "cuit/dist/ui/element";
 
 const element = new Element({
     className: null,
@@ -133,7 +133,7 @@ This is a generic component that most components inherit from, it only adds the 
 This component inherits from `Element`.
 
 ```js
-import {Component} from "cuit/dist/ui/component";
+import Component from "cuit/dist/ui/component";
 
 const component = new Component();
 ```
@@ -145,7 +145,7 @@ A basic clickable button.
 This component inherits from `Component`.
 
 ```js
-import {Button} from "cuit/dist/ui/button";
+import Button from "cuit/dist/ui/button";
 
 const button = new Button({
     className: "btn-primary",
@@ -167,7 +167,7 @@ This is a generic component with opening and closing capabilities.
 This component inherits from `Component`.
 
 ```js
-import {Closable} from "cuit/dist/ui/closable";
+import Closable from "cuit/dist/ui/closable";
 
 const component = new Closable({
     closable: false,
@@ -192,8 +192,8 @@ A dialog can be configured with a header and title, a body and a footer with but
 This component inherits from `Closable`.
 
 ```js
-import {Button} from "cuit/dist/ui/button";
-import {Dialog} from "cuit/dist/ui/dialog";
+import Button from "cuit/dist/ui/button";
+import Dialog from "cuit/dist/ui/dialog";
 
 const dialog = new Dialog({
     autoClose: false,
@@ -237,8 +237,8 @@ dialog.setTitle(String);
 A guide is used to assist users, to explain things in an interactive way like "click here, then here...".
 
 ```js
-import {Button} from "cuit/dist/ui/button";
-import {Guide} from "cuit/dist/ui/guide";
+import Button from "cuit/dist/ui/button";
+import Guide from "cuit/dist/ui/guide";
 
 const guide = new Guide({
     anchor: "top",
@@ -273,8 +273,8 @@ A generic component that can be moved with the mouse.
 This component inherits from `Component`.
 
 ```js
-import {Element} from "cuit/dist/ui/element";
-import {Movable} from "cuit/dist/ui/movable";
+import Element from "cuit/dist/ui/element";
+import Movable from "cuit/dist/ui/movable";
 
 const movable = new Movable({
     handle: null,
@@ -300,7 +300,7 @@ A simple notification where you can put anything inside.
 This component inherits from `Closable`.
 
 ```js
-import {Notification} from "cuit/dist/ui/notification";
+import Notification from "cuit/dist/ui/notification";
 
 const notification = new Notification({
     autoClose: true,
@@ -330,7 +330,7 @@ A notification stack is a group of notifications, easier to manage.
 This component inherits from `Group`.
 
 ```js
-import {NotificationStack} from "cuit/dist/ui/notification-stack";
+import NotificationStack from "cuit/dist/ui/notification-stack";
 
 const stack = new NotificationStack({
     position: "right top",
@@ -349,7 +349,7 @@ An overlay is used to cover areas with a screen.
 This component inherits from `Closable`.
 
 ```js
-import {Overlay} from "cuit/dist/ui/overlay";
+import Overlay from "cuit/dist/ui/overlay";
 
 const overlay = new Overlay({
     autoClose: false,
@@ -370,7 +370,7 @@ A panel can be configured with a header and title, a body and a footer.
 This component inherits from `Closable`.
 
 ```js
-import {Panel} from "cuit/dist/ui/panel";
+import Panel from "cuit/dist/ui/panel";
 
 const panel = new Panel({
     autoClose: false,
@@ -407,7 +407,7 @@ A popup can be used to display things that are hidden by default.
 This component inherits from `Closable`.
 
 ```js
-import {Popup} from "cuit/dist/ui/popup";
+import Popup from "cuit/dist/ui/popup";
 
 const popup = new Popup({
     anchor: "top",
@@ -441,7 +441,7 @@ A generic component that can be resized.
 This component inherits from `Component`.
 
 ```js
-import {Resizable} from "cuit/dist/ui/resizable";
+import Resizable from "cuit/dist/ui/resizable";
 
 const resizable = new Resizable({
     handleSize: 10,
@@ -468,7 +468,7 @@ A generic component that can be selected.
 This component inherits from `Component`.
 
 ```js
-import {Selectable} from "cuit/dist/ui/selectable";
+import Selectable from "cuit/dist/ui/selectable";
 
 const selectable = new Selectable({
     selected: false
@@ -489,7 +489,7 @@ A switcher simply loops through its children, it can be used as a slider.
 This component inherits from `Closable`.
 
 ```js
-import {Switcher} from "cuit/dist/ui/switcher";
+import Switcher from "cuit/dist/ui/switcher";
 
 const switcher = new Switcher({
     autoStart: true,
@@ -518,7 +518,7 @@ A tooltip is used to display text near the pointer, it can be static or it can f
 This component inherits from `Closable`.
 
 ```js
-import {Tooltip} from "cuit/dist/ui/tooltip";
+import Tooltip from "cuit/dist/ui/tooltip";
 
 const tooltip = new Tooltip({
     anchor: "right",
@@ -539,94 +539,7 @@ tooltip.updateTail();
 
 ## Changelog
 
-### v0.11.1
-- Renames all component CSS class name with the prefix `cc-`
-- Renames class `debug` to `debugging`
-- Fixes calls to `cuic.getComputedStyle()`
-- Disables transitions for elements with `hidden` CSS class
-- Adds resolvers for `animationend` in `cuic.whichEvent()`
-- Adds default class `btn-secondary` to `Button` component to support Bootstrap v4
-
-### v0.11.0
-- Adds `options` argument to method `Element._calculateAlign(position, options)`
-- Adds `options` argument to method `Element.align(position, options)`
-- Adds `Element.focus()`
-- Adds `Element.scrollHeight()`
-- Adds `Element.scrollWidth()`
-- Adds option `inScreen: Boolean` to `Element.align(position, options)`
-- Auto-focuses the last button with `autofocus` attribute in `Dialog`
-- Fixes `Element._calculateAlign()` with scrolling
-- Fixes `Element._calculateAvailablePosition()` with scrolling
-- Fixes `Element._calculateMaximize()` with scrolling
-- Fixes `Element.scrollLeft()` on body and window
-- Fixes `Element.scrollTop()` on body and window
-
-### v0.10.2
-- Adds `Cuic.body()`
-- Adds `Cuic.calculateScrollbarWidth()`
-- Adds `Cuic.screenHeight()`
-- Adds `Cuic.screenWidth()`
-- Adds `Cuic.scrollTo()`
-- Adds `Cuic.scrollX()`
-- Adds `Cuic.scrollY()`
-- Adds `Element.calculatePosition()`
-- Adds `Element.calculatePositionOnScreen()`
-- Adds `Element.isDirectChildOf()`
-- Adds `Guide.getCurrentStepIndex()`
-- Adds `Guide.getLastStep()`
-- Adds `Guide.getStep()`
-- Adds `Guide.getStepById()`
-- Adds `Guide.getStepIndex()`
-- Adds `Guide.resume()`
-- Adds `Switcher.onIndexChanged()`
-- Adds `Switcher.onStarted()`
-- Adds `Switcher.onStopped()`
-- Adds option `autoScroll: Boolean` to `Guide`
-- Fixes notifications animation in `NotificationStack`
-- Fixes `Element._disableTransitions()` to hide element
-- Fixes `Element._enableTransitions()` to show element
-- Fixes `Element.anchor()` to animate changes only when element is in the same parent node then the target
-- Fixes `Element.isInDOM()`
-- Fixes `Element.offsetParent()` to return null if no parent is found
-- Fixes `Cuic.isJQuery()` causing webpack error: "module not found 'jquery'"
-
-### v0.10.1
-- Fixes `Guide` auto close issue
-- Fixes `Guide` animations
-- Adds option `steps: Array` in `Guide` to work with `autoStart: Boolean` option
-
-### v0.10.0
-- Adds `Guide` component
-- Adds `Popup.addButton(Object)`
-- Adds `Popup.getFooter()`
-- Adds `Popup.getHeader()`
-- Adds `Popup.setHeader(String)`
-- Adds `Popup.setHeader(String)`
-- Adds `Popup.setTitle(String)`
-- Allows to pass all valid button options to `Dialog.addButton(Object)` 
-- Fixes `Cuic.append()`, `Cuic.prepend()` and `Cuic.prependTo()` with old browsers using compatible syntax not requiring polyfills
-
-### v0.9.3
-- Fixes dialog closing origin animation
-- Fixes dialog content size when footer is hidden
-- Fixes method `Events.trigger()` to allow returning value
-
-### v0.9.2
-- Adds `Closable` component
-- Adds `Dialog.setHeader(html)`
-- Adds `Notification.getContent()`
-- Adds `Panel.setHeader(html)`
-- Adds `Popup.getContent()`
-- Adds `Tooltip.getContent()`
-- Adds option `selected: false` to `Selectable` component
-- Renames option `vertical` to `vertically` for `Movable` and `Resizable` components
-- Renames option `horizontal` to `horizontally` for `Movable` and `Resizable` components
-- Renames `Fader` component to `Overlay`
-- Returns `Element` inside `click` method of every components
-- Fixes movable components aligned to bottom
-
-### v0.9.0
-- Uses ES6 import/export syntax
+History of releases is in the [Changelog](./CHANGELOG.md).
 
 ## License
 
