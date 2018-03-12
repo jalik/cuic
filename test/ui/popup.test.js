@@ -23,7 +23,7 @@
  *
  */
 
-import {Popup} from "../../src/js/ui/popup";
+import Popup from "../../src/js/ui/popup";
 
 describe(`Popup`, () => {
 

@@ -23,7 +23,7 @@
  *
  */
 
-import {Tooltip} from "../../src/js/ui/tooltip";
+import Tooltip from "../../src/js/ui/tooltip";
 
 describe(`Tooltip`, () => {
 

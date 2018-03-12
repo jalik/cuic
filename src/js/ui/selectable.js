@@ -24,7 +24,7 @@
  */
 
 import Cuic from "../cuic";
-import {Component} from "./component";
+import Component from "./component";
 
 export class Selectable extends Component {
 
@@ -124,3 +124,5 @@ Selectable.prototype.options = {
     namespace: "selectable",
     selected: false
 };
+
+export default Selectable;

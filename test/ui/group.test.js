@@ -23,7 +23,7 @@
  *
  */
 
-import {Group} from "../../src/js/ui/group";
+import Group from "../../src/js/ui/group";
 
 describe(`Group`, () => {
 

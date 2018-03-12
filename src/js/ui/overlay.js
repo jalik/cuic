@@ -24,7 +24,7 @@
  */
 
 import Cuic from "../cuic";
-import {Closable} from "./closable";
+import Closable from "./closable";
 
 export class Overlay extends Closable {
 
@@ -60,3 +60,5 @@ Overlay.prototype.options = {
     opened: false,
     zIndex: 1
 };
+
+export default Overlay;

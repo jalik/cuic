@@ -24,9 +24,9 @@
  */
 
 import Cuic from "../cuic";
-import {Closable} from "./closable";
-import {Collection} from "../utils/collection";
-import {Element} from "./element";
+import Closable from "./closable";
+import Collection from "../utils/collection";
+import Element from "./element";
 
 export class Tooltip extends Closable {
 
@@ -220,3 +220,5 @@ Tooltip.prototype.options = {
 };
 
 Cuic.tooltips = new Collection();
+
+export default Tooltip;

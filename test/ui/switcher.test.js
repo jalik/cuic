@@ -23,7 +23,7 @@
  *
  */
 
-import {Switcher} from "../../src/js/ui/switcher";
+import Switcher from "../../src/js/ui/switcher";
 
 describe(`Switcher`, () => {
 

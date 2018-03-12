@@ -23,7 +23,7 @@
  *
  */
 
-import {Notification} from "../../src/js/ui/notification";
+import Notification from "../../src/js/ui/notification";
 
 describe(`Notification`, () => {
 

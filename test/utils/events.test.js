@@ -23,7 +23,7 @@
  *
  */
 
-import {Events} from "../../src/js/utils/events";
+import Events from "../../src/js/utils/events";
 
 describe(`Events`, () => {
 

@@ -23,7 +23,7 @@
  *
  */
 
-import {Overlay} from "../../src/js/ui/overlay";
+import Overlay from "../../src/js/ui/overlay";
 
 describe(`Overlay`, () => {
 

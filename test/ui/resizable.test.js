@@ -23,7 +23,7 @@
  *
  */
 
-import {Resizable} from "../../src/js/ui/resizable";
+import Resizable from "../../src/js/ui/resizable";
 
 describe(`Resizable`, () => {
 

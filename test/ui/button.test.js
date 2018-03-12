@@ -23,7 +23,7 @@
  *
  */
 
-import {Button} from "../../src/js/ui/button";
+import Button from "../../src/js/ui/button";
 // Load polyfill
 import "../../src/js/polyfill";
 

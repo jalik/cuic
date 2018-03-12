@@ -23,7 +23,7 @@
  *
  */
 
-import {Guide} from "../../src/js/ui/guide";
+import Guide from "../../src/js/ui/guide";
 
 describe(`Guide`, () => {
 

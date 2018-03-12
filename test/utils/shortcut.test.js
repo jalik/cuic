@@ -23,7 +23,7 @@
  *
  */
 
-import {Shortcut} from "../../src/js/utils/shortcut";
+import Shortcut from "../../src/js/utils/shortcut";
 
 describe(`Shortcut`, () => {
 

@@ -24,23 +24,23 @@
  */
 
 import Cuic from "../dist/cuic";
-import {Button} from "../dist/ui/button";
-import {Closable} from "../dist/ui/closable";
-import {Dialog} from "../dist/ui/dialog";
-import {Element} from "../dist/ui/element";
-import {Elements} from "../dist/ui/elements";
-import {Overlay} from "../dist/ui/overlay";
-import {Group} from "../dist/ui/group";
-import {Hook} from "../dist/ui/hook";
-import {Movable} from "../dist/ui/movable";
-import {Notification} from "../dist/ui/notification";
-import {NotificationStack} from "../dist/ui/notification-stack";
-import {Panel} from "../dist/ui/panel";
-import {Popup} from "../dist/ui/popup";
-import {Resizable} from "../dist/ui/resizable";
-import {Selectable} from "../dist/ui/selectable";
-import {Switcher} from "../dist/ui/switcher";
-import {Tooltip} from "../dist/ui/tooltip";
+import Button from "../dist/ui/button";
+import Closable from "../dist/ui/closable";
+import Dialog from "../dist/ui/dialog";
+import Element from "../dist/ui/element";
+import Elements from "../dist/ui/elements";
+import Overlay from "../dist/ui/overlay";
+import Group from "../dist/ui/group";
+import Hook from "../dist/ui/hook";
+import Movable from "../dist/ui/movable";
+import Notification from "../dist/ui/notification";
+import NotificationStack from "../dist/ui/notification-stack";
+import Panel from "../dist/ui/panel";
+import Popup from "../dist/ui/popup";
+import Resizable from "../dist/ui/resizable";
+import Selectable from "../dist/ui/selectable";
+import Switcher from "../dist/ui/switcher";
+import Tooltip from "../dist/ui/tooltip";
 
 describe(`dist files`, () => {
 

@@ -24,8 +24,8 @@
  */
 
 import Cuic from "../cuic";
-import {Closable} from "./closable";
-import {Collection} from "../utils/collection";
+import Closable from "./closable";
+import Collection from "../utils/collection";
 
 export class Switcher extends Closable {
 
@@ -248,3 +248,5 @@ Switcher.prototype.options = {
 };
 
 Cuic.switchers = new Collection();
+
+export default Switcher;

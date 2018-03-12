@@ -24,9 +24,9 @@
  */
 
 import Cuic from "../cuic";
-import {Collection} from "../utils/collection";
-import {Component} from "./component";
-import {Element} from "./element";
+import Collection from "../utils/collection";
+import Component from "./component";
+import Element from "./element";
 
 export class Resizable extends Component {
 
@@ -218,3 +218,5 @@ Resizable.prototype.options = {
     namespace: "resizable",
     vertically: true
 };
+
+export default Resizable;

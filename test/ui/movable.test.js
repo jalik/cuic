@@ -23,7 +23,7 @@
  *
  */
 
-import {Movable} from "../../src/js/ui/movable";
+import Movable from "../../src/js/ui/movable";
 
 describe(`Movable`, () => {
 

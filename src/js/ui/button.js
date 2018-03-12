@@ -24,7 +24,7 @@
  */
 
 import Cuic from "../cuic";
-import {Component} from "./component";
+import Component from "./component";
 
 export class Button extends Component {
 
@@ -65,3 +65,5 @@ Button.prototype.options = {
     title: null,
     type: "button"
 };
+
+export default Button;

@@ -82,3 +82,5 @@ export class Benchmark {
         };
     }
 }
+
+export default Benchmark;

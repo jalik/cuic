@@ -395,3 +395,5 @@ export class Elements {
         }
     }
 }
+
+export default Elements;

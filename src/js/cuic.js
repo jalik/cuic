@@ -23,7 +23,7 @@
  *
  */
 
-import {Element} from "./ui/element";
+import Element from "./ui/element";
 
 const Cuic = {
 
@@ -643,6 +643,7 @@ const Cuic = {
         }
 
         const listener = (ev) => {
+            this.debug(`event ${event} took ${ev.elapsedTime}s`, element);
             this.removeEventListener(element, browserEvent, listener);
             this.apply(callback, element, Array.prototype.slice.call(ev));
         };

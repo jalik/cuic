@@ -24,8 +24,8 @@
  */
 
 import Cuic from "../cuic";
-import {Popup} from "./popup";
-import {Events} from "../utils/events";
+import Popup from "./popup";
+import Events from "../utils/events";
 
 export class Guide {
 
@@ -367,3 +367,5 @@ Guide.prototype.options = {
     steps: null,
     zIndex: 9
 };
+
+export default Guide;

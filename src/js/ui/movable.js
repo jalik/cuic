@@ -24,8 +24,8 @@
  */
 
 import Cuic from "../cuic";
-import {Collection} from "../utils/collection";
-import {Component} from "./component";
+import Collection from "../utils/collection";
+import Component from "./component";
 
 export class Movable extends Component {
 
@@ -169,3 +169,5 @@ Movable.prototype.options = {
     rootOnly: true,
     vertically: true
 };
+
+export default Movable;

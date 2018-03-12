@@ -23,13 +23,13 @@
  *
  */
 
+import Button from "./button";
 import Cuic from "../cuic";
-import {Closable} from "./closable";
-import {Collection} from "../utils/collection";
-import {Element} from "./element";
-import {Shortcut} from "../utils/shortcut";
-import {Group} from "./group";
-import {Button} from "./button";
+import Closable from "./closable";
+import Collection from "../utils/collection";
+import Element from "./element";
+import Group from "./group";
+import Shortcut from "../utils/shortcut";
 
 export class Popup extends Closable {
 
@@ -323,3 +323,5 @@ Cuic.onWindowResized(() => {
         }
     });
 });
+
+export default Popup;

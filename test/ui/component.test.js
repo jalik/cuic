@@ -23,7 +23,7 @@
  *
  */
 
-import {Component} from "../../src/js/ui/component";
+import Component from "../../src/js/ui/component";
 
 describe(`Component`, () => {
 
@@ -33,6 +33,6 @@ describe(`Component`, () => {
 
     it(`should have the CSS class "component"`, () => {
         const component = new Component("div");
-        expect(component.hasClass("component")).toEqual(true);
+        expect(component.hasClass("cc-component")).toEqual(true);
     });
 });

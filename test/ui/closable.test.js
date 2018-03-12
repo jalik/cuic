@@ -23,7 +23,7 @@
  *
  */
 
-import {Closable} from "../../src/js/ui/closable";
+import Closable from "../../src/js/ui/closable";
 
 describe(`Closable`, () => {
 

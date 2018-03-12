@@ -24,8 +24,8 @@
  */
 
 import Cuic from "../js/cuic";
-import {Movable} from "../js/ui/movable";
-import {Resizable} from "../js/ui/resizable";
+import Movable from "../js/ui/movable";
+import Resizable from "../js/ui/resizable";
 
 var counter = 0;
 

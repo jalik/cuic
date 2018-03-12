@@ -24,9 +24,9 @@
  */
 
 import Cuic from "../cuic";
-import {Element} from "./element";
+import Element from "./element";
 
-export class Component extends Element {
+class Component extends Element {
 
     constructor(node, attributes, options) {
         // Set default options
@@ -45,3 +45,5 @@ export class Component extends Element {
 }
 
 Component.prototype.options = {};
+
+export default Component;

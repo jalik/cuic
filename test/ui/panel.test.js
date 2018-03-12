@@ -23,7 +23,7 @@
  *
  */
 
-import {Panel} from "../../src/js/ui/panel";
+import Panel from "../../src/js/ui/panel";
 
 describe(`Panel`, () => {
 

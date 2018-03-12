@@ -24,9 +24,9 @@
  */
 
 import Cuic from "../cuic";
-import {Collection} from "../utils/collection";
-import {Group} from "./group";
-import {Notification} from "./notification";
+import Collection from "../utils/collection";
+import Group from "./group";
+import Notification from "./notification";
 
 export class NotificationStack extends Group {
 
@@ -90,3 +90,5 @@ Cuic.onWindowResized(() => {
         }
     });
 });
+
+export default NotificationStack;

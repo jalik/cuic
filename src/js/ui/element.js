@@ -24,8 +24,8 @@
  */
 
 import Cuic from "../cuic";
-import {Elements} from "./elements";
-import {Events} from "../utils/events";
+import Elements from "./elements";
+import Events from "../utils/events";
 
 export class Element {
 
@@ -2254,3 +2254,5 @@ Element.prototype.options = {
     namespace: null,
     parent: null
 };
+
+export default Element;

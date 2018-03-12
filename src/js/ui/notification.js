@@ -24,9 +24,9 @@
  */
 
 import Cuic from "../cuic";
-import {Closable} from "./closable";
-import {Collection} from "../utils/collection";
-import {Element} from "./element";
+import Closable from "./closable";
+import Collection from "../utils/collection";
+import Element from "./element";
 
 export class Notification extends Closable {
 
@@ -155,3 +155,5 @@ Cuic.onWindowResized(() => {
         }
     });
 });
+
+export default Notification;

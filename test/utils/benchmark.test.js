@@ -23,7 +23,7 @@
  *
  */
 
-import {Benchmark} from "../../src/js/utils/benchmark";
+import Benchmark from "../../src/js/utils/benchmark";
 
 describe(`Benchmark`, () => {
 

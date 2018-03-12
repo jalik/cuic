@@ -108,3 +108,5 @@ Cuic.keys = {
     TAB: 9,
     UP: 38
 };
+
+export default Shortcut;

@@ -23,7 +23,7 @@
  *
  */
 
-import {Element} from "../../src/js/ui/element";
+import Element from "../../src/js/ui/element";
 
 describe(`Element`, () => {
 

@@ -23,7 +23,7 @@
  *
  */
 
-import {Dialog} from "../../src/js/ui/dialog";
+import Dialog from "../../src/js/ui/dialog";
 
 describe(`Dialog`, () => {
 

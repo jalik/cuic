@@ -24,7 +24,7 @@
  */
 
 import Cuic from "../cuic";
-import {Component} from "./component";
+import Component from "./component";
 
 export class Closable extends Component {
 
@@ -157,3 +157,5 @@ Closable.prototype.options = {
     closable: false,
     opened: true
 };
+
+export default Closable;

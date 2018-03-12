@@ -23,7 +23,7 @@
  *
  */
 
-import {Events} from "./events";
+import Events from "./events";
 
 export class Collection {
 
@@ -112,3 +112,5 @@ export class Collection {
         return this.values.length;
     }
 }
+
+export default Collection;

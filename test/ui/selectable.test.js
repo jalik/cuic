@@ -23,7 +23,7 @@
  *
  */
 
-import {Selectable} from "../../src/js/ui/selectable";
+import Selectable from "../../src/js/ui/selectable";
 
 describe(`Selectable`, () => {
 

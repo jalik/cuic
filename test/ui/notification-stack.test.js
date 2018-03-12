@@ -23,7 +23,7 @@
  *
  */
 
-import {NotificationStack} from "../../src/js/ui/notification-stack";
+import NotificationStack from "../../src/js/ui/notification-stack";
 
 describe(`NotificationStack`, () => {
 

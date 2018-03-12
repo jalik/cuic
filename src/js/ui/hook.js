@@ -24,8 +24,8 @@
  */
 
 import Cuic from "../cuic";
-import {Element} from "./element";
-import {Component} from "./component";
+import Component from "./component";
+import Element from "./element";
 
 export class Hook extends Component {
 
@@ -182,3 +182,5 @@ Hook.prototype.options = {
     // offsetTop: 0,
     zIndex: 4
 };
+
+export default Hook;

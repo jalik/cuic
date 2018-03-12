@@ -24,15 +24,15 @@
  */
 
 import Cuic from "../cuic";
-import {Button} from "./button";
-import {Closable} from "./closable";
-import {Collection} from "../utils/collection";
-import {Element} from "./element";
-import {Overlay} from "./overlay";
-import {Group} from "./group";
-import {Movable} from "./movable";
-import {Resizable} from "./resizable";
-import {Shortcut} from "../utils/shortcut";
+import Button from "./button";
+import Closable from "./closable";
+import Collection from "../utils/collection";
+import Element from "./element";
+import Overlay from "./overlay";
+import Group from "./group";
+import Movable from "./movable";
+import Resizable from "./resizable";
+import Shortcut from "../utils/shortcut";
 
 export class Dialog extends Closable {
 
@@ -465,3 +465,5 @@ Cuic.onWindowResized(() => {
         }
     });
 });
+
+export default Dialog;

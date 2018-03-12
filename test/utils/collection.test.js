@@ -23,7 +23,7 @@
  *
  */
 
-import {Collection} from "../../src/js/utils/collection";
+import Collection from "../../src/js/utils/collection";
 
 describe(`Collection`, () => {
 

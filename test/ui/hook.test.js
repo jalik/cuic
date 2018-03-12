@@ -23,7 +23,7 @@
  *
  */
 
-import {Hook} from "../../src/js/ui/hook";
+import Hook from "../../src/js/ui/hook";
 
 describe(`Hook`, () => {
 

@@ -24,9 +24,9 @@
  */
 
 import Cuic from "../cuic";
-import {Closable} from "./closable";
-import {Collection} from "../utils/collection";
-import {Element} from "./element";
+import Closable from "./closable";
+import Collection from "../utils/collection";
+import Element from "./element";
 
 export class Group extends Closable {
 
@@ -122,3 +122,5 @@ export class Group extends Closable {
 Group.prototype.options = {
     namespace: "group"
 };
+
+export default Group;
