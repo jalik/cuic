@@ -159,7 +159,7 @@ export class Popup extends Closable {
         });
 
         // Add element to collection
-        Cuic.popups.add(this);
+        Popups.add(this);
     }
 
     /**
@@ -311,10 +311,10 @@ Popup.prototype.options = {
     zIndex: 9
 };
 
-Cuic.popups = new Collection();
+export const Popups = new Collection();
 
 Cuic.onWindowResized(() => {
-    Cuic.popups.each((popup) => {
+    Popups.each((popup) => {
         if (popup.isInDOM() && popup.isShown()) {
             // popup._disableTransitions();
             const options = popup.options;
