@@ -1,6 +1,6 @@
 # Changelog
 
-## UNRELEASED
+## v0.12.0
 - Adds prefixes to style passed to `getComputedStyle()`
 - Adds resolvers for `animationend` in `cuic.whichEvent()`
 - Adds default class `btn-secondary` to `Button` component to support Bootstrap v4
