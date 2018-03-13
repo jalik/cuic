@@ -25,7 +25,7 @@
     "ui"
   ],
   "author": {
-    "name": "Karl STEIN",
+    "name": "Karl Stein",
     "email": "karl.stein.pro@gmail.com",
     "url": "https://github.com/jalik"
   },
@@ -44,10 +44,9 @@
     "package": "./node_modules/.bin/webpack && ./node_modules/.bin/webpack -p",
     "prepare": "npm run build:prod && npm test",
     "prepublishOnly": "npm test",
-    "test": "jest",
+    "test": "./node_modules/.bin/jest",
     "watch": "./node_modules/.bin/gulp watch"
   },
-  "homepage": "https://github.com/jalik/cuic.js#readme",
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.4",
