@@ -541,7 +541,7 @@ tooltip.updateTail();
 
 ## Changelog
 
-History of releases is in the [Changelog](./CHANGELOG.md).
+History of releases is in the [changelog](./CHANGELOG.md).
 
 ## License
 
