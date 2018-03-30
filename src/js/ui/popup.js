@@ -15,313 +15,310 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
-import Button from "./button";
-import Cuic from "../cuic";
-import Closable from "./closable";
-import Collection from "../utils/collection";
-import Element from "./element";
-import Group from "./group";
-import Shortcut from "../utils/shortcut";
+import Cuic from '../cuic';
+import Shortcut from '../utils/shortcut';
+import Button from './button';
+import Closable from './closable';
+import Element from './element';
+import Group from './group';
 
-export class Popup extends Closable {
+class Popup extends Closable {
+  constructor(options) {
+    // Set default options
+    const opt = Cuic.extend({}, Popup.prototype.options, options, {
+      mainClass: 'cc-popup',
+    });
 
-    constructor(options) {
-        // Set default options
-        options = Cuic.extend({}, Popup.prototype.options, options, {
-            mainClass: "cc-popup"
-        });
+    // Create element
+    super('div', { className: opt.className }, opt);
 
-        // Create element
-        super("div", {className: options.className}, options);
+    // Add tail
+    this.tail = new Element('span', {
+      className: 'cc-popup-tail',
+    }).appendTo(this);
 
-        // Add tail
-        this.tail = new Element("span", {
-            className: "cc-popup-tail"
-        }).appendTo(this);
+    // Add header
+    this.header = new Element('header', {
+      className: 'cc-popup-header',
+      css: { display: this.options.title ? 'block' : 'none' },
+    }).appendTo(this);
 
-        // Add header
-        this.header = new Element("header", {
-            className: "cc-popup-header",
-            css: {display: !!this.options.title ? "block" : "none"}
-        }).appendTo(this);
+    // Add title
+    this.title = new Element('h5', {
+      className: 'cc-popup-title',
+      html: this.options.title,
+    }).appendTo(this.header);
 
-        // Add title
-        this.title = new Element("h5", {
-            className: "cc-popup-title",
-            html: this.options.title
-        }).appendTo(this.header);
+    // Add content
+    this.content = new Element('div', {
+      className: 'cc-popup-content',
+      html: opt.content,
+    }).appendTo(this);
 
-        // Add content
-        this.content = new Element("div", {
-            className: "cc-popup-content",
-            html: options.content
-        }).appendTo(this);
+    // Add footer
+    const isButtonsDefined = this.options.buttons instanceof Array
+      && this.options.buttons.length > 0;
 
-        // Add footer
-        this.footer = new Element("footer", {
-            className: "cc-popup-footer",
-            css: {display: !!this.options.buttons ? "block" : "none"}
-        }).appendTo(this);
+    this.footer = new Element('footer', {
+      className: 'cc-popup-footer',
+      css: { display: isButtonsDefined ? 'block' : 'none' },
+    }).appendTo(this);
 
-        // Add buttons group
-        this.buttons = new Group("div", {
-            className: "btn-group cc-guide-buttons"
-        }).appendTo(this.footer);
+    // Add buttons group
+    this.buttons = new Group('div', {
+      className: 'btn-group cc-guide-buttons',
+    }).appendTo(this.footer);
 
-        // Show footer if not empty
-        this.buttons.onComponentAdded(() => {
-            if (this.buttons.components.length > 0) {
-                this.footer.show();
-            }
-        });
+    // Show footer if not empty
+    this.buttons.onComponentAdded(() => {
+      if (this.buttons.components.length > 0) {
+        this.footer.show();
+      }
+    });
 
-        // Hide footer if empty
-        this.buttons.onComponentRemoved(() => {
-            if (this.buttons.components.length < 1) {
-                this.footer.hide();
-            }
-        });
+    // Hide footer if empty
+    this.buttons.onComponentRemoved(() => {
+      if (this.buttons.components.length < 1) {
+        this.footer.hide();
+      }
+    });
 
-        // Add buttons
-        if (this.options.buttons instanceof Array) {
-            for (let i = 0; i < this.options.buttons.length; i += 1) {
-                this.addButton(this.options.buttons[i]);
-            }
+    // Add buttons
+    if (this.options.buttons instanceof Array) {
+      for (let i = 0; i < this.options.buttons.length; i += 1) {
+        this.addButton(this.options.buttons[i]);
+      }
+    }
+
+    // Hide footer if no buttons
+    if (!(this.options.buttons instanceof Array) || this.options.buttons.length < 1) {
+      this.footer.hide();
+    }
+
+    /**
+     * Popup shortcuts
+     * @type {{close: *}}
+     */
+    this.shortcuts = {
+      close: new Shortcut({
+        element: this,
+        keyCode: Cuic.keys.ESC,
+        callback: () => {
+          this.close();
+        },
+      }),
+    };
+
+    const autoClose = (ev) => {
+      if (this.isOpened() && this.options.autoClose) {
+        if (ev.target !== this.node() && !Cuic.element(ev.target).isChildOf(this)) {
+          this.close();
         }
+      }
+    };
 
-        // Hide footer if no buttons
-        if (!(this.options.buttons instanceof Array) || this.options.buttons.length < 1) {
-            this.footer.hide();
-        }
+    this.on('click', (ev) => {
+      // Close button
+      if (Cuic.element(ev.target).hasClass('btn-close')) {
+        ev.preventDefault();
+        this.close();
+      }
+    });
 
-        /**
-         * Popup shortcuts
-         * @type {{close: *}}
-         */
-        this.shortcuts = {
-            close: new Shortcut({
-                element: this,
-                keyCode: Cuic.keys.ESC,
-                callback: () => {
-                    this.close();
-                }
-            })
-        };
+    // Reposition tail when popup position change
+    this.onAnchored(() => {
+      this.updateTail();
+    });
 
-        const autoClose = (ev) => {
-            if (this.isOpened() && this.options.autoClose) {
-                if (ev.target !== this.node() && !Cuic.element(ev.target).isChildOf(this)) {
-                    this.close();
-                }
-            }
-        };
+    this.onClosed(() => {
+      Cuic.off('click', document, autoClose);
 
-        this.on("click", (ev) => {
-            // Close button
-            if (Cuic.element(ev.target).hasClass("btn-close")) {
-                ev.preventDefault();
-                this.close();
-            }
+      if (this.options.autoRemove) {
+        this.remove();
+      }
+    });
+
+    this.onOpen(() => {
+      const target = Cuic.element(this.options.target);
+      // Get anchor from data attribute
+      const anchor = target.data('anchor') || this.options.anchor;
+      const anchorPoint = target.data('anchor-point') || this.options.anchorPoint;
+      this.anchor(anchor, anchorPoint, target);
+    });
+
+    this.onOpened(() => {
+      // Close the popup when the user clicks outside of it
+      Cuic.on('click', document, autoClose);
+    });
+
+    Cuic.onWindowResized(() => {
+      if (this.isInDOM() && this.isShown()) {
+        // popup._disableTransitions();
+        this.anchor(opt.anchor, opt.anchorPoint, opt.target);
+        // popup._enableTransitions();
+      }
+    });
+  }
+
+  /**
+   * Adds a button to the footer
+   * @param props
+   * @return {Button}
+   */
+  addButton(props) {
+    let button = props;
+
+    if (!(props instanceof Button)) {
+      const { callback } = props;
+
+      // Create button
+      button = new Button(Cuic.extend({
+        className: `btn btn-default btn-secondary ${props.className}`,
+        label: props.label,
+      }, props));
+
+      // Set button callback
+      if (typeof callback === 'function') {
+        button.on('click', (ev) => {
+          callback.call(this, ev);
         });
-
-        // Reposition tail when popup position change
-        this.onAnchored(() => {
-            this.updateTail();
-        });
-
-        this.onClosed(() => {
-            Cuic.off("click", document, autoClose);
-
-            if (this.options.autoRemove) {
-                this.remove();
-            }
-        });
-
-        this.onOpen(() => {
-            const target = Cuic.element(this.options.target);
-            // Get anchor from data attribute
-            const anchor = target.data("anchor") || this.options.anchor;
-            const anchorPoint = target.data("anchor-point") || this.options.anchorPoint;
-            this.anchor(anchor, anchorPoint, target);
-        });
-
-        this.onOpened(() => {
-            // Close the popup when the user clicks outside of it
-            Cuic.on("click", document, autoClose);
-        });
-
-        // Add element to collection
-        Popups.add(this);
+      }
     }
 
-    /**
-     * Adds a button to the footer
-     * @param button
-     * @return {Button}
-     */
-    addButton(button) {
-        if (!(button instanceof Button)) {
-            const callback = button.callback;
+    // Add button in footer
+    this.buttons.addComponent(button);
 
-            // Create button
-            button = new Button(Cuic.extend({
-                className: "btn btn-default btn-secondary " + button.className,
-                label: button.label
-            }, button));
+    return button;
+  }
 
-            // Set button callback
-            if (typeof callback === "function") {
-                button.on("click", (ev) => {
-                    callback.call(this, ev);
-                });
-            }
-        }
+  /**
+   * Returns the content
+   * @return {Element}
+   */
+  getContent() {
+    return this.content;
+  }
 
-        // Add button in footer
-        this.buttons.addComponent(button);
-        return button;
+  /**
+   * Returns the footer
+   * @return {Element}
+   */
+  getFooter() {
+    return this.footer;
+  }
+
+  /**
+   * Returns the header
+   * @return {Element}
+   */
+  getHeader() {
+    return this.header;
+  }
+
+  /**
+   * Sets the content
+   * @param html
+   * @return {Popup}
+   */
+  setContent(html) {
+    this.content.html(html);
+    return this;
+  }
+
+  /**
+   * Sets the footer
+   * @param html
+   * @return {Popup}
+   */
+  setFooter(html) {
+    this.footer.html(html);
+    return this;
+  }
+
+  /**
+   * Sets the header
+   * @param html
+   * @return {Popup}
+   */
+  setHeader(html) {
+    this.header.html(html);
+    return this;
+  }
+
+  /**
+   * Sets dialog title
+   * @param html
+   * @return {Popup}
+   */
+  setTitle(html) {
+    this.title.html(html);
+
+    if (html !== null) {
+      this.header.show();
+    }
+    return this;
+  }
+
+  /**
+   * Position the tail
+   * @return {Popup}
+   */
+  updateTail() {
+    const prop = {
+      bottom: '',
+      left: '',
+      right: '',
+      top: '',
+    };
+
+    // todo copy popup background color
+    // prop["border-color"] = this.css("background-color");
+
+    // Remove previous classes
+    this.tail.removeClass('cc-popup-tail-bottom cc-popup-tail-left cc-popup-tail-right cc-popup-tail-top');
+
+    // Top tail
+    if (this.isAnchored('bottom')) {
+      this.tail.addClass('cc-popup-tail-top');
+    }
+    // Bottom tail
+    if (this.isAnchored('top')) {
+      this.tail.addClass('cc-popup-tail-bottom');
+    }
+    // Right tail
+    if (this.isAnchored('left')) {
+      this.tail.addClass('cc-popup-tail-right');
+    }
+    // Left tail
+    if (this.isAnchored('right')) {
+      this.tail.addClass('cc-popup-tail-left');
     }
 
-    /**
-     * Returns the content
-     * @return {Element}
-     */
-    getContent() {
-        return this.content;
-    }
+    // Apply CSS
+    this.tail.css(prop);
 
-    /**
-     * Returns the footer
-     * @return {Element}
-     */
-    getFooter() {
-        return this.footer;
-    }
-
-    /**
-     * Returns the header
-     * @return {Element}
-     */
-    getHeader() {
-        return this.header;
-    }
-
-    /**
-     * Sets the content
-     * @param html
-     * @return {Popup}
-     */
-    setContent(html) {
-        this.content.html(html);
-        return this;
-    }
-
-    /**
-     * Sets the footer
-     * @param html
-     * @return {Popup}
-     */
-    setFooter(html) {
-        this.footer.html(html);
-        return this;
-    }
-
-    /**
-     * Sets the header
-     * @param html
-     * @return {Popup}
-     */
-    setHeader(html) {
-        this.header.html(html);
-        return this;
-    }
-
-    /**
-     * Sets dialog title
-     * @param html
-     * @return {Popup}
-     */
-    setTitle(html) {
-        this.title.html(html);
-
-        if (html !== null) {
-            this.header.show();
-        }
-        return this;
-    }
-
-    /**
-     * Position the tail
-     * @return {Popup}
-     */
-    updateTail() {
-        let prop = {
-            bottom: "",
-            left: "",
-            right: "",
-            top: "",
-        };
-
-        // todo copy popup background color
-        // prop["border-color"] = this.css("background-color");
-
-        // Remove previous classes
-        this.tail.removeClass("cc-popup-tail-bottom cc-popup-tail-left cc-popup-tail-right cc-popup-tail-top");
-
-        // Top tail
-        if (this.isAnchored("bottom")) {
-            this.tail.addClass("cc-popup-tail-top");
-        }
-        // Bottom tail
-        if (this.isAnchored("top")) {
-            this.tail.addClass("cc-popup-tail-bottom");
-        }
-        // Right tail
-        if (this.isAnchored("left")) {
-            this.tail.addClass("cc-popup-tail-right");
-        }
-        // Left tail
-        if (this.isAnchored("right")) {
-            this.tail.addClass("cc-popup-tail-left");
-        }
-
-        // Apply CSS
-        this.tail.css(prop);
-
-        return this;
-    }
+    return this;
+  }
 }
 
 Popup.prototype.options = {
-    anchor: "top",
-    autoClose: true,
-    autoRemove: false,
-    content: null,
-    namespace: "popup",
-    opened: false,
-    target: null,
-    zIndex: 9
+  anchor: 'top',
+  autoClose: true,
+  autoRemove: false,
+  buttons: [],
+  content: null,
+  namespace: 'popup',
+  opened: false,
+  target: null,
+  title: null,
+  zIndex: 9,
 };
-
-export const Popups = new Collection();
-
-Cuic.onWindowResized(() => {
-    Popups.each((popup) => {
-        if (popup.isInDOM() && popup.isShown()) {
-            // popup._disableTransitions();
-            const options = popup.options;
-            popup.anchor(options.anchor, options.anchorPoint, options.target);
-            // popup._enableTransitions();
-        }
-    });
-});
 
 export default Popup;

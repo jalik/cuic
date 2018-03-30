@@ -15,43 +15,36 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
-import Cuic from "./js/cuic";
-import Benchmark from "./js/utils/benchmark";
-import Button from "./js/ui/button";
-import Closable from "./js/ui/closable";
-import Collection from "./js/utils/collection";
-import Dialog from "./js/ui/dialog";
-import {Dialogs} from "./js/ui/dialog";
-import Element from "./js/ui/element";
-import Elements from "./js/ui/elements";
-import Events from "./js/utils/events";
-import Group from "./js/ui/group";
-import Guide from "./js/ui/guide";
-import Hook from "./js/ui/hook";
-import Movable from "./js/ui/movable";
-import Notification from "./js/ui/notification";
-import {Notifications} from "./js/ui/notification";
-import NotificationStack from "./js/ui/notification-stack";
-import Overlay from "./js/ui/overlay";
-import Panel from "./js/ui/panel";
-import {Panels} from "./js/ui/panel";
-import Popup from "./js/ui/popup";
-import {Popups} from "./js/ui/popup";
-import Resizable from "./js/ui/resizable";
-import Selectable from "./js/ui/selectable";
-import Shortcut from "./js/utils/shortcut";
-import Switcher from "./js/ui/switcher";
-import {Switchers} from "./js/ui/switcher";
-import Tooltip from "./js/ui/tooltip";
-import {Tooltips} from "./js/ui/tooltip";
+import Cuic from './js/cuic';
+import Button from './js/ui/button';
+import Closable from './js/ui/closable';
+import Dialog, { Dialogs } from './js/ui/dialog';
+import Element from './js/ui/element';
+import Elements from './js/ui/elements';
+import Group from './js/ui/group';
+import Guide from './js/ui/guide';
+import Hook from './js/ui/hook';
+import Movable from './js/ui/movable';
+import Notification, { Notifications } from './js/ui/notification';
+import NotificationStack from './js/ui/notification-stack';
+import Overlay from './js/ui/overlay';
+import Panel, { Panels } from './js/ui/panel';
+import Popup, { Popups } from './js/ui/popup';
+import Resizable from './js/ui/resizable';
+import Selectable from './js/ui/selectable';
+import Switcher, { Switchers } from './js/ui/switcher';
+import Tooltip, { Tooltips } from './js/ui/tooltip';
+import Benchmark from './js/utils/benchmark';
+import Collection from './js/utils/collection';
+import Events from './js/utils/events';
+import Shortcut from './js/utils/shortcut';
 
 // Add components to global var
 Cuic.Button = Button;

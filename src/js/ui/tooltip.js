@@ -15,210 +15,202 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
-import Cuic from "../cuic";
-import Closable from "./closable";
-import Collection from "../utils/collection";
-import Element from "./element";
+import Cuic from '../cuic';
+import Closable from './closable';
+import Element from './element';
 
-export class Tooltip extends Closable {
+class Tooltip extends Closable {
+  constructor(options) {
+    // Set default options
+    const opt = Cuic.extend({}, Tooltip.prototype.options, options, {
+      mainClass: 'cc-tooltip',
+    });
 
-    constructor(options) {
-        // Set default options
-        options = Cuic.extend({}, Tooltip.prototype.options, options, {
-            mainClass: "cc-tooltip"
-        });
+    // Create element
+    super('div', { className: opt.className }, opt);
 
-        // Create element
-        super("div", {className: options.className}, options);
+    // Public attributes
+    this.currentTarget = null;
 
-        // Public attributes
-        this.currentTarget = null;
+    // Add content
+    this.content = new Element('div', {
+      className: 'cc-tooltip-content',
+    }).appendTo(this);
 
-        // Add content
-        this.content = new Element("div", {
-            className: "cc-tooltip-content"
-        }).appendTo(this);
+    // Add tail
+    this.tail = new Element('span', {
+      className: 'cc-tooltip-tail',
+    }).appendTo(this);
 
-        // Add tail
-        this.tail = new Element("span", {
-            className: "cc-tooltip-tail"
-        }).appendTo(this);
+    Cuic.element(document).on('mouseover', (ev) => {
+      const targets = Cuic.find(this.options.selector);
 
-        Cuic.element(document).on("mouseover", (ev) => {
-            const targets = Cuic.find(this.options.selector);
+      for (let i = 0; i < targets.length; i += 1) {
+        const target = targets[i];
 
-            for (let i = 0; i < targets.length; i += 1) {
-                const target = targets[i];
+        if (ev.target === target.node()) {
+          // Get stored tooltip content
+          let content = target.data('tooltip');
 
-                if (ev.target === target.node()) {
-                    // Get stored tooltip content
-                    let content = target.data("tooltip");
+          if (!content || !content.length) {
+            // Get tooltip content from attribute
+            content = target.attr(this.options.attribute);
+            // Avoid conflict with native tooltip
+            target.attr(this.options.attribute, '');
+            // Store tooltip content
+            target.data('tooltip', content);
+          }
 
-                    if (!content || !content.length) {
-                        // Get tooltip content from attribute
-                        content = target.attr(this.options.attribute);
-                        // Avoid conflict with native tooltip
-                        target.attr(this.options.attribute, "");
-                        // Store tooltip content
-                        target.data("tooltip", content);
-                    }
+          // Update tooltip content
+          if (content && content.length) {
+            this.content.html(content);
+          }
 
-                    // Update tooltip content
-                    if (content && content.length) {
-                        this.content.html(content);
-                    }
+          this.currentTarget = ev.target;
 
-                    this.currentTarget = ev.target;
-
-                    // Position tooltip
-                    if (!this.options.followPointer) {
-                        if (this.parentNode() !== ev.target.parentNode) {
-                            this.appendTo(ev.target.parentNode);
-                        }
-                    }
-                    this.open();
-
-                    // Close tooltip when mouse leaves area
-                    target.once("mouseleave", () => {
-                        this.close();
-                    });
-                    break;
-                }
+          // Position tooltip
+          if (!this.options.followPointer) {
+            if (this.parentNode() !== ev.target.parentNode) {
+              this.appendTo(ev.target.parentNode);
             }
-        });
+          }
+          this.open();
 
-        // Move tooltip when mouse moves and tooltip is opened
-        Cuic.element(document).on("mousemove", (ev) => {
-            if (this.options.followPointer && !this.isHidden()) {
-                if (this.parentNode() !== document.body) {
-                    this.appendTo(document.body);
-                }
-                const target = Cuic.element(this.currentTarget);
-                // Get anchor from data attribute
-                const anchor = target.data("anchor") || this.options.anchor;
-                const anchorPoint = target.data("anchor-point") || this.options.anchorPoint;
-                this.anchor(anchor, anchorPoint, [ev.pageX, ev.pageY]);
-            }
-        });
+          // Close tooltip when mouse leaves area
+          target.once('mouseleave', () => {
+            this.close();
+          });
+          break;
+        }
+      }
+    });
 
-        const autoClose = (ev) => {
-            if (this.isOpened() && this.options.autoClose) {
-                if (ev.target !== this.node() && !Cuic.element(ev.target).isChildOf(this)) {
-                    this.close();
-                }
-            }
-        };
+    // Move tooltip when mouse moves and tooltip is opened
+    Cuic.element(document).on('mousemove', (ev) => {
+      if (this.options.followPointer && !this.isHidden()) {
+        if (this.parentNode() !== document.body) {
+          this.appendTo(document.body);
+        }
+        const target = Cuic.element(this.currentTarget);
+        // Get anchor from data attribute
+        const anchor = target.data('anchor') || this.options.anchor;
+        const anchorPoint = target.data('anchor-point') || this.options.anchorPoint;
+        this.anchor(anchor, anchorPoint, [ev.pageX, ev.pageY]);
+      }
+    });
 
-        // Reposition tail when tooltip position change
-        this.onAnchored(() => {
-            this.updateTail();
-        });
+    const autoClose = (ev) => {
+      if (this.isOpened() && this.options.autoClose) {
+        if (ev.target !== this.node() && !Cuic.element(ev.target).isChildOf(this)) {
+          this.close();
+        }
+      }
+    };
 
-        this.onClosed(() => {
-            Cuic.off("click", document, autoClose);
+    // Reposition tail when tooltip position change
+    this.onAnchored(() => {
+      this.updateTail();
+    });
 
-            if (this.options.autoRemove) {
-                this.remove();
-            }
-        });
+    this.onClosed(() => {
+      Cuic.off('click', document, autoClose);
 
-        this.onOpen(() => {
-            if (!this.options.followPointer) {
-                const target = Cuic.element(this.currentTarget);
-                // Get anchor from data attribute
-                const anchor = target.data("anchor") || this.options.anchor;
-                const anchorPoint = target.data("anchor-point") || this.options.anchorPoint;
-                this.anchor(anchor, anchorPoint, target);
-            }
-        });
+      if (this.options.autoRemove) {
+        this.remove();
+      }
+    });
 
-        this.onOpened(() => {
-            // Close the popup when the user clicks outside of it
-            Cuic.on("click", document, autoClose);
-        });
+    this.onOpen(() => {
+      if (!this.options.followPointer) {
+        const target = Cuic.element(this.currentTarget);
+        // Get anchor from data attribute
+        const anchor = target.data('anchor') || this.options.anchor;
+        const anchorPoint = target.data('anchor-point') || this.options.anchorPoint;
+        this.anchor(anchor, anchorPoint, target);
+      }
+    });
 
-        // Add element to collection
-        Tooltips.add(this);
+    this.onOpened(() => {
+      // Close the popup when the user clicks outside of it
+      Cuic.on('click', document, autoClose);
+    });
+  }
+
+  /**
+   * Returns the content
+   * @return {Element}
+   */
+  getContent() {
+    return this.content;
+  }
+
+  /**
+   * Sets tooltip content
+   * @param html
+   * @return {Tooltip}
+   */
+  setContent(html) {
+    this.content.html(html);
+    return this;
+  }
+
+  /**
+   * Position the tail
+   * @return {Tooltip}
+   */
+  updateTail() {
+    const prop = {
+      bottom: '',
+      left: '',
+      right: '',
+      top: '',
+    };
+
+    // todo copy tooltip background color
+    // prop["border-color"] = this.css("background-color");
+
+    // Remove previous classes
+    this.tail.removeClass('cc-tooltip-tail-bottom cc-tooltip-tail-left cc-tooltip-tail-right cc-tooltip-tail-top');
+
+    // Top tail
+    if (this.isAnchored('bottom')) {
+      this.tail.addClass('cc-tooltip-tail-top');
+    }
+    // Bottom tail
+    if (this.isAnchored('top')) {
+      this.tail.addClass('cc-tooltip-tail-bottom');
+    }
+    // Right tail
+    if (this.isAnchored('left')) {
+      this.tail.addClass('cc-tooltip-tail-right');
+    }
+    // Left tail
+    if (this.isAnchored('right')) {
+      this.tail.addClass('cc-tooltip-tail-left');
     }
 
-    /**
-     * Returns the content
-     * @return {Element}
-     */
-    getContent() {
-        return this.content;
-    }
+    // Apply CSS
+    this.tail.css(prop);
 
-    /**
-     * Sets tooltip content
-     * @param html
-     * @return {Tooltip}
-     */
-    setContent(html) {
-        this.content.html(html);
-        return this;
-    }
-
-    /**
-     * Position the tail
-     * @return {Tooltip}
-     */
-    updateTail() {
-        let prop = {
-            bottom: "",
-            left: "",
-            right: "",
-            top: "",
-        };
-
-        // todo copy tooltip background color
-        // prop["border-color"] = this.css("background-color");
-
-        // Remove previous classes
-        this.tail.removeClass("cc-tooltip-tail-bottom cc-tooltip-tail-left cc-tooltip-tail-right cc-tooltip-tail-top");
-
-        // Top tail
-        if (this.isAnchored("bottom")) {
-            this.tail.addClass("cc-tooltip-tail-top");
-        }
-        // Bottom tail
-        if (this.isAnchored("top")) {
-            this.tail.addClass("cc-tooltip-tail-bottom");
-        }
-        // Right tail
-        if (this.isAnchored("left")) {
-            this.tail.addClass("cc-tooltip-tail-right");
-        }
-        // Left tail
-        if (this.isAnchored("right")) {
-            this.tail.addClass("cc-tooltip-tail-left");
-        }
-
-        // Apply CSS
-        this.tail.css(prop);
-
-        return this;
-    }
+    return this;
+  }
 }
 
 Tooltip.prototype.options = {
-    anchor: "right",
-    attribute: "title",
-    followPointer: true,
-    namespace: "tooltip",
-    opened: false,
-    selector: "[title]",
-    zIndex: 100
+  anchor: 'right',
+  attribute: 'title',
+  followPointer: true,
+  namespace: 'tooltip',
+  opened: false,
+  selector: '[title]',
+  zIndex: 100,
 };
-
-export const Tooltips = new Collection();
 
 export default Tooltip;

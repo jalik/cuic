@@ -15,159 +15,157 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
-import Cuic from "../cuic";
-import Collection from "../utils/collection";
-import Component from "./component";
+import Cuic from '../cuic';
+import Collection from '../utils/collection';
+import Component from './component';
 
-export class Movable extends Component {
+class Movable extends Component {
+  constructor(options) {
+    // Set default options
+    const opt = Cuic.extend({}, Movable.prototype.options, options);
 
-    constructor(options) {
-        // Set default options
-        options = Cuic.extend({}, Movable.prototype.options, options);
+    // Create element
+    super('div', { className: opt.className }, opt);
 
-        // Create element
-        super("div", {className: options.className}, options);
+    // Add component class
+    this.addClass('cc-movable');
 
-        // Add component class
-        this.addClass("cc-movable");
+    // Force the target to be the relative parent
+    if (this.isStatic()) {
+      this.css({ position: 'relative' });
+    }
 
-        // Force the target to be the relative parent
-        if (this.isStatic()) {
-            this.css({position: "relative"});
+    // Group handles
+    this.handles = new Collection();
+
+    // Set the moving area
+    this.addMoveHandle(opt.handle || this.node());
+  }
+
+  /**
+   * Sets the moving area
+   * @param handleTarget
+   * @return {Movable}
+   */
+  addMoveHandle(handleTarget) {
+    const handle = Cuic.element(handleTarget);
+
+    this.handles.add(handle);
+
+    // Add the handle class
+    handle.addClass('cc-movable-handle');
+
+    // Start moving
+    handle.on('mousedown', (ev) => {
+      // Ignore moving if the target is not the root
+      if (this.options.rootOnly && ev.target !== ev.currentTarget) return;
+
+      // Execute callback
+      if (this.events.trigger('moveStart', ev) === false) return;
+
+      // Prevent text selection
+      ev.preventDefault();
+
+      // Add moving class
+      this.addClass('moving');
+
+      // Removes alignment classes
+      // this.removeClass("aligned-left aligned-right aligned-top aligned-bottom");
+
+      const startPosition = this.position();
+      const startX = ev.clientX;
+      const startY = ev.clientY;
+
+      const onMouseMove = (mouseMoveEvent) => {
+        // Execute callback
+        if (this.events.trigger('move', mouseMoveEvent) === false) return;
+
+        let prop = { bottom: 'auto' };
+
+        // Move horizontally
+        if (this.options.horizontally) {
+          const diffX = mouseMoveEvent.clientX - startX;
+          prop.left = startPosition.left + diffX;
+          prop.right = 'auto';
         }
 
-        // Group handles
-        this.handles = new Collection();
+        // Move vertically
+        if (this.options.vertically) {
+          const diffY = mouseMoveEvent.clientY - startY;
+          prop.top = startPosition.top + diffY;
+          prop.bottom = 'auto';
+        }
 
-        // Set the moving area
-        this.addMoveHandle(options.handle || this.node());
-    }
+        // Limit position to parent available position
+        if (this.options.constraintToParent) {
+          const available = this.calculateAvailablePosition();
+          prop = Cuic.constraintPosition(prop, available);
+          this.alignInParent(); // todo useful ?
+        }
 
-    /**
-     * Sets the moving area
-     * @param handle
-     * @return {Movable}
-     */
-    addMoveHandle(handle) {
-        handle = Cuic.element(handle);
+        // Move element
+        this.css(prop);
+      };
 
-        this.handles.add(handle);
+      // Moving
+      Cuic.on('mousemove', document, onMouseMove);
 
-        // Add the handle class
-        handle.addClass("cc-movable-handle");
+      // Stop moving
+      Cuic.once('mouseup', document, (mouseUpEvent) => {
+        Cuic.off('mousemove', document, onMouseMove);
+        this.removeClass('moving');
+        this.events.trigger('moveEnd', mouseUpEvent);
+      });
+    });
+    return this;
+  }
 
-        // Start moving
-        handle.on("mousedown", (ev) => {
-            // Ignore moving if the target is not the root
-            if (this.options.rootOnly && ev.target !== ev.currentTarget) return;
+  /**
+   * Called when moving
+   * @param callback
+   * @return {Movable}
+   */
+  onMove(callback) {
+    this.events.on('move', callback);
+    return this;
+  }
 
-            // Execute callback
-            if (this.events.trigger("moveStart", ev) === false) return;
+  /**
+   * Called when move end
+   * @param callback
+   * @return {Movable}
+   */
+  onMoveEnd(callback) {
+    this.events.on('moveEnd', callback);
+    return this;
+  }
 
-            // Prevent text selection
-            ev.preventDefault();
-
-            // Add moving class
-            this.addClass("moving");
-
-            // Removes alignment classes
-            // this.removeClass("aligned-left aligned-right aligned-top aligned-bottom");
-
-            const startPosition = this.position();
-            const startX = ev.clientX;
-            const startY = ev.clientY;
-
-            const onMouseMove = (ev) => {
-                // Execute callback
-                if (this.events.trigger("move", ev) === false) return;
-
-                let prop = {bottom: "auto"};
-
-                // Move horizontally
-                if (this.options.horizontally) {
-                    const diffX = ev.clientX - startX;
-                    prop.left = startPosition.left + diffX;
-                    prop.right = "auto";
-                }
-
-                // Move vertically
-                if (this.options.vertically) {
-                    const diffY = ev.clientY - startY;
-                    prop.top = startPosition.top + diffY;
-                    prop.bottom = "auto";
-                }
-
-                // Limit position to parent available position
-                if (this.options.constraintToParent) {
-                    const available = this._calculateAvailablePosition();
-                    prop = Cuic.constraintPosition(prop, available);
-                    this.alignInParent();//todo useful ?
-                }
-
-                // Move element
-                this.css(prop);
-            };
-
-            // Moving
-            Cuic.on("mousemove", document, onMouseMove);
-
-            // Stop moving
-            Cuic.once("mouseup", document, (ev) => {
-                Cuic.off("mousemove", document, onMouseMove);
-                this.removeClass("moving");
-                this.events.trigger("moveEnd", ev);
-            });
-        });
-        return this;
-    }
-
-    /**
-     * Called when moving
-     * @param callback
-     * @return {Movable}
-     */
-    onMove(callback) {
-        this.events.on("move", callback);
-        return this;
-    }
-
-    /**
-     * Called when move end
-     * @param callback
-     * @return {Movable}
-     */
-    onMoveEnd(callback) {
-        this.events.on("moveEnd", callback);
-        return this;
-    }
-
-    /**
-     * Called when move start
-     * @param callback
-     * @return {Movable}
-     */
-    onMoveStart(callback) {
-        this.events.on("moveStart", callback);
-        return this;
-    }
+  /**
+   * Called when move start
+   * @param callback
+   * @return {Movable}
+   */
+  onMoveStart(callback) {
+    this.events.on('moveStart', callback);
+    return this;
+  }
 }
 
 Movable.prototype.options = {
-    constraintToParent: true,
-    handle: null,
-    handleClassName: "cc-movable-handle",
-    horizontally: true,
-    namespace: "movable",
-    rootOnly: true,
-    vertically: true
+  constraintToParent: true,
+  handle: null,
+  handleClassName: 'cc-movable-handle',
+  horizontally: true,
+  namespace: 'movable',
+  rootOnly: true,
+  vertically: true,
 };
 
 export default Movable;

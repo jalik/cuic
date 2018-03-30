@@ -15,72 +15,67 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
-export class Benchmark {
+class Benchmark {
+  constructor() {
+    this.startTime = null;
+    this.stopTime = null;
+    this.time = 0;
+  }
 
-    constructor() {
-        let startTime = null;
-        let stopTime = null;
-        let time = 0;
-
-        /**
-         * Returns benchmark time
-         * @returns {number}
-         */
-        this.getTime = () => {
-            if (startTime && stopTime) {
-                return stopTime - startTime;
-            }
-            else if (startTime) {
-                return Date.now() - startTime;
-            }
-            else {
-                return 0;
-            }
-        };
-
-        /**
-         * Checks if benchmark is started
-         * @returns {boolean}
-         */
-        this.isStarted = () => {
-            return typeof startTime === "number";
-        };
-
-        /**
-         * Resets the benchmark
-         */
-        this.reset = () => {
-            time = 0;
-            startTime = null;
-            stopTime = null;
-        };
-
-        /**
-         * Starts the benchmark
-         * @returns {*}
-         */
-        this.start = () => {
-            startTime = Date.now();
-            stopTime = null;
-        };
-
-        /**
-         * Stops the benchmark
-         * @returns {*}
-         */
-        this.stop = () => {
-            startTime = null;
-            stopTime = Date.now();
-        };
+  /**
+   * Returns benchmark time
+   * @returns {number}
+   */
+  getTime() {
+    if (this.startTime && this.stopTime) {
+      return this.stopTime - this.startTime;
+    } else if (this.startTime) {
+      return Date.now() - this.startTime;
     }
+    return 0;
+  }
+
+  /**
+   * Checks if benchmark is started
+   * @returns {boolean}
+   */
+  isStarted() {
+    return typeof this.startTime === 'number';
+  }
+
+  /**
+   * Resets the benchmark
+   */
+  reset() {
+    this.time = 0;
+    this.startTime = null;
+    this.stopTime = null;
+  }
+
+  /**
+   * Starts the benchmark
+   * @returns {*}
+   */
+  start() {
+    this.startTime = Date.now();
+    this.stopTime = null;
+  }
+
+  /**
+   * Stops the benchmark
+   * @returns {*}
+   */
+  stop() {
+    this.startTime = null;
+    this.stopTime = Date.now();
+  }
 }
 
 export default Benchmark;

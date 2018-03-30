@@ -15,55 +15,53 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
-import Cuic from "../cuic";
-import Component from "./component";
+import Cuic from '../cuic';
+import Component from './component';
 
-export class Button extends Component {
+class Button extends Component {
+  constructor(options) {
+    // Set default options
+    const opt = Cuic.extend({}, Button.prototype.options, options, {
+      mainClass: 'cc-button',
+    });
 
-    constructor(options) {
-        // Set default options
-        options = Cuic.extend({}, Button.prototype.options, options, {
-            mainClass: "cc-button"
-        });
+    // Create element
+    super('button', {
+      autofocus: opt.autofocus,
+      className: opt.className,
+      disabled: opt.disabled,
+      html: opt.label,
+      title: opt.title,
+      type: opt.type,
+    }, opt);
 
-        // Create element
-        super("button", {
-            autofocus: options.autofocus,
-            className: options.className,
-            disabled: options.disabled,
-            html: options.label,
-            title: options.title,
-            type: options.type
-        }, options);
-
-        // Create shortcut
-        if (typeof options.shortcut === "number") {
-            this.shortcut = new Cuic.Shortcut({
-                keyCode: options.shortcut,
-                target: this.element,
-                callback: () => {
-                    this.click();
-                }
-            });
-        }
+    // Create shortcut
+    if (typeof opt.shortcut === 'number') {
+      this.shortcut = new Cuic.Shortcut({
+        keyCode: opt.shortcut,
+        target: this.element,
+        callback: () => {
+          this.click();
+        },
+      });
     }
+  }
 }
 
 Button.prototype.options = {
-    className: "btn btn-default btn-secondary",
-    disabled: false,
-    label: null,
-    shortcut: null,
-    title: null,
-    type: "button"
+  className: 'btn btn-default btn-secondary',
+  disabled: false,
+  label: null,
+  shortcut: null,
+  title: null,
+  type: 'button',
 };
 
 export default Button;

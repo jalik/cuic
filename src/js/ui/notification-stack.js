@@ -15,80 +15,65 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
-import Cuic from "../cuic";
-import Collection from "../utils/collection";
-import Group from "./group";
-import Notification from "./notification";
+import Cuic from '../cuic';
+import Group from './group';
+import Notification from './notification';
 
-export class NotificationStack extends Group {
+class NotificationStack extends Group {
+  constructor(options) {
+    // Set default options
+    const opt = Cuic.extend({}, NotificationStack.prototype.options, options, {
+      mainClass: 'cc-notification-stack',
+    });
 
-    constructor(options) {
-        // Set default options
-        options = Cuic.extend({}, NotificationStack.prototype.options, options, {
-            mainClass: "cc-notification-stack"
-        });
+    // Create element
+    super('div', { className: opt.className }, opt);
 
-        // Create element
-        super("div", {className: options.className}, options);
+    // Set position
+    this.align(this.options.position);
 
-        // Set position
-        this.align(this.options.position);
+    // Set max height
+    this.resize();
 
-        // Set max height
+    // Display the notification when it's added to the stack
+    this.onComponentAdded((component) => {
+      if (component instanceof Notification) {
+        component.open();
+      }
+    });
+
+    // Display the notification when it's added to the stack
+    this.onComponentRemoved((component) => {
+      if (component instanceof Notification) {
+        component.close();
+      }
+    });
+
+    Cuic.onWindowResized(() => {
+      if (this.isInDOM()) {
         this.resize();
+        this.align(this.options.position);
+      }
+    });
+  }
 
-        // Display the notification when it's added to the stack
-        this.onComponentAdded((component) => {
-            if (component instanceof Notification) {
-                component.open();
-            }
-        });
-
-        // Display the notification when it's added to the stack
-        this.onComponentRemoved((component) => {
-            if (component instanceof Notification) {
-                component.close();
-            }
-        });
-
-        // Remove element from list
-        this.onRemoved(() => {
-            Cuic.notificationStacks.remove(this);
-        });
-
-        // Add element to collection
-        Cuic.notificationStacks.add(this);
-    }
-
-    resize() {
-        const availableSpace = this._calculateAvailableSpace(this.offsetParent());
-        this.css({"max-height": availableSpace.height});
-    }
+  resize() {
+    const availableSpace = this.calculateAvailableSpace(this.offsetParent());
+    this.css({ 'max-height': availableSpace.height });
+  }
 }
 
 NotificationStack.prototype.options = {
-    namespace: "notification-stack",
-    position: "right top",
-    zIndex: 10
+  namespace: 'notification-stack',
+  position: 'right top',
+  zIndex: 10,
 };
-
-Cuic.notificationStacks = new Collection();
-
-Cuic.onWindowResized(() => {
-    Cuic.notificationStacks.each((n) => {
-        if (n.isInDOM()) {
-            n.resize();
-            n.align(n.options.position);
-        }
-    });
-});
 
 export default NotificationStack;

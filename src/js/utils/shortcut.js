@@ -15,98 +15,96 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
-import Cuic from "../cuic";
+import Cuic from '../cuic';
 
-export class Shortcut {
+class Shortcut {
+  constructor(options) {
+    // Set default options
+    this.options = Cuic.extend({}, Shortcut.prototype.options, options);
 
-    constructor(options) {
-        // Set default options
-        options = Cuic.extend({}, Shortcut.prototype.options, options);
-        this.options = options;
+    // Get the element
+    this.options.element = Cuic.node(this.options.element);
 
-        // Get the element
-        this.options.element = Cuic.node(options.element);
-
-        // Check options
-        if (typeof this.options.callback !== "function") {
-            throw new TypeError(`Shortcut.options.callback is not a function.`);
-        }
-
-        // Init options
-        if (this.options.active) {
-            this.activate();
-        }
+    // Check options
+    if (typeof this.options.callback !== 'function') {
+      throw new TypeError('Shortcut.options.callback is not a function.');
     }
 
-    /**
-     * Activates the shortcut
-     */
-    activate() {
-        const options = this.options;
-        const element = this.node();
-        Cuic.on(`keydown`, element, (ev) => {
-            if ((options.keyCode === ev.keyCode || options.key === ev.key || options.key === ev.code)
-                && options.altKey === ev.altKey
-                && options.ctrlKey === ev.ctrlKey
-                && options.shiftKey === ev.shiftKey) {
-                ev.preventDefault();
-                ev.stopPropagation();
-                options.callback.call(this, element, ev);
-                return false;
-            }
-        });
+    // Init options
+    if (this.options.active) {
+      this.activate();
     }
+  }
 
-    /**
-     * Deactivates the shortcut
-     */
-    deactivate() {
-        Cuic.off(`keydown`, this.node(), this.options.callback);
-    }
+  /**
+   * Activates the shortcut
+   */
+  activate() {
+    const { options } = this;
+    const element = this.node();
+    Cuic.on('keydown', element, (ev) => {
+      if ((options.keyCode === ev.keyCode || options.key === ev.key || options.key === ev.code)
+        && options.altKey === ev.altKey
+        && options.ctrlKey === ev.ctrlKey
+        && options.shiftKey === ev.shiftKey) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        options.callback.call(this, element, ev);
+        return false;
+      }
+      return true;
+    });
+  }
 
-    /**
-     * Returns the element
-     * @return {HTMLElement}
-     */
-    node() {
-        return Cuic.node(this.options.element);
-    }
+  /**
+   * Deactivates the shortcut
+   */
+  deactivate() {
+    Cuic.off('keydown', this.node(), this.options.callback);
+  }
+
+  /**
+   * Returns the element
+   * @return {HTMLElement}
+   */
+  node() {
+    return Cuic.node(this.options.element);
+  }
 }
 
 Shortcut.prototype.options = {
-    active: true,
-    altKey: false,
-    callback: null,
-    ctrlKey: false,
-    element: document.body,
-    key: null,
-    keyCode: null,
-    shiftKey: false
+  active: true,
+  altKey: false,
+  callback: null,
+  ctrlKey: false,
+  element: document.body,
+  key: null,
+  keyCode: null,
+  shiftKey: false,
 };
 
 Cuic.keys = {
-    BACKSPACE: 8,
-    DEL: 46,
-    DOWN: 40,
-    ENTER: 13,
-    ESC: 27,
-    INSERT: 45,
-    LEFT: 37,
-    MINUS: 109,
-    PAGE_UP: 33,
-    PAGE_DOWN: 34,
-    PLUS: 107,
-    RIGHT: 39,
-    TAB: 9,
-    UP: 38
+  BACKSPACE: 8,
+  DEL: 46,
+  DOWN: 40,
+  ENTER: 13,
+  ESC: 27,
+  INSERT: 45,
+  LEFT: 37,
+  MINUS: 109,
+  PAGE_UP: 33,
+  PAGE_DOWN: 34,
+  PLUS: 107,
+  RIGHT: 39,
+  TAB: 9,
+  UP: 38,
 };
 
 export default Shortcut;

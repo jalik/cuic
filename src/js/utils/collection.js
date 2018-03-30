@@ -15,102 +15,100 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
-import Events from "./events";
+import Events from './events';
 
-export class Collection {
+class Collection {
+  constructor(values) {
+    this.events = new Events();
+    this.values = values instanceof Array ? values : [];
+    this.length = this.values.length;
+  }
 
-    constructor(values) {
-        this.events = new Events();
-        this.values = values instanceof Array ? values : [];
-        this.length = this.values.length;
+  /**
+   * Adds the value to the collection
+   * @param value
+   */
+  add(value) {
+    this.values.push(value);
+    this.length += 1;
+    this.events.trigger('added', value);
+  }
+
+  /**
+   * Executes a callback on each values
+   * @param callback
+   */
+  each(callback) {
+    for (let i = 0; i < this.values.length; i += 1) {
+      callback.call(this, this.values[i]);
     }
+  }
 
-    /**
-     * Adds the value to the collection
-     * @param value
-     */
-    add(value) {
-        this.values.push(value);
-        this.length += 1;
-        this.events.trigger("added", value);
+  /**
+   * Returns the specified value
+   * @param index
+   * @return {Array.<T>}
+   */
+  get(index) {
+    return this.values[index];
+  }
+
+  /**
+   * Returns the index of the value
+   * @param value
+   * @return {number}
+   */
+  indexOf(value) {
+    return this.values.indexOf(value);
+  }
+
+  /**
+   * Called when a value is added
+   * @param callback
+   * @return {Collection}
+   */
+  onAdded(callback) {
+    this.events.on('added', callback);
+    return this;
+  }
+
+  /**
+   * Called when a value is removed
+   * @param callback
+   * @return {Collection}
+   */
+  onRemoved(callback) {
+    this.events.on('removed', callback);
+    return this;
+  }
+
+  /**
+   * Removes the value from the collection
+   * @param value
+   */
+  remove(value) {
+    const index = this.values.indexOf(value);
+
+    if (index !== -1) {
+      this.values.splice(index, 1);
+      this.length -= 1;
+      this.events.trigger('removed', value);
     }
+  }
 
-    /**
-     * Executes a callback on each values
-     * @param callback
-     */
-    each(callback) {
-        for (let i = 0; i < this.values.length; i += 1) {
-            callback.call(this, this.values[i]);
-        }
-    }
-
-    /**
-     * Returns the specified value
-     * @param index
-     * @return {Array.<T>}
-     */
-    get(index) {
-        return this.values[index];
-    }
-
-    /**
-     * Returns the index of the value
-     * @param value
-     * @return {number}
-     */
-    indexOf(value) {
-        return this.values.indexOf(value);
-    }
-
-    /**
-     * Called when a value is added
-     * @param callback
-     * @return {Collection}
-     */
-    onAdded(callback) {
-        this.events.on("added", callback);
-        return this;
-    }
-
-    /**
-     * Called when a value is removed
-     * @param callback
-     * @return {Collection}
-     */
-    onRemoved(callback) {
-        this.events.on("removed", callback);
-        return this;
-    }
-
-    /**
-     * Removes the value from the collection
-     * @param value
-     */
-    remove(value) {
-        const index = this.values.indexOf(value);
-
-        if (index !== -1) {
-            this.values.splice(index, 1);
-            this.length -= 1;
-            this.events.trigger("removed", value);
-        }
-    }
-
-    /**
-     * Returns the collection size
-     */
-    size() {
-        return this.values.length;
-    }
+  /**
+   * Returns the collection size
+   */
+  size() {
+    return this.values.length;
+  }
 }
 
 export default Collection;

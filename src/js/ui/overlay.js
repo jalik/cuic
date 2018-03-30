@@ -15,50 +15,48 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
-import Cuic from "../cuic";
-import Closable from "./closable";
+import Cuic from '../cuic';
+import Closable from './closable';
 
-export class Overlay extends Closable {
+class Overlay extends Closable {
+  constructor(options) {
+    // Set default options
+    const opt = Cuic.extend({}, Overlay.prototype.options, options, {
+      mainClass: 'cc-overlay',
+    });
 
-    constructor(options) {
-        // Set default options
-        options = Cuic.extend({}, Overlay.prototype.options, options, {
-            mainClass: "cc-overlay"
-        });
+    // Create element
+    super('div', { className: opt.className }, opt);
 
-        // Create element
-        super("div", {className: options.className}, options);
+    // Auto close when overlay is clicked
+    this.on('click', () => {
+      if (this.options.autoClose) {
+        this.close();
+      }
+    });
 
-        // Auto close when overlay is clicked
-        this.on("click", () => {
-            if (this.options.autoClose) {
-                this.close();
-            }
-        });
-
-        // Called when overlay is closed
-        this.onClosed(() => {
-            if (this.options.autoRemove) {
-                this.remove();
-            }
-        });
-    }
+    // Called when overlay is closed
+    this.onClosed(() => {
+      if (this.options.autoRemove) {
+        this.remove();
+      }
+    });
+  }
 }
 
 Overlay.prototype.options = {
-    autoClose: false,
-    autoRemove: false,
-    namespace: "overlay",
-    opened: false,
-    zIndex: 1
+  autoClose: false,
+  autoRemove: false,
+  namespace: 'overlay',
+  opened: false,
+  zIndex: 1,
 };
 
 export default Overlay;

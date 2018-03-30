@@ -15,19 +15,18 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
-import Cuic from "../js/cuic";
-import Movable from "../js/ui/movable";
-import Resizable from "../js/ui/resizable";
+import Cuic from '../js/cuic';
+import Movable from '../js/ui/movable';
+import Resizable from '../js/ui/resizable';
 
-var counter = 0;
+let counter = 0;
 
 /**
  * Creates a Grid
@@ -35,72 +34,72 @@ var counter = 0;
  * @constructor
  */
 Cuic.Grid = function (options) {
-    var grid = this;
+  let grid = this;
 
-    // Default options
-    options = Cuic.extend(true, Cuic.Grid.prototype.options, options);
+  // Default options
+  options = Cuic.extend(true, Cuic.Grid.prototype.options, options);
 
-    // Set the options
-    grid.animSpeed = parseInt(options.animSpeed);
-    grid.autoResize = options.autoResize === true;
-    grid.colsWidth = parseFloat(options.colsWidth);
-    grid.editable = options.editable === true;
-    grid.fps = parseInt(options.fps);
-    grid.maxCols = parseInt(options.maxCols);
-    grid.maxRows = parseInt(options.maxRows);
-    grid.minCols = parseInt(options.minCols);
-    grid.minRows = parseInt(options.minRows);
-    grid.rowsHeight = parseFloat(options.rowsHeight);
-    grid.spacing = parseFloat(options.spacing);
-    grid.widgets = {};
+  // Set the options
+  grid.animSpeed = Number.parseInt(options.animSpeed, 10);
+  grid.autoResize = options.autoResize === true;
+  grid.colsWidth = parseFloat(options.colsWidth);
+  grid.editable = options.editable === true;
+  grid.fps = Number.parseInt(options.fps, 10);
+  grid.maxCols = Number.parseInt(options.maxCols, 10);
+  grid.maxRows = Number.parseInt(options.maxRows, 10);
+  grid.minCols = Number.parseInt(options.minCols, 10);
+  grid.minRows = Number.parseInt(options.minRows, 10);
+  grid.rowsHeight = parseFloat(options.rowsHeight);
+  grid.spacing = parseFloat(options.spacing);
+  grid.widgets = {};
 
-    // Get the grid
-    grid.element = $(options.target);
+  // Get the grid
+  grid.element = $(options.target);
 
-    // Set the grid style
-    grid.element.css({
-        display: 'block',
-        minHeight: options.height,
-        minWidth: options.width
-    });
+  // Set the grid style
+  grid.element.css({
+    display: 'block',
+    minHeight: options.height,
+    minWidth: options.width,
+  });
 
-    // Set the grid size
-    grid.resize(options.cols, options.rows);
+  // Set the grid size
+  grid.resize(options.cols, options.rows);
 
-    // Set the grid resizable
-    new Resizable({target: grid.element}).onResizeEnd(function () {
-        var cols = grid.getSizeX(grid.element.outerWidth());
-        var rows = grid.getSizeY(grid.element.outerHeight());
-        grid.maxCols = cols;
-        grid.maxRows = rows;
-        grid.maximize();
-    });
+  // Set the grid resizable
+  new Resizable({ target: grid.element }).onResizeEnd(() => {
+    const cols = grid.getSizeX(grid.element.outerWidth());
+    const rows = grid.getSizeY(grid.element.outerHeight());
+    grid.maxCols = cols;
+    grid.maxRows = rows;
+    grid.maximize();
+  });
 
-    // Create the widget preview
-    grid.preview = $('<div>', {
-        'class': 'preview',
-        css: {
-            'box-sizing': 'border-box',
-            height: grid.rowsHeight,
-            left: grid.spacing,
-            position: 'absolute',
-            top: grid.spacing,
-            width: grid.colsWidth,
-            zIndex: 1
-        }
-    });
+  // Create the widget preview
+  grid.preview = $('<div>', {
+    'class': 'preview',
+    css: {
+      'box-sizing': 'border-box',
+      height: grid.rowsHeight,
+      left: grid.spacing,
+      position: 'absolute',
+      top: grid.spacing,
+      width: grid.colsWidth,
+      zIndex: 1,
+    },
+  });
 
-    // Add widgets to the grid
-    grid.element.children(options.widgetSelector).each(function () {
-        var id = this.id || 'widget-' + (counter += 1);
-        grid.addWidget(id, new Cuic.Grid.Widget({
-            target: this
-        }));
-    });
+  // Add widgets to the grid
+  grid.element.children(options.widgetSelector).each(function () {
+    let id = this.id || 'widget-' + (counter += 1);
+    grid.addWidget(id, new Cuic.Grid.Widget({
+      target: this,
+    }));
+  });
 
-    if (grid.autoResize) {
-        grid.minimize();
-    }
+  if (grid.autoResize) {
+    grid.minimize();
+  }
 };
 
 /**
@@ -110,194 +109,192 @@ Cuic.Grid = function (options) {
  * @return {Cuic.Widget}
  */
 Cuic.Grid.prototype.addWidget = function (id, widget) {
-    var grid = this;
-    var element = widget.element;
-    var preview = grid.preview;
+  let grid = this;
+  let element = widget.element;
+  let preview = grid.preview;
 
-    // Remove any widget having the same id
-    grid.removeWidget(id);
+  // Remove any widget having the same id
+  grid.removeWidget(id);
 
-    // Keep a reference to the widget
-    grid.widgets[id] = widget;
+  // Keep a reference to the widget
+  grid.widgets[id] = widget;
 
-    // Add the widget to the grid
-    grid.element.append(widget.element);
+  // Add the widget to the grid
+  grid.element.append(widget.element);
 
-    // Set the widget id
-    widget.element.attr('id', id);
+  // Set the widget id
+  widget.element.attr('id', id);
 
-    // Override widget style
-    widget.element.css({
-        'box-sizing': 'border-box',
-        display: 'block',
-        margin: 0,
-        overflow: 'hidden',
-        position: 'absolute'
+  // Override widget style
+  widget.element.css({
+    'box-sizing': 'border-box',
+    display: 'block',
+    margin: 0,
+    overflow: 'hidden',
+    position: 'absolute',
+  });
+
+  // Position the widget
+  grid.moveWidget(widget, widget.col, widget.row);
+
+  // Resize the widget
+  grid.resizeWidget(widget, widget.sizeX, widget.sizeY);
+
+  // Extend the grid if needed
+  if (widget.col - 1 + widget.sizeX > grid.cols) {
+    grid.resize(widget.col - 1 + widget.sizeX, widget.sizeY);
+  }
+  if (widget.row - 1 + widget.sizeY > grid.rows) {
+    grid.resize(widget.sizeX, widget.row - 1 + widget.sizeY);
+  }
+
+  let height;
+  let width;
+
+  // Make the widget resizable
+  let resizable = new Cuic.Resizable({
+    target: widget.element,
+    container: grid.element,
+  });
+
+  // Set behavior when resizing widget
+  resizable.onResize = function () {
+    let tmpHeight = element.outerHeight();
+    let tmpWidth = element.outerWidth();
+    let sizeX = Math.round(tmpWidth / (grid.colsWidth + grid.spacing));
+    let sizeY = Math.round(tmpHeight / (grid.rowsHeight + grid.spacing));
+
+    // Make sure the widget does not overlap the grid
+    if (sizeX + widget.col - 1 > grid.maxCols) {
+      sizeX = grid.maxCols - (widget.col - 1);
+    } else if (sizeX < widget.minSizeX) {
+      sizeX = widget.minSizeX;
+    }
+    // Make sure the widget does not overlap the grid
+    if (sizeY + widget.row - 1 > grid.maxRows) {
+      sizeY = grid.maxRows - (widget.row - 1);
+    } else if (sizeY < widget.minSizeY) {
+      sizeY = widget.minSizeY;
+    }
+
+    // Resize the preview
+    preview.css({
+      height: grid.calculateHeight(sizeY),
+      width: grid.calculateWidth(sizeX),
     });
+  };
 
-    // Position the widget
-    grid.moveWidget(widget, widget.col, widget.row);
+  // Set behavior when resizing starts
+  resizable.onResizeStart = function () {
+    if (grid.editable && widget.resizable && !widget.isDragging()) {
+      height = element.outerHeight();
+      width = element.outerWidth();
+
+      // Move widget to foreground
+      element.css({ zIndex: 2 });
+
+      // Display the widget preview
+      grid.element.append(preview.css({
+        left: element.css('left'),
+        height: height,
+        top: element.css('top'),
+        width: width,
+      }));
+
+      // Maximize the grid
+      if (grid.autoResize) {
+        grid.maximize();
+      }
+      return true;
+    }
+    return false;
+  };
+
+  // Set behavior when resizing stops
+  resizable.onResizeEnd(function () {
+    // Remove the preview
+    preview.detach();
 
     // Resize the widget
-    grid.resizeWidget(widget, widget.sizeX, widget.sizeY);
+    let sizeX = grid.getSizeX(preview.outerWidth());
+    let sizeY = grid.getSizeY(preview.outerHeight());
+    grid.resizeWidget(widget, sizeX, sizeY);
 
-    // Extend the grid if needed
-    if (widget.col - 1 + widget.sizeX > grid.cols) {
-        grid.resize(widget.col - 1 + widget.sizeX, widget.sizeY);
+    // Fit the grid to its content
+    if (grid.autoResize) {
+      grid.minimize();
     }
-    if (widget.row - 1 + widget.sizeY > grid.rows) {
-        grid.resize(widget.sizeX, widget.row - 1 + widget.sizeY);
+  });
+
+  // Make the widget movable
+  let movable = new Movable({
+    target: widget.element,
+    rootOnly: true,
+    container: grid.element,
+  });
+
+  // Set behavior when dragging widget
+  movable.onMove = function () {
+    let left = parseFloat(element.css('left'));
+    let top = parseFloat(element.css('top'));
+    let col = grid.getPositionX(left);
+    let row = grid.getPositionY(top);
+
+    if (!(col > 0 && col + widget.sizeX <= grid.cols + 1
+      && row > 0 && row + widget.sizeY <= grid.rows + 1)) {
+      col = widget.col;
+      row = widget.row;
     }
-
-    var height;
-    var width;
-
-    // Make the widget resizable
-    var resizable = new Cuic.Resizable({
-        target: widget.element,
-        container: grid.element
+    preview.css({
+      left: grid.calculateLeft(col),
+      top: grid.calculateTop(row),
     });
+  };
 
-    // Set behavior when resizing widget
-    resizable.onResize = function () {
-        var tmpHeight = element.outerHeight();
-        var tmpWidth = element.outerWidth();
-        var sizeX = Math.round(tmpWidth / (grid.colsWidth + grid.spacing));
-        var sizeY = Math.round(tmpHeight / (grid.rowsHeight + grid.spacing));
+  // Set behavior when dragging starts
+  movable.onMoveStart = function (ev) {
+    if (grid.editable && widget.movable && !widget.isResizing()) {
+      height = element.outerHeight();
+      width = element.outerWidth();
 
-        // Make sure the widget does not overlap the grid
-        if (sizeX + widget.col - 1 > grid.maxCols) {
-            sizeX = grid.maxCols - (widget.col - 1);
-        }
-        else if (sizeX < widget.minSizeX) {
-            sizeX = widget.minSizeX;
-        }
-        // Make sure the widget does not overlap the grid
-        if (sizeY + widget.row - 1 > grid.maxRows) {
-            sizeY = grid.maxRows - (widget.row - 1);
-        }
-        else if (sizeY < widget.minSizeY) {
-            sizeY = widget.minSizeY;
-        }
+      // Move widget to foreground
+      element.css({ zIndex: 2 });
 
-        // Resize the preview
-        preview.css({
-            height: grid.calculateHeight(sizeY),
-            width: grid.calculateWidth(sizeX)
-        });
-    };
+      // Display the widget preview
+      grid.element.append(preview.css({
+        left: element.css('left'),
+        height: height,
+        top: element.css('top'),
+        width: width,
+      }));
 
-    // Set behavior when resizing starts
-    resizable.onResizeStart = function () {
-        if (grid.editable && widget.resizable && !widget.isDragging()) {
-            height = element.outerHeight();
-            width = element.outerWidth();
+      // Maximize the grid
+      if (grid.autoResize) {
+        grid.maximize();
+      }
+      return true;
+    }
+    return false;
+  };
 
-            // Move widget to foreground
-            element.css({zIndex: 2});
+  // Set behavior when dragging stops
+  movable.onMoveEnd = function () {
+    // Remove the preview
+    preview.detach();
 
-            // Display the widget preview
-            grid.element.append(preview.css({
-                left: element.css('left'),
-                height: height,
-                top: element.css('top'),
-                width: width
-            }));
+    // Position the widget
+    let left = parseFloat(element.css('left'));
+    let top = parseFloat(element.css('top'));
+    let col = grid.getSizeX(left) + 1;
+    let row = grid.getSizeY(top) + 1;
+    grid.moveWidget(widget, col, row);
 
-            // Maximize the grid
-            if (grid.autoResize) {
-                grid.maximize();
-            }
-            return true;
-        }
-        return false;
-    };
-
-    // Set behavior when resizing stops
-    resizable.onResizeEnd(function () {
-        // Remove the preview
-        preview.detach();
-
-        // Resize the widget
-        var sizeX = grid.getSizeX(preview.outerWidth());
-        var sizeY = grid.getSizeY(preview.outerHeight());
-        grid.resizeWidget(widget, sizeX, sizeY);
-
-        // Fit the grid to its content
-        if (grid.autoResize) {
-            grid.minimize();
-        }
-    });
-
-    // Make the widget movable
-    var movable = new Movable({
-        target: widget.element,
-        rootOnly: true,
-        container: grid.element
-    });
-
-    // Set behavior when dragging widget
-    movable.onMove = function () {
-        var left = parseFloat(element.css('left'));
-        var top = parseFloat(element.css('top'));
-        var col = grid.getPositionX(left);
-        var row = grid.getPositionY(top);
-
-        if (!(col > 0 && col + widget.sizeX <= grid.cols + 1
-                && row > 0 && row + widget.sizeY <= grid.rows + 1)) {
-            col = widget.col;
-            row = widget.row;
-        }
-        preview.css({
-            left: grid.calculateLeft(col),
-            top: grid.calculateTop(row)
-        });
-    };
-
-    // Set behavior when dragging starts
-    movable.onMoveStart = function (ev) {
-        if (grid.editable && widget.movable && !widget.isResizing()) {
-            height = element.outerHeight();
-            width = element.outerWidth();
-
-            // Move widget to foreground
-            element.css({zIndex: 2});
-
-            // Display the widget preview
-            grid.element.append(preview.css({
-                left: element.css('left'),
-                height: height,
-                top: element.css('top'),
-                width: width
-            }));
-
-            // Maximize the grid
-            if (grid.autoResize) {
-                grid.maximize();
-            }
-            return true;
-        }
-        return false;
-    };
-
-    // Set behavior when dragging stops
-    movable.onMoveEnd = function () {
-        // Remove the preview
-        preview.detach();
-
-        // Position the widget
-        var left = parseFloat(element.css('left'));
-        var top = parseFloat(element.css('top'));
-        var col = grid.getSizeX(left) + 1;
-        var row = grid.getSizeY(top) + 1;
-        grid.moveWidget(widget, col, row);
-
-        // Fit the grid to its content
-        if (grid.autoResize) {
-            grid.minimize();
-        }
-    };
-    return widget;
+    // Fit the grid to its content
+    if (grid.autoResize) {
+      grid.minimize();
+    }
+  };
+  return widget;
 };
 
 /**
@@ -306,7 +303,7 @@ Cuic.Grid.prototype.addWidget = function (id, widget) {
  * @return {number}
  */
 Cuic.Grid.prototype.calculateHeight = function (sizeY) {
-    return parseInt(sizeY) * (this.rowsHeight + this.spacing) - this.spacing;
+  return Number.parseInt(sizeY) * (this.rowsHeight + this.spacing, 10) - this.spacing;
 };
 
 /**
@@ -315,7 +312,7 @@ Cuic.Grid.prototype.calculateHeight = function (sizeY) {
  * @return {number}
  */
 Cuic.Grid.prototype.calculateLeft = function (posX) {
-    return parseInt(posX) * (this.colsWidth + this.spacing) - this.colsWidth;
+  return Number.parseInt(posX) * (this.colsWidth + this.spacing, 10) - this.colsWidth;
 };
 
 /**
@@ -324,7 +321,7 @@ Cuic.Grid.prototype.calculateLeft = function (posX) {
  * @return {number}
  */
 Cuic.Grid.prototype.calculateTop = function (posY) {
-    return parseInt(posY) * (this.rowsHeight + this.spacing) - this.rowsHeight;
+  return Number.parseInt(posY) * (this.rowsHeight + this.spacing, 10) - this.rowsHeight;
 };
 
 /**
@@ -333,7 +330,7 @@ Cuic.Grid.prototype.calculateTop = function (posY) {
  * @return {number}
  */
 Cuic.Grid.prototype.calculateWidth = function (sizeX) {
-    return parseInt(sizeX) * (this.colsWidth + this.spacing) - this.spacing;
+  return Number.parseInt(sizeX) * (this.colsWidth + this.spacing, 10) - this.spacing;
 };
 
 /**
@@ -341,12 +338,12 @@ Cuic.Grid.prototype.calculateWidth = function (sizeX) {
  * @return {Cuic.Grid}
  */
 Cuic.Grid.prototype.clear = function () {
-    for (var id in this.widgets) {
-        if (this.widgets.hasOwnProperty(id)) {
-            this.removeWidget(id);
-        }
+  for (let id in this.widgets) {
+    if (this.widgets.hasOwnProperty(id)) {
+      this.removeWidget(id);
     }
-    return this;
+  }
+  return this;
 };
 
 /**
@@ -356,7 +353,7 @@ Cuic.Grid.prototype.clear = function () {
  * @return {number[]}
  */
 Cuic.Grid.prototype.getPosition = function (left, top) {
-    return [this.getPositionX(left), this.getPositionY(top)];
+  return [this.getPositionX(left), this.getPositionY(top)];
 };
 
 /**
@@ -365,7 +362,7 @@ Cuic.Grid.prototype.getPosition = function (left, top) {
  * @return {number}
  */
 Cuic.Grid.prototype.getPositionX = function (posX) {
-    return Math.round(parseFloat(posX) / (this.colsWidth + this.spacing)) + 1;
+  return Math.round(parseFloat(posX) / (this.colsWidth + this.spacing)) + 1;
 };
 
 /**
@@ -374,7 +371,7 @@ Cuic.Grid.prototype.getPositionX = function (posX) {
  * @return {number}
  */
 Cuic.Grid.prototype.getPositionY = function (posY) {
-    return Math.round(parseFloat(posY) / (this.rowsHeight + this.spacing)) + 1;
+  return Math.round(parseFloat(posY) / (this.rowsHeight + this.spacing)) + 1;
 };
 
 /**
@@ -384,7 +381,7 @@ Cuic.Grid.prototype.getPositionY = function (posY) {
  * @return {number[]}
  */
 Cuic.Grid.prototype.getSize = function (width, height) {
-    return [this.getSizeX(width), this.getSizeY(height)];
+  return [this.getSizeX(width), this.getSizeY(height)];
 };
 
 /**
@@ -393,7 +390,7 @@ Cuic.Grid.prototype.getSize = function (width, height) {
  * @return {number}
  */
 Cuic.Grid.prototype.getSizeX = function (width) {
-    return Math.round(parseFloat(width) / (this.colsWidth + this.spacing));
+  return Math.round(parseFloat(width) / (this.colsWidth + this.spacing));
 };
 
 /**
@@ -402,7 +399,7 @@ Cuic.Grid.prototype.getSizeX = function (width) {
  * @return {number}
  */
 Cuic.Grid.prototype.getSizeY = function (height) {
-    return Math.round(parseFloat(height) / (this.rowsHeight + this.spacing));
+  return Math.round(parseFloat(height) / (this.rowsHeight + this.spacing));
 };
 
 /**
@@ -411,7 +408,7 @@ Cuic.Grid.prototype.getSizeY = function (height) {
  * @return {Cuic.Grid.Widget}
  */
 Cuic.Grid.prototype.getWidget = function (id) {
-    return this.widgets[id];
+  return this.widgets[id];
 };
 
 /**
@@ -419,7 +416,7 @@ Cuic.Grid.prototype.getWidget = function (id) {
  * @return {Cuic.Grid}
  */
 Cuic.Grid.prototype.maximize = function () {
-    return this.resize(this.maxCols, this.maxRows);
+  return this.resize(this.maxCols, this.maxRows);
 };
 
 /**
@@ -427,22 +424,22 @@ Cuic.Grid.prototype.maximize = function () {
  * @return {Cuic.Grid}
  */
 Cuic.Grid.prototype.minimize = function () {
-    var col = this.minCols || 1;
-    var row = this.minRows || 1;
+  let col = this.minCols || 1;
+  let row = this.minRows || 1;
 
-    for (var id in this.widgets) {
-        if (this.widgets.hasOwnProperty(id)) {
-            var widget = this.widgets[id];
+  for (let id in this.widgets) {
+    if (this.widgets.hasOwnProperty(id)) {
+      let widget = this.widgets[id];
 
-            if (widget.col + widget.sizeX - 1 > col) {
-                col = widget.col + widget.sizeX - 1;
-            }
-            if (widget.row + widget.sizeY - 1 > row) {
-                row = widget.row + widget.sizeY - 1;
-            }
-        }
+      if (widget.col + widget.sizeX - 1 > col) {
+        col = widget.col + widget.sizeX - 1;
+      }
+      if (widget.row + widget.sizeY - 1 > row) {
+        row = widget.row + widget.sizeY - 1;
+      }
     }
-    return this.resize(col, row);
+  }
+  return this.resize(col, row);
 };
 
 /**
@@ -453,35 +450,35 @@ Cuic.Grid.prototype.minimize = function () {
  * @return {Cuic.Grid}
  */
 Cuic.Grid.prototype.moveWidget = function (widget, col, row) {
-    var grid = this;
+  let grid = this;
 
-    if (!(col > 0 && col - 1 + widget.sizeX <= grid.cols && row > 0 && row - 1 + widget.sizeY <= grid.rows )) {
-        col = widget.col;
-        row = widget.row;
-    }
+  if (!(col > 0 && col - 1 + widget.sizeX <= grid.cols && row > 0 && row - 1 + widget.sizeY <= grid.rows)) {
+    col = widget.col;
+    row = widget.row;
+  }
 
-    if (col > 0 && row > 0) {
-        widget.col = col;
-        widget.row = row;
-        widget.element.css({zIndex: 2});
-        widget.element.animate({
-            left: grid.calculateLeft(col),
-            top: grid.calculateTop(row)
-        }, {
-            complete() {
-                widget.element.removeClass('dragging');
-                widget.element.css({zIndex: 1});
+  if (col > 0 && row > 0) {
+    widget.col = col;
+    widget.row = row;
+    widget.element.css({ zIndex: 2 });
+    widget.element.animate({
+      left: grid.calculateLeft(col),
+      top: grid.calculateTop(row),
+    }, {
+      complete() {
+        widget.element.removeClass('dragging');
+        widget.element.css({ zIndex: 1 });
 
-                // Execute callback
-                if (typeof grid.onWidgetMoved === 'function') {
-                    grid.onWidgetMoved.call(grid, widget);
-                }
-            },
-            duration: grid.animSpeed,
-            queue: false
-        });
-    }
-    return grid;
+        // Execute callback
+        if (typeof grid.onWidgetMoved === 'function') {
+          grid.onWidgetMoved.call(grid, widget);
+        }
+      },
+      duration: grid.animSpeed,
+      queue: false,
+    });
+  }
+  return grid;
 };
 
 /**
@@ -490,22 +487,22 @@ Cuic.Grid.prototype.moveWidget = function (widget, col, row) {
  * @return {Cuic.Grid.Widget}
  */
 Cuic.Grid.prototype.removeWidget = function (id) {
-    var widget = this.widgets[id];
+  let widget = this.widgets[id];
 
-    if (widget) {
-        delete this.widgets[id];
-        widget.element.stop(true, false).animate({
-            height: 0,
-            width: 0
-        }, {
-            complete() {
-                $(this).remove();
-            },
-            duration: this.animSpeed,
-            queue: false
-        });
-    }
-    return widget;
+  if (widget) {
+    delete this.widgets[id];
+    widget.element.stop(true, false).animate({
+      height: 0,
+      width: 0,
+    }, {
+      complete() {
+        $(this).remove();
+      },
+      duration: this.animSpeed,
+      queue: false,
+    });
+  }
+  return widget;
 };
 
 /**
@@ -515,28 +512,28 @@ Cuic.Grid.prototype.removeWidget = function (id) {
  * @return {Cuic.Grid}
  */
 Cuic.Grid.prototype.resize = function (cols, rows) {
-    cols = parseInt(cols);
-    rows = parseInt(rows);
+  cols = Number.parseInt(cols, 10);
+  rows = Number.parseInt(rows, 10);
 
-    if (cols < 1) {
-        cols = 1;
-    }
-    if (rows < 1) {
-        rows = 1;
-    }
+  if (cols < 1) {
+    cols = 1;
+  }
+  if (rows < 1) {
+    rows = 1;
+  }
 
-    if (cols > 0 && cols <= this.maxCols && rows > 0 && rows <= this.maxRows) {
-        this.cols = cols;
-        this.rows = rows;
-        this.element.stop(true, false).animate({
-            height: this.calculateHeight(rows) + this.spacing * 2,
-            width: this.calculateWidth(cols) + this.spacing * 2
-        }, {
-            duration: this.animSpeed,
-            queue: false
-        });
-    }
-    return this;
+  if (cols > 0 && cols <= this.maxCols && rows > 0 && rows <= this.maxRows) {
+    this.cols = cols;
+    this.rows = rows;
+    this.element.stop(true, false).animate({
+      height: this.calculateHeight(rows) + this.spacing * 2,
+      width: this.calculateWidth(cols) + this.spacing * 2,
+    }, {
+      duration: this.animSpeed,
+      queue: false,
+    });
+  }
+  return this;
 };
 
 /**
@@ -547,39 +544,39 @@ Cuic.Grid.prototype.resize = function (cols, rows) {
  * @return {Cuic.Grid}
  */
 Cuic.Grid.prototype.resizeWidget = function (widget, sizeX, sizeY) {
-    var grid = this;
-    sizeX = parseInt(sizeX);
-    sizeY = parseInt(sizeY);
+  let grid = this;
+  sizeX = Number.parseInt(sizeX, 10);
+  sizeY = Number.parseInt(sizeY, 10);
 
-    if (sizeX < widget.minSizeX) {
-        sizeX = widget.minSizeX;
-    }
-    if (sizeY < widget.minSizeY) {
-        sizeY = widget.minSizeY;
-    }
+  if (sizeX < widget.minSizeX) {
+    sizeX = widget.minSizeX;
+  }
+  if (sizeY < widget.minSizeY) {
+    sizeY = widget.minSizeY;
+  }
 
-    if ((!grid.maxSizeX || sizeX <= grid.maxSizeX) && (!grid.maxSizeY || sizeY >= grid.maxSizeY)) {
-        widget.sizeX = sizeX;
-        widget.sizeY = sizeY;
-        widget.element.css({zIndex: 2});
-        widget.element.animate({
-            height: sizeY * (grid.rowsHeight + grid.spacing) - grid.spacing,
-            width: sizeX * (grid.colsWidth + grid.spacing) - grid.spacing
-        }, {
-            complete() {
-                widget.element.removeClass('resizing');
-                widget.element.css({zIndex: 1});
+  if ((!grid.maxSizeX || sizeX <= grid.maxSizeX) && (!grid.maxSizeY || sizeY >= grid.maxSizeY)) {
+    widget.sizeX = sizeX;
+    widget.sizeY = sizeY;
+    widget.element.css({ zIndex: 2 });
+    widget.element.animate({
+      height: sizeY * (grid.rowsHeight + grid.spacing) - grid.spacing,
+      width: sizeX * (grid.colsWidth + grid.spacing) - grid.spacing,
+    }, {
+      complete() {
+        widget.element.removeClass('resizing');
+        widget.element.css({ zIndex: 1 });
 
-                // Execute callback
-                if (typeof grid.onWidgetResized === 'function') {
-                    grid.onWidgetResized.call(grid, widget);
-                }
-            },
-            duration: grid.animSpeed,
-            queue: false
-        });
-    }
-    return grid;
+        // Execute callback
+        if (typeof grid.onWidgetResized === 'function') {
+          grid.onWidgetResized.call(grid, widget);
+        }
+      },
+      duration: grid.animSpeed,
+      queue: false,
+    });
+  }
+  return grid;
 };
 
 /**
@@ -599,20 +596,20 @@ Cuic.Grid.prototype.onWidgetResized = null;
  * @type {*}
  */
 Cuic.Grid.prototype.options = {
-    animSpeed: 200,
-    autoResize: true,
-    cols: null,
-    colsWidth: 100,
-    editable: true,
-    fps: 30,
-    maxCols: null,
-    maxRows: null,
-    minCols: null,
-    minRows: null,
-    rows: null,
-    rowsHeight: 100,
-    spacing: 10,
-    widgetSelector: '.widget'
+  animSpeed: 200,
+  autoResize: true,
+  cols: null,
+  colsWidth: 100,
+  editable: true,
+  fps: 30,
+  maxCols: null,
+  maxRows: null,
+  minCols: null,
+  minRows: null,
+  rows: null,
+  rowsHeight: 100,
+  spacing: 10,
+  widgetSelector: '.widget',
 };
 
 /**
@@ -621,50 +618,50 @@ Cuic.Grid.prototype.options = {
  * @constructor
  */
 Cuic.Grid.Widget = function (options) {
-    var self = this;
+  let self = this;
 
-    // Default options
-    options = Cuic.extend(true, {}, Cuic.Grid.Widget.prototype.options, options);
+  // Default options
+  options = Cuic.extend(true, {}, Cuic.Grid.Widget.prototype.options, options);
 
-    // Set the options
-    self.col = parseInt(options.col);
-    self.movable = options.movable === true;
-    self.resizable = options.resizable === true;
-    self.row = parseInt(options.row);
-    self.maxSizeX = parseInt(options.maxSizeX);
-    self.maxSizeY = parseInt(options.maxSizeY);
-    self.minSizeX = parseInt(options.minSizeX);
-    self.minSizeY = parseInt(options.minSizeY);
-    self.sizeX = parseInt(options.sizeX);
-    self.sizeY = parseInt(options.sizeY);
+  // Set the options
+  self.col = Number.parseInt(options.col, 10);
+  self.movable = options.movable === true;
+  self.resizable = options.resizable === true;
+  self.row = Number.parseInt(options.row, 10);
+  self.maxSizeX = Number.parseInt(options.maxSizeX, 10);
+  self.maxSizeY = Number.parseInt(options.maxSizeY, 10);
+  self.minSizeX = Number.parseInt(options.minSizeX, 10);
+  self.minSizeY = Number.parseInt(options.minSizeY, 10);
+  self.sizeX = Number.parseInt(options.sizeX, 10);
+  self.sizeY = Number.parseInt(options.sizeY, 10);
 
-    // Find the target
-    if (options.target) {
-        self.element = $(options.target);
+  // Find the target
+  if (options.target) {
+    self.element = $(options.target);
 
-        if (self.element.length > 0) {
-            self.col = parseInt(self.element.attr('data-col')) || options.col;
-            self.movable = !!self.element.attr('data-movable') ? /^true$/gi.test(self.element.attr('data-movable')) : options.movable;
-            self.maxSizeX = parseInt(self.element.attr('data-max-size-x')) || options.maxSizeX;
-            self.maxSizeY = parseInt(self.element.attr('data-max-size-y')) || options.maxSizeY;
-            self.minSizeX = parseInt(self.element.attr('data-min-size-x')) || options.minSizeX;
-            self.minSizeY = parseInt(self.element.attr('data-min-size-y')) || options.minSizeY;
-            self.resizable = !!self.element.attr('data-resizable') ? /^true$/gi.test(self.element.attr('data-resizable')) : options.resizable;
-            self.row = parseInt(self.element.attr('data-row')) || options.row;
-            self.sizeX = parseInt(self.element.attr('data-size-x')) || options.sizeX;
-            self.sizeY = parseInt(self.element.attr('data-size-y')) || options.sizeY;
-        }
+    if (self.element.length > 0) {
+      self.col = Number.parseInt(self.element.attr('data-col'), 10) || options.col;
+      self.movable = !!self.element.attr('data-movable') ? /^true$/gi.test(self.element.attr('data-movable')) : options.movable;
+      self.maxSizeX = Number.parseInt(self.element.attr('data-max-size-x'), 10) || options.maxSizeX;
+      self.maxSizeY = Number.parseInt(self.element.attr('data-max-size-y'), 10) || options.maxSizeY;
+      self.minSizeX = Number.parseInt(self.element.attr('data-min-size-x'), 10) || options.minSizeX;
+      self.minSizeY = Number.parseInt(self.element.attr('data-min-size-y'), 10) || options.minSizeY;
+      self.resizable = !!self.element.attr('data-resizable') ? /^true$/gi.test(self.element.attr('data-resizable')) : options.resizable;
+      self.row = Number.parseInt(self.element.attr('data-row'), 10) || options.row;
+      self.sizeX = Number.parseInt(self.element.attr('data-size-x'), 10) || options.sizeX;
+      self.sizeY = Number.parseInt(self.element.attr('data-size-y'), 10) || options.sizeY;
     }
+  }
 
-    // Create the element HTML node
-    if (!self.element || self.element.length < 1) {
-        self.element = $('<div>', {
-            html: options.content
-        });
-    }
+  // Create the element HTML node
+  if (!self.element || self.element.length < 1) {
+    self.element = $('<div>', {
+      html: options.content,
+    });
+  }
 
-    // Set the style
-    self.element.addClass('widget');
+  // Set the style
+  self.element.addClass('widget');
 };
 
 /**
@@ -672,7 +669,7 @@ Cuic.Grid.Widget = function (options) {
  * @return {Boolean}
  */
 Cuic.Grid.Widget.prototype.isDragging = function () {
-    return this.element.hasClass('dragging');
+  return this.element.hasClass('dragging');
 };
 
 /**
@@ -680,7 +677,7 @@ Cuic.Grid.Widget.prototype.isDragging = function () {
  * @return {Boolean}
  */
 Cuic.Grid.Widget.prototype.isResizing = function () {
-    return this.element.hasClass('resizing');
+  return this.element.hasClass('resizing');
 };
 
 /**
@@ -688,16 +685,16 @@ Cuic.Grid.Widget.prototype.isResizing = function () {
  * @type {*}
  */
 Cuic.Grid.Widget.prototype.options = {
-    col: 1,
-    content: null,
-    movable: true,
-    maxSizeX: null,
-    maxSizeY: null,
-    minSizeX: 1,
-    minSizeY: 1,
-    resizable: true,
-    row: 1,
-    sizeX: 1,
-    sizeY: 1,
-    target: null
+  col: 1,
+  content: null,
+  movable: true,
+  maxSizeX: null,
+  maxSizeY: null,
+  minSizeX: 1,
+  minSizeY: 1,
+  resizable: true,
+  row: 1,
+  sizeX: 1,
+  sizeY: 1,
+  target: null,
 };

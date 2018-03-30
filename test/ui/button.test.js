@@ -15,32 +15,30 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
-import Button from "../../src/js/ui/button";
 // Load polyfill
-import "../../src/js/polyfill";
+import '../../src/js/polyfill';
+import Button from '../../src/js/ui/button';
 
-describe(`Button`, () => {
+describe('Button', () => {
+  it('should be importable from package', () => {
+    expect(typeof Button).toEqual('function');
+  });
 
-    it(`should be importable from package`, () => {
-        expect(typeof Button).toEqual("function");
+  describe('on("click")', () => {
+    it('should execute callback when button is clicked', () => {
+      let count = 0;
+      new Button().on('click', () => {
+        count += 1;
+      }).click()
+        .click();
+      expect(count).toEqual(2);
     });
-
-    describe(`on("click")`, () => {
-
-        it(`should execute callback when button is clicked`, () => {
-            let count = 0;
-            new Button().appendTo(document.body).on("click", () => {
-                count += 1;
-            }).click().click();
-            expect(count).toEqual(2);
-        });
-    });
+  });
 });

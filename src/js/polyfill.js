@@ -15,107 +15,96 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
 /**
  * Element.matches()
  */
 if (!Element.prototype.matches) {
-    Element.prototype.matches =
-        Element.prototype.matchesSelector ||
-        Element.prototype.mozMatchesSelector ||
-        Element.prototype.msMatchesSelector ||
-        Element.prototype.oMatchesSelector ||
-        Element.prototype.webkitMatchesSelector ||
-        function (s) {
-            const matches = (this.document || this.ownerDocument).querySelectorAll(s);
-            let i = matches.length;
-            while (--i >= 0 && matches.item(i) !== this) {
-            }
-            return i > -1;
-        };
+  Element.prototype.matches =
+    Element.prototype.matchesSelector ||
+    Element.prototype.mozMatchesSelector ||
+    Element.prototype.msMatchesSelector ||
+    Element.prototype.oMatchesSelector ||
+    Element.prototype.webkitMatchesSelector ||
+    function matchesElement(s) {
+      const matches = (this.document || this.ownerDocument).querySelectorAll(s);
+      let i;
+
+      for (i = 0; i < matches.length; i += 1) {
+        if (matches.item(i) === this) {
+          break;
+        }
+      }
+      return i > -1;
+    };
 }
 
 /**
  * Element.remove()
  */
 if (!Element.prototype.remove) {
-    Element.prototype.remove = function () {
-        if (this.parentNode) {
-            this.parentNode.removeChild(this);
-        }
-    };
+  Element.prototype.remove = function removeElement() {
+    if (this.parentNode) {
+      this.parentNode.removeChild(this);
+    }
+  };
 }
 
 /**
  * Node.append()
  */
 // Source: https://github.com/jserz/js_piece/blob/master/DOM/ParentNode/append()/append().md
-(function (arr) {
-    arr.forEach(function (item) {
-        if (item.hasOwnProperty('append')) {
-            return;
-        }
-        Object.defineProperty(item, 'append', {
-            configurable: true,
-            enumerable: true,
-            writable: true,
-            value: function append() {
-                let argArr = Array.prototype.slice.call(arguments);
-                let docFrag = document.createDocumentFragment();
+((arr) => {
+  arr.forEach((item) => {
+    if (typeof item.append !== 'undefined') {
+      return;
+    }
+    Object.defineProperty(item, 'append', {
+      configurable: true,
+      enumerable: true,
+      writable: true,
+      value: function append(...args) {
+        const docFrag = document.createDocumentFragment();
 
-                argArr.forEach(function (argItem) {
-                    let isNode = argItem instanceof Node;
-                    docFrag.appendChild(isNode ? argItem : document.createTextNode(String(argItem)));
-                });
-                this.appendChild(docFrag);
-            }
+        args.forEach((argItem) => {
+          const isNode = argItem instanceof Node;
+          docFrag.appendChild(isNode ? argItem : document.createTextNode(String(argItem)));
         });
+        this.appendChild(docFrag);
+      },
     });
+  });
 })([Element.prototype, Document.prototype, DocumentFragment.prototype]);
 
 /**
  * Node.prepend()
  */
 // from: https://github.com/jserz/js_piece/blob/master/DOM/ParentNode/prepend()/prepend().md
-(function (arr) {
-    arr.forEach(function (item) {
-        if (item.hasOwnProperty('prepend')) {
-            return;
-        }
-        Object.defineProperty(item, 'prepend', {
-            configurable: true,
-            enumerable: true,
-            writable: true,
-            value: function prepend() {
-                let argArr = Array.prototype.slice.call(arguments);
-                let docFrag = document.createDocumentFragment();
+((arr) => {
+  arr.forEach((item) => {
+    if (typeof item.prepend !== 'undefined') {
+      return;
+    }
+    Object.defineProperty(item, 'prepend', {
+      configurable: true,
+      enumerable: true,
+      writable: true,
+      value: function prepend(...args) {
+        const docFrag = document.createDocumentFragment();
 
-                argArr.forEach(function (argItem) {
-                    let isNode = argItem instanceof Node;
-                    docFrag.appendChild(isNode ? argItem : document.createTextNode(String(argItem)));
-                });
-
-                this.insertBefore(docFrag, this.firstChild);
-            }
+        args.forEach((argItem) => {
+          const isNode = argItem instanceof Node;
+          docFrag.appendChild(isNode ? argItem : document.createTextNode(String(argItem)));
         });
-    });
-})([Element.prototype, Document.prototype, DocumentFragment.prototype]);
 
-/**
- * console.debug()
- */
-(function (arr) {
-    arr.forEach(function (item) {
-        if (console.hasOwnProperty(item)) {
-            return;
-        }
-        console[item] = console.log.bind(console);
+        this.insertBefore(docFrag, this.firstChild);
+      },
     });
-})(["debug", "info", "warn"]);
+  });
+})([Element.prototype, Document.prototype, DocumentFragment.prototype]);
