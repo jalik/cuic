@@ -6,6 +6,7 @@
   },
   "extends": "airbnb",
   "plugins": [
+    "import",
     "jest"
   ],
   "rules": {
