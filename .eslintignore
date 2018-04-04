@@ -1,1 +1,5 @@
+.idea
+aio
+dist
+node_modules
 src/unused
