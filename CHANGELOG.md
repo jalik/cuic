@@ -1,6 +1,7 @@
 # Changelog
 
-## UNRELEASED
+## v0.12.1
+- Updates dependencies
 - Renames method `Cuic._calculateAlign` to `Cuic.calculateAlign`
 - Renames method `Cuic._calculateAnchor` to `Cuic.calculateAnchor`
 - Renames method `Cuic._calculateAvailablePosition` to `Cuic.calculateAvailablePosition`
