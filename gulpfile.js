@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+const autoprefixer = require('gulp-autoprefixer');
 const babel = require('gulp-babel');
 const concat = require('gulp-concat');
 const del = require('del');
@@ -36,7 +37,7 @@ const buildPath = 'dist';
 const distDir = 'dist';
 const distFile = `${pkg.name}`;
 
-// Compile JS files
+// Compile source files
 gulp.task('build', () => gulp.src([
   'src/js/**/*.js',
 ])
@@ -51,7 +52,7 @@ gulp.task('build:styles', () =>
     .pipe(concat(`${distFile}.css`))
     .pipe(less())
     .pipe(stripCssComments())
-    // .pipe(autoprefixer()) //fixme needs node v7.10.0
+    .pipe(autoprefixer())
     .pipe(gulp.dest(`${distDir}`)));
 
 // Remove compiled files
@@ -67,13 +68,13 @@ gulp.task('eslint', () => gulp.src([
   .pipe(eslint.formatEach())
   .pipe(eslint.failAfterError()));
 
-// Prepare files for publication
-gulp.task('prepublish', gulp.series('clean', 'eslint', 'build', 'build:styles'));
+// Prepare files for production
+gulp.task('prepare', gulp.series('clean', 'eslint', 'build', 'build:styles'));
 
 // Rebuild automatically
 gulp.task('watch:js', () => watch(['src/**/*.js'], ['build']));
 gulp.task('watch:styles', () => watch(['src/**/*.less'], ['build:styles']));
 gulp.task('watch', gulp.parallel('watch:js', 'watch:styles'));
 
-// Compile source files
-gulp.task('default', gulp.series('prepublish'));
+// Prepare files for production
+gulp.task('default', gulp.series('prepare'));
