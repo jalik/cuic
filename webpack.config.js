@@ -26,29 +26,16 @@ const path = require('path');
 const Package = require('./package.json');
 
 const isProd = process.argv.indexOf('-p') !== -1;
-const isHTTPS = process.argv.indexOf('--https') !== -1;
-const filename = `${Package.name}-aio${(isProd ? '.min' : '')}`;
+const filename = Package.name + (isProd ? '.min' : '');
+
+const paths = {
+  dist: path.join(__dirname, 'bundle'),
+  src: path.join(__dirname, 'src'),
+};
 
 module.exports = {
   entry: {
-    bundle: path.join(__dirname, 'src', 'index.js'),
-  },
-  output: {
-    libraryTarget: 'umd',
-    path: path.join(__dirname, 'aio'),
-    filename: `${filename}.js`,
-  },
-  devServer: {
-    hot: true,
-    host: '0.0.0.0',
-    port: isHTTPS ? 3443 : 3000,
-    contentBase: path.join(__dirname, 'aio'),
-    publicPath: '/',
-    watchContentBase: true,
-  },
-  resolve: {
-    extensions: ['.js'],
-    modules: [path.join(__dirname, 'src'), 'node_modules'],
+    bundle: path.join(paths.src, 'index.js'),
   },
   module: {
     rules: [
@@ -57,12 +44,15 @@ module.exports = {
         exclude: /node_modules/,
         loader: 'babel-loader',
       },
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: 'remove-comments-loader',
-      },
     ],
   },
-  plugins: [],
+  output: {
+    libraryTarget: 'umd',
+    path: paths.dist,
+    filename: `${filename}.js`,
+  },
+  resolve: {
+    extensions: ['.js'],
+    modules: [paths.src, 'node_modules'],
+  },
 };
