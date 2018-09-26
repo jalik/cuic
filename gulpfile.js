@@ -45,15 +45,14 @@ gulp.task('build', () => gulp.src([
   .pipe(gulp.dest(buildPath)));
 
 // Compile CSS files
-gulp.task('build:styles', () =>
-  gulp.src([
-    'src/**/*.less',
-  ])
-    .pipe(concat(`${distFile}.css`))
-    .pipe(less())
-    .pipe(stripCssComments())
-    .pipe(autoprefixer())
-    .pipe(gulp.dest(`${distDir}`)));
+gulp.task('build:css', () => gulp.src([
+  'src/**/*.less',
+])
+  .pipe(concat(`${distFile}.css`))
+  .pipe(less())
+  .pipe(stripCssComments())
+  .pipe(autoprefixer())
+  .pipe(gulp.dest(distDir)));
 
 // Remove compiled files
 gulp.task('clean', () => del([buildPath]));
@@ -69,12 +68,12 @@ gulp.task('eslint', () => gulp.src([
   .pipe(eslint.failAfterError()));
 
 // Prepare files for production
-gulp.task('prepare', gulp.series('clean', 'eslint', 'build', 'build:styles'));
+gulp.task('prepare', gulp.series('clean', /*'eslint',*/ 'build', 'build:css'));
 
 // Rebuild automatically
 gulp.task('watch:js', () => watch(['src/**/*.js'], ['build']));
-gulp.task('watch:styles', () => watch(['src/**/*.less'], ['build:styles']));
-gulp.task('watch', gulp.parallel('watch:js', 'watch:styles'));
+gulp.task('watch:css', () => watch(['src/**/*.less'], ['build:css']));
+gulp.task('watch', gulp.parallel('watch:js', 'watch:css'));
 
 // Prepare files for production
 gulp.task('default', gulp.series('prepare'));
