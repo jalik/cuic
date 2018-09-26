@@ -253,7 +253,7 @@ class Guide {
         this.debug('stepChanged', step, target);
         this.events.trigger('stepChanged', step, target);
       } else {
-        console.error('Invalid step target:', step.target);
+        throw new TypeError(`Invalid step target: ${step.target}`);
       }
     }
     return this;

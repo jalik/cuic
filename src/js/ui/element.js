@@ -54,7 +54,6 @@ class Element {
       // Use the first node of a jQuery object
       this.element = node.get(0);
     } else {
-      console.info(node);
       throw new TypeError('Cannot create element using given node.');
     }
 
@@ -979,12 +978,14 @@ class Element {
 
           // Check if style is supported
           if (!(style in node.style)) {
+            // eslint-disable-next-line no-console
             console.warn(`Style "${style}" is not supported by element.`, node);
           }
           node.style[style] = value;
         }
         return this;
-      } else if (typeof styles === 'string') {
+      }
+      if (typeof styles === 'string') {
         // Set styles
         if (styles.indexOf(':') !== -1) {
           this.debug('css', styles);
@@ -1045,6 +1046,7 @@ class Element {
    */
   debug(...args) {
     if (this.options.debug || Cuic.options.debug) {
+      // eslint-disable-next-line no-console
       console.log.apply(this, args);
     }
   }
@@ -2102,7 +2104,8 @@ class Element {
         node.textContent = text;
       }
       return this;
-    } else if (typeof node.textContent !== 'undefined') {
+    }
+    if (typeof node.textContent !== 'undefined') {
       return node.textContent;
     }
     return Cuic.stripTags(node.innerHTML);

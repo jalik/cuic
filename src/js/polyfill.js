@@ -26,13 +26,12 @@
  * Element.matches()
  */
 if (!Element.prototype.matches) {
-  Element.prototype.matches =
-    Element.prototype.matchesSelector ||
-    Element.prototype.mozMatchesSelector ||
-    Element.prototype.msMatchesSelector ||
-    Element.prototype.oMatchesSelector ||
-    Element.prototype.webkitMatchesSelector ||
-    function matchesElement(s) {
+  Element.prototype.matches = Element.prototype.matchesSelector
+    || Element.prototype.mozMatchesSelector
+    || Element.prototype.msMatchesSelector
+    || Element.prototype.oMatchesSelector
+    || Element.prototype.webkitMatchesSelector
+    || function matchesElement(s) {
       const matches = (this.document || this.ownerDocument).querySelectorAll(s);
       let i;
 

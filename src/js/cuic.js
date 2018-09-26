@@ -54,7 +54,8 @@ const Cuic = {
   addEventListener(element, event, listener) {
     if (typeof element.addEventListener === 'function') {
       return element.addEventListener(event, listener, false);
-    } else if (typeof element.attachEvent === 'function') {
+    }
+    if (typeof element.attachEvent === 'function') {
       return element.attachEvent(event, listener, false);
     }
     return null;
@@ -226,6 +227,7 @@ const Cuic = {
    */
   debug(...args) {
     if (this.options.debug && typeof console !== 'undefined') {
+      // eslint-disable-next-line no-console
       console.log.apply(this, args);
     }
   },
@@ -347,8 +349,8 @@ const Cuic = {
    */
   isElement(obj) {
     return (
-      typeof HTMLElement === 'object' ? obj instanceof HTMLElement :
-        obj !== null
+      typeof HTMLElement === 'object' ? obj instanceof HTMLElement
+        : obj !== null
         && typeof obj === 'object'
         && obj.nodeType === 1
         && typeof obj.nodeName === 'string'
@@ -479,7 +481,6 @@ const Cuic = {
     } else if (this.isJQuery(elm)) {
       elm = elm.get(0);
     } else if (!this.isNode(elm) && !(elm instanceof Window)) {
-      console.info(event, elm);
       throw new TypeError('Cannot add event listener on unsupported element.');
     }
 
@@ -488,6 +489,7 @@ const Cuic = {
 
     // Check if event is supported
     if (!browserEvent) {
+      // eslint-disable-next-line no-console
       console.warn(`Event "${event}" is not supported by this browser.`);
     }
 
@@ -527,7 +529,6 @@ const Cuic = {
     } else if (this.isJQuery(elm)) {
       elm = elm.get(0);
     } else if (!this.isNode(elm) && !(elm instanceof Window)) {
-      console.info(event, elm);
       throw new TypeError('Cannot add event listener on unsupported element.');
     }
 
@@ -536,6 +537,7 @@ const Cuic = {
 
     // Check if event is supported
     if (!browserEvent) {
+      // eslint-disable-next-line no-console
       console.warn(`Event "${event}" is not supported by this browser.`);
     }
 
@@ -575,7 +577,6 @@ const Cuic = {
     } else if (this.isJQuery(elm)) {
       elm = elm.get(0);
     } else if (!this.isNode(elm) && !(elm instanceof Window)) {
-      console.info(event, elm);
       throw new TypeError('Cannot add event listener on unsupported element.');
     }
 
@@ -584,6 +585,7 @@ const Cuic = {
 
     // Check if event is supported
     if (!browserEvent) {
+      // eslint-disable-next-line no-console
       console.warn(`Event "${event}" is not supported by this browser.`);
     }
 
@@ -702,7 +704,8 @@ const Cuic = {
   removeEventListener(element, event, listener) {
     if (typeof element.removeEventListener === 'function') {
       return element.removeEventListener(event, listener);
-    } else if (typeof element.detachEvent === 'function') {
+    }
+    if (typeof element.detachEvent === 'function') {
       return element.detachEvent(event, listener);
     }
     return undefined;
