@@ -29,51 +29,68 @@ const del = require('del');
 const eslint = require('gulp-eslint');
 const gulp = require('gulp');
 const less = require('gulp-less');
+const path = require('path');
 const stripCssComments = require('gulp-strip-css-comments');
-const watch = require('gulp-watch');
 const pkg = require('./package.json');
 
-const buildPath = 'dist';
-const distDir = 'dist';
+const buildPath = path.resolve('dist');
 const distFile = `${pkg.name}`;
+const srcPath = path.resolve('src');
+const testPath = path.resolve('test');
 
-// Compile source files
-gulp.task('build', () => gulp.src([
-  'src/js/**/*.js',
-])
-  .pipe(babel())
+// Compile JS files
+gulp.task('build:js', () => gulp.src([
+  path.join(srcPath, 'js', '**', '*.js'),
+]).pipe(babel())
   .pipe(gulp.dest(buildPath)));
 
-// Compile CSS files
-gulp.task('build:css', () => gulp.src([
-  'src/**/*.less',
-])
-  .pipe(concat(`${distFile}.css`))
+// Compile LESS files
+gulp.task('build:less', () => gulp.src([
+  path.join(srcPath, 'less', '**', '*.less'),
+]).pipe(concat(`${distFile}.css`))
   .pipe(less())
   .pipe(stripCssComments())
   .pipe(autoprefixer())
-  .pipe(gulp.dest(distDir)));
+  .pipe(gulp.dest(buildPath)));
 
-// Remove compiled files
-gulp.task('clean', () => del([buildPath]));
+// Compile all files
+gulp.task('build', gulp.parallel(
+  'build:less',
+  'build:js',
+));
 
-// Check code quality
+// Delete previous compiled files
+gulp.task('clean', () => del([
+  buildPath,
+]));
+
+// Run JS lint
 gulp.task('eslint', () => gulp.src([
-  'src/**/*.js',
-  'test/**/*.js',
-  '!node_modules/**',
-])
-  .pipe(eslint())
-  .pipe(eslint.formatEach())
-  .pipe(eslint.failAfterError()));
+  path.join(srcPath, '**', '*.js'),
+  path.join(testPath, '**', '*.js'),
+  path.join('!node_modules', '**'),
+]).pipe(eslint())
+  .pipe(eslint.formatEach()));
+// .pipe(eslint.failAfterError())
 
 // Prepare files for production
-gulp.task('prepare', gulp.series('clean', /*'eslint',*/ 'build', 'build:css'));
+gulp.task('prepare', gulp.series('clean', 'eslint', 'build'));
 
-// Rebuild automatically
-gulp.task('watch:js', () => watch(['src/**/*.js'], ['build']));
-gulp.task('watch:css', () => watch(['src/**/*.less'], ['build:css']));
-gulp.task('watch', gulp.parallel('watch:js', 'watch:css'));
+// Rebuild JS automatically
+gulp.task('watch:js', () => gulp.watch([
+  path.join(srcPath, '**', '*.js'),
+], gulp.parallel('build:js')));
 
-// Prepare files for production
+// Rebuild LESS automatically
+gulp.task('watch:less', () => gulp.watch([
+  path.join(srcPath, '**', '*.less'),
+], gulp.parallel('build:less')));
+
+// Rebuild sources automatically
+gulp.task('watch', gulp.parallel(
+  'watch:less',
+  'watch:js',
+));
+
+// Default task
 gulp.task('default', gulp.series('prepare'));
