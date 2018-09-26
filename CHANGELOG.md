@@ -1,17 +1,23 @@
 # Changelog
 
+## CURRENT
+- Updates dependencies
+- Deprecates method `Closeable.isOpened()`
+- Adds method `Closeable.isClosed()`
+- Renames option `opened` to `closed` in all components
+
 ## v0.12.1
 - Updates dependencies
-- Renames method `Cuic._calculateAlign` to `Cuic.calculateAlign`
-- Renames method `Cuic._calculateAnchor` to `Cuic.calculateAnchor`
-- Renames method `Cuic._calculateAvailablePosition` to `Cuic.calculateAvailablePosition`
-- Renames method `Cuic._calculateAvailableSpace` to `Cuic.calculateAvailableSpace`
-- Renames method `Cuic._calculateMaximize` to `Cuic.calculateMaximize`
-- Renames method `Cuic._calculateMinimize` to `Cuic.calculateMinimize`
-- Renames method `Cuic._disableTransitions` to `Cuic.disableTransitions`
-- Renames method `Cuic._display` to `Cuic.display`
-- Renames method `Cuic._enableTransitions` to `Cuic.enableTransitions`
-- Renames method `Cuic._restoreDisplay` to `Cuic.restoreDisplay`
+- Renames method `Cuic._calculateAlign()` to `Cuic.calculateAlign()`
+- Renames method `Cuic._calculateAnchor()` to `Cuic.calculateAnchor()`
+- Renames method `Cuic._calculateAvailablePosition()` to `Cuic.calculateAvailablePosition()`
+- Renames method `Cuic._calculateAvailableSpace()` to `Cuic.calculateAvailableSpace()`
+- Renames method `Cuic._calculateMaximize()` to `Cuic.calculateMaximize()`
+- Renames method `Cuic._calculateMinimize()` to `Cuic.calculateMinimize()`
+- Renames method `Cuic._disableTransitions()` to `Cuic.disableTransitions()`
+- Renames method `Cuic._display()` to `Cuic.display()`
+- Renames method `Cuic._enableTransitions()` to `Cuic.enableTransitions()`
+- Renames method `Cuic._restoreDisplay()` to `Cuic.restoreDisplay()`
 
 ## v0.12.0
 - Adds prefixes to style passed to `getComputedStyle()`

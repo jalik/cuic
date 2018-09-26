@@ -121,7 +121,7 @@ class Popup extends Closable {
     };
 
     const autoClose = (ev) => {
-      if (this.isOpened() && this.options.autoClose) {
+      if (!this.isClosed() && this.options.autoClose) {
         if (ev.target !== this.node() && !Cuic.element(ev.target).isChildOf(this)) {
           this.close();
         }
@@ -325,9 +325,9 @@ Popup.prototype.options = {
   autoClose: true,
   autoRemove: false,
   buttons: [],
+  closed: true,
   content: null,
   namespace: 'popup',
-  opened: false,
   target: null,
   title: null,
   zIndex: 9,

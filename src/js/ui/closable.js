@@ -38,11 +38,11 @@ class Closable extends Component {
     }
 
     // Open or hide the component
-    if (typeof this.options.opened !== 'undefined') {
-      if (this.options.opened) {
-        this.open();
-      } else {
+    if (typeof this.options.closed !== 'undefined') {
+      if ([true, 1, 'true', '1', 'yes'].indexOf(this.options.closed) !== -1) {
         this.close();
+      } else {
+        this.open();
       }
     }
   }
@@ -58,7 +58,7 @@ class Closable extends Component {
     this.removeClass('opened');
     this.addClass('closed');
     this.once('transitionend', (ev) => {
-      if (!this.isOpened()) {
+      if (this.isClosed()) {
         this.debug('closed');
         this.events.trigger('closed', ev);
         this.hide();
@@ -72,11 +72,22 @@ class Closable extends Component {
   }
 
   /**
+   * Checks if the component is closed
+   * @return {boolean}
+   */
+  isClosed() {
+    return this.hasClass('closed');
+  }
+
+  /**
    * Checks if the component is opened
+   * @deprecated use method isClosed() instead
    * @return {boolean}
    */
   isOpened() {
-    return this.hasClass('opened');
+    // eslint-disable-next-line no-console
+    console.warn('Closeable.isOpened() is deprecated, use Closeable.isClosed() instead');
+    return this.hasClass('opened') || !this.hasClass('closed');
   }
 
   /**
@@ -96,7 +107,7 @@ class Closable extends Component {
   }
 
   /**
-   * Called when the component is opened
+   * Called when the component is opening
    * @param callback
    */
   onOpen(callback) {
@@ -123,7 +134,7 @@ class Closable extends Component {
     this.removeClass('closed');
     this.addClass('opened');
     this.once('transitionend', (ev) => {
-      if (this.isOpened()) {
+      if (!this.isClosed()) {
         this.debug('opened');
         this.events.trigger('opened', ev);
 
@@ -141,7 +152,7 @@ class Closable extends Component {
    * @return {Closable}
    */
   toggle(callback) {
-    if (this.isOpened()) {
+    if (!this.isClosed()) {
       this.close(callback);
     } else {
       this.open(callback);
@@ -152,7 +163,7 @@ class Closable extends Component {
 
 Closable.prototype.options = {
   closable: false,
-  opened: true,
+  closed: false,
 };
 
 export default Closable;

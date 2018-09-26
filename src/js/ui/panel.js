@@ -99,15 +99,8 @@ class Panel extends Closable {
       this.parent().css({ overflow: 'hidden' });
     }
 
-    const autoClose = (ev) => {
-      if (this.isOpened() && this.options.autoClose) {
-        if (ev.target !== this.node() && !Cuic.element(ev.target).isChildOf(this)) {
-          this.close();
-        }
-      }
-    };
-
     // todo avoid closing panel if button is from another component
+    // Handle click events on the component
     this.on('click', (ev) => {
       // Close button
       if (Cuic.element(ev.target).hasClass('btn-close')) {
@@ -148,13 +141,26 @@ class Panel extends Closable {
       this.css(prop);
     });
 
+    // Define the auto close behavior
+    // todo move this code in the closeable class
+    const autoClose = (ev) => {
+      if (!this.isClosed() && this.options.autoClose) {
+        if (ev.target !== this.node() && !Cuic.element(ev.target).isChildOf(this)) {
+          this.close();
+        }
+      }
+    };
+
+    // todo move this code in the closeable class
     this.onClosed(() => {
+      // Ignore future click events for autoclose
+      // since the component will be closed.
       Cuic.off('click', document, autoClose);
     });
 
     this.onMaximized(() => {
       // Realign if panel is closed
-      if (!this.isOpened()) {
+      if (this.isClosed()) {
         const prop = {};
 
         // Horizontal position
@@ -179,7 +185,7 @@ class Panel extends Closable {
 
     this.onMinimize(() => {
       // Realign if panel is closed
-      if (!this.isOpened()) {
+      if (this.isClosed()) {
         const prop = {};
 
         // Horizontal position
@@ -207,6 +213,7 @@ class Panel extends Closable {
       this.resizeContent();
     });
 
+    // todo move this code in the closeable class
     this.onOpened(() => {
       // Close the panel when the user clicks outside of it
       Cuic.on('click', document, autoClose);
@@ -343,11 +350,11 @@ Panel.prototype.options = {
   closable: true,
   closeButton: null,
   closeButtonClass: 'glyphicon glyphicon-remove-sign',
+  closed: true,
   content: null,
   footer: null,
   maximized: false,
   namespace: 'panel',
-  opened: false,
   parent: null,
   position: 'left top',
   title: null,

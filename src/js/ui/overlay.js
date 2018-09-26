@@ -54,8 +54,8 @@ class Overlay extends Closable {
 Overlay.prototype.options = {
   autoClose: false,
   autoRemove: false,
+  closed: true,
   namespace: 'overlay',
-  opened: false,
   zIndex: 1,
 };
 

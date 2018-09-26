@@ -73,10 +73,10 @@ class Dialog extends Closable {
 
     // Create the overlay
     this.overlay = new Overlay({
-      className: 'cc-overlay cc-dialog-overlay',
       autoClose: false,
       autoRemove: false,
-      opened: false,
+      className: 'cc-overlay cc-dialog-overlay',
+      closed: true,
     }).appendTo(this.options.parent);
 
     // Add header
@@ -166,13 +166,8 @@ class Dialog extends Closable {
         handle: this.header,
         rootOnly: false,
       });
-      this.movable.onMoveStart((ev) => {
-        // Avoid moving if button is clicked
-        if (Cuic.element(ev.target).hasClass('btn-close')) {
-          return false;
-        }
-        return true;
-      });
+      // Ignore moving if button is clicked
+      this.movable.onMoveStart(ev => !Cuic.element(ev.target).hasClass('btn-close'));
     }
 
     /**
@@ -219,7 +214,8 @@ class Dialog extends Closable {
     this.onClose(() => {
       this.overlay.options.autoRemove = this.options.autoRemove;
 
-      if (this.overlay.isOpened()) {
+      // Auto close overlay
+      if (!this.overlay.isClosed()) {
         this.overlay.close();
       }
     });
@@ -458,6 +454,7 @@ Dialog.prototype.options = {
   closable: true,
   closeButton: null,
   closeButtonClass: 'glyphicon glyphicon-remove-sign',
+  closed: true,
   content: null,
   contentHeight: null,
   contentWidth: null,
@@ -465,7 +462,6 @@ Dialog.prototype.options = {
   maximized: false,
   modal: true,
   namespace: 'dialog',
-  opened: false,
   parent: document.body,
   position: 'center',
   resizable: false,

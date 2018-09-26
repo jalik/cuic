@@ -224,7 +224,7 @@ class Guide {
     }
 
     // Continue if step is valid and different
-    if (step && (this.step !== this.steps.indexOf(step) || !this.popup.isOpened())) {
+    if (step && (this.step !== this.steps.indexOf(step) || this.popup.isClosed())) {
       this.lastStep = this.step;
       this.step = Number.parseInt(idOrNumber, 10);
 
@@ -308,7 +308,7 @@ class Guide {
    */
   previous() {
     if (this.step > 0) {
-      if (this.step === (this.steps.length - 1) && !this.popup.isOpened()) {
+      if (this.step === (this.steps.length - 1) && this.popup.isClosed()) {
         this.goTo(this.step);
       } else {
         this.goTo(this.step - 1);
@@ -344,7 +344,7 @@ class Guide {
    * @return {Guide}
    */
   stop() {
-    if (this.popup.isOpened()) {
+    if (!this.popup.isClosed()) {
       this.popup.close();
       this.events.trigger('stopped');
       this.debug('stopped');
@@ -359,10 +359,10 @@ Guide.prototype.options = {
   autoRemove: false,
   autoScroll: true,
   autoStart: false,
+  closed: true,
   content: null,
   duration: 5000,
   namespace: 'guide',
-  opened: false,
   steps: null,
   zIndex: 9,
 };

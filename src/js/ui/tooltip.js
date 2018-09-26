@@ -111,7 +111,7 @@ class Tooltip extends Closable {
     });
 
     const autoClose = (ev) => {
-      if (this.isOpened() && this.options.autoClose) {
+      if (!this.isClosed() && this.options.autoClose) {
         if (ev.target !== this.node() && !Cuic.element(ev.target).isChildOf(this)) {
           this.close();
         }
@@ -218,9 +218,9 @@ class Tooltip extends Closable {
 Tooltip.prototype.options = {
   anchor: 'right',
   attribute: 'title',
+  closed: true,
   followPointer: true,
   namespace: 'tooltip',
-  opened: false,
   selector: '[title]',
   zIndex: 100,
 };
