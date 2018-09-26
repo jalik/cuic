@@ -22,13 +22,14 @@
  * SOFTWARE.
  */
 
+import { extend } from '@jalik/extend';
 import Cuic from '../cuic';
 import Component from './component';
 
 class Button extends Component {
   constructor(options) {
     // Set default options
-    const opt = Cuic.extend({}, Button.prototype.options, options, {
+    const opt = extend({}, Button.prototype.options, options, {
       mainClass: 'cc-button',
     });
 

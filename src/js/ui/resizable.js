@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+import { extend } from '@jalik/extend';
 import Cuic from '../cuic';
 import Collection from '../utils/collection';
 import Component from './component';
@@ -30,7 +31,7 @@ import Element from './element';
 class Resizable extends Component {
   constructor(options) {
     // Set default options
-    const opt = Cuic.extend({}, Resizable.prototype.options, options);
+    const opt = extend({}, Resizable.prototype.options, options);
 
     // Create element
     super('div', { className: opt.className }, opt);

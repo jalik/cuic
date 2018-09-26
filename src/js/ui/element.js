@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+import { extend } from '@jalik/extend';
 import Cuic from '../cuic';
 import Events from '../utils/events';
 import Elements from './elements';
@@ -29,10 +30,10 @@ import Elements from './elements';
 class Element {
   constructor(node, attributes, options) {
     // Set default attributes
-    const attrs = Cuic.extend({}, attributes);
+    const attrs = extend({}, attributes);
 
     // Set default options
-    this.options = Cuic.extend({}, Element.prototype.options, options);
+    this.options = extend({}, Element.prototype.options, options);
 
     // Use existing node
     if (this.options.element) {
@@ -472,7 +473,7 @@ class Element {
     }
 
     // Default options
-    const opt = Cuic.extend({
+    const opt = extend({
       inScreen: false,
       parent: null,
     }, options);
@@ -1912,7 +1913,7 @@ class Element {
    * @return {*}
    */
   positionOnScreen() {
-    return Cuic.extend({}, this.node().getBoundingClientRect());
+    return extend({}, this.node().getBoundingClientRect());
   }
 
   /**

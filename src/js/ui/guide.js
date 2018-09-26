@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+import { extend } from '@jalik/extend';
 import Cuic from '../cuic';
 import Events from '../utils/events';
 import Popup from './popup';
@@ -29,13 +30,13 @@ import Popup from './popup';
 class Guide {
   constructor(options) {
     // Set default options
-    this.options = Cuic.extend({}, Guide.prototype.options, options, {});
+    this.options = extend({}, Guide.prototype.options, options, {});
 
     // Add debug method
     this.debug = Cuic.debug;
 
     // Create guide popup
-    this.popup = new Popup(Cuic.extend({}, options, {
+    this.popup = new Popup(extend({}, options, {
       autoClose: false,
       autoRemove: false,
       mainClass: 'cc-guide',
@@ -105,7 +106,7 @@ class Guide {
     // todo parse buttons
 
     // Add the step
-    this.steps.push(Cuic.extend({
+    this.steps.push(extend({
       title: null,
       content: null,
       buttons: null,

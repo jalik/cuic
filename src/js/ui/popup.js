@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+import { extend } from '@jalik/extend';
 import Cuic from '../cuic';
 import Collection from '../utils/collection';
 import Shortcut from '../utils/shortcut';
@@ -35,7 +36,7 @@ export const Popups = new Collection();
 class Popup extends Closable {
   constructor(options) {
     // Set default options
-    const opt = Cuic.extend({}, Popup.prototype.options, options, {
+    const opt = extend({}, Popup.prototype.options, options, {
       mainClass: 'cc-popup',
     });
 
@@ -190,7 +191,7 @@ class Popup extends Closable {
       const { callback } = props;
 
       // Create button
-      button = new Button(Cuic.extend({
+      button = new Button(extend({
         className: `btn btn-default btn-secondary ${props.className}`,
         label: props.label,
       }, props));

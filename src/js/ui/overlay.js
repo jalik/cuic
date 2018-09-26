@@ -22,13 +22,13 @@
  * SOFTWARE.
  */
 
-import Cuic from '../cuic';
+import { extend } from '@jalik/extend';
 import Closable from './closable';
 
 class Overlay extends Closable {
   constructor(options) {
     // Set default options
-    const opt = Cuic.extend({}, Overlay.prototype.options, options, {
+    const opt = extend({}, Overlay.prototype.options, options, {
       mainClass: 'cc-overlay',
     });
 

@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+import { extend } from '@jalik/extend';
 import Cuic from '../cuic';
 import Collection from '../utils/collection';
 import Component from './component';
@@ -29,7 +30,7 @@ import Component from './component';
 class Movable extends Component {
   constructor(options) {
     // Set default options
-    const opt = Cuic.extend({}, Movable.prototype.options, options);
+    const opt = extend({}, Movable.prototype.options, options);
 
     // Create element
     super('div', { className: opt.className }, opt);

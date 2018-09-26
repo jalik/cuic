@@ -22,16 +22,16 @@
  * SOFTWARE.
  */
 
-import Cuic from '../cuic';
+import { extend } from '@jalik/extend';
 import Element from './element';
 
 class Component extends Element {
   constructor(node, attributes, options) {
     // Set default options
-    const opt = Cuic.extend({}, Component.prototype.options, options);
+    const opt = extend({}, Component.prototype.options, options);
 
     // Set default attributes
-    const attrs = Cuic.extend({
+    const attrs = extend({
       tabIndex: 0,
     }, attributes);
 

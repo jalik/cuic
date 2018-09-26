@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+import { extend } from '@jalik/extend';
 import Cuic from '../cuic';
 import Group from './group';
 import Notification from './notification';
@@ -29,7 +30,7 @@ import Notification from './notification';
 class NotificationStack extends Group {
   constructor(options) {
     // Set default options
-    const opt = Cuic.extend({}, NotificationStack.prototype.options, options, {
+    const opt = extend({}, NotificationStack.prototype.options, options, {
       mainClass: 'cc-notification-stack',
     });
 

@@ -22,13 +22,13 @@
  * SOFTWARE.
  */
 
-import Cuic from '../cuic';
+import { extend } from '@jalik/extend';
 import Component from './component';
 
 class Closable extends Component {
   constructor(node, attributes, options) {
     // Set default options
-    const opt = Cuic.extend({}, Closable.prototype.options, options);
+    const opt = extend({}, Closable.prototype.options, options);
 
     super(node, attributes, opt);
 

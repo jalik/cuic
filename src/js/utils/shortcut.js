@@ -22,12 +22,13 @@
  * SOFTWARE.
  */
 
+import { extend } from '@jalik/extend';
 import Cuic from '../cuic';
 
 class Shortcut {
   constructor(options) {
     // Set default options
-    this.options = Cuic.extend({}, Shortcut.prototype.options, options);
+    this.options = extend({}, Shortcut.prototype.options, options);
 
     // Get the element
     this.options.element = Cuic.node(this.options.element);

@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+import { extend } from '@jalik/extend';
 import Cuic from '../cuic';
 import Collection from '../utils/collection';
 import Closable from './closable';
@@ -32,7 +33,7 @@ export const Panels = new Collection();
 class Panel extends Closable {
   constructor(options) {
     // Set default options
-    const opt = Cuic.extend({}, Panel.prototype.options, options, {
+    const opt = extend({}, Panel.prototype.options, options, {
       mainClass: 'cc-panel',
     });
 

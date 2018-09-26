@@ -22,13 +22,13 @@
  * SOFTWARE.
  */
 
-import Cuic from '../cuic';
+import { extend } from '@jalik/extend';
 import Component from './component';
 
 class Selectable extends Component {
   constructor(options) {
     // Set default options
-    const opt = Cuic.extend({}, Selectable.prototype.options, options);
+    const opt = extend({}, Selectable.prototype.options, options);
 
     // Create element
     super('div', { className: opt.className }, opt);

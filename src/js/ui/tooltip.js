@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+import { extend } from '@jalik/extend';
 import Cuic from '../cuic';
 import Collection from '../utils/collection';
 import Closable from './closable';
@@ -32,7 +33,7 @@ export const Tooltips = new Collection();
 class Tooltip extends Closable {
   constructor(options) {
     // Set default options
-    const opt = Cuic.extend({}, Tooltip.prototype.options, options, {
+    const opt = extend({}, Tooltip.prototype.options, options, {
       mainClass: 'cc-tooltip',
     });
 

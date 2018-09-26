@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+import { extend } from '@jalik/extend';
 import Cuic from '../js/cuic';
 import Movable from '../js/ui/movable';
 import Resizable from '../js/ui/resizable';
@@ -37,7 +38,7 @@ Cuic.Grid = function (options) {
   let grid = this;
 
   // Default options
-  options = Cuic.extend(true, Cuic.Grid.prototype.options, options);
+  options = extend(true, Cuic.Grid.prototype.options, options);
 
   // Set the options
   grid.animSpeed = Number.parseInt(options.animSpeed, 10);
@@ -621,7 +622,7 @@ Cuic.Grid.Widget = function (options) {
   let self = this;
 
   // Default options
-  options = Cuic.extend(true, {}, Cuic.Grid.Widget.prototype.options, options);
+  options = extend(true, {}, Cuic.Grid.Widget.prototype.options, options);
 
   // Set the options
   self.col = Number.parseInt(options.col, 10);

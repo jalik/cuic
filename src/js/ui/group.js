@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-import Cuic from '../cuic';
+import { extend } from '@jalik/extend';
 import Collection from '../utils/collection';
 import Closable from './closable';
 import Element from './element';
@@ -30,10 +30,10 @@ import Element from './element';
 class Group extends Closable {
   constructor(node, attributes, options) {
     // Set default options
-    const opt = Cuic.extend({}, Group.prototype.options, options);
+    const opt = extend({}, Group.prototype.options, options);
 
     // Create element
-    super(node, Cuic.extend({
+    super(node, extend({
       className: opt.className,
       role: 'group',
     }, attributes), opt);

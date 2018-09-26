@@ -22,13 +22,14 @@
  * SOFTWARE.
  */
 
+import { extend } from '@jalik/extend';
 import Cuic from '../cuic';
 import Closable from './closable';
 
 class Switcher extends Closable {
   constructor(options) {
     // Set default options
-    const opt = Cuic.extend({}, Switcher.prototype.options, options, {
+    const opt = extend({}, Switcher.prototype.options, options, {
       mainClass: 'cc-switcher',
     });
 

@@ -22,14 +22,14 @@
  * SOFTWARE.
  */
 
-import Cuic from '../cuic';
+import { extend } from '@jalik/extend';
 import Component from './component';
 import Element from './element';
 
 class Hook extends Component {
   constructor(options) {
     // Set default options
-    const opt = Cuic.extend({}, Hook.prototype.options, options);
+    const opt = extend({}, Hook.prototype.options, options);
 
     // Create element
     super('div', { className: opt.className }, opt);

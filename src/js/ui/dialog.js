@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+import { extend } from '@jalik/extend';
 import Cuic from '../cuic';
 import Collection from '../utils/collection';
 import Shortcut from '../utils/shortcut';
@@ -55,7 +56,7 @@ Dialogs.getCurrentZIndex = () => {
 class Dialog extends Closable {
   constructor(options) {
     // Set default options
-    const opt = Cuic.extend({}, Dialog.prototype.options, options, {
+    const opt = extend({}, Dialog.prototype.options, options, {
       mainClass: 'cc-dialog',
     });
 
@@ -315,7 +316,7 @@ class Dialog extends Closable {
       const { callback } = props;
 
       // Create button
-      button = new Button(Cuic.extend({
+      button = new Button(extend({
         className: `btn btn-default btn-secondary ${(props.className || '')}`,
         label: props.label,
       }, props));

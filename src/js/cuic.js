@@ -270,43 +270,6 @@ const Cuic = {
   },
 
   /**
-   * Merge objects
-   * @return {*}
-   */
-  extend(...args) {
-    let recursive = false;
-    let a = args.shift();
-
-    if (typeof a === 'boolean') {
-      recursive = a;
-      a = args.shift();
-    }
-
-    for (let i = 0; i < args.length; i += 1) {
-      const b = args[i];
-
-      if (typeof b === 'object' && b !== null
-        && typeof a === 'object' && a !== null) {
-        const keys = Object.keys(b);
-        const keysLength = keys.length;
-
-        for (let j = 0; j < keysLength; j += 1) {
-          const key = keys[j];
-
-          if (recursive && typeof b[key] === 'object' && b[key] !== null) {
-            a[key] = this.extend(a[key], b[key]);
-          } else {
-            a[key] = b[key];
-          }
-        }
-      } else if (b !== null && typeof b !== 'undefined') {
-        a = b;
-      }
-    }
-    return a;
-  },
-
-  /**
    * Returns all elements matching the selector
    * @param selector
    * @param context
