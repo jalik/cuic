@@ -38,14 +38,14 @@
   },
   "main": "dist/cuic.js",
   "scripts": {
-    "build": "./node_modules/.bin/gulp build",
-    "bundle": "npm test && ./node_modules/.bin/webpack -p",
-    "lint": "./node_modules/.bin/eslint .",
-    "lint-fix": "./node_modules/.bin/eslint --fix .",
-    "prepare": "./node_modules/.bin/gulp prepare",
+    "build": "npx gulp build",
+    "lint": "npx eslint .",
+    "lint-fix": "npx eslint --fix .",
+    "package": "npm test && npx webpack -p",
+    "prepare": "npx gulp prepare",
     "prepublishOnly": "npm test",
-    "test": "./node_modules/.bin/jest",
-    "watch": "./node_modules/.bin/gulp watch"
+    "test": "npx jest",
+    "watch": "npx gulp watch"
   },
   "devDependencies": {
     "@babel/core": "^7.1.0",
