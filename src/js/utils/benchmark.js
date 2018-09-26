@@ -36,7 +36,8 @@ class Benchmark {
   getTime() {
     if (this.startTime && this.stopTime) {
       return this.stopTime - this.startTime;
-    } else if (this.startTime) {
+    }
+    if (this.startTime) {
       return Date.now() - this.startTime;
     }
     return 0;

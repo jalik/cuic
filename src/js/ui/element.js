@@ -212,7 +212,7 @@ class Element {
    * @return {Element}
    */
   align(position, options) {
-    if (this.isInDOM() && position && position !== '') {
+    if (this.isInDOM() && position !== '') {
       const pos = this.css('position');
 
       if (['absolute', 'fixed'].indexOf(pos) !== -1) {

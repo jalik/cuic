@@ -387,7 +387,8 @@ class Elements {
       return this.each((el) => {
         el.val(value);
       });
-    } else if (this.length) {
+    }
+    if (this.length) {
       return this.eq(0).val();
     }
     return undefined;
