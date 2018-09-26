@@ -23,8 +23,11 @@
  */
 
 import Cuic from '../cuic';
+import Collection from '../utils/collection';
 import Closable from './closable';
 import Element from './element';
+
+export const Tooltips = new Collection();
 
 class Tooltip extends Closable {
   constructor(options) {
@@ -141,6 +144,14 @@ class Tooltip extends Closable {
       // Close the popup when the user clicks outside of it
       Cuic.on('click', document, autoClose);
     });
+
+    // Remove element from list
+    this.onRemoved(() => {
+      Tooltips.remove(this);
+    });
+
+    // Add element to collection
+    Tooltips.add(this);
   }
 
   /**

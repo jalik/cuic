@@ -23,8 +23,11 @@
  */
 
 import Cuic from '../cuic';
+import Collection from '../utils/collection';
 import Closable from './closable';
 import Element from './element';
+
+export const Panels = new Collection();
 
 class Panel extends Closable {
   constructor(options) {
@@ -216,6 +219,14 @@ class Panel extends Closable {
         // panel._enableTransitions();
       }
     });
+
+    // Remove element from list
+    this.onRemoved(() => {
+      Panels.remove(this);
+    });
+
+    // Add element to collection
+    Panels.add(this);
   }
 
   /**

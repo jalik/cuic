@@ -23,8 +23,11 @@
  */
 
 import Cuic from '../cuic';
+import Collection from '../utils/collection';
 import Closable from './closable';
 import Element from './element';
+
+export const Notifications = new Collection();
 
 class Notification extends Closable {
   constructor(options) {
@@ -93,6 +96,14 @@ class Notification extends Closable {
         // n._enableTransitions();
       }
     });
+
+    // Remove element from list
+    this.onRemoved(() => {
+      Notifications.remove(this);
+    });
+
+    // Add element to collection
+    Notifications.add(this);
   }
 
   /**

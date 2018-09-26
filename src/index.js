@@ -39,7 +39,7 @@ import Panel, { Panels } from './js/ui/panel';
 import Popup, { Popups } from './js/ui/popup';
 import Resizable from './js/ui/resizable';
 import Selectable from './js/ui/selectable';
-import Switcher, { Switchers } from './js/ui/switcher';
+import Switcher from './js/ui/switcher';
 import Tooltip, { Tooltips } from './js/ui/tooltip';
 import Benchmark from './js/utils/benchmark';
 import Collection from './js/utils/collection';
@@ -68,7 +68,6 @@ Cuic.Popups = Popups;
 Cuic.Resizable = Resizable;
 Cuic.Selectable = Selectable;
 Cuic.Switcher = Switcher;
-Cuic.Switchers = Switchers;
 Cuic.Tooltip = Tooltip;
 Cuic.Tooltips = Tooltips;
 

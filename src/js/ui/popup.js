@@ -23,11 +23,14 @@
  */
 
 import Cuic from '../cuic';
+import Collection from '../utils/collection';
 import Shortcut from '../utils/shortcut';
 import Button from './button';
 import Closable from './closable';
 import Element from './element';
 import Group from './group';
+
+export const Popups = new Collection();
 
 class Popup extends Closable {
   constructor(options) {
@@ -165,6 +168,14 @@ class Popup extends Closable {
         // popup._enableTransitions();
       }
     });
+
+    // Remove element from list
+    this.onRemoved(() => {
+      Popups.remove(this);
+    });
+
+    // Add element to collection
+    Popups.add(this);
   }
 
   /**
