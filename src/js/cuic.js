@@ -274,12 +274,23 @@ const Cuic = {
   /**
    * Returns all elements matching the selector
    * @param selector
-   * @param context
+   * @param context DEPRECATED!
    * @return {Elements}
    */
   find(selector, context) {
-    const ctx = this.node(context || document);
-    return this.element(ctx).find(selector);
+    if (context) {
+      throw new SyntaxError('Context argument is deprecated in Cuic.find(selector, context)');
+    }
+    if (selector === 'body') {
+      return this.element(document.body);
+    }
+    if (selector === 'head') {
+      return this.element(document.head);
+    }
+    if (selector === 'window') {
+      return this.element(window);
+    }
+    return this.element(document).find(selector);
   },
 
   /**
@@ -446,20 +457,33 @@ const Cuic = {
   node(element) {
     let node;
 
+    // Is already an HTML element
     if (this.isNode(element)) {
       node = element;
     }
+    // Is a Window
     if (element instanceof Window) {
       node = element;
     }
+    // Is a CUIC element
     if (element instanceof Element) {
       node = element.node();
     }
+    // Is a jQuery element
     if (this.isJQuery(element)) {
       node = element.get(0);
     }
+    // Is a string selector
     if (typeof element === 'string') {
-      node = this.find(element).get(0);
+      if (element === 'body') {
+        node = document.body;
+      } else if (element === 'head') {
+        node = document.head;
+      } else if (element === 'window') {
+        node = window;
+      } else {
+        node = this.find(element).get(0);
+      }
     }
     // console.error('cannot get HTMLElement from element.', element);
     return node;
