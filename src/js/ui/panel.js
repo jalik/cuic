@@ -88,10 +88,13 @@ class Panel extends Closable {
       }
     }
 
-    if (this.isOpened()) {
+    // Set default alignment
+    if (this.options.position) {
       this.align(this.options.position);
-      this.resizeContent();
     }
+
+    // Resize content
+    this.resizeContent();
 
     // To hide the panel in the container,
     // the container must have a hidden overflow
@@ -114,99 +117,87 @@ class Panel extends Closable {
       }
     });
 
-    this.onClose(() => {
-      const height = this.outerHeight(true);
-      const width = this.outerWidth(true);
-      const prop = {};
+    // this.onClose(() => {
+    //   const height = this.outerHeight(true);
+    //   const width = this.outerWidth(true);
+    //   const prop = {
+    //     bottom: '',
+    //     left: '',
+    //     right: '',
+    //     top: '',
+    //   };
+    //
+    //   // Horizontal position
+    //   if (this.isAligned('right')) {
+    //     prop.right = -width;
+    //     prop.left = '';
+    //   } else if (this.isAligned('left')) {
+    //     prop.left = -width;
+    //     prop.right = '';
+    //   }
+    //
+    //   // Vertical position
+    //   if (this.isAligned('bottom')) {
+    //     prop.bottom = -height;
+    //     prop.top = '';
+    //   } else if (this.isAligned('top')) {
+    //     prop.top = -height;
+    //     prop.bottom = '';
+    //   }
+    //
+    //   // Animate panel
+    //   this.css(prop);
+    // });
 
-      // Horizontal position
-      if (this.isAligned('right')) {
-        prop.right = -width;
-        prop.left = '';
-      } else if (this.isAligned('left')) {
-        prop.left = -width;
-        prop.right = '';
-      }
+    // this.onMaximized(() => {
+    //   // Realign if panel is closed
+    //   if (this.isClosed()) {
+    //     const prop = {};
+    //
+    //     // Horizontal position
+    //     if (this.isAligned('left')) {
+    //       prop.left = -this.outerWidth(true);
+    //       prop.right = '';
+    //     } else if (this.isAligned('right')) {
+    //       prop.right = -this.outerWidth(true);
+    //       prop.left = '';
+    //     }
+    //     // Vertical position
+    //     if (this.isAligned('bottom')) {
+    //       prop.bottom = -this.outerHeight(true);
+    //       prop.top = '';
+    //     } else if (this.isAligned('top')) {
+    //       prop.top = -this.outerHeight(true);
+    //       prop.bottom = '';
+    //     }
+    //     this.css(prop);
+    //   }
+    // });
 
-      // Vertical position
-      if (this.isAligned('bottom')) {
-        prop.bottom = -height;
-        prop.top = '';
-      } else if (this.isAligned('top')) {
-        prop.top = -height;
-        prop.bottom = '';
-      }
-
-      // Animate panel
-      this.css(prop);
-    });
-
-    // Define the auto close behavior
-    // todo move this code in the closeable class
-    const autoClose = (ev) => {
-      if (!this.isClosed() && this.options.autoClose) {
-        if (ev.target !== this.node() && !Cuic.element(ev.target).isChildOf(this)) {
-          this.close();
-        }
-      }
-    };
-
-    // todo move this code in the closeable class
-    this.onClosed(() => {
-      // Ignore future click events for autoclose
-      // since the component will be closed.
-      Cuic.off('click', document, autoClose);
-    });
-
-    this.onMaximized(() => {
-      // Realign if panel is closed
-      if (this.isClosed()) {
-        const prop = {};
-
-        // Horizontal position
-        if (this.isAligned('left')) {
-          prop.left = -this.outerWidth(true);
-          prop.right = '';
-        } else if (this.isAligned('right')) {
-          prop.right = -this.outerWidth(true);
-          prop.left = '';
-        }
-        // Vertical position
-        if (this.isAligned('bottom')) {
-          prop.bottom = -this.outerHeight(true);
-          prop.top = '';
-        } else if (this.isAligned('top')) {
-          prop.top = -this.outerHeight(true);
-          prop.bottom = '';
-        }
-        this.css(prop);
-      }
-    });
-
-    this.onMinimize(() => {
-      // Realign if panel is closed
-      if (this.isClosed()) {
-        const prop = {};
-
-        // Horizontal position
-        if (this.isAligned('left')) {
-          prop.left = -this.outerWidth(true);
-          prop.right = '';
-        } else if (this.isAligned('right')) {
-          prop.right = -this.outerWidth(true);
-          prop.left = '';
-        }
-        // Vertical position
-        if (this.isAligned('bottom')) {
-          prop.bottom = -this.outerHeight(true);
-          prop.top = '';
-        } else if (this.isAligned('top')) {
-          prop.top = -this.outerHeight(true);
-          prop.bottom = '';
-        }
-        this.css(prop);
-      }
-    });
+    // this.onMinimize(() => {
+    //   // Realign if panel is closed
+    //   if (this.isClosed()) {
+    //     const prop = {};
+    //
+    //     // Horizontal position
+    //     if (this.isAligned('left')) {
+    //       prop.left = -this.outerWidth(true);
+    //       prop.right = '';
+    //     } else if (this.isAligned('right')) {
+    //       prop.right = -this.outerWidth(true);
+    //       prop.left = '';
+    //     }
+    //     // Vertical position
+    //     if (this.isAligned('bottom')) {
+    //       prop.bottom = -this.outerHeight(true);
+    //       prop.top = '';
+    //     } else if (this.isAligned('top')) {
+    //       prop.top = -this.outerHeight(true);
+    //       prop.bottom = '';
+    //     }
+    //     this.css(prop);
+    //   }
+    // });
 
     this.onOpen(() => {
       this.align(this.options.position);
@@ -340,7 +331,7 @@ class Panel extends Closable {
 }
 
 Panel.prototype.options = {
-  animationClass: 'cc-anim-fade',
+  animationClass: 'cc-anim-fade cc-anim-slide',
   closable: true,
   closeButton: null,
   closeButtonClass: 'glyphicon glyphicon-remove-sign',

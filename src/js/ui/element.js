@@ -227,7 +227,14 @@ class Element {
 
       if (['absolute', 'fixed'].indexOf(pos) !== -1) {
         this.debug('align', position);
-        this.css(this.calculateAlign(position, options));
+
+        // Align to center or using custom pixel position
+        if (position.indexOf('center') !== -1
+          || ['bottom', 'center', 'left', 'right', 'top'].indexOf(position) !== -1
+          || /^[0-9]+(px)? [0-9]+(px)?/.test(position)) {
+          this.css(this.calculateAlign(position, options));
+        }
+
         this.addPositionClass(position, 'aligned');
         this.options.position = position;
         this.events.trigger('aligned', position);
