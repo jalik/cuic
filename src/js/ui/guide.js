@@ -39,8 +39,10 @@ class Guide {
     this.popup = new Popup(extend({}, options, {
       autoClose: false,
       autoRemove: false,
+      closeOnBlur: false,
+      closeOnFocus: false,
+      closeOnMouseLeave: false,
       mainClass: 'cc-guide',
-      className: 'cc-guide cc-guide-popup',
     }));
     this.popup.guide = this;
 
