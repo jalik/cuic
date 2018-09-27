@@ -196,22 +196,26 @@ class Element {
       pfx('top'),
     ].join(' '));
 
-    // Vertical position
-    if (position.indexOf('bottom') !== -1) {
-      this.addClass(pfx('bottom'));
-    } else if (position.indexOf('top') !== -1) {
-      this.addClass(pfx('top'));
-    } else {
+    if (position === 'center') {
+      // Centered vertically and horizontally
       this.addClass(pfx('center'));
-    }
-
-    // Horizontal position
-    if (position.indexOf('left') !== -1) {
-      this.addClass(pfx('left'));
-    } else if (position.indexOf('right') !== -1) {
-      this.addClass(pfx('right'));
     } else {
-      this.addClass(pfx('center'));
+      // Vertical position
+      if (position.indexOf('bottom') !== -1) {
+        this.addClass(pfx('bottom'));
+      } else if (position.indexOf('top') !== -1) {
+        this.addClass(pfx('top'));
+      } else {
+        this.addClass(pfx('center-y'));
+      }
+      // Horizontal position
+      if (position.indexOf('left') !== -1) {
+        this.addClass(pfx('left'));
+      } else if (position.indexOf('right') !== -1) {
+        this.addClass(pfx('right'));
+      } else {
+        this.addClass(pfx('center-x'));
+      }
     }
     return this;
   }

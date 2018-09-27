@@ -22,52 +22,79 @@
  * SOFTWARE.
  */
 
-.aligned-bottom,
-.aligned-bottom.aligned-center {
+// BOTTOM
+
+.aligned-bottom {
   bottom: 0;
+  top: auto;
   transform-origin: bottom center;
 }
 
 .aligned-bottom.aligned-left {
-  bottom: 0;
-  left: 0;
   transform-origin: bottom left;
 }
 
 .aligned-bottom.aligned-right {
-  bottom: 0;
-  right: 0;
   transform-origin: bottom right;
 }
 
+// CENTER
+
 .aligned-center {
+  left: 50%;
+  top: 50%;
   transform-origin: center;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
+
+.aligned-center-x {
+  -webkit-transform: translate(-50%, 0);
+  -moz-transform: translate(-50%, 0);
+  -ms-transform: translate(-50%, 0);
+  -o-transform: translate(-50%, 0);
+  transform: translate(-50%, 0);
+}
+
+.aligned-center-y {
+  -webkit-transform: translate(0, -50%);
+  -moz-transform: translate(0, -50%);
+  -ms-transform: translate(0, -50%);
+  -o-transform: translate(0, -50%);
+  transform: translate(0, -50%);
+}
+
+// LEFT
 
 .aligned-left {
   left: 0;
+  right: auto;
   transform-origin: left center;
 }
 
+// RIGHT
+
 .aligned-right {
+  left: auto;
   right: 0;
   transform-origin: right center;
 }
 
-.aligned-top,
-.aligned-top.aligned-center {
+// TOP
+
+.aligned-top {
+  bottom: auto;
   top: 0;
   transform-origin: top center;
 }
 
 .aligned-top.aligned-left {
-  top: 0;
-  left: 0;
   transform-origin: top left;
 }
 
 .aligned-top.aligned-right {
-  top: 0;
-  right: 0;
   transform-origin: top right;
 }

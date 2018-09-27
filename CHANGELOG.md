@@ -2,6 +2,7 @@
 
 ## v0.13.0
 - Updates dependencies
+- Fixes positioning of method `Element.align()`
 - Deprecates method `Closable.isOpened()`
 - Adds method `Closable.cancelCloseTimer()`
 - Adds method `Closable.isAutoClosable()`
