@@ -98,24 +98,34 @@ class Element {
       }
     }
 
-    // Define Z-Index
-    if (typeof this.options.zIndex === 'number') {
-      this.css({ 'z-index': Number.parseInt(this.options.zIndex, 10) });
-    }
+    // Add styles to elements in body only
+    if (this.element !== document.head
+      && !(this.element instanceof Window)
+      && !(this.element instanceof HTMLDocument)) {
+      // Define Z-Index
+      if (typeof this.options.zIndex === 'number') {
+        this.css({ 'z-index': Number.parseInt(this.options.zIndex, 10) });
+      }
 
-    // Set element styles
-    if (this.options.css) {
-      this.css(this.options.css);
-    }
+      // Set element styles
+      if (this.options.css) {
+        this.css(this.options.css);
+      }
 
-    // Add debug class
-    if (this.options.debug) {
-      this.addClass('debugging');
-    }
+      // Add debug class
+      if (this.options.debug) {
+        this.addClass('debugging');
+      }
 
-    // Add main class
-    if (this.options.mainClass) {
-      this.addClass(this.options.mainClass);
+      // Add animation class
+      if (this.options.animationClass) {
+        this.addClass(this.options.animationClass);
+      }
+
+      // Add main class
+      if (this.options.mainClass) {
+        this.addClass(this.options.mainClass);
+      }
     }
 
     // Add default events
@@ -2149,6 +2159,7 @@ class Element {
 }
 
 Element.prototype.options = {
+  animationClass: null,
   className: null,
   css: null,
   debug: false,
