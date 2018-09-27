@@ -1,6 +1,6 @@
 # Changelog
 
-## CURRENT
+## v0.13.0
 - Updates dependencies
 - Deprecates method `Closable.isOpened()`
 - Adds method `Closable.cancelCloseTimer()`

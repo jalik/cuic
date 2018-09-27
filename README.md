@@ -23,14 +23,15 @@ This is the most generic component that contains all the logic of any component,
 import Element from "cuit/dist/ui/element";
 
 const element = new Element({
-    className: null,
-    css: null,
-    debug: false,
-    maximized: false,
-    maximizedX: false,
-    maximizedY: false,
-    namespace: null,
-    parent: null
+  animationClass: null,
+  className: null,
+  css: null,
+  debug: false,
+  maximized: false,
+  maximizedX: false,
+  maximizedY: false,
+  namespace: null,
+  parent: null,
 });
 
 // Element methods
@@ -150,11 +151,12 @@ This component inherits from `Component`.
 import Button from "cuit/dist/ui/button";
 
 const button = new Button({
-    className: "btn-primary",
-    disabled: false,
-    label: "Submit",
-    title: "Save modifications",
-    type: "submit"
+  className: 'btn btn-default btn-secondary',
+  disabled: false,
+  label: null,
+  shortcut: null,
+  title: null,
+  type: 'button',
 });
 
 button.on("click", () => {
@@ -171,20 +173,28 @@ This component inherits from `Component`.
 ```js
 import Closable from "cuit/dist/ui/closable";
 
-const component = new Closable({
-    closable: false,
-    opened: true
+const closable = new Closable({
+  autoClose: false,
+  autoCloseDelay: 0,
+  autoRemove: false,
+  closable: true,
+  closed: false,
+  closeOnBlur: false,
+  closeOnFocus: false,
+  closeOnMouseLeave: false,
 });
 
 // Closable methods
-component.close(Function);
-component.isOpened();
-component.onClose(Function);
-component.onClosed(Function);
-component.onOpen(Function);
-component.onOpened(Function);
-component.open(Function);
-component.toggle(Function);
+closable.autoClose(Function);
+closable.close(Function);
+closable.isClosable();
+closable.isClosed();
+closable.onClose(Function);
+closable.onClosed(Function);
+closable.onOpen(Function);
+closable.onOpened(Function);
+closable.open(Function);
+closable.toggle(Function);
 ```
 
 ### Dialog
@@ -198,26 +208,31 @@ import Button from "cuit/dist/ui/button";
 import Dialog from "cuit/dist/ui/dialog";
 
 const dialog = new Dialog({
-    autoClose: false,
-    autoRemove: true,
-    autoResize: true,
-    buttons: [Button],
-    closable: true,
-    closeButton: null,
-    closeButtonClass: "glyphicon glyphicon-remove-sign",
-    content: null,
-    contentHeight: null,
-    contentWidth: null,
-    movable: true,
-    maximized: false,
-    modal: true,
-    namespace: "dialog",
-    opened: false,
-    parent: document.body,
-    position: "center",
-    resizable: false,
-    title: null,
-    zIndex: 10
+  animationClass: 'cc-anim-fade cc-anim-resize',
+  autoClose: false,
+  autoCloseDelay: 0,
+  autoRemove: true,
+  autoResize: true,
+  buttons: [],
+  closable: true,
+  closeButton: null,
+  closeButtonClass: 'glyphicon glyphicon-remove-sign',
+  closed: true,
+  closeOnBlur: false,
+  closeOnFocus: false,
+  closeOnMouseLeave: false,
+  content: null,
+  contentHeight: null,
+  contentWidth: null,
+  movable: true,
+  maximized: false,
+  modal: true,
+  namespace: 'dialog',
+  parent: document.body,
+  position: 'center',
+  resizable: false,
+  title: null,
+  zIndex: 10,
 });
 
 // Dialog methods
@@ -243,14 +258,17 @@ import Button from "cuit/dist/ui/button";
 import Guide from "cuit/dist/ui/guide";
 
 const guide = new Guide({
-    anchor: "top",
-    autoClose: true,
-    autoRemove: false,
-    content: null,
-    opened: false,
-    steps: [Button],
-    target: null,
-    zIndex: 9
+  anchor: 'top',
+  autoClose: false,
+  autoRemove: false,
+  autoScroll: true,
+  autoStart: false,
+  closed: true,
+  content: null,
+  duration: 5000,
+  namespace: 'guide',
+  steps: null,
+  zIndex: 9,
 });
 
 // Guide methods
@@ -279,13 +297,13 @@ import Element from "cuit/dist/ui/element";
 import Movable from "cuit/dist/ui/movable";
 
 const movable = new Movable({
-    handle: null,
-    handleClassName: "movable-handle",
-    constraintToParent: true,
-    horizontally: true,
-    namespace: "movable",
-    rootOnly: true,
-    vertically: true
+  constraintToParent: true,
+  handle: null,
+  handleClassName: 'cc-movable-handle',
+  horizontally: true,
+  namespace: 'movable',
+  rootOnly: true,
+  vertically: true,
 });
 
 // Resizable methods
@@ -305,17 +323,22 @@ This component inherits from `Closable`.
 import Notification from "cuit/dist/ui/notification";
 
 const notification = new Notification({
-    autoClose: true,
-    autoRemove: true,
-    closable: true,
-    closeButton: null,
-    closeButtonClass: "glyphicon glyphicon-remove-sign",
-    content: null,
-    duration: 2000,
-    opened: false,
-    parent: document.body,
-    position: "center",
-    zIndex: 100
+  animationClass: 'cc-anim-fade cc-anim-zoom',
+  autoClose: true,
+  autoCloseDelay: 2000,
+  autoRemove: true,
+  closable: true,
+  closed: true,
+  closeButton: '',
+  closeButtonClass: 'glyphicon glyphicon-remove-sign',
+  closeOnBlur: false,
+  closeOnFocus: false,
+  closeOnMouseLeave: true,
+  content: null,
+  namespace: 'notification',
+  parent: document.body,
+  position: 'center',
+  zIndex: 100,
 });
 
 // Notification methods
@@ -335,8 +358,9 @@ This component inherits from `Group`.
 import NotificationStack from "cuit/dist/ui/notification-stack";
 
 const stack = new NotificationStack({
-    position: "right top",
-    zIndex: 10
+  namespace: 'notification-stack',
+  position: 'right top',
+  zIndex: 10,
 });
 
 // NotificationStack methods
@@ -354,10 +378,17 @@ This component inherits from `Closable`.
 import Overlay from "cuit/dist/ui/overlay";
 
 const overlay = new Overlay({
-    autoClose: false,
-    autoRemove: false,
-    opened: false,
-    zIndex: 1
+  animationClass: 'cc-anim-fade',
+  autoClose: false,
+  autoCloseDelay: 0,
+  autoRemove: false,
+  closable: false,
+  closed: false,
+  closeOnBlur: false,
+  closeOnFocus: false,
+  closeOnMouseLeave: false,
+  namespace: 'overlay',
+  zIndex: 1,
 });
 
 // Overlay methods
@@ -375,18 +406,19 @@ This component inherits from `Closable`.
 import Panel from "cuit/dist/ui/panel";
 
 const panel = new Panel({
-    autoClose: false,
-    closable: true,
-    closeButton: null,
-    closeButtonClass: "glyphicon glyphicon-remove-sign",
-    content: null,
-    footer: null,
-    maximized: false,
-    opened: false,
-    parent: null,
-    position: "left top",
-    title: null,
-    zIndex: 1
+  animationClass: 'cc-anim-fade cc-anim-slide',
+  closable: true,
+  closeButton: null,
+  closeButtonClass: 'glyphicon glyphicon-remove-sign',
+  closed: true,
+  content: null,
+  footer: null,
+  maximized: false,
+  namespace: 'panel',
+  parent: null,
+  position: 'left top',
+  title: null,
+  zIndex: 1,
 });
 
 // Panel methods
@@ -412,14 +444,22 @@ This component inherits from `Closable`.
 import Popup from "cuit/dist/ui/popup";
 
 const popup = new Popup({
-    anchor: "top",
-    autoClose: true,
-    autoRemove: false,
-    buttons: [],
-    content: null,
-    opened: false,
-    target: null,
-    zIndex: 9
+  anchor: 'top',
+  animationClass: 'cc-anim-zoom',
+  autoClose: false,
+  autoCloseDelay: 0,
+  autoRemove: false,
+  buttons: [],
+  closable: true,
+  closed: true,
+  closeOnBlur: true,
+  closeOnFocus: false,
+  closeOnMouseLeave: false,
+  content: null,
+  namespace: 'popup',
+  target: null,
+  title: null,
+  zIndex: 9,
 });
 
 // Popup methods
@@ -446,15 +486,15 @@ This component inherits from `Component`.
 import Resizable from "cuit/dist/ui/resizable";
 
 const resizable = new Resizable({
-    handleSize: 10,
-    horizontally: true,
-    keepRatio: false,
-    maxHeight: null,
-    maxWidth: null,
-    minHeight: 1,
-    minWidth: 1,
-    namespace: "resizable",
-    vertically: true
+  handleSize: 10,
+  horizontally: true,
+  keepRatio: false,
+  maxHeight: null,
+  maxWidth: null,
+  minHeight: 1,
+  minWidth: 1,
+  namespace: 'resizable',
+  vertically: true,
 });
 
 // Resizable methods
@@ -473,7 +513,8 @@ This component inherits from `Component`.
 import Selectable from "cuit/dist/ui/selectable";
 
 const selectable = new Selectable({
-    selected: false
+  namespace: 'selectable',
+  selected: false,
 });
 
 // Selectable methods
@@ -494,9 +535,10 @@ This component inherits from `Closable`.
 import Switcher from "cuit/dist/ui/switcher";
 
 const switcher = new Switcher({
-    autoStart: true,
-    delay: 3000,
-    repeat: true
+  autoStart: true,
+  delay: 3000,
+  namespace: 'switcher',
+  repeat: true,
 });
 
 // Switcher methods
@@ -523,12 +565,21 @@ This component inherits from `Closable`.
 import Tooltip from "cuit/dist/ui/tooltip";
 
 const tooltip = new Tooltip({
-    anchor: "right",
-    attribute: "title",
-    followPointer: true,
-    opened: false,
-    selector: "[title]",
-    zIndex: 100
+  anchor: 'right',
+  animationClass: 'cc-anim-zoom',
+  attribute: 'title',
+  autoClose: false,
+  autoCloseDelay: 0,
+  autoRemove: false,
+  closable: true,
+  closed: true,
+  closeOnBlur: false,
+  closeOnFocus: false,
+  closeOnMouseLeave: false,
+  followPointer: true,
+  namespace: 'tooltip',
+  selector: '[title]',
+  zIndex: 100,
 });
 
 // Tooltip methods
