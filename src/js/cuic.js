@@ -828,6 +828,7 @@ const Cuic = {
 
   /**
    * Returns the string converted to CamelCase
+   * todo remove this unused method
    * @param str
    * @return {string}
    */

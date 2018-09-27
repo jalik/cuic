@@ -78,6 +78,7 @@
     "webpack-cli": "^3.1.1"
   },
   "dependencies": {
-    "@jalik/extend": "^1.0.2"
+    "@jalik/extend": "^1.0.2",
+    "change-case": "^3.0.2"
   }
 }

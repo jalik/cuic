@@ -23,6 +23,7 @@
  */
 
 import { extend } from '@jalik/extend';
+import changeCase from 'change-case';
 import Cuic from '../cuic';
 import Events from '../utils/events';
 import Elements from './elements';
@@ -463,10 +464,10 @@ class Element {
    * @return {*}
    */
   border() {
-    const bottom = parseFloat(Cuic.getComputedStyle(this, 'border-bottom-width'));
-    const left = parseFloat(Cuic.getComputedStyle(this, 'border-left-width'));
-    const right = parseFloat(Cuic.getComputedStyle(this, 'border-right-width'));
-    const top = parseFloat(Cuic.getComputedStyle(this, 'border-top-width'));
+    const bottom = parseFloat(Cuic.getComputedStyle(this, 'borderBottomWidth'));
+    const left = parseFloat(Cuic.getComputedStyle(this, 'borderLeftWidth'));
+    const right = parseFloat(Cuic.getComputedStyle(this, 'borderRightWidth'));
+    const top = parseFloat(Cuic.getComputedStyle(this, 'borderTopWidth'));
     return {
       bottom,
       horizontal: left + right,
@@ -990,17 +991,9 @@ class Element {
 
         // Add new styles
         for (let i = 0; i < stylesLength; i += 1) {
-          let style = styleKeys[i];
+          // Rename dash-separated properties to camelCase
+          const style = changeCase.camelCase(styleKeys[i]);
           const value = newStyles[style];
-
-          // Rename dash-separated properties
-          if (style === 'z-index') {
-            style = 'zIndex';
-          } else if (style === 'max-height') {
-            style = 'maxHeight';
-          } else if (style === 'max-width') {
-            style = 'maxWidth';
-          }
 
           // Check if style is supported
           if (!(style in node.style)) {
@@ -1046,11 +1039,11 @@ class Element {
     let result = dataSet;
 
     if (typeof value !== 'undefined') {
-      dataSet[Cuic.toCamelCase(key)] = value;
+      dataSet[changeCase.camelCase(key)] = value;
       result = this;
     } else if (key !== null) {
       if (typeof key === 'string') {
-        result = dataSet[Cuic.toCamelCase(key)];
+        result = dataSet[changeCase.camelCase(key)];
       } else if (typeof key === 'object') {
         const attrs = Object.keys(key);
         const attrsLength = attrs.length;
@@ -1058,7 +1051,7 @@ class Element {
         for (let i = 0; i < attrsLength; i += 1) {
           const name = attrs[i];
 
-          dataSet[Cuic.toCamelCase(name)] = key[name];
+          dataSet[changeCase.camelCase(name)] = key[name];
         }
         result = this;
       }
@@ -1580,10 +1573,10 @@ class Element {
     let top = 0;
 
     if (!(this.node() instanceof Window)) {
-      bottom = parseFloat(Cuic.getComputedStyle(this, 'margin-bottom'));
-      left = parseFloat(Cuic.getComputedStyle(this, 'margin-left'));
-      right = parseFloat(Cuic.getComputedStyle(this, 'margin-right'));
-      top = parseFloat(Cuic.getComputedStyle(this, 'margin-top'));
+      bottom = parseFloat(Cuic.getComputedStyle(this, 'marginBottom'));
+      left = parseFloat(Cuic.getComputedStyle(this, 'marginLeft'));
+      right = parseFloat(Cuic.getComputedStyle(this, 'marginRight'));
+      top = parseFloat(Cuic.getComputedStyle(this, 'marginTop'));
     }
     return {
       bottom,
@@ -1885,10 +1878,10 @@ class Element {
     let top = 0;
 
     if (!(this.node() instanceof Window)) {
-      bottom = parseFloat(Cuic.getComputedStyle(this, 'padding-bottom'));
-      left = parseFloat(Cuic.getComputedStyle(this, 'padding-left'));
-      right = parseFloat(Cuic.getComputedStyle(this, 'padding-right'));
-      top = parseFloat(Cuic.getComputedStyle(this, 'padding-top'));
+      bottom = parseFloat(Cuic.getComputedStyle(this, 'paddingBottom'));
+      left = parseFloat(Cuic.getComputedStyle(this, 'paddingLeft'));
+      right = parseFloat(Cuic.getComputedStyle(this, 'paddingRight'));
+      top = parseFloat(Cuic.getComputedStyle(this, 'paddingTop'));
     }
     return {
       bottom,
