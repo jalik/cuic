@@ -990,8 +990,17 @@ class Element {
 
         // Add new styles
         for (let i = 0; i < stylesLength; i += 1) {
-          const style = styleKeys[i];
+          let style = styleKeys[i];
           const value = newStyles[style];
+
+          // Rename dash-separated properties
+          if (style === 'z-index') {
+            style = 'zIndex';
+          } else if (style === 'max-height') {
+            style = 'maxHeight';
+          } else if (style === 'max-width') {
+            style = 'maxWidth';
+          }
 
           // Check if style is supported
           if (!(style in node.style)) {
