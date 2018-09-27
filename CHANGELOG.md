@@ -2,8 +2,17 @@
 
 ## CURRENT
 - Updates dependencies
-- Deprecates method `Closeable.isOpened()`
-- Adds method `Closeable.isClosed()`
+- Deprecates method `Closable.isOpened()`
+- Adds method `Closable.cancelCloseTimer()`
+- Adds method `Closable.isAutoClosable()`
+- Adds method `Closable.isClosable()`
+- Adds method `Closable.isClosed()`
+- Adds option `autoClose` in `Closable` components
+- Adds option `autoCloseDelay` in `Closable` components
+- Adds option `autoRemove` in `Closable` components
+- Adds option `closeOnBlur` in `Closable` components
+- Adds option `closeOnFocus` in `Closable` components
+- Adds option `closeOnMouseLeave` in `Closable` components
 - Renames option `opened` to `closed` in all components
 
 ## v0.12.1

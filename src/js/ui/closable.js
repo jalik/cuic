@@ -23,6 +23,7 @@
  */
 
 import { extend } from '@jalik/extend';
+import Cuic from '../cuic';
 import Component from './component';
 
 class Closable extends Component {
@@ -32,10 +33,58 @@ class Closable extends Component {
 
     super(node, attributes, opt);
 
-    // Add closable class
+    // Add closable class todo what is the purpose of this option ?
     if (this.options.closable) {
       this.addClass('cc-closable');
     }
+
+    // Public attributes
+    this.closeTimer = null;
+
+    // Close when component is clicked
+    this.on('click', () => {
+      if (this.options.closeOnFocus) {
+        this.close();
+      }
+    });
+
+    // Close notification when mouse is out
+    this.on('mouseleave', (ev) => {
+      if (this.options.closeOnMouseLeave) {
+        if (ev.currentTarget === this.node()) {
+          this.autoClose();
+        }
+      }
+    });
+
+    // Define the close on blur callback
+    const closeOnBlurCallback = (ev) => {
+      if (!this.isClosed() && this.options.closeOnBlur) {
+        if (ev.target !== this.node() && !Cuic.element(ev.target).isChildOf(this)) {
+          this.close();
+        }
+      }
+    };
+
+    this.onClosed(() => {
+      // Ignore future click events for autoclose
+      // since the component will be closed.
+      Cuic.off('click', document, closeOnBlurCallback);
+
+      // Remove component from the DOM
+      if (this.options.autoRemove) {
+        this.remove();
+      }
+    });
+
+    this.onOpened(() => {
+      // Close the component when the user clicks outside of it
+      Cuic.on('click', document, closeOnBlurCallback);
+
+      // Starts the auto close timer
+      // if component closes automatically.
+      this.autoClose();
+    });
 
     // Open or hide the component
     if (typeof this.options.closed !== 'undefined') {
@@ -44,6 +93,35 @@ class Closable extends Component {
       } else {
         this.open();
       }
+    }
+  }
+
+  /**
+   * Auto closes the component
+   * @param custom delay to close
+   */
+  autoClose(delay) {
+    if (!this.hasClass('closed')) {
+      this.cancelCloseTimer();
+
+      if (this.isAutoClosable()) {
+        this.closeTimer = setTimeout(() => {
+          // Check again if the component is auto closable,
+          // this could have changed during the delay.
+          if (this.isAutoClosable()) {
+            this.close();
+          }
+        }, (typeof delay === 'number' ? delay : this.options.autoCloseDelay));
+      }
+    }
+  }
+
+  /**
+   * Cancels the close timer
+   */
+  cancelCloseTimer() {
+    if (this.closeTimer !== null) {
+      clearTimeout(this.closeTimer);
     }
   }
 
@@ -72,6 +150,22 @@ class Closable extends Component {
   }
 
   /**
+   * Checks if the component closes automatically
+   * @return {boolean}
+   */
+  isAutoClosable() {
+    return this.options.autoClose === true;
+  }
+
+  /**
+   * Checks if the component is closable
+   * @return {boolean}
+   */
+  isClosable() {
+    return this.options.closable === true;
+  }
+
+  /**
    * Checks if the component is closed
    * @return {boolean}
    */
@@ -86,7 +180,7 @@ class Closable extends Component {
    */
   isOpened() {
     // eslint-disable-next-line no-console
-    console.warn('Closeable.isOpened() is deprecated, use Closeable.isClosed() instead');
+    console.warn('Closable.isOpened() is deprecated, use Closable.isClosed() instead');
     return this.hasClass('opened') || !this.hasClass('closed');
   }
 
@@ -128,6 +222,7 @@ class Closable extends Component {
    * @return {Closable}
    */
   open(callback) {
+    this.cancelCloseTimer();
     this.show();
     this.debug('open');
     this.events.trigger('open');
@@ -162,8 +257,14 @@ class Closable extends Component {
 }
 
 Closable.prototype.options = {
-  closable: false,
+  autoClose: false,
+  autoCloseDelay: 0,
+  autoRemove: false,
+  closable: true,
   closed: false,
+  closeOnBlur: false,
+  closeOnFocus: false,
+  closeOnMouseLeave: false,
 };
 
 export default Closable;

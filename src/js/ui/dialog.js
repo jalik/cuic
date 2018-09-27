@@ -74,7 +74,7 @@ class Dialog extends Closable {
     // Create the overlay
     this.overlay = new Overlay({
       autoClose: false,
-      autoRemove: false,
+      autoRemove: this.options.autoRemove,
       className: 'cc-overlay cc-dialog-overlay',
       closed: true,
     }).appendTo(this.options.parent);
@@ -195,13 +195,6 @@ class Dialog extends Closable {
       }),
     };
 
-    // Close dialog when overlay is clicked
-    this.overlay.on('click', () => {
-      if (this.options.autoClose) {
-        this.close();
-      }
-    });
-
     this.on('click', (ev) => {
       // Close button
       if (Cuic.element(ev.target).hasClass('btn-close')) {
@@ -210,21 +203,11 @@ class Dialog extends Closable {
       }
     });
 
-    // Called when dialog is closing
     this.onClose(() => {
-      this.overlay.options.autoRemove = this.options.autoRemove;
-
-      // Auto close overlay
+      // Close overlay when dialog is closing
       if (!this.overlay.isClosed()) {
+        this.overlay.options.autoRemove = this.options.autoRemove;
         this.overlay.close();
-      }
-    });
-
-    // Called when dialog is closed
-    this.onClosed(() => {
-      if (this.options.autoRemove) {
-        this.remove();
-        this.overlay.remove();
       }
     });
 
@@ -448,6 +431,7 @@ class Dialog extends Closable {
 
 Dialog.prototype.options = {
   autoClose: false,
+  autoCloseDelay: 0,
   autoRemove: true,
   autoResize: true,
   buttons: [],
@@ -455,6 +439,9 @@ Dialog.prototype.options = {
   closeButton: null,
   closeButtonClass: 'glyphicon glyphicon-remove-sign',
   closed: true,
+  closeOnBlur: false,
+  closeOnFocus: false,
+  closeOnMouseLeave: false,
   content: null,
   contentHeight: null,
   contentWidth: null,

@@ -110,25 +110,9 @@ class Tooltip extends Closable {
       }
     });
 
-    const autoClose = (ev) => {
-      if (!this.isClosed() && this.options.autoClose) {
-        if (ev.target !== this.node() && !Cuic.element(ev.target).isChildOf(this)) {
-          this.close();
-        }
-      }
-    };
-
     // Reposition tail when tooltip position change
     this.onAnchored(() => {
       this.updateTail();
-    });
-
-    this.onClosed(() => {
-      Cuic.off('click', document, autoClose);
-
-      if (this.options.autoRemove) {
-        this.remove();
-      }
     });
 
     this.onOpen(() => {
@@ -139,11 +123,6 @@ class Tooltip extends Closable {
         const anchorPoint = target.data('anchor-point') || this.options.anchorPoint;
         this.anchor(anchor, anchorPoint, target);
       }
-    });
-
-    this.onOpened(() => {
-      // Close the popup when the user clicks outside of it
-      Cuic.on('click', document, autoClose);
     });
 
     // Remove element from list
@@ -218,7 +197,14 @@ class Tooltip extends Closable {
 Tooltip.prototype.options = {
   anchor: 'right',
   attribute: 'title',
+  autoClose: false,
+  autoCloseDelay: 0,
+  autoRemove: false,
+  closable: true,
   closed: true,
+  closeOnBlur: false,
+  closeOnFocus: false,
+  closeOnMouseLeave: false,
   followPointer: true,
   namespace: 'tooltip',
   selector: '[title]',

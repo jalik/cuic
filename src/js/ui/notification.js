@@ -40,9 +40,6 @@ class Notification extends Closable {
     // Create element
     super('div', { className: opt.className }, opt);
 
-    // Public attributes
-    this.closeTimer = null;
-
     // Add content
     this.content = new Element('div', {
       className: 'cc-notification-content',
@@ -56,16 +53,9 @@ class Notification extends Closable {
       role: 'button',
     }).addClass('btn-close').appendTo(this);
 
-    // Avoid closing notification when mouse is over
+    // Avoid closing the notification when mouse is over
     this.on('mouseenter', () => {
-      clearTimeout(this.closeTimer);
-    });
-
-    // Close notification when mouse is out
-    this.on('mouseleave', (ev) => {
-      if (ev.currentTarget === this.node()) {
-        this.autoClose();
-      }
+      this.open();
     });
 
     this.on('click', (ev) => {
@@ -76,18 +66,8 @@ class Notification extends Closable {
       }
     });
 
-    this.onClosed(() => {
-      if (this.options.autoRemove) {
-        this.remove();
-      }
-    });
-
     this.onOpen(() => {
       this.align(this.options.position);
-    });
-
-    this.onOpened(() => {
-      this.autoClose();
     });
 
     Cuic.onWindowResized(() => {
@@ -105,18 +85,6 @@ class Notification extends Closable {
 
     // Add element to collection
     Notifications.add(this);
-  }
-
-  /**
-   * Auto closes the notification
-   */
-  autoClose() {
-    clearTimeout(this.closeTimer);
-    this.closeTimer = setTimeout(() => {
-      if (this.options.autoClose) {
-        this.close();
-      }
-    }, this.options.duration);
   }
 
   /**
@@ -140,13 +108,16 @@ class Notification extends Closable {
 
 Notification.prototype.options = {
   autoClose: true,
+  autoCloseDelay: 2000,
   autoRemove: true,
   closable: true,
+  closed: true,
   closeButton: '',
   closeButtonClass: 'glyphicon glyphicon-remove-sign',
-  closed: true,
+  closeOnBlur: false,
+  closeOnFocus: false,
+  closeOnMouseLeave: true,
   content: null,
-  duration: 2000,
   namespace: 'notification',
   parent: document.body,
   position: 'center',

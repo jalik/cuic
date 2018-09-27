@@ -34,27 +34,18 @@ class Overlay extends Closable {
 
     // Create element
     super('div', { className: opt.className }, opt);
-
-    // Auto close when overlay is clicked
-    this.on('click', () => {
-      if (this.options.autoClose) {
-        this.close();
-      }
-    });
-
-    // Called when overlay is closed
-    this.onClosed(() => {
-      if (this.options.autoRemove) {
-        this.remove();
-      }
-    });
   }
 }
 
 Overlay.prototype.options = {
   autoClose: false,
+  autoCloseDelay: 0,
   autoRemove: false,
-  closed: true,
+  closable: false,
+  closed: false,
+  closeOnBlur: false,
+  closeOnFocus: false,
+  closeOnMouseLeave: false,
   namespace: 'overlay',
   zIndex: 1,
 };

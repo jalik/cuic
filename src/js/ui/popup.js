@@ -120,14 +120,6 @@ class Popup extends Closable {
       }),
     };
 
-    const autoClose = (ev) => {
-      if (!this.isClosed() && this.options.autoClose) {
-        if (ev.target !== this.node() && !Cuic.element(ev.target).isChildOf(this)) {
-          this.close();
-        }
-      }
-    };
-
     this.on('click', (ev) => {
       // Close button
       if (Cuic.element(ev.target).hasClass('btn-close')) {
@@ -141,25 +133,12 @@ class Popup extends Closable {
       this.updateTail();
     });
 
-    this.onClosed(() => {
-      Cuic.off('click', document, autoClose);
-
-      if (this.options.autoRemove) {
-        this.remove();
-      }
-    });
-
     this.onOpen(() => {
       const target = Cuic.element(this.options.target);
       // Get anchor from data attribute
       const anchor = target.data('anchor') || this.options.anchor;
       const anchorPoint = target.data('anchor-point') || this.options.anchorPoint;
       this.anchor(anchor, anchorPoint, target);
-    });
-
-    this.onOpened(() => {
-      // Close the popup when the user clicks outside of it
-      Cuic.on('click', document, autoClose);
     });
 
     Cuic.onWindowResized(() => {
@@ -322,10 +301,15 @@ class Popup extends Closable {
 
 Popup.prototype.options = {
   anchor: 'top',
-  autoClose: true,
+  autoClose: false,
+  autoCloseDelay: 0,
   autoRemove: false,
   buttons: [],
+  closable: true,
   closed: true,
+  closeOnBlur: true,
+  closeOnFocus: false,
+  closeOnMouseLeave: false,
   content: null,
   namespace: 'popup',
   target: null,

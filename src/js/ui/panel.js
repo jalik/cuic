@@ -213,12 +213,6 @@ class Panel extends Closable {
       this.resizeContent();
     });
 
-    // todo move this code in the closeable class
-    this.onOpened(() => {
-      // Close the panel when the user clicks outside of it
-      Cuic.on('click', document, autoClose);
-    });
-
     Cuic.onWindowResized(() => {
       if (this.isInDOM()) {
         // panel._disableTransitions();
