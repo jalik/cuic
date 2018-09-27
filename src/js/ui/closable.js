@@ -33,13 +33,13 @@ class Closable extends Component {
 
     super(node, attributes, opt);
 
+    // Public attributes
+    this.closeTimer = null;
+
     // Add closable class todo what is the purpose of this option ?
     if (this.options.closable) {
       this.addClass('cc-closable');
     }
-
-    // Public attributes
-    this.closeTimer = null;
 
     // Close when component is clicked
     this.on('click', () => {
@@ -57,48 +57,22 @@ class Closable extends Component {
       }
     });
 
-    // Define the close on blur callback
-    const closeOnBlurCallback = (ev) => {
-      if (!this.isClosed() && this.options.closeOnBlur) {
-        if (ev.target !== this.node() && !Cuic.element(ev.target).isChildOf(this)) {
-          this.close();
-        }
-      }
-    };
-
-    this.onClosed(() => {
-      // Ignore future click events for autoclose
-      // since the component will be closed.
-      Cuic.off('click', document, closeOnBlurCallback);
-
-      // Remove component from the DOM
-      if (this.options.autoRemove) {
-        this.remove();
-      }
-    });
-
-    this.onOpened(() => {
-      // Close the component when the user clicks outside of it
-      Cuic.on('click', document, closeOnBlurCallback);
-
-      // Starts the auto close timer
-      // if component closes automatically.
-      this.autoClose();
-    });
+    // Set element position
+    // if (this.parentNode() === document.body) {
+    //   this.css({ position: 'absolute' });
+    // }
 
     // Open or hide the component
-    if (typeof this.options.closed !== 'undefined') {
-      if ([true, 1, 'true', '1', 'yes'].indexOf(this.options.closed) !== -1) {
-        this.close();
-      } else {
-        this.open();
-      }
+    if (this.options.closed === true) {
+      this.close();
+    } else {
+      this.open();
     }
   }
 
   /**
    * Auto closes the component
-   * @param custom delay to close
+   * @param delay custom delay in milliseconds
    */
   autoClose(delay) {
     if (!this.hasClass('closed')) {
@@ -141,12 +115,32 @@ class Closable extends Component {
         this.events.trigger('closed', ev);
         this.hide();
 
+        // Ignore future click events for autoclose
+        // since the component will be closed.
+        Cuic.off('click', document, (clickEvent) => {
+          this.closeOnBlurCallback(clickEvent);
+        });
+
+        // Remove component from the DOM
+        if (this.options.autoRemove) {
+          this.remove();
+        }
+
         if (typeof callback === 'function') {
           callback.call(this, ev);
         }
       }
     });
     return this;
+  }
+
+  // Define the close on blur callback
+  closeOnBlurCallback(ev) {
+    if (!this.isClosed() && this.options.closeOnBlur) {
+      if (ev.target !== this.node() && !Cuic.element(ev.target).isChildOf(this)) {
+        this.close();
+      }
+    }
   }
 
   /**
@@ -232,6 +226,14 @@ class Closable extends Component {
       if (!this.isClosed()) {
         this.debug('opened');
         this.events.trigger('opened', ev);
+
+        // Close the component when the user clicks outside of it
+        Cuic.on('click', document, (clickEvent) => {
+          this.closeOnBlurCallback(clickEvent);
+        });
+
+        // Starts the auto close timer if auto close is enabled.
+        this.autoClose();
 
         if (typeof callback === 'function') {
           callback.call(this, ev);

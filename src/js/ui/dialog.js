@@ -60,24 +60,10 @@ class Dialog extends Closable {
       mainClass: 'cc-dialog',
     });
 
-    // Create element
     super('div', {
       className: opt.className,
       role: 'dialog',
     }, opt);
-
-    // Set dialog position
-    if (this.parentNode() === document.body) {
-      this.css({ position: 'absolute' });
-    }
-
-    // Create the overlay
-    this.overlay = new Overlay({
-      autoClose: false,
-      autoRemove: this.options.autoRemove,
-      className: 'cc-overlay cc-dialog-overlay',
-      closed: true,
-    }).appendTo(this.options.parent);
 
     // Add header
     this.header = new Element('header', {
@@ -145,13 +131,13 @@ class Dialog extends Closable {
     }
 
     // Set content height
-    if (parseFloat(opt.contentHeight) > 0) {
-      this.content.css({ height: opt.contentHeight });
+    if (parseFloat(this.options.contentHeight) > 0) {
+      this.content.css({ height: this.options.contentHeight });
     }
 
     // Set content width
-    if (parseFloat(opt.contentWidth) > 0) {
-      this.content.css({ width: opt.contentWidth });
+    if (parseFloat(this.options.contentWidth) > 0) {
+      this.content.css({ width: this.options.contentWidth });
     }
 
     /**
@@ -204,14 +190,13 @@ class Dialog extends Closable {
     });
 
     this.onClose(() => {
-      // Close overlay when dialog is closing
-      if (!this.overlay.isClosed()) {
+      if (this.overlay) {
+        // Close overlay when dialog is closing
         this.overlay.options.autoRemove = this.options.autoRemove;
         this.overlay.close();
       }
     });
 
-    // Called when dialog is opening
     this.onOpen(() => {
       // Calculate z-index
       const zIndex = Math.max(this.options.zIndex, Dialogs.getCurrentZIndex() + 1);
@@ -220,17 +205,23 @@ class Dialog extends Closable {
       this.css({ 'z-index': zIndex });
       this.resizeContent();
 
-      // Open overlay
       if (this.options.modal) {
+        // Create the overlay within the same parent
+        this.overlay = new Overlay({
+          autoClose: false,
+          autoRemove: this.options.autoRemove,
+          className: 'cc-overlay cc-dialog-overlay',
+          closed: true,
+        }).appendTo(this.options.parent);
+
+        // Open overlay
         this.css({ 'z-index': zIndex + 1 });
         this.overlay.css({ 'z-index': zIndex });
         this.overlay.open();
       }
 
-      // Maximize or align the dialog
-      if (this.options.maximized) {
-        this.maximize();
-      } else {
+      // Align the dialog
+      if (!this.options.maximized) {
         this.align(this.options.position, {
           inScreen: true,
         });
@@ -257,22 +248,6 @@ class Dialog extends Closable {
         }
       });
     });
-
-    // Called when dialog is opened
-    // this.onOpened((ev) => {
-    // // todo wait images to be loaded to resize content
-    // let images = this.find("img");
-    //
-    // if (images.length > 0) {
-    //     // Position the dialog when images are loaded
-    //     images.off(ns("load")).on(ns("load"), () => {
-    //         this.resizeContent();
-    //     });
-    // } else {
-    //     // Position the dialog in the wrapper
-    //     this.resizeContent();
-    // }
-    // });
 
     // Remove dialog from list
     this.onRemoved(() => {
