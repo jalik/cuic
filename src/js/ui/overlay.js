@@ -38,6 +38,7 @@ class Overlay extends Closable {
 }
 
 Overlay.prototype.options = {
+  animationClass: 'cc-anim-fade',
   autoClose: false,
   autoCloseDelay: 0,
   autoRemove: false,

@@ -7,6 +7,7 @@
 - Adds method `Closable.isAutoClosable()`
 - Adds method `Closable.isClosable()`
 - Adds method `Closable.isClosed()`
+- Adds option `animationClass` in all components
 - Adds option `autoClose` in `Closable` components
 - Adds option `autoCloseDelay` in `Closable` components
 - Adds option `autoRemove` in `Closable` components

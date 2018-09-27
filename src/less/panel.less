@@ -22,24 +22,18 @@
  * SOFTWARE.
  */
 
+body > .cc-panel {
+  position: fixed;
+}
+
 .cc-panel {
   background-color: @background-color;
-  border: solid 1px #ccc;
+  border: solid 1px #CCCCCC;
   box-shadow: @shadow;
   margin: @margin;
   position: absolute;
   transition-property: background, opacity, height, width, bottom, left, right, top, transform;
   z-index: 1;
-}
-
-body > .cc-panel {
-  position: fixed;
-}
-
-.cc-panel.closed {
-}
-
-.cc-panel.opened {
 }
 
 .cc-panel-content {
@@ -50,13 +44,13 @@ body > .cc-panel {
 }
 
 .cc-panel-footer {
-  color: #888;
+  color: #888888;
   //font-size: 0.8em;
   padding: @text-padding;
 }
 
 .cc-panel-header {
-  border-bottom: solid 3px #57a0be;
+  border-bottom: solid 3px #57A0BE;
   padding: @text-padding;
 }
 

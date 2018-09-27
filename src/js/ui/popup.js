@@ -301,6 +301,7 @@ class Popup extends Closable {
 
 Popup.prototype.options = {
   anchor: 'top',
+  animationClass: 'cc-anim-zoom',
   autoClose: false,
   autoCloseDelay: 0,
   autoRemove: false,

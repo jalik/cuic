@@ -37,3 +37,91 @@
   transition-duration: @anim-open-duration;
   transition-timing-function: @anim-open-curve;
 }
+
+// Fade
+
+.cc-anim-fade.closed {
+  opacity: 0 !important;
+}
+
+.cc-anim-fade.opened {
+  opacity: 1 !important;
+}
+
+// Resize
+
+.cc-anim-resize.closed {
+  -webkit-transform: perspective(1000px) scale(0.8) !important;
+  -moz-transform: perspective(1000px) scale(0.8) !important;
+  -ms-transform: perspective(1000px) scale(0.8) !important;
+  -o-transform: perspective(1000px) scale(0.8) !important;
+  transform: perspective(1000px) scale(0.8) !important;
+}
+
+.cc-anim-resize.opened {
+  -webkit-transform: scale(1) !important;
+  -moz-transform: scale(1) !important;
+  -ms-transform: scale(1) !important;
+  -o-transform: scale(1) !important;
+  transform: scale(1) !important;
+}
+
+// Slide
+
+.cc-anim-slide.aligned-bottom.closed,
+.cc-anim-slide-y.aligned-bottom.closed {
+  bottom: -100% !important;
+}
+
+.cc-anim-slide.aligned-bottom.opened,
+.cc-anim-slide-y.aligned-bottom.opened {
+  bottom: 0 !important;
+}
+
+.cc-anim-slide.aligned-left.closed,
+.cc-anim-slide-x.aligned-left.closed {
+  left: -100% !important;
+}
+
+.cc-anim-slide.aligned-left.opened,
+.cc-anim-slide-x.aligned-left.opened {
+  left: 0 !important;
+}
+
+.cc-anim-slide.aligned-right.closed,
+.cc-anim-slide-x.aligned-right.closed {
+  right: -100% !important;
+}
+
+.cc-anim-slide.aligned-right.opened,
+.cc-anim-slide-x.aligned-right.opened {
+  right: 0 !important;
+}
+
+.cc-anim-slide.aligned-top.closed,
+.cc-anim-slide-y.aligned-top.closed {
+  top: -100% !important;
+}
+
+.cc-anim-slide.aligned-top.opened,
+.cc-anim-slide-y.aligned-top.opened {
+  top: 0 !important;
+}
+
+// Zoom
+
+.cc-anim-zoom.closed {
+  -webkit-transform: scale(0) !important;
+  -moz-transform: scale(0) !important;
+  -ms-transform: scale(0) !important;
+  -o-transform: scale(0) !important;
+  transform: scale(0) !important;
+}
+
+.cc-anim-zoom.opened {
+  -webkit-transform: scale(1) !important;
+  -moz-transform: scale(1) !important;
+  -ms-transform: scale(1) !important;
+  -o-transform: scale(1) !important;
+  transform: scale(1) !important;
+}

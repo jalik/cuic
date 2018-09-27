@@ -430,6 +430,7 @@ class Dialog extends Closable {
 }
 
 Dialog.prototype.options = {
+  animationClass: 'cc-anim-fade cc-anim-resize',
   autoClose: false,
   autoCloseDelay: 0,
   autoRemove: true,

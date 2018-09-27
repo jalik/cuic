@@ -22,6 +22,10 @@
  * SOFTWARE.
  */
 
+body > .cc-notification {
+  position: fixed;
+}
+
 .cc-notification {
   background-color: @background-color-inverse;
   border-radius: @border-radius;
@@ -36,21 +40,7 @@
   z-index: 100;
 }
 
-body > .cc-notification {
-  position: fixed;
-}
-
-.cc-notification.closed {
-  opacity: 0;
-  transform: scale(0);
-}
-
-.cc-notification.opened {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.cc-notification.opened:hover {
+.cc-notification:hover {
   background-color: rgba(50, 50, 50, 0.9);
 }
 
@@ -68,9 +58,4 @@ body > .cc-notification {
   position: absolute;
   top: 0;
   right: 0;
-}
-
-.cc-notification .btn-close:focus,
-.cc-notification .btn-close:hover {
-  //color: rgba(255, 255, 255, 0.7);
 }

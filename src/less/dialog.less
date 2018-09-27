@@ -22,6 +22,10 @@
  * SOFTWARE.
  */
 
+body > .cc-dialog {
+  position: fixed;
+}
+
 .cc-dialog {
   background-color: @background-color;
   border-radius: @border-radius;
@@ -33,22 +37,8 @@
   z-index: 10;
 }
 
-body > .cc-dialog {
-  position: fixed;
-}
-
-.cc-dialog.closed {
-  opacity: 0;
-  transform: perspective(1000px) scale(0.8);
-}
-
 .cc-dialog.cc-movable {
   position: absolute !important;
-}
-
-.cc-dialog.opened {
-  opacity: 1;
-  transform: perspective(1000px) scale(1);
 }
 
 .cc-dialog-content {
@@ -59,13 +49,13 @@ body > .cc-dialog {
 }
 
 .cc-dialog-footer {
-  border-top: solid 1px #eee;
+  border-top: solid 1px #EEEEEE;
   padding: @text-padding;
   text-align: right;
 }
 
 .cc-dialog-header {
-  border-bottom: solid 1px #eee;
+  border-bottom: solid 1px #EEEEEE;
   min-height: 56px;
   padding: @text-padding;
 }

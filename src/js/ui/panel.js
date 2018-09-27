@@ -340,7 +340,7 @@ class Panel extends Closable {
 }
 
 Panel.prototype.options = {
-  autoClose: false,
+  animationClass: 'cc-anim-fade',
   closable: true,
   closeButton: null,
   closeButtonClass: 'glyphicon glyphicon-remove-sign',

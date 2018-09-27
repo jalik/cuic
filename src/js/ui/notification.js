@@ -107,6 +107,7 @@ class Notification extends Closable {
 }
 
 Notification.prototype.options = {
+  animationClass: 'cc-anim-fade cc-anim-zoom',
   autoClose: true,
   autoCloseDelay: 2000,
   autoRemove: true,

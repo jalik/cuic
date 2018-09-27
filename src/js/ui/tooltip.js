@@ -196,6 +196,7 @@ class Tooltip extends Closable {
 
 Tooltip.prototype.options = {
   anchor: 'right',
+  animationClass: 'cc-anim-zoom',
   attribute: 'title',
   autoClose: false,
   autoCloseDelay: 0,

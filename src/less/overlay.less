@@ -22,6 +22,10 @@
  * SOFTWARE.
  */
 
+body > .cc-overlay {
+  position: fixed;
+}
+
 .cc-overlay {
   background-color: rgba(240, 240, 240, 0.5);
   display: block;
@@ -32,18 +36,4 @@
   position: absolute;
   transition-property: opacity, height, width, transform;
   z-index: 1;
-}
-
-body > .cc-overlay {
-  position: fixed;
-}
-
-.cc-overlay.closed {
-  opacity: 0;
-  transform: perspective(1000px);
-}
-
-.cc-overlay.opened {
-  opacity: 1;
-  transform: perspective(1000px);
 }
