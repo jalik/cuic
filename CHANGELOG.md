@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.13.1
+- Fixes application of CSS styles with dash in method `Cuic.css()`
+
 ## v0.13.0
 - Updates dependencies
 - Fixes positioning of method `Element.align()`

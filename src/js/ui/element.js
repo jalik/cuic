@@ -996,15 +996,16 @@ class Element {
         // Add new styles
         for (let i = 0; i < stylesLength; i += 1) {
           // Rename dash-separated properties to camelCase
-          const style = changeCase.camelCase(styleKeys[i]);
+          const style = styleKeys[i];
+          const camelCaseStyle = changeCase.camelCase(style);
           const value = newStyles[style];
 
           // Check if style is supported
-          if (!(style in node.style)) {
+          if (!(camelCaseStyle in node.style)) {
             // eslint-disable-next-line no-console
-            console.warn(`Style "${style}" is not supported by element.`, node);
+            console.warn(`Style "${camelCaseStyle}" is not supported by element.`, node);
           }
-          node.style[style] = value;
+          node.style[camelCaseStyle] = value;
         }
         return this;
       }
