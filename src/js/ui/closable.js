@@ -60,11 +60,6 @@ class Closable extends Component {
       }
     });
 
-    // Set element position
-    // if (this.parentNode() === document.body) {
-    //   this.css({ position: 'absolute' });
-    // }
-
     // Open or hide the component
     if (this.options.closed === true) {
       this.close();
@@ -78,18 +73,8 @@ class Closable extends Component {
    * @param delay custom delay in milliseconds
    */
   autoClose(delay) {
-    if (!this.hasClass('closed')) {
-      this.cancelCloseTimer();
-
-      if (this.isAutoClosable()) {
-        this.closeTimer = setTimeout(() => {
-          // Check again if the component is auto closable,
-          // this could have changed during the delay.
-          if (this.isAutoClosable()) {
-            this.close();
-          }
-        }, (typeof delay === 'number' ? delay : this.options.autoCloseDelay));
-      }
+    if (!this.hasClass('closed') && this.isAutoClosable()) {
+      this.closeAfterDelay((typeof delay === 'number' ? delay : this.options.autoCloseDelay));
     }
   }
 
@@ -133,6 +118,18 @@ class Closable extends Component {
       }
     });
     return this;
+  }
+
+  /**
+   * Closes the element after a delay in milliseconds
+   * @param delay
+   * @param callback
+   */
+  closeAfterDelay(delay, callback) {
+    this.cancelCloseTimer();
+    this.closeTimer = setTimeout(() => {
+      this.close(callback);
+    }, delay);
   }
 
   // Define the close on blur callback
@@ -223,7 +220,6 @@ class Closable extends Component {
     this.events.trigger('open');
     this.removeClass('closed');
     this.addClass('opened');
-
     this.once('transitionend', (ev) => {
       if (!this.isClosed()) {
         this.debug('opened');

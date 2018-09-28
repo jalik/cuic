@@ -1,5 +1,9 @@
 # Changelog
 
+## CURRENT
+- Fixes tooltip closing with option `followPointer: true` when mouse is over tooltip
+- Adds method `Closable.closeAfterDelay(delay, callback)`
+
 ## v0.13.1
 - Fixes application of CSS styles with dash in method `Cuic.css()`
 

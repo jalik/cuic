@@ -59,6 +59,7 @@ class Tooltip extends Closable {
       for (let i = 0; i < targets.length; i += 1) {
         const target = targets[i];
 
+        // Mouse is over a target
         if (ev.target === target.node()) {
           // Get stored tooltip content
           let content = target.data('tooltip');
@@ -85,28 +86,28 @@ class Tooltip extends Closable {
               this.appendTo(ev.target.parentNode);
             }
           }
+
+          // Display tooltip
           this.open();
 
-          // Close tooltip when mouse leaves area
           target.once('mouseleave', () => {
-            this.close();
+            // Close tooltip when mouse leaves area
+            this.closeAfterDelay(100);
           });
+
+          // Stop looping now because
+          // we found the current target.
           break;
+        } else if (ev.target === this.node() && this.options.followPointer) {
+          this.reAnchor([ev.pageX, ev.pageY]);
         }
       }
     });
 
     // Move tooltip when mouse moves and tooltip is opened
     Cuic.element(document).on('mousemove', (ev) => {
-      if (this.options.followPointer && !this.isHidden()) {
-        if (this.parentNode() !== document.body) {
-          this.appendTo(document.body);
-        }
-        const target = Cuic.element(this.currentTarget);
-        // Get anchor from data attribute
-        const anchor = target.data('anchor') || this.options.anchor;
-        const anchorPoint = target.data('anchor-point') || this.options.anchorPoint;
-        this.anchor(anchor, anchorPoint, [ev.pageX, ev.pageY]);
+      if (this.options.followPointer /* && !this.isHidden() && !this.isClosed() */) {
+        this.reAnchor([ev.pageX, ev.pageY]);
       }
     });
 
@@ -117,11 +118,7 @@ class Tooltip extends Closable {
 
     this.onOpen(() => {
       if (!this.options.followPointer) {
-        const target = Cuic.element(this.currentTarget);
-        // Get anchor from data attribute
-        const anchor = target.data('anchor') || this.options.anchor;
-        const anchorPoint = target.data('anchor-point') || this.options.anchorPoint;
-        this.anchor(anchor, anchorPoint, target);
+        this.reAnchor();
       }
     });
 
@@ -140,6 +137,18 @@ class Tooltip extends Closable {
    */
   getContent() {
     return this.content;
+  }
+
+  /**
+   * Re-Anchor element using the current options.
+   * @param target
+   */
+  reAnchor(target) {
+    const currentTarget = Cuic.element(this.currentTarget);
+    // Get anchor from data attribute
+    const anchor = currentTarget.data('anchor') || this.options.anchor;
+    const anchorPoint = currentTarget.data('anchor-point') || this.options.anchorPoint;
+    this.anchor(anchor, anchorPoint, (target || currentTarget));
   }
 
   /**
