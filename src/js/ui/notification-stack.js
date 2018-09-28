@@ -72,6 +72,7 @@ class NotificationStack extends Group {
 }
 
 NotificationStack.prototype.options = {
+  animationClass: 'cc-anim-fade',
   namespace: 'notification-stack',
   position: 'right top',
   zIndex: 10,
