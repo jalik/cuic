@@ -631,6 +631,8 @@ const Cuic = {
       }
     }
 
+    // fixme sometimes, no callback is executed, so components stays with opening class...
+
     const listener = (ev) => {
       const isTransitionOrAnimation = (event.indexOf('animation') !== -1 || event.indexOf('transition') !== -1);
 
