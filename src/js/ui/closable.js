@@ -54,7 +54,7 @@ class Closable extends Component {
     // Close notification when mouse is out
     this.on('mouseleave', (ev) => {
       if (this.options.closeOnMouseLeave) {
-        if (ev.currentTarget === this.node()) {
+        if (ev.currentTarget === this.node() && this.isAutoClosable()) {
           this.autoClose();
         }
       }
@@ -73,7 +73,7 @@ class Closable extends Component {
    * @param delay custom delay in milliseconds
    */
   autoClose(delay) {
-    if (!this.hasClass('closed') && this.isAutoClosable()) {
+    if (!this.isClosing() && !this.isClosed()) {
       this.closeAfterDelay((typeof delay === 'number' ? delay : this.options.autoCloseDelay));
     }
   }
@@ -95,15 +95,16 @@ class Closable extends Component {
   close(callback) {
     this.debug('close');
     this.events.trigger('close');
-    this.removeClass('opened');
-    this.addClass('closed');
+    this.addClass('closing closed');
+    this.removeClass('opening opened');
     this.once('transitionend', (ev) => {
-      if (this.isClosed()) {
+      if (this.isClosing()) {
         this.debug('closed');
+        this.removeClass('closing');
         this.events.trigger('closed', ev);
         this.hide();
 
-        // Ignore future click events for autoclose
+        // Ignore future click events for autoClose
         // since the component will be closed.
         Cuic.off('click', document, this.closeOnBlurCallback);
 
@@ -166,14 +167,27 @@ class Closable extends Component {
   }
 
   /**
+   * Checks if the component is closing
+   * @return {boolean}
+   */
+  isClosing() {
+    return this.hasClass('closing');
+  }
+
+  /**
    * Checks if the component is opened
-   * @deprecated use method isClosed() instead
    * @return {boolean}
    */
   isOpened() {
-    // eslint-disable-next-line no-console
-    console.warn('Closable.isOpened() is deprecated, use Closable.isClosed() instead');
-    return this.hasClass('opened') || !this.hasClass('closed');
+    return this.hasClass('opened');
+  }
+
+  /**
+   * Checks if the component is opening
+   * @return {boolean}
+   */
+  isOpening() {
+    return this.hasClass('opening');
   }
 
   /**
@@ -218,18 +232,21 @@ class Closable extends Component {
     this.show();
     this.debug('open');
     this.events.trigger('open');
-    this.removeClass('closed');
-    this.addClass('opened');
+    this.addClass('opening opened');
+    this.removeClass('closing closed');
     this.once('transitionend', (ev) => {
-      if (!this.isClosed()) {
+      if (this.isOpening()) {
         this.debug('opened');
+        this.removeClass('opening');
         this.events.trigger('opened', ev);
 
         // Close the component when the user clicks outside of it
         Cuic.on('click', document, this.closeOnBlurCallback);
 
         // Starts the auto close timer if auto close is enabled.
-        this.autoClose();
+        if (this.isAutoClosable()) {
+          this.autoClose();
+        }
 
         if (typeof callback === 'function') {
           callback.call(this, ev);
