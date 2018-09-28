@@ -191,6 +191,8 @@ class Element {
     this.removeClass([
       pfx('bottom'),
       pfx('center'),
+      pfx('center-x'),
+      pfx('center-y'),
       pfx('left'),
       pfx('right'),
       pfx('top'),
@@ -198,7 +200,11 @@ class Element {
 
     if (position === 'center') {
       // Centered vertically and horizontally
-      this.addClass(pfx('center'));
+      this.addClass([
+        pfx('center'),
+        pfx('center-x'),
+        pfx('center-y'),
+      ].join(' '));
     } else {
       // Vertical position
       if (position.indexOf('bottom') !== -1) {
@@ -227,7 +233,7 @@ class Element {
    * @return {Element}
    */
   align(position, options) {
-    if (this.isInDOM() && position !== '') {
+    if (typeof position === 'string' && position !== '') {
       const pos = this.css('position');
 
       if (['absolute', 'fixed'].indexOf(pos) !== -1) {
@@ -250,6 +256,7 @@ class Element {
 
   /**
    * Aligns element in its parent
+   * todo add more details to what and how this method behaves
    * @return {Element}
    */
   alignInParent() {
@@ -346,7 +353,7 @@ class Element {
    * @return {Element}
    */
   anchor(anchor, anchorPoint, target) {
-    if (anchor && anchor !== '') {
+    if (typeof anchor === 'string' && anchor !== '') {
       const isPixelCoordinate = target instanceof Array;
       let targetElm = target;
 
@@ -526,13 +533,10 @@ class Element {
     };
 
     // If the target is fixed, we use the window as parent
-    switch (this.css('position')) {
-      case 'fixed':
-        parent = windowElement;
-        scrollLeft = 0;
-        scrollTop = 0;
-        break;
-      default:
+    if (this.css('position') === 'fixed') {
+      parent = windowElement;
+      scrollLeft = 0;
+      scrollTop = 0;
     }
 
     let centerX = scrollLeft + Math.max(0, (parent.innerWidth() / 2) - (elWidth / 2));
@@ -1365,6 +1369,8 @@ class Element {
     if (this.options.position) {
       const pos = (position || '').split(' ');
       result = true;
+
+      // todo replace center by center-(x|y) if more than one position (ex: left center => center-y)
 
       for (let i = 0; i < pos.length; i += 1) {
         if (this.options.position.indexOf(pos[i]) === -1) {
