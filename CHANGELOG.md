@@ -2,6 +2,7 @@
 
 ## v0.14.0
 - Fixes tooltip closing with option `followPointer: true` when mouse is over tooltip
+- Fixes missing dependency `babel-core@7.0.0-bridge.0` in `package.json`
 - Adds classes `closing` and `opening` on component during animations
 - Adds method `Closable.closeAfterDelay(delay, callback)`
 - Adds method `Closable.isClosing()`
