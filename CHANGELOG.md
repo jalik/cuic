@@ -1,11 +1,12 @@
 # Changelog
 
-## CURRENT
+## v0.14.0
 - Fixes tooltip closing with option `followPointer: true` when mouse is over tooltip
 - Adds classes `closing` and `opening` on component during animations
 - Adds method `Closable.closeAfterDelay(delay, callback)`
 - Adds method `Closable.isClosing()`
 - Adds method `Closable.isOpening()`
+- Adds method `Elements.focus()`
 
 ## v0.13.1
 - Fixes application of CSS styles with dash in method `Cuic.css()`

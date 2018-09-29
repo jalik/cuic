@@ -249,6 +249,15 @@ class Dialog extends Closable {
       });
     });
 
+    this.onOpened(() => {
+      const autoFocusElement = this.find('[autofocus]').first();
+
+      // Places focus on first element with auto focus attribute
+      if (autoFocusElement) {
+        autoFocusElement.focus();
+      }
+    });
+
     // Remove dialog from list
     this.onRemoved(() => {
       Dialogs.remove(this);
