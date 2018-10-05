@@ -41,7 +41,7 @@
     "build": "npx gulp build",
     "lint": "npx eslint .",
     "lint-fix": "npx eslint --fix .",
-    "package": "npm test && npx webpack -p",
+    "package": "npm test && npx webpack --mode=production",
     "prepare": "npx gulp prepare",
     "prepublishOnly": "npm test",
     "test": "npx jest",
