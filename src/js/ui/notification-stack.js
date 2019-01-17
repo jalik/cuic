@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-import { extend } from '@jalik/extend';
+import extend from '@jalik/extend';
 import Cuic from '../cuic';
 import Group from './group';
 import Notification from './notification';

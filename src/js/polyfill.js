@@ -22,6 +22,15 @@
  * SOFTWARE.
  */
 
+// Add support for Number.parseFloat
+if (!Number || typeof Number.parseFloat === 'undefined') {
+  Number.parseFloat = window.parseFloat;
+}
+// Add support for Number.parseInt
+if (!Number || typeof Number.parseInt === 'undefined') {
+  Number.parseInt = window.parseInt;
+}
+
 /**
  * Element.matches()
  */

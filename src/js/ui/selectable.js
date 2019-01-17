@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-import { extend } from '@jalik/extend';
+import extend from '@jalik/extend';
 import Component from './component';
 
 class Selectable extends Component {

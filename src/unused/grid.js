@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-import { extend } from '@jalik/extend';
+import extend from '@jalik/extend';
 import Cuic from '../js/cuic';
 import Movable from '../js/ui/movable';
 import Resizable from '../js/ui/resizable';

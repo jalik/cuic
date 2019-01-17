@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-import { extend } from '@jalik/extend';
+import extend from '@jalik/extend';
 import Closable from './closable';
 
 class Overlay extends Closable {

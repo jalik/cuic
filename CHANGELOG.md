@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.14.1
+- Updates dependencies
+
 ## v0.14.0
 - Fixes tooltip closing with option `followPointer: true` when mouse is over tooltip
 - Fixes missing dependency `babel-core@7.0.0-bridge.0` in `package.json`

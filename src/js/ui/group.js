@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-import { extend } from '@jalik/extend';
+import extend from '@jalik/extend';
 import Collection from '../utils/collection';
 import Closable from './closable';
 import Element from './element';
