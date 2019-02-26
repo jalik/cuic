@@ -74,7 +74,11 @@ gulp.task('eslint', () => gulp.src([
 // .pipe(eslint.failAfterError())
 
 // Prepare files for production
-gulp.task('prepare', gulp.series('clean', 'eslint', 'build'));
+gulp.task('prepare', gulp.series(
+  'clean',
+  'build',
+  'eslint',
+));
 
 // Rebuild JS automatically
 gulp.task('watch:js', () => gulp.watch([
