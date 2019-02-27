@@ -22,11 +22,10 @@
  * SOFTWARE.
  */
 
-import Cuic from '../src/js/cuic';
+import * as Cuic from '../dist/cuic';
 
-describe('Cuic', () => {
-  it('should be importable from package', () => {
-    expect(typeof Cuic.options !== 'undefined').toEqual(true);
-    expect(typeof Cuic.element).toEqual('function');
+describe('asElement()', () => {
+  it('should be importable', () => {
+    expect(typeof Cuic.asElement).toEqual('function');
   });
 });

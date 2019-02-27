@@ -23,7 +23,7 @@
  */
 
 import extend from '@jalik/extend';
-import Cuic from '../cuic';
+import { asElement, onWindowResized } from '../cuic';
 import Collection from '../utils/collection';
 import Closable from './closable';
 import Element from './element';
@@ -106,12 +106,12 @@ class Panel extends Closable {
     // Handle click events on the component
     this.on('click', (ev) => {
       // Close button
-      if (Cuic.element(ev.target).hasClass('btn-close')) {
+      if (asElement(ev.target).hasClass('btn-close')) {
         ev.preventDefault();
         this.close();
       }
       // Toggle button
-      if (Cuic.element(ev.target).hasClass('btn-toggle')) {
+      if (asElement(ev.target).hasClass('btn-toggle')) {
         ev.preventDefault();
         this.toggle();
       }
@@ -204,7 +204,7 @@ class Panel extends Closable {
       this.resizeContent();
     });
 
-    Cuic.onWindowResized(() => {
+    onWindowResized(() => {
       if (this.isInDOM()) {
         // panel._disableTransitions();
         this.resizeContent();

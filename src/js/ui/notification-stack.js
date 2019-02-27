@@ -23,7 +23,7 @@
  */
 
 import extend from '@jalik/extend';
-import Cuic from '../cuic';
+import { onWindowResized } from '../cuic';
 import Group from './group';
 import Notification from './notification';
 
@@ -57,7 +57,7 @@ class NotificationStack extends Group {
       }
     });
 
-    Cuic.onWindowResized(() => {
+    onWindowResized(() => {
       if (this.isInDOM()) {
         this.resize();
         this.align(this.options.position);

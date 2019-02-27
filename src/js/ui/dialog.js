@@ -23,7 +23,8 @@
  */
 
 import extend from '@jalik/extend';
-import Cuic from '../cuic';
+import { asElement, onWindowResized } from '../cuic';
+import Keys from '../keys';
 import Collection from '../utils/collection';
 import Shortcut from '../utils/shortcut';
 import Button from './button';
@@ -153,7 +154,7 @@ class Dialog extends Closable {
         rootOnly: false,
       });
       // Ignore moving if button is clicked
-      this.movable.onMoveStart(ev => !Cuic.element(ev.target).hasClass('btn-close'));
+      this.movable.onMoveStart(ev => !asElement(ev.target).hasClass('btn-close'));
     }
 
     /**
@@ -174,7 +175,7 @@ class Dialog extends Closable {
     this.shortcuts = {
       close: new Shortcut({
         element: this,
-        keyCode: Cuic.keys.ESC,
+        keyCode: Keys.ESC,
         callback: () => {
           this.close();
         },
@@ -183,7 +184,7 @@ class Dialog extends Closable {
 
     this.on('click', (ev) => {
       // Close button
-      if (Cuic.element(ev.target).hasClass('btn-close')) {
+      if (asElement(ev.target).hasClass('btn-close')) {
         ev.preventDefault();
         this.close();
       }
@@ -242,7 +243,7 @@ class Dialog extends Closable {
         }
       }
 
-      Cuic.onWindowResized(() => {
+      onWindowResized(() => {
         if (this.isInDOM()) {
           this.resizeContent();
         }

@@ -23,7 +23,7 @@
  */
 
 import extend from '@jalik/extend';
-import Cuic from '../cuic';
+import { asNode, off, on } from '../cuic';
 
 class Shortcut {
   constructor(options) {
@@ -31,7 +31,7 @@ class Shortcut {
     this.options = extend({}, Shortcut.prototype.options, options);
 
     // Get the element
-    this.options.element = Cuic.node(this.options.element);
+    this.options.asElement = asNode(this.options.element);
 
     // Check options
     if (typeof this.options.callback !== 'function') {
@@ -50,7 +50,7 @@ class Shortcut {
   activate() {
     const { options } = this;
     const element = this.node();
-    Cuic.on('keydown', element, (ev) => {
+    on('keydown', element, (ev) => {
       if ((options.keyCode === ev.keyCode || options.key === ev.key || options.key === ev.code)
         && options.altKey === ev.altKey
         && options.ctrlKey === ev.ctrlKey
@@ -68,7 +68,7 @@ class Shortcut {
    * Deactivates the shortcut
    */
   deactivate() {
-    Cuic.off('keydown', this.node(), this.options.callback);
+    off('keydown', this.node(), this.options.callback);
   }
 
   /**
@@ -76,7 +76,7 @@ class Shortcut {
    * @return {HTMLElement}
    */
   node() {
-    return Cuic.node(this.options.element);
+    return asNode(this.options.element);
   }
 }
 
@@ -89,23 +89,6 @@ Shortcut.prototype.options = {
   key: null,
   keyCode: null,
   shiftKey: false,
-};
-
-Cuic.keys = {
-  BACKSPACE: 8,
-  DEL: 46,
-  DOWN: 40,
-  ENTER: 13,
-  ESC: 27,
-  INSERT: 45,
-  LEFT: 37,
-  MINUS: 109,
-  PAGE_UP: 33,
-  PAGE_DOWN: 34,
-  PLUS: 107,
-  RIGHT: 39,
-  TAB: 9,
-  UP: 38,
 };
 
 export default Shortcut;

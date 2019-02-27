@@ -23,7 +23,7 @@
  */
 
 import extend from '@jalik/extend';
-import Cuic from '../cuic';
+import { asElement, screenHeight, scrollY } from '../cuic';
 import Events from '../utils/events';
 import Popup from './popup';
 
@@ -31,9 +31,6 @@ class Guide {
   constructor(options) {
     // Set default options
     this.options = extend({}, Guide.prototype.options, options, {});
-
-    // Add debug method
-    this.debug = Cuic.debug;
 
     // Create guide popup
     this.popup = new Popup(extend({}, options, {
@@ -69,9 +66,9 @@ class Guide {
       if (this.popup.isShown() && this.options.autoScroll) {
         const position = this.popup.calculatePosition();
 
-        if (position.top + this.popup.outerHeight(true) > Cuic.screenHeight()
+        if (position.top + this.popup.outerHeight(true) > screenHeight()
           || position.top < window.scrollY) {
-          Cuic.scrollY(position.top);
+          scrollY(position.top);
         }
       }
     });
@@ -80,7 +77,7 @@ class Guide {
       if (this.options.autoScroll) {
         const position = this.popup.calculatePosition();
 
-        if (position.top + this.popup.outerHeight(true) > Cuic.screenHeight()) {
+        if (position.top + this.popup.outerHeight(true) > screenHeight()) {
           window.scrollTo(window.scrollX, position.top);
         } else if (position.top < window.scrollY) {
           window.scrollTo(window.scrollX, position.top);
@@ -244,7 +241,7 @@ class Guide {
       }
 
       // Move popup to step target
-      const target = Cuic.element(step.target);
+      const target = asElement(step.target);
 
       if (target) {
         const anchor = step.anchor || target.data('anchor') || this.options.anchor;
@@ -253,7 +250,6 @@ class Guide {
         this.popup.options.anchor = anchor;
         this.popup.options.anchorPoint = anchorPoint;
         this.popup.open();
-        this.debug('stepChanged', step, target);
         this.events.trigger('stepChanged', step, target);
       } else {
         throw new TypeError(`Invalid step target: ${step.target}`);
@@ -338,7 +334,6 @@ class Guide {
   start() {
     this.goTo(0);
     this.events.trigger('started');
-    this.debug('started');
     return this;
   }
 
@@ -350,7 +345,6 @@ class Guide {
     if (!this.popup.isClosed()) {
       this.popup.close();
       this.events.trigger('stopped');
-      this.debug('stopped');
     }
     return this;
   }

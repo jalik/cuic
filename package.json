@@ -1,6 +1,6 @@
 {
   "name": "cuic",
-  "version": "0.14.1",
+  "version": "0.50.0",
   "description": "Common user interface components.",
   "license": "MIT",
   "keywords": [
@@ -36,7 +36,7 @@
   "bugs": {
     "url": "https://github.com/jalik/cuic.js/issues"
   },
-  "main": "dist/cuic.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "npx gulp build",
     "lint": "npx eslint .",

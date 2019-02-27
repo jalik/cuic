@@ -10,7 +10,7 @@ Cuic has a default styling that you must load to display components correctly.
 
 ```js
 // Load styles
-import cuicStyles from "cuic/dist/cuic.css";
+import 'cuic/dist/cuic.css';
 ```
 
 ## Components
@@ -20,13 +20,12 @@ import cuicStyles from "cuic/dist/cuic.css";
 This is the most generic component that contains all the logic of any component, all components inherit from `Element`.
 
 ```js
-import Element from "cuit/dist/ui/element";
+import { Element } from 'cuic';
 
 const element = new Element({
   animationClass: null,
   className: null,
   css: null,
-  debug: false,
   maximized: false,
   maximizedX: false,
   maximizedY: false,
@@ -53,7 +52,6 @@ element.clone();
 element.closest(String);
 element.css(Object);
 element.data(String, Object);
-element.debug();
 element.disable();
 element.empty();
 element.enable();
@@ -136,7 +134,7 @@ This is a generic component that most components inherit from, it only adds the 
 This component inherits from `Element`.
 
 ```js
-import Component from "cuit/dist/ui/component";
+import { Component } from 'cuic';
 
 const component = new Component();
 ```
@@ -148,7 +146,7 @@ A basic clickable button.
 This component inherits from `Component`.
 
 ```js
-import Button from "cuit/dist/ui/button";
+import { Button } from 'cuic';
 
 const button = new Button({
   className: 'btn btn-default btn-secondary',
@@ -171,7 +169,7 @@ This is a generic component with opening and closing capabilities.
 This component inherits from `Component`.
 
 ```js
-import Closable from "cuit/dist/ui/closable";
+import { Closable } from 'cuic';
 
 const closable = new Closable({
   autoClose: false,
@@ -204,8 +202,7 @@ A dialog can be configured with a header and title, a body and a footer with but
 This component inherits from `Closable`.
 
 ```js
-import Button from "cuit/dist/ui/button";
-import Dialog from "cuit/dist/ui/dialog";
+import { Button, Dialog } from 'cuic';
 
 const dialog = new Dialog({
   animationClass: 'cc-anim-fade cc-anim-resize',
@@ -254,8 +251,7 @@ dialog.setTitle(String);
 A guide is used to assist users, to explain things in an interactive way like "click here, then here...".
 
 ```js
-import Button from "cuit/dist/ui/button";
-import Guide from "cuit/dist/ui/guide";
+import { Guide } from 'cuic';
 
 const guide = new Guide({
   anchor: 'top',
@@ -293,8 +289,7 @@ A generic component that can be moved with the mouse.
 This component inherits from `Component`.
 
 ```js
-import Element from "cuit/dist/ui/element";
-import Movable from "cuit/dist/ui/movable";
+import { Element, Movable } from 'cuic';
 
 const movable = new Movable({
   constraintToParent: true,
@@ -320,7 +315,7 @@ A simple notification where you can put anything inside.
 This component inherits from `Closable`.
 
 ```js
-import Notification from "cuit/dist/ui/notification";
+import { Notification } from 'cuic';
 
 const notification = new Notification({
   animationClass: 'cc-anim-fade cc-anim-zoom',
@@ -355,7 +350,7 @@ A notification stack is a group of notifications, easier to manage.
 This component inherits from `Group`.
 
 ```js
-import NotificationStack from "cuit/dist/ui/notification-stack";
+import { NotificationStack } from 'cuic';
 
 const stack = new NotificationStack({
   namespace: 'notification-stack',
@@ -375,7 +370,7 @@ An overlay is used to cover areas with a screen.
 This component inherits from `Closable`.
 
 ```js
-import Overlay from "cuit/dist/ui/overlay";
+import { Overlay } from 'cuic';
 
 const overlay = new Overlay({
   animationClass: 'cc-anim-fade',
@@ -403,7 +398,7 @@ A panel can be configured with a header and title, a body and a footer.
 This component inherits from `Closable`.
 
 ```js
-import Panel from "cuit/dist/ui/panel";
+import { Panel } from 'cuic';
 
 const panel = new Panel({
   animationClass: 'cc-anim-fade cc-anim-slide',
@@ -441,7 +436,7 @@ A popup can be used to display things that are hidden by default.
 This component inherits from `Closable`.
 
 ```js
-import Popup from "cuit/dist/ui/popup";
+import { Popup } from 'cuic';
 
 const popup = new Popup({
   anchor: 'top',
@@ -483,7 +478,7 @@ A generic component that can be resized.
 This component inherits from `Component`.
 
 ```js
-import Resizable from "cuit/dist/ui/resizable";
+import { Resizable } from 'cuic';
 
 const resizable = new Resizable({
   handleSize: 10,
@@ -510,7 +505,7 @@ A generic component that can be selected.
 This component inherits from `Component`.
 
 ```js
-import Selectable from "cuit/dist/ui/selectable";
+import { Selectable } from 'cuic';
 
 const selectable = new Selectable({
   namespace: 'selectable',
@@ -532,7 +527,7 @@ A switcher simply loops through its children, it can be used as a slider.
 This component inherits from `Closable`.
 
 ```js
-import Switcher from "cuit/dist/ui/switcher";
+import { Switcher } from 'cuic';
 
 const switcher = new Switcher({
   autoStart: true,
@@ -562,7 +557,7 @@ A tooltip is used to display text near the pointer, it can be static or it can f
 This component inherits from `Closable`.
 
 ```js
-import Tooltip from "cuit/dist/ui/tooltip";
+import { Tooltip } from 'cuic';
 
 const tooltip = new Tooltip({
   anchor: 'right',

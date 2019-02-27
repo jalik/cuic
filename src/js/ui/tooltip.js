@@ -23,7 +23,7 @@
  */
 
 import extend from '@jalik/extend';
-import Cuic from '../cuic';
+import { asElement, find } from '../cuic';
 import Collection from '../utils/collection';
 import Closable from './closable';
 import Element from './element';
@@ -53,8 +53,8 @@ class Tooltip extends Closable {
       className: 'cc-tooltip-tail',
     }).appendTo(this);
 
-    Cuic.element(document).on('mouseover', (ev) => {
-      const targets = Cuic.find(this.options.selector);
+    asElement(document).on('mouseover', (ev) => {
+      const targets = find(this.options.selector);
 
       for (let i = 0; i < targets.length; i += 1) {
         const target = targets[i];
@@ -105,7 +105,7 @@ class Tooltip extends Closable {
     });
 
     // Move tooltip when mouse moves and tooltip is opened
-    Cuic.element(document).on('mousemove', (ev) => {
+    asElement(document).on('mousemove', (ev) => {
       if (this.options.followPointer /* && !this.isHidden() && !this.isClosed() */) {
         this.reAnchor([ev.pageX, ev.pageY]);
       }
@@ -144,7 +144,7 @@ class Tooltip extends Closable {
    * @param target
    */
   reAnchor(target) {
-    const currentTarget = Cuic.element(this.currentTarget);
+    const currentTarget = asElement(this.currentTarget);
     // Get anchor from data attribute
     const anchor = currentTarget.data('anchor') || this.options.anchor;
     const anchorPoint = currentTarget.data('anchor-point') || this.options.anchorPoint;

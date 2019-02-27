@@ -23,7 +23,7 @@
  */
 
 import extend from '@jalik/extend';
-import Cuic from '../cuic';
+import { off, on, once } from '../cuic';
 import Collection from '../utils/collection';
 import Component from './component';
 import Element from './element';
@@ -162,11 +162,11 @@ class Resizable extends Component {
         };
 
         // Resizing
-        Cuic.on('mousemove', document, onMouseMove);
+        on('mousemove', document, onMouseMove);
 
         // Stop resizing
-        Cuic.once('mouseup', document, (mouseUpEvent) => {
-          Cuic.off('mousemove', document, onMouseMove);
+        once('mouseup', document, (mouseUpEvent) => {
+          off('mousemove', document, onMouseMove);
           this.removeClass('resizing');
           this.events.trigger('resizeEnd', mouseUpEvent);
         });

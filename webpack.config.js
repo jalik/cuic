@@ -35,7 +35,7 @@ const srcPath = path.resolve(path.join(__dirname, 'src'));
 
 module.exports = {
   entry: {
-    bundle: path.join(srcPath, 'index.js'),
+    bundle: path.join(srcPath, 'js/index.js'),
   },
   module: {
     rules: [

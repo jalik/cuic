@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.50.0
+- Removes functions `body()` and `debug()`
+- Renames function `ready()` to `onDOMReady()`
+- Renames function `element()` to `asElement()`
+- Renames function `node()` to `asNode()`
+
 ## v0.14.1
 - Updates dependencies
 

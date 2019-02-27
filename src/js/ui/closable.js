@@ -23,7 +23,7 @@
  */
 
 import extend from '@jalik/extend';
-import Cuic from '../cuic';
+import { asElement, off, on } from '../cuic';
 import Component from './component';
 
 class Closable extends Component {
@@ -93,20 +93,18 @@ class Closable extends Component {
    * @return {Closable}
    */
   close(callback) {
-    this.debug('close');
     this.events.trigger('close');
     this.addClass('closing closed');
     this.removeClass('opening opened');
     this.once('transitionend', (ev) => {
       if (this.isClosing()) {
-        this.debug('closed');
         this.removeClass('closing');
         this.events.trigger('closed', ev);
         this.hide();
 
         // Ignore future click events for autoClose
         // since the component will be closed.
-        Cuic.off('click', document, this.closeOnBlurCallback);
+        off('click', document, this.closeOnBlurCallback);
 
         // Remove component from the DOM
         if (this.options.autoRemove) {
@@ -136,7 +134,7 @@ class Closable extends Component {
   // Define the close on blur callback
   closeOnBlurCallback(ev) {
     if (this.options.closeOnBlur && !this.isClosed()) {
-      if (ev.target !== this.node() && !Cuic.element(ev.target).isChildOf(this)) {
+      if (ev.target !== this.node() && !asElement(ev.target).isChildOf(this)) {
         this.close();
       }
     }
@@ -230,18 +228,16 @@ class Closable extends Component {
   open(callback) {
     this.cancelCloseTimer();
     this.show();
-    this.debug('open');
     this.events.trigger('open');
     this.addClass('opening opened');
     this.removeClass('closing closed');
     this.once('transitionend', (ev) => {
       if (this.isOpening()) {
-        this.debug('opened');
         this.removeClass('opening');
         this.events.trigger('opened', ev);
 
         // Close the component when the user clicks outside of it
-        Cuic.on('click', document, this.closeOnBlurCallback);
+        on('click', document, this.closeOnBlurCallback);
 
         // Starts the auto close timer if auto close is enabled.
         if (this.isAutoClosable()) {

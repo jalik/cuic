@@ -22,47 +22,40 @@
  * SOFTWARE.
  */
 
-import extend from '@jalik/extend';
-import Shortcut from '../utils/shortcut';
-import Component from './component';
+import Cuic from '../src/js/index';
 
-class Button extends Component {
-  constructor(options) {
-    // Set default options
-    const opt = extend({}, Button.prototype.options, options, {
-      mainClass: 'cc-button',
-    });
+describe('asElement()', () => {
+  it('should be importable from package', () => {
+    expect(typeof Cuic.asElement).toEqual('function');
+  });
+});
 
-    // Create element
-    super('button', {
-      autofocus: opt.autofocus,
-      className: opt.className,
-      disabled: opt.disabled,
-      html: opt.label,
-      title: opt.title,
-      type: opt.type,
-    }, opt);
+describe('Button', () => {
+  it('should be importable from package', () => {
+    expect(typeof Cuic.Button).toEqual('function');
+  });
+});
 
-    // Create shortcut
-    if (typeof opt.shortcut === 'number') {
-      this.shortcut = new Shortcut({
-        keyCode: opt.shortcut,
-        target: this.element,
-        callback: () => {
-          this.click();
-        },
-      });
-    }
-  }
-}
+describe('Dialog', () => {
+  it('should be importable from package', () => {
+    expect(typeof Cuic.Dialog).toEqual('function');
+  });
+});
 
-Button.prototype.options = {
-  className: 'btn btn-default btn-secondary',
-  disabled: false,
-  label: null,
-  shortcut: null,
-  title: null,
-  type: 'button',
-};
+describe('Element', () => {
+  it('should be importable from package', () => {
+    expect(typeof Cuic.Element).toEqual('function');
+  });
+});
 
-export default Button;
+describe('Notification', () => {
+  it('should be importable from package', () => {
+    expect(typeof Cuic.Notification).toEqual('function');
+  });
+});
+
+describe('Tooltip', () => {
+  it('should be importable from package', () => {
+    expect(typeof Cuic.Tooltip).toEqual('function');
+  });
+});

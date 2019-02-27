@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-import Cuic from '../cuic';
+import { asElement } from '../cuic';
 
 class Elements {
   constructor(elements, context, selector) {
@@ -31,7 +31,7 @@ class Elements {
 
     for (let i = 0; i < keysLength; i += 1) {
       const key = keys[i];
-      this[i] = Cuic.element(elements[key]);
+      this[i] = asElement(elements[key]);
     }
 
     // Public attributes

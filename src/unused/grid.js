@@ -23,7 +23,6 @@
  */
 
 import extend from '@jalik/extend';
-import Cuic from '../js/cuic';
 import Movable from '../js/ui/movable';
 import Resizable from '../js/ui/resizable';
 
@@ -34,11 +33,11 @@ let counter = 0;
  * @param options
  * @constructor
  */
-Cuic.Grid = function (options) {
+function Grid(options) {
   let grid = this;
 
   // Default options
-  options = extend(true, Cuic.Grid.prototype.options, options);
+  options = extend(true, Grid.prototype.options, options);
 
   // Set the options
   grid.animSpeed = Number.parseInt(options.animSpeed, 10);
@@ -93,7 +92,7 @@ Cuic.Grid = function (options) {
   // Add widgets to the grid
   grid.element.children(options.widgetSelector).each(function () {
     let id = this.id || 'widget-' + (counter += 1);
-    grid.addWidget(id, new Cuic.Grid.Widget({
+    grid.addWidget(id, new Grid.Widget({
       target: this,
     }));
   });
@@ -107,9 +106,9 @@ Cuic.Grid = function (options) {
  * Adds a widget to the grid
  * @param id
  * @param widget
- * @return {Cuic.Widget}
+ * @return {Widget}
  */
-Cuic.Grid.prototype.addWidget = function (id, widget) {
+Grid.prototype.addWidget = function (id, widget) {
   let grid = this;
   let element = widget.element;
   let preview = grid.preview;
@@ -153,7 +152,7 @@ Cuic.Grid.prototype.addWidget = function (id, widget) {
   let width;
 
   // Make the widget resizable
-  let resizable = new Cuic.Resizable({
+  let resizable = new Resizable({
     target: widget.element,
     container: grid.element,
   });
@@ -303,7 +302,7 @@ Cuic.Grid.prototype.addWidget = function (id, widget) {
  * @param sizeY
  * @return {number}
  */
-Cuic.Grid.prototype.calculateHeight = function (sizeY) {
+Grid.prototype.calculateHeight = function (sizeY) {
   return Number.parseInt(sizeY) * (this.rowsHeight + this.spacing, 10) - this.spacing;
 };
 
@@ -312,7 +311,7 @@ Cuic.Grid.prototype.calculateHeight = function (sizeY) {
  * @param posX
  * @return {number}
  */
-Cuic.Grid.prototype.calculateLeft = function (posX) {
+Grid.prototype.calculateLeft = function (posX) {
   return Number.parseInt(posX) * (this.colsWidth + this.spacing, 10) - this.colsWidth;
 };
 
@@ -321,7 +320,7 @@ Cuic.Grid.prototype.calculateLeft = function (posX) {
  * @param posY
  * @return {number}
  */
-Cuic.Grid.prototype.calculateTop = function (posY) {
+Grid.prototype.calculateTop = function (posY) {
   return Number.parseInt(posY) * (this.rowsHeight + this.spacing, 10) - this.rowsHeight;
 };
 
@@ -330,15 +329,15 @@ Cuic.Grid.prototype.calculateTop = function (posY) {
  * @param sizeX
  * @return {number}
  */
-Cuic.Grid.prototype.calculateWidth = function (sizeX) {
+Grid.prototype.calculateWidth = function (sizeX) {
   return Number.parseInt(sizeX) * (this.colsWidth + this.spacing, 10) - this.spacing;
 };
 
 /**
  * Removes all widgets from the grid
- * @return {Cuic.Grid}
+ * @return {Grid}
  */
-Cuic.Grid.prototype.clear = function () {
+Grid.prototype.clear = function () {
   for (let id in this.widgets) {
     if (this.widgets.hasOwnProperty(id)) {
       this.removeWidget(id);
@@ -353,7 +352,7 @@ Cuic.Grid.prototype.clear = function () {
  * @param top
  * @return {number[]}
  */
-Cuic.Grid.prototype.getPosition = function (left, top) {
+Grid.prototype.getPosition = function (left, top) {
   return [this.getPositionX(left), this.getPositionY(top)];
 };
 
@@ -362,7 +361,7 @@ Cuic.Grid.prototype.getPosition = function (left, top) {
  * @param posX
  * @return {number}
  */
-Cuic.Grid.prototype.getPositionX = function (posX) {
+Grid.prototype.getPositionX = function (posX) {
   return Math.round(parseFloat(posX) / (this.colsWidth + this.spacing)) + 1;
 };
 
@@ -371,7 +370,7 @@ Cuic.Grid.prototype.getPositionX = function (posX) {
  * @param posY
  * @return {number}
  */
-Cuic.Grid.prototype.getPositionY = function (posY) {
+Grid.prototype.getPositionY = function (posY) {
   return Math.round(parseFloat(posY) / (this.rowsHeight + this.spacing)) + 1;
 };
 
@@ -381,7 +380,7 @@ Cuic.Grid.prototype.getPositionY = function (posY) {
  * @param height
  * @return {number[]}
  */
-Cuic.Grid.prototype.getSize = function (width, height) {
+Grid.prototype.getSize = function (width, height) {
   return [this.getSizeX(width), this.getSizeY(height)];
 };
 
@@ -390,7 +389,7 @@ Cuic.Grid.prototype.getSize = function (width, height) {
  * @param width
  * @return {number}
  */
-Cuic.Grid.prototype.getSizeX = function (width) {
+Grid.prototype.getSizeX = function (width) {
   return Math.round(parseFloat(width) / (this.colsWidth + this.spacing));
 };
 
@@ -399,32 +398,32 @@ Cuic.Grid.prototype.getSizeX = function (width) {
  * @param height
  * @return {number}
  */
-Cuic.Grid.prototype.getSizeY = function (height) {
+Grid.prototype.getSizeY = function (height) {
   return Math.round(parseFloat(height) / (this.rowsHeight + this.spacing));
 };
 
 /**
  * Returns a widget
  * @param id
- * @return {Cuic.Grid.Widget}
+ * @return {Grid.Widget}
  */
-Cuic.Grid.prototype.getWidget = function (id) {
+Grid.prototype.getWidget = function (id) {
   return this.widgets[id];
 };
 
 /**
  * Makes the grid as big as possible
- * @return {Cuic.Grid}
+ * @return {Grid}
  */
-Cuic.Grid.prototype.maximize = function () {
+Grid.prototype.maximize = function () {
   return this.resize(this.maxCols, this.maxRows);
 };
 
 /**
  * Makes the grid fit its content
- * @return {Cuic.Grid}
+ * @return {Grid}
  */
-Cuic.Grid.prototype.minimize = function () {
+Grid.prototype.minimize = function () {
   let col = this.minCols || 1;
   let row = this.minRows || 1;
 
@@ -448,9 +447,9 @@ Cuic.Grid.prototype.minimize = function () {
  * @param widget
  * @param col
  * @param row
- * @return {Cuic.Grid}
+ * @return {Grid}
  */
-Cuic.Grid.prototype.moveWidget = function (widget, col, row) {
+Grid.prototype.moveWidget = function (widget, col, row) {
   let grid = this;
 
   if (!(col > 0 && col - 1 + widget.sizeX <= grid.cols && row > 0 && row - 1 + widget.sizeY <= grid.rows)) {
@@ -485,9 +484,9 @@ Cuic.Grid.prototype.moveWidget = function (widget, col, row) {
 /**
  * Removes the widget from the grid
  * @param id
- * @return {Cuic.Grid.Widget}
+ * @return {Grid.Widget}
  */
-Cuic.Grid.prototype.removeWidget = function (id) {
+Grid.prototype.removeWidget = function (id) {
   let widget = this.widgets[id];
 
   if (widget) {
@@ -510,9 +509,9 @@ Cuic.Grid.prototype.removeWidget = function (id) {
  * Sets the grid size
  * @param cols
  * @param rows
- * @return {Cuic.Grid}
+ * @return {Grid}
  */
-Cuic.Grid.prototype.resize = function (cols, rows) {
+Grid.prototype.resize = function (cols, rows) {
   cols = Number.parseInt(cols, 10);
   rows = Number.parseInt(rows, 10);
 
@@ -542,9 +541,9 @@ Cuic.Grid.prototype.resize = function (cols, rows) {
  * @param widget
  * @param sizeX
  * @param sizeY
- * @return {Cuic.Grid}
+ * @return {Grid}
  */
-Cuic.Grid.prototype.resizeWidget = function (widget, sizeX, sizeY) {
+Grid.prototype.resizeWidget = function (widget, sizeX, sizeY) {
   let grid = this;
   sizeX = Number.parseInt(sizeX, 10);
   sizeY = Number.parseInt(sizeY, 10);
@@ -584,19 +583,19 @@ Cuic.Grid.prototype.resizeWidget = function (widget, sizeX, sizeY) {
  * Called when widget has been moved
  * @type {function}
  */
-Cuic.Grid.prototype.onWidgetMoved = null;
+Grid.prototype.onWidgetMoved = null;
 
 /**
  * Called when widget has been resized
  * @type {function}
  */
-Cuic.Grid.prototype.onWidgetResized = null;
+Grid.prototype.onWidgetResized = null;
 
 /**
  * Default options
  * @type {*}
  */
-Cuic.Grid.prototype.options = {
+Grid.prototype.options = {
   animSpeed: 200,
   autoResize: true,
   cols: null,
@@ -618,11 +617,11 @@ Cuic.Grid.prototype.options = {
  * @param options
  * @constructor
  */
-Cuic.Grid.Widget = function (options) {
+Grid.Widget = function (options) {
   let self = this;
 
   // Default options
-  options = extend(true, {}, Cuic.Grid.Widget.prototype.options, options);
+  options = extend(true, {}, Grid.Widget.prototype.options, options);
 
   // Set the options
   self.col = Number.parseInt(options.col, 10);
@@ -669,7 +668,7 @@ Cuic.Grid.Widget = function (options) {
  * Checks if the widget is dragging
  * @return {Boolean}
  */
-Cuic.Grid.Widget.prototype.isDragging = function () {
+Grid.Widget.prototype.isDragging = function () {
   return this.element.hasClass('dragging');
 };
 
@@ -677,7 +676,7 @@ Cuic.Grid.Widget.prototype.isDragging = function () {
  * Checks if the widget is resizing
  * @return {Boolean}
  */
-Cuic.Grid.Widget.prototype.isResizing = function () {
+Grid.Widget.prototype.isResizing = function () {
   return this.element.hasClass('resizing');
 };
 
@@ -685,7 +684,7 @@ Cuic.Grid.Widget.prototype.isResizing = function () {
  * Default options
  * @type {*}
  */
-Cuic.Grid.Widget.prototype.options = {
+Grid.Widget.prototype.options = {
   col: 1,
   content: null,
   movable: true,

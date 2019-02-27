@@ -23,7 +23,8 @@
  */
 
 import extend from '@jalik/extend';
-import Cuic from '../cuic';
+import { asElement, onWindowResized } from '../cuic';
+import Keys from '../keys';
 import Collection from '../utils/collection';
 import Shortcut from '../utils/shortcut';
 import Button from './button';
@@ -113,7 +114,7 @@ class Popup extends Closable {
     this.shortcuts = {
       close: new Shortcut({
         element: this,
-        keyCode: Cuic.keys.ESC,
+        keyCode: Keys.ESC,
         callback: () => {
           this.close();
         },
@@ -122,7 +123,7 @@ class Popup extends Closable {
 
     this.on('click', (ev) => {
       // Close button
-      if (Cuic.element(ev.target).hasClass('btn-close')) {
+      if (asElement(ev.target).hasClass('btn-close')) {
         ev.preventDefault();
         this.close();
       }
@@ -134,14 +135,14 @@ class Popup extends Closable {
     });
 
     this.onOpen(() => {
-      const target = Cuic.element(this.options.target);
+      const target = asElement(this.options.target);
       // Get anchor from data attribute
       const anchor = target.data('anchor') || this.options.anchor;
       const anchorPoint = target.data('anchor-point') || this.options.anchorPoint;
       this.anchor(anchor, anchorPoint, target);
     });
 
-    Cuic.onWindowResized(() => {
+    onWindowResized(() => {
       if (this.isInDOM() && this.isShown()) {
         // popup._disableTransitions();
         this.anchor(opt.anchor, opt.anchorPoint, opt.target);

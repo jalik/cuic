@@ -22,47 +22,21 @@
  * SOFTWARE.
  */
 
-import extend from '@jalik/extend';
-import Shortcut from '../utils/shortcut';
-import Component from './component';
-
-class Button extends Component {
-  constructor(options) {
-    // Set default options
-    const opt = extend({}, Button.prototype.options, options, {
-      mainClass: 'cc-button',
-    });
-
-    // Create element
-    super('button', {
-      autofocus: opt.autofocus,
-      className: opt.className,
-      disabled: opt.disabled,
-      html: opt.label,
-      title: opt.title,
-      type: opt.type,
-    }, opt);
-
-    // Create shortcut
-    if (typeof opt.shortcut === 'number') {
-      this.shortcut = new Shortcut({
-        keyCode: opt.shortcut,
-        target: this.element,
-        callback: () => {
-          this.click();
-        },
-      });
-    }
-  }
-}
-
-Button.prototype.options = {
-  className: 'btn btn-default btn-secondary',
-  disabled: false,
-  label: null,
-  shortcut: null,
-  title: null,
-  type: 'button',
+const Keys = {
+  BACKSPACE: 8,
+  DEL: 46,
+  DOWN: 40,
+  ENTER: 13,
+  ESC: 27,
+  INSERT: 45,
+  LEFT: 37,
+  MINUS: 109,
+  PAGE_UP: 33,
+  PAGE_DOWN: 34,
+  PLUS: 107,
+  RIGHT: 39,
+  TAB: 9,
+  UP: 38,
 };
 
-export default Button;
+export default Keys;

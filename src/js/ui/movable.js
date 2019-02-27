@@ -23,7 +23,13 @@
  */
 
 import extend from '@jalik/extend';
-import Cuic from '../cuic';
+import {
+  asElement,
+  constraintPosition,
+  off,
+  on,
+  once,
+} from '../cuic';
 import Collection from '../utils/collection';
 import Component from './component';
 
@@ -56,7 +62,7 @@ class Movable extends Component {
    * @return {Movable}
    */
   addMoveHandle(handleTarget) {
-    const handle = Cuic.element(handleTarget);
+    const handle = asElement(handleTarget);
 
     this.handles.add(handle);
 
@@ -107,7 +113,7 @@ class Movable extends Component {
         // Limit position to parent available position
         if (this.options.constraintToParent) {
           const available = this.calculateAvailablePosition();
-          prop = Cuic.constraintPosition(prop, available);
+          prop = constraintPosition(prop, available);
           this.alignInParent(); // todo useful ?
         }
 
@@ -116,11 +122,11 @@ class Movable extends Component {
       };
 
       // Moving
-      Cuic.on('mousemove', document, onMouseMove);
+      on('mousemove', document, onMouseMove);
 
       // Stop moving
-      Cuic.once('mouseup', document, (mouseUpEvent) => {
-        Cuic.off('mousemove', document, onMouseMove);
+      once('mouseup', document, (mouseUpEvent) => {
+        off('mousemove', document, onMouseMove);
         this.removeClass('moving');
         this.events.trigger('moveEnd', mouseUpEvent);
       });

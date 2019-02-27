@@ -23,7 +23,7 @@
  */
 
 import extend from '@jalik/extend';
-import Cuic from '../cuic';
+import { asElement } from '../cuic';
 import Closable from './closable';
 
 class Switcher extends Closable {
@@ -111,7 +111,7 @@ class Switcher extends Closable {
 
       // Hide visible elements
       for (let i = 0; i < children.length; i += 1) {
-        const child = Cuic.element(children[i]);
+        const child = asElement(children[i]);
 
         if (this.index === i) {
           child.addClass('visible');
@@ -126,8 +126,6 @@ class Switcher extends Closable {
       this.activeElement = children.eq(this.index);
       this.activeElement.addClass('visible');
       this.activeElement.removeClass('hidden');
-
-      this.debug('indexChanged', this.index, this.activeElement);
       this.events.trigger('indexChanged', this.index, this.activeElement);
 
       // Show the active element
@@ -213,7 +211,6 @@ class Switcher extends Closable {
         this.next();
       }, this.options.delay);
       this.events.trigger('started');
-      this.debug('started');
     }
     return this;
   }
@@ -227,7 +224,6 @@ class Switcher extends Closable {
       clearInterval(this.timer);
       this.timer = null;
       this.events.trigger('stopped');
-      this.debug('stopped');
     }
     return this;
   }

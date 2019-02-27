@@ -24,7 +24,21 @@
 
 import extend from '@jalik/extend';
 import changeCase from 'change-case';
-import Cuic from '../cuic';
+import {
+  asElement,
+  asNode,
+  autoPixel,
+  constraintPosition,
+  getComputedStyle,
+  isJQuery,
+  isNode,
+  off,
+  on,
+  once,
+  scrollX,
+  scrollY,
+  stripTags,
+} from '../cuic';
 import Events from '../utils/events';
 import Elements from './elements';
 
@@ -38,11 +52,11 @@ class Element {
 
     // Use existing node
     if (this.options.element) {
-      this.element = Cuic.node(this.options.element);
+      this.element = asNode(this.options.element);
     } else if (typeof node === 'string') {
       // Create node
       this.element = document.createElement(node);
-    } else if (Cuic.isNode(node) || node instanceof Window) {
+    } else if (isNode(node) || node instanceof Window) {
       // Use HTML node
       this.element = node;
     } else if (node instanceof Element) {
@@ -51,7 +65,7 @@ class Element {
     } else if (node instanceof Elements) {
       // Use the first node of an Elements object
       this.element = node.get(0);
-    } else if (Cuic.isJQuery(node)) {
+    } else if (isJQuery(node)) {
       // Use the first node of a jQuery object
       this.element = node.get(0);
     } else {
@@ -113,11 +127,6 @@ class Element {
         this.css(this.options.css);
       }
 
-      // Add debug class
-      if (this.options.debug) {
-        this.addClass('debugging');
-      }
-
       // Add animation class
       if (this.options.animationClass) {
         this.addClass(this.options.animationClass);
@@ -135,7 +144,7 @@ class Element {
     // Append element to parent node
     if (this.options.parent) {
       this.appendTo(this.options.parent);
-      Cuic.element(this.options.parent).append(this);
+      asElement(this.options.parent).append(this);
     }
 
     // Position the element
@@ -163,7 +172,6 @@ class Element {
    * @return {Element}
    */
   addClass(className) {
-    this.debug('addClass', className);
     const classes = this.getClasses();
     const target = (className || '').split(' ');
 
@@ -184,7 +192,6 @@ class Element {
    * @return {Element}
    */
   addPositionClass(position, prefix) {
-    this.debug('addPositionClass', position, prefix);
     const pfx = str => (prefix ? `${prefix}-${str}` : str);
 
     // Remove previous classes
@@ -237,8 +244,6 @@ class Element {
       const pos = this.css('position');
 
       if (['absolute', 'fixed'].indexOf(pos) !== -1) {
-        this.debug('align', position);
-
         // Align to center or using custom pixel position
         if (position.indexOf('center') !== -1
           || ['bottom', 'center', 'left', 'right', 'top'].indexOf(position) !== -1
@@ -261,7 +266,6 @@ class Element {
    */
   alignInParent() {
     if (this.isInDOM()) {
-      this.debug('alignInParent');
       const alignments = ['bottom', 'left', 'right', 'top'];
       let prop = this.position();
 
@@ -274,7 +278,7 @@ class Element {
 
       // Limit position to parent available position
       const available = this.calculateAvailablePosition();
-      prop = Cuic.constraintPosition(prop, available);
+      prop = constraintPosition(prop, available);
 
       // Apply alignment
       this.css(prop);
@@ -288,7 +292,6 @@ class Element {
    */
   alignInScreen() {
     if (this.isInDOM()) {
-      this.debug('alignInScreen');
       const alignments = ['bottom', 'left', 'right', 'top'];
       const prop = this.position();
 
@@ -302,9 +305,9 @@ class Element {
       // Limit position to screen
       const screen = {
         minX: 0,
-        maxX: Cuic.element(window).width(),
+        maxX: asElement(window).width(),
         minY: 0,
-        maxY: Cuic.element(window).height(),
+        maxY: asElement(window).height(),
       };
       const rect = this.positionOnScreen();
       const elWidth = this.outerWidth(true);
@@ -321,24 +324,18 @@ class Element {
           } else if (['bottom', 'top'].indexOf(location) !== -1) {
             // positive
             if (screenPos + elHeight > screen.maxY) {
-              // this.debug(location + ": " + (screenPos + elHeight) + " > " + available.maxY);
               // const extraSpace = Math.abs(available.maxY - Math.abs(prop[location]) - elHeight);
               const extraSpace = Math.abs(screen.maxY - Math.abs(rect[location]) - elHeight);
               prop[location] -= extraSpace;
-              // this.debug(available.maxY + "-" + extraSpace + " = ", prop[location]);
             }
           } else if (['left', 'right'].indexOf(location) !== -1) {
             if (screenPos + elWidth > screen.maxX) {
-              // this.debug(location + ": " + (screenPos + elWidth) + " > " + available.maxX);
               const extraSpace = Math.abs(screen.maxX - Math.abs(rect[location]) - elWidth);
               prop[location] -= extraSpace;
-              // this.debug(available.maxX + "-" + extraSpace + " = ", prop[location]);
             }
           }
         }
       }
-      // this.debug("prop", prop);
-
       // Apply alignment
       this.css(prop);
     }
@@ -359,9 +356,8 @@ class Element {
 
       // Anchor can be an array of pixel coordinates
       if (!isPixelCoordinate) {
-        targetElm = Cuic.element(targetElm);
+        targetElm = asElement(targetElm);
       }
-      this.debug('anchor', anchor, targetElm);
 
       const targetParent = isPixelCoordinate ? document.body : targetElm.offsetParent();
       const disableTransition = this.isInDOM() && !this.isDirectChildOf(targetParent);
@@ -387,18 +383,17 @@ class Element {
    */
   append(element) {
     const node = this.node();
-    this.debug('append', element);
 
     if (element instanceof Elements) {
       element.each((el) => {
         node.appendChild(el.node());
       });
-    } else if (Cuic.isJQuery(element)) {
+    } else if (isJQuery(element)) {
       element.each(function eachElement() {
         node.appendChild(this);
       });
     } else {
-      node.appendChild(Cuic.node(element));
+      node.appendChild(asNode(element));
     }
     return this;
   }
@@ -409,8 +404,7 @@ class Element {
    * @return {Element}
    */
   appendTo(element) {
-    this.debug('appendTo', element);
-    Cuic.node(element).appendChild(this.node());
+    asNode(element).appendChild(this.node());
     return this;
   }
 
@@ -448,7 +442,6 @@ class Element {
    */
   autoResize() {
     if (this.isInDOM()) {
-      this.debug('autoResize');
       const available = this.calculateAvailableSpace();
 
       const prop = {
@@ -475,10 +468,10 @@ class Element {
    * @return {*}
    */
   border() {
-    const bottom = parseFloat(Cuic.getComputedStyle(this, 'borderBottomWidth'));
-    const left = parseFloat(Cuic.getComputedStyle(this, 'borderLeftWidth'));
-    const right = parseFloat(Cuic.getComputedStyle(this, 'borderRightWidth'));
-    const top = parseFloat(Cuic.getComputedStyle(this, 'borderTopWidth'));
+    const bottom = parseFloat(getComputedStyle(this, 'borderBottomWidth'));
+    const left = parseFloat(getComputedStyle(this, 'borderLeftWidth'));
+    const right = parseFloat(getComputedStyle(this, 'borderRightWidth'));
+    const top = parseFloat(getComputedStyle(this, 'borderTopWidth'));
     return {
       bottom,
       horizontal: left + right,
@@ -507,18 +500,18 @@ class Element {
     }, options);
 
     let { parent } = opt;
-    const windowElement = Cuic.element(window);
+    const windowElement = asElement(window);
 
     if (parent) {
-      parent = Cuic.element(parent);
+      parent = asElement(parent);
 
       // Use body as parent
       if (parent.node().nodeName === 'HTML') {
-        parent = Cuic.body();
+        parent = asElement(document.body);
       }
     } else {
       // Use parent node if no parent defined
-      parent = this.offsetParent() || Cuic.body();
+      parent = this.offsetParent() || asElement(document.body);
     }
 
     const elHeight = this.outerHeight(true);
@@ -605,7 +598,7 @@ class Element {
       };
     } else {
       // Target is an element
-      targetElm = Cuic.element(targetElm);
+      targetElm = asElement(targetElm);
       targetHeight = targetElm.outerHeight();
       targetWidth = targetElm.outerWidth();
       targetOffset = targetElm.offset();
@@ -623,11 +616,6 @@ class Element {
       right: '',
       top: '',
     };
-
-    // TODO REMOVE
-    this.debug('elSize:', { width: elWidth, height: elHeight });
-    this.debug('targetOffset:', targetOffset);
-    // this.debug("width:", elWidth, ", height:", elHeight);
 
     if (anchorPoint) {
       // Vertical positioning
@@ -698,7 +686,6 @@ class Element {
       prop.left -= window.scrollX;
       prop.top -= window.scrollY;
     }
-    // this.debug("css =", prop);
     return prop;
   }
 
@@ -708,7 +695,7 @@ class Element {
    * @return {{minX: number, minY: number, maxX: number, maxY: number}}
    */
   calculateAvailablePosition(parent) {
-    const parentElm = parent ? Cuic.element(parent) : this.offsetParent() || Cuic.body();
+    const parentElm = parent ? asElement(parent) : this.offsetParent() || asElement(document.body);
 
     const prop = {
       minX: 0,
@@ -717,7 +704,7 @@ class Element {
       maxY: Math.max(0, parentElm.height() - this.outerHeight(true)),
     };
 
-    const body = Cuic.body();
+    const body = asElement(document.body);
 
     // Adjust limits depending of element position
     switch (this.css('position')) {
@@ -751,7 +738,7 @@ class Element {
    * @return {{height, width}}
    */
   calculateAvailableSpace(parent) {
-    const parentElm = parent ? Cuic.element(parent) : this.offsetParent() || Cuic.body();
+    const parentElm = parent ? asElement(parent) : this.offsetParent() || asElement(document.body);
     const elMargin = this.margin();
     const prop = {
       height: parentElm.height(),
@@ -783,8 +770,8 @@ class Element {
    * @return {*}
    */
   calculateMaximize() {
-    const parent = this.offsetParent() || Cuic.body();
-    const windowElement = Cuic.element(window);
+    const parent = this.offsetParent() || asElement(document.body);
+    const windowElement = asElement(window);
     const parentPadding = parent.padding();
     const elMargin = this.margin();
     const prop = {
@@ -899,9 +886,7 @@ class Element {
         parent = ref.offsetParent();
 
         if (parent) {
-          // this.debug("-- parent:", offsetParent.node());
           const parentPos = parent.offset();
-          // this.debug("        ->", parentPos);
           pos.top += parentPos.top;
           pos.left += parentPos.left;
           ref = parent;
@@ -940,7 +925,7 @@ class Element {
     const nodes = this.node().children || this.node().childNodes;
 
     for (let i = 0; i < nodes.length; i += 1) {
-      if (Cuic.isNode(nodes[i])) {
+      if (isNode(nodes[i])) {
         if (!selector || nodes[i].matches(selector)) {
           children.push(nodes[i]);
         }
@@ -963,8 +948,7 @@ class Element {
    * @return {*|Element}
    */
   clone() {
-    this.debug('clone');
-    return Cuic.element(this.node().cloneNode(true));
+    return asElement(this.node().cloneNode(true));
   }
 
   /**
@@ -976,7 +960,7 @@ class Element {
     this.display();
     const node = this.node().closest(selector);
     this.restoreDisplay();
-    return node ? Cuic.element(node) : null;
+    return node ? asElement(node) : null;
   }
 
   /**
@@ -990,10 +974,8 @@ class Element {
     // Writing styles
     if (styles) {
       if (typeof styles === 'object') {
-        this.debug('css', styles);
-
         // Add pixel unit where needed
-        const newStyles = Cuic.autoPixel(styles);
+        const newStyles = autoPixel(styles);
         const styleKeys = Object.keys(newStyles);
         const stylesLength = styleKeys.length;
 
@@ -1016,7 +998,6 @@ class Element {
       if (typeof styles === 'string') {
         // Set styles
         if (styles.indexOf(':') !== -1) {
-          this.debug('css', styles);
           node.style = styles;
           return this;
         }
@@ -1025,7 +1006,7 @@ class Element {
         switch (styles) {
           case 'display':
           case 'position':
-            return Cuic.getComputedStyle(node, styles);
+            return getComputedStyle(node, styles);
           default:
         }
         // Return specific style
@@ -1043,7 +1024,6 @@ class Element {
    * @return {Element|*}
    */
   data(key, value) {
-    this.debug('data', key, value);
     const dataSet = this.node().dataset;
     let result = dataSet;
 
@@ -1069,22 +1049,10 @@ class Element {
   }
 
   /**
-   * Displays debug message if debug mode is active
-   * @param args
-   */
-  debug(...args) {
-    if (this.options.debug || Cuic.options.debug) {
-      // eslint-disable-next-line no-console
-      console.log.apply(this, args);
-    }
-  }
-
-  /**
    * Disables the element
    * @return {Element}
    */
   disable() {
-    this.debug('disable');
     this.node().disabled = true;
     this.addClass('disabled');
     this.events.trigger('disabled');
@@ -1126,7 +1094,6 @@ class Element {
    * @return {Element}
    */
   empty() {
-    this.debug('empty');
     this.html('');
     return this;
   }
@@ -1136,7 +1103,6 @@ class Element {
    * @return {Element}
    */
   enable() {
-    this.debug('enable');
     this.node().disabled = false;
     this.removeClass('disabled');
     this.events.trigger('enabled');
@@ -1252,7 +1218,6 @@ class Element {
    * @return {Element}
    */
   hide() {
-    this.debug('hide');
     this.addClass('hidden');
     this.events.trigger('hidden');
     return this;
@@ -1267,14 +1232,14 @@ class Element {
     if (typeof html !== 'undefined') {
       // Get HTML from object
       if (html && typeof html === 'object') {
-        if (Cuic.isNode(html)) {
+        if (isNode(html)) {
           this.empty();
           this.append(html);
         } else if (html instanceof Element) {
           // Replace content keeping attached events on nodes
           this.empty();
           this.append(html.node());
-        } else if (Cuic.isJQuery(html)) {
+        } else if (isJQuery(html)) {
           this.empty();
           this.append(html.get(0));
         }
@@ -1330,8 +1295,7 @@ class Element {
    * @return {Element}
    */
   insertAfter(element) {
-    this.debug('insertAfter', element);
-    const node = Cuic.node(element);
+    const node = asNode(element);
     const parentNode = this.parentNode();
     parentNode.insertBefore(node, this.node().nextSibling);
     return this;
@@ -1343,8 +1307,7 @@ class Element {
    * @return {Element}
    */
   insertBefore(element) {
-    this.debug('insertBefore', element);
-    const node = Cuic.node(element);
+    const node = asNode(element);
     const parentNode = this.parentNode();
     parentNode.insertBefore(node, this.node());
     return this;
@@ -1410,7 +1373,7 @@ class Element {
    * @return {boolean}
    */
   isChildOf(parent) {
-    const parentNode = Cuic.node(parent);
+    const parentNode = asNode(parent);
     let node = this.node();
 
     do {
@@ -1439,7 +1402,7 @@ class Element {
    * @return {boolean}
    */
   isDirectChildOf(element) {
-    return this.parentNode() === Cuic.node(element);
+    return this.parentNode() === asNode(element);
   }
 
   /**
@@ -1584,10 +1547,10 @@ class Element {
     let top = 0;
 
     if (!(this.node() instanceof Window)) {
-      bottom = parseFloat(Cuic.getComputedStyle(this, 'marginBottom'));
-      left = parseFloat(Cuic.getComputedStyle(this, 'marginLeft'));
-      right = parseFloat(Cuic.getComputedStyle(this, 'marginRight'));
-      top = parseFloat(Cuic.getComputedStyle(this, 'marginTop'));
+      bottom = parseFloat(getComputedStyle(this, 'marginBottom'));
+      left = parseFloat(getComputedStyle(this, 'marginLeft'));
+      right = parseFloat(getComputedStyle(this, 'marginRight'));
+      top = parseFloat(getComputedStyle(this, 'marginTop'));
     }
     return {
       bottom,
@@ -1605,14 +1568,12 @@ class Element {
    * @return {Element}
    */
   maximize(callback) {
-    this.debug('maximize');
     this.events.trigger('maximize');
     this.removeClass('minimized');
     this.addClass('maximized');
     this.css(this.calculateMaximize());
     this.once('transitionend', (ev) => {
       if (this.isMaximized()) {
-        this.debug('maximized');
         this.events.trigger('maximized', ev);
 
         if (typeof callback === 'function') {
@@ -1629,7 +1590,6 @@ class Element {
    * @return {Element}
    */
   maximizeX(callback) {
-    this.debug('maximizeX');
     this.events.trigger('maximizeX');
     this.removeClass('minimized');
     this.addClass('maximized-x');
@@ -1637,7 +1597,6 @@ class Element {
     this.css({ width: prop.width, left: prop.left, right: prop.right });
     this.once('transitionend', (ev) => {
       if (this.isMaximizedX()) {
-        this.debug('maximizedX');
         this.events.trigger('maximizedX', ev);
 
         if (typeof callback === 'function') {
@@ -1654,7 +1613,6 @@ class Element {
    * @return {Element}
    */
   maximizeY(callback) {
-    this.debug('maximizeY');
     this.events.trigger('maximizeY');
     this.removeClass('minimized');
     this.addClass('maximized-y');
@@ -1662,7 +1620,6 @@ class Element {
     this.css({ height: prop.height, top: prop.top, bottom: prop.bottom });
     this.once('transitionend', (ev) => {
       if (this.isMaximizedY()) {
-        this.debug('maximizedY');
         this.events.trigger('maximizedY', ev);
 
         if (typeof callback === 'function') {
@@ -1679,14 +1636,12 @@ class Element {
    * @return {Element}
    */
   minimize(callback) {
-    this.debug('minimize');
     this.events.trigger('minimize');
     this.removeClass('maximized maximized-x maximized-y');
     this.addClass('minimized');
     this.css(this.calculateMinimize(this.options.position));
     this.once('transitionend', (ev) => {
       if (this.isMinimized()) {
-        this.debug('minimized');
         this.events.trigger('minimized', ev);
 
         if (typeof callback === 'function') {
@@ -1712,7 +1667,7 @@ class Element {
    * @return {Element}
    */
   off(event, callback) {
-    Cuic.off(event, this.node(), callback);
+    off(event, this.node(), callback);
     return this;
   }
 
@@ -1734,7 +1689,7 @@ class Element {
    */
   offsetParent() {
     const parent = this.offsetParentNode();
-    return parent ? Cuic.element(parent) : null;
+    return parent ? asElement(parent) : null;
   }
 
   /**
@@ -1755,7 +1710,7 @@ class Element {
    * @return {Element}
    */
   on(event, callback) {
-    Cuic.on(event, this.node(), callback);
+    on(event, this.node(), callback);
     return this;
   }
 
@@ -1766,7 +1721,7 @@ class Element {
    * @return {Element}
    */
   once(event, callback) {
-    Cuic.once(event, this.node(), callback);
+    once(event, this.node(), callback);
     return this;
   }
 
@@ -1889,10 +1844,10 @@ class Element {
     let top = 0;
 
     if (!(this.node() instanceof Window)) {
-      bottom = parseFloat(Cuic.getComputedStyle(this, 'paddingBottom'));
-      left = parseFloat(Cuic.getComputedStyle(this, 'paddingLeft'));
-      right = parseFloat(Cuic.getComputedStyle(this, 'paddingRight'));
-      top = parseFloat(Cuic.getComputedStyle(this, 'paddingTop'));
+      bottom = parseFloat(getComputedStyle(this, 'paddingBottom'));
+      left = parseFloat(getComputedStyle(this, 'paddingLeft'));
+      right = parseFloat(getComputedStyle(this, 'paddingRight'));
+      top = parseFloat(getComputedStyle(this, 'paddingTop'));
     }
     return {
       bottom,
@@ -1910,7 +1865,7 @@ class Element {
    */
   parent() {
     const parent = this.parentNode();
-    return parent ? Cuic.element(parent) : null;
+    return parent ? asElement(parent) : null;
   }
 
   /**
@@ -1927,10 +1882,10 @@ class Element {
    */
   position() {
     this.display();
-    const bottom = Number.parseFloat(Cuic.getComputedStyle(this, 'bottom'));
-    const left = Number.parseFloat(Cuic.getComputedStyle(this, 'left'));
-    const right = Number.parseFloat(Cuic.getComputedStyle(this, 'right'));
-    const top = Number.parseFloat(Cuic.getComputedStyle(this, 'top'));
+    const bottom = Number.parseFloat(getComputedStyle(this, 'bottom'));
+    const left = Number.parseFloat(getComputedStyle(this, 'left'));
+    const right = Number.parseFloat(getComputedStyle(this, 'right'));
+    const top = Number.parseFloat(getComputedStyle(this, 'top'));
     this.restoreDisplay();
     return {
       bottom,
@@ -1957,21 +1912,20 @@ class Element {
     const self = this;
     // const node = this.node();
     // const parent = this.parent();
-    this.debug('prepend', element);
 
     if (element instanceof Elements) {
       element.each((el) => {
         el.preprendTo(self);
         // node.prepend(el.node());
       });
-    } else if (Cuic.isJQuery(element)) {
+    } else if (isJQuery(element)) {
       element.each(function jQueryEach() {
-        Cuic.element(this).preprendTo(self);
+        asElement(this).preprendTo(self);
         // node.prepend(this);
       });
     } else {
-      Cuic.element(element).preprendTo(self);
-      // node.prepend(Cuic.node(element));
+      asElement(element).preprendTo(self);
+      // node.prepend(asNode(element));
     }
     return this;
   }
@@ -1982,15 +1936,14 @@ class Element {
    * @return {Element}
    */
   prependTo(element) {
-    this.debug('prependTo', element);
-    const el = Cuic.element(element);
+    const el = asElement(element);
 
     if (el.children().length) {
       el.children().first().insertBefore(this.node());
     } else {
       el.append(this);
     }
-    // Cuic.node(element).prepend(this.node());
+    // asNode(element).prepend(this.node());
     return this;
   }
 
@@ -1999,7 +1952,6 @@ class Element {
    * @return {Element}
    */
   remove() {
-    this.debug('remove');
     this.node().remove();
     this.events.trigger('removed');
     return this;
@@ -2011,7 +1963,6 @@ class Element {
    * @return {Element}
    */
   removeClass(className) {
-    this.debug('removeClass', className);
     const classes = this.getClasses();
     const classNames = (className || '').split(' ');
 
@@ -2069,7 +2020,7 @@ class Element {
 
     // Use window scrolling instead
     if (node instanceof HTMLBodyElement || node instanceof Window) {
-      scroll = Cuic.scrollX();
+      scroll = scrollX();
     }
     return scroll;
   }
@@ -2084,7 +2035,7 @@ class Element {
 
     // Use window scrolling instead
     if (node instanceof HTMLBodyElement || node instanceof Window) {
-      scroll = Cuic.scrollY();
+      scroll = scrollY();
     }
     return scroll;
   }
@@ -2111,7 +2062,6 @@ class Element {
    * @return {Element}
    */
   show() {
-    this.debug('show');
     this.css({ display: '' });
     this.removeClass('hidden');
     this.events.trigger('shown');
@@ -2125,7 +2075,6 @@ class Element {
    */
   text(text) {
     const node = this.node();
-    this.debug('text', text);
 
     if (typeof text !== 'undefined') {
       if (typeof node.innerText !== 'undefined') {
@@ -2138,7 +2087,7 @@ class Element {
     if (typeof node.textContent !== 'undefined') {
       return node.textContent;
     }
-    return Cuic.stripTags(node.innerHTML);
+    return stripTags(node.innerHTML);
   }
 
   /**
@@ -2147,8 +2096,6 @@ class Element {
    * @return {Element|*}
    */
   val(value) {
-    this.debug('val', value);
-
     if (typeof value !== 'undefined') {
       this.node().value = value;
       return this;
@@ -2182,7 +2129,6 @@ Element.prototype.options = {
   animationClass: null,
   className: null,
   css: null,
-  debug: false,
   maximized: false,
   maximizedX: false,
   maximizedY: false,

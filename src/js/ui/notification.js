@@ -23,7 +23,7 @@
  */
 
 import extend from '@jalik/extend';
-import Cuic from '../cuic';
+import { asElement, onWindowResized } from '../cuic';
 import Collection from '../utils/collection';
 import Closable from './closable';
 import Element from './element';
@@ -60,7 +60,7 @@ class Notification extends Closable {
 
     this.on('click', (ev) => {
       // Close button
-      if (Cuic.element(ev.target).hasClass('btn-close')) {
+      if (asElement(ev.target).hasClass('btn-close')) {
         ev.preventDefault();
         this.close();
       }
@@ -70,7 +70,7 @@ class Notification extends Closable {
       this.align(this.options.position);
     });
 
-    Cuic.onWindowResized(() => {
+    onWindowResized(() => {
       if (this.isInDOM()) {
         // n._disableTransitions();
         this.align(this.options.position);
