@@ -5,6 +5,8 @@
 - Renames function `ready()` to `onDOMReady()`
 - Renames function `element()` to `asElement()`
 - Renames function `node()` to `asNode()`
+- Lib available in ES6+ syntax (see `src` folder) to enable auto-completion in IDEs
+- Updates dependencies
 
 ## v0.14.1
 - Updates dependencies
