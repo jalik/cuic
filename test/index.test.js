@@ -22,40 +22,47 @@
  * SOFTWARE.
  */
 
-import Cuic from '../src/js/index';
+import {
+  asElement,
+  Button,
+  Dialog,
+  Element,
+  Notification,
+  Tooltip,
+} from '../dist/index';
 
 describe('asElement()', () => {
   it('should be importable from package', () => {
-    expect(typeof Cuic.asElement).toEqual('function');
+    expect(typeof asElement).toEqual('function');
   });
 });
 
 describe('Button', () => {
   it('should be importable from package', () => {
-    expect(typeof Cuic.Button).toEqual('function');
+    expect(typeof Button).toEqual('function');
   });
 });
 
 describe('Dialog', () => {
   it('should be importable from package', () => {
-    expect(typeof Cuic.Dialog).toEqual('function');
+    expect(typeof Dialog).toEqual('function');
   });
 });
 
 describe('Element', () => {
   it('should be importable from package', () => {
-    expect(typeof Cuic.Element).toEqual('function');
+    expect(typeof Element).toEqual('function');
   });
 });
 
 describe('Notification', () => {
   it('should be importable from package', () => {
-    expect(typeof Cuic.Notification).toEqual('function');
+    expect(typeof Notification).toEqual('function');
   });
 });
 
 describe('Tooltip', () => {
   it('should be importable from package', () => {
-    expect(typeof Cuic.Tooltip).toEqual('function');
+    expect(typeof Tooltip).toEqual('function');
   });
 });
