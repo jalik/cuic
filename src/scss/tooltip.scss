@@ -21,16 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+@import "./variables";
 
 .cc-tooltip {
-  background-color: @tooltip-background-color;
-  border-radius: @border-radius;
-  box-shadow: @shadow;
-  color: @color-inverse;
+  background-color: $tooltip-background-color;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+  color: $color-inverse;
   display: inline-block;
-  margin: @margin;
+  margin: $margin;
   max-width: 250px;
-  padding: @padding;
+  padding: $padding;
   position: absolute;
   transition-property: background, opacity, height, width, transform;
   z-index: 100;
@@ -61,22 +62,22 @@
 
 .cc-tooltip.anchored-bottom.anchored-left {
   transform-origin: top right;
-  border-radius: @border-radius 0 @border-radius @border-radius;
+  border-radius: $border-radius 0 $border-radius $border-radius;
 }
 
 .cc-tooltip.anchored-bottom.anchored-right {
   transform-origin: top left;
-  border-radius: 0 @border-radius @border-radius @border-radius;
+  border-radius: 0 $border-radius $border-radius $border-radius;
 }
 
 .cc-tooltip.anchored-top.anchored-left {
   transform-origin: bottom right;
-  border-radius: @border-radius @border-radius 0 @border-radius;
+  border-radius: $border-radius $border-radius 0 $border-radius;
 }
 
 .cc-tooltip.anchored-top.anchored-right {
   transform-origin: bottom left;
-  border-radius: @border-radius @border-radius @border-radius 0;
+  border-radius: $border-radius $border-radius $border-radius 0;
 }
 
 // TOOLTIP TAIL
@@ -89,10 +90,10 @@
 }
 
 .cc-tooltip-tail-bottom {
-  border-left: solid @tooltip-tail-size transparent;
-  border-right: solid @tooltip-tail-size transparent;
-  border-top: solid @tooltip-tail-size @tooltip-background-color;
-  margin: 0 0 -@tooltip-tail-size -@tooltip-tail-size;
+  border-left: solid $tooltip-tail-size transparent;
+  border-right: solid $tooltip-tail-size transparent;
+  border-top: solid $tooltip-tail-size $tooltip-background-color;
+  margin: 0 0 -$tooltip-tail-size -$tooltip-tail-size;
   bottom: 0;
   left: 50%;
   right: auto;
@@ -100,10 +101,10 @@
 }
 
 .cc-tooltip-tail-left {
-  border-bottom: solid @tooltip-tail-size transparent !important;
-  border-top: solid @tooltip-tail-size transparent !important;
-  border-right: solid @tooltip-tail-size @tooltip-background-color;
-  margin: -@tooltip-tail-size 0 0 -@tooltip-tail-size;
+  border-bottom: solid $tooltip-tail-size transparent !important;
+  border-top: solid $tooltip-tail-size transparent !important;
+  border-right: solid $tooltip-tail-size $tooltip-background-color;
+  margin: -$tooltip-tail-size 0 0 -$tooltip-tail-size;
   bottom: auto;
   left: 0;
   right: auto;
@@ -111,10 +112,10 @@
 }
 
 .cc-tooltip-tail-right {
-  border-bottom: solid @tooltip-tail-size transparent !important;
-  border-top: solid @tooltip-tail-size transparent !important;
-  border-left: solid @tooltip-tail-size @tooltip-background-color;
-  margin: -@tooltip-tail-size -@tooltip-tail-size 0 0;
+  border-bottom: solid $tooltip-tail-size transparent !important;
+  border-top: solid $tooltip-tail-size transparent !important;
+  border-left: solid $tooltip-tail-size $tooltip-background-color;
+  margin: -$tooltip-tail-size -$tooltip-tail-size 0 0;
   bottom: auto;
   left: auto;
   right: 0;
@@ -122,10 +123,10 @@
 }
 
 .cc-tooltip-tail-top {
-  border-left: solid @tooltip-tail-size transparent !important;
-  border-right: solid @tooltip-tail-size transparent !important;
-  border-bottom: solid @tooltip-tail-size @tooltip-background-color;
-  margin: -@tooltip-tail-size 0 0 -@tooltip-tail-size;
+  border-left: solid $tooltip-tail-size transparent !important;
+  border-right: solid $tooltip-tail-size transparent !important;
+  border-bottom: solid $tooltip-tail-size $tooltip-background-color;
+  margin: -$tooltip-tail-size 0 0 -$tooltip-tail-size;
   bottom: auto;
   left: 50%;
   right: auto;

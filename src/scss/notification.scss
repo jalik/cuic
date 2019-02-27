@@ -21,55 +21,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+@import "./variables";
 
-body > .cc-panel {
+body > .cc-notification {
   position: fixed;
 }
 
-.cc-panel {
-  background-color: @background-color;
-  border: solid 1px #CCCCCC;
-  box-shadow: @shadow;
-  margin: @margin;
-  position: absolute;
-  transition-property: background, opacity, height, width, bottom, left, right, top, transform;
-  z-index: 1;
-}
-
-.cc-panel-content {
-  line-height: @text-line-height;
+.cc-notification {
+  background-color: $background-color-inverse;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+  color: $color-inverse;
+  display: inline-block;
+  margin: $shadow-size;
   overflow: auto;
-  margin: @text-padding 0;
-  padding: 0 @text-padding;
+  padding: $padding;
+  position: absolute;
+  transition-property: background, height, width, bottom, left, right, top, opacity, transform;
+  z-index: 100;
 }
 
-.cc-panel-footer {
-  color: #888888;
-  //font-size: 0.8em;
-  padding: @text-padding;
+.cc-notification:hover {
+  background-color: rgba(50, 50, 50, 0.9);
 }
 
-.cc-panel-header {
-  border-bottom: solid 3px #57A0BE;
-  padding: @text-padding;
+.cc-notification-content {
+  line-height: $text-line-height;
 }
 
-.cc-panel-header .btn-close {
-  color: rgba(0, 0, 0, 0.4);
+.cc-notification.cc-closable .cc-notification-content {
+  margin-right: $margin * 2.5;
+}
+
+.cc-notification .btn-close {
   cursor: pointer;
-  //font-size: 1.6em;
+  margin: $margin;
   position: absolute;
   top: 0;
   right: 0;
-  padding: @text-padding;
-}
-
-.cc-panel-header .btn-close:focus,
-.cc-panel-header .btn-close:hover {
-  color: rgba(0, 0, 0, 0.6);
-}
-
-.cc-panel-title {
-  font-weight: bold;
-  margin: 0;
 }

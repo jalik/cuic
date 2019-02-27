@@ -21,58 +21,68 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+@import "./variables";
 
-.cc-notification-stack {
-  overflow: auto;
-  padding-bottom: @shadow-y;
-  position: absolute;
-  transition-property: height, width, bottom, left, right, top, opacity, transform;
-  z-index: 10;
-}
-
-body > .cc-notification-stack {
+body > .cc-dialog {
   position: fixed;
 }
 
-.cc-notification-stack .cc-notification {
+.cc-dialog {
+  background-color: $background-color;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
   display: block;
-  position: relative;
-  bottom: auto;
-  left: auto;
-  right: auto;
-  top: auto;
+  margin: $margin;
+  position: absolute;
+  transition-property: opacity, height, width, transform;
+  z-index: 10;
 }
 
-// NOTIFICATIONS IN STACK
-
-.cc-notification-stack.aligned-bottom .cc-notification {
-  transform-origin: bottom center;
+.cc-dialog.cc-movable {
+  position: absolute !important;
 }
 
-.cc-notification-stack.aligned-bottom.aligned-left .cc-notification {
-  transform-origin: bottom left;
+.cc-dialog-content {
+  line-height: $text-line-height;
+  overflow: auto;
+  margin: $text-padding 0;
+  padding: 0 $text-padding;
 }
 
-.cc-notification-stack.aligned-bottom.aligned-right .cc-notification {
-  transform-origin: bottom right;
+.cc-dialog-footer {
+  border-top: solid 1px #EEEEEE;
+  padding: $text-padding;
+  text-align: right;
 }
 
-.cc-notification-stack.aligned-left .cc-notification {
-  transform-origin: left center;
+.cc-dialog-header {
+  border-bottom: solid 1px #EEEEEE;
+  min-height: 56px;
+  padding: $text-padding;
 }
 
-.cc-notification-stack.aligned-right .cc-notification {
-  transform-origin: right center;
+.cc-dialog.cc-closable .cc-dialog-header {
+  padding-right: 56px;
 }
 
-.cc-notification-stack.aligned-top .cc-notification {
-  transform-origin: top center;
+.cc-dialog-header .btn-close {
+  color: rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  //font-size: 1.6em;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: $text-padding;
 }
 
-.cc-notification-stack.aligned-top.aligned-left .cc-notification {
-  transform-origin: top left;
+.cc-dialog-header .btn-close:focus,
+.cc-dialog-header .btn-close:hover {
+  color: rgba(0, 0, 0, 0.6);
 }
 
-.cc-notification-stack.aligned-top.aligned-right .cc-notification {
-  transform-origin: top right;
+.cc-dialog-title {
+  font-size: 1.1em;
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
 }

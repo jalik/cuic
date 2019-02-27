@@ -28,8 +28,8 @@ const concat = require('gulp-concat');
 const del = require('del');
 const eslint = require('gulp-eslint');
 const gulp = require('gulp');
-const less = require('gulp-less');
 const path = require('path');
+const sass = require('gulp-sass');
 const stripCssComments = require('gulp-strip-css-comments');
 const pkg = require('./package.json');
 
@@ -44,18 +44,22 @@ gulp.task('build:js', () => gulp.src([
 ]).pipe(babel())
   .pipe(gulp.dest(buildPath)));
 
-// Compile LESS files
-gulp.task('build:less', () => gulp.src([
-  path.join(srcPath, 'less', '**', '*.less'),
-]).pipe(concat(`${distFile}.css`))
-  .pipe(less())
+// Define the SASS compiler.
+sass.compiler = require('node-sass');
+
+// Compile SCSS files.
+gulp.task('build:scss', () => gulp.src([
+  path.join(srcPath, 'scss', '**', '*.scss'),
+])
+  .pipe(sass().on('error', sass.logError))
+  .pipe(concat(`${distFile}.css`))
   .pipe(stripCssComments())
   .pipe(autoprefixer())
   .pipe(gulp.dest(buildPath)));
 
 // Compile all files
 gulp.task('build', gulp.parallel(
-  'build:less',
+  'build:scss',
   'build:js',
 ));
 
@@ -86,13 +90,13 @@ gulp.task('watch:js', () => gulp.watch([
 ], gulp.parallel('build:js')));
 
 // Rebuild LESS automatically
-gulp.task('watch:less', () => gulp.watch([
-  path.join(srcPath, '**', '*.less'),
-], gulp.parallel('build:less')));
+gulp.task('watch:scss', () => gulp.watch([
+  path.join(srcPath, '**', '*.scss'),
+], gulp.parallel('build:scss')));
 
 // Rebuild sources automatically
 gulp.task('watch', gulp.parallel(
-  'watch:less',
+  'watch:scss',
   'watch:js',
 ));
 

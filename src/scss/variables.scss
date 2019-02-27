@@ -22,47 +22,44 @@
  * SOFTWARE.
  */
 
-.cc-grid {
-  background-color: #EEEEEE;
-  border: solid 1px #CCCCCC;
-  border-radius: 3px;
-  display: block;
-}
+// Default
+$background-color: rgba(255, 255, 255, 1.0);
+$border-radius: 5px;
+$margin: 10px;
+$padding: 10px;
 
-.cc-grid > .cc-widget {
-  background-color: #FFFFFF;
-  border: solid 1px #CCCCCC;
-  margin: 2em;
-  border-radius: 3px;
-  padding: 1em;
-  transition: background 200ms, border 200ms, opacity 200ms, box-shadow 200ms;
-}
+// Inverse
+$background-color-inverse: rgba(60, 60, 60, 0.9);
+$color-inverse: rgba(250, 250, 250, 1.0);
 
-.cc-grid > .cc-widget:hover {
-  border: solid 1px #65D0F3;
-}
+// Button
+$button-padding: 10px;
 
-.cc-grid > .cc-widget * {
-  cursor: auto;
-}
+// Guide
+$guide-background-color: $background-color-inverse;
 
-.cc-grid > .cc-preview {
-  background-color: transparent;
-  border: dotted 3px #65D0F3;
-}
+// Popup
+$popup-background-color: $background-color-inverse;
+$popup-tail-size: 8px;
 
-.cc-grid > .dragging {
-  background-color: #57A0BE !important;
-  box-shadow: @shadow;
-  border-color: #65D0F3;
-  color: #EEEEEE;
-  opacity: 0.7;
-}
+// Tooltip
+$tooltip-background-color: $background-color-inverse;
+$tooltip-tail-size: 6px;
 
-.cc-grid > .resizing {
-  background-color: #57A0BE !important;
-  box-shadow: @shadow;
-  border-color: #65D0F3;
-  color: #EEEEEE;
-  opacity: 0.7;
-}
+// Text
+$text-padding: 20px;
+$text-line-height: 1.5em;
+
+// Animation
+$anim-duration: 0.5s;
+$anim-close-curve: ease;
+$anim-close-duration: 0.2s;
+$anim-open-curve: ease;
+$anim-open-duration: 0.3s;
+
+// Shadows
+$shadow-color: rgba(0, 0, 0, 0.3);
+$shadow-size: 10px;
+$shadow-x: 0;
+$shadow-y: 5px;
+$shadow: $shadow-x $shadow-y $shadow-size $shadow-color;

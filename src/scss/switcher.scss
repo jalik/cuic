@@ -21,21 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+@import "./variables";
 
 .cc-switcher {
   overflow: hidden;
-  padding: @padding;
+  padding: $padding;
 }
 
 .cc-switcher .hidden {
   display: none;
   opacity: 0;
   transition-property: all;
-  transition-duration: @anim-close-duration;
+  transition-duration: $anim-close-duration;
 }
 
 .cc-switcher .active,
 .cc-switcher .visible {
   opacity: 1;
-  transition-duration: @anim-open-duration;
+  transition-duration: $anim-open-duration;
 }

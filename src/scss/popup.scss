@@ -21,22 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+@import "./variables";
 
 .cc-popup {
-  background-color: @popup-background-color;
-  border-radius: @border-radius;
-  box-shadow: @shadow;
-  color: @color-inverse;
+  background-color: $popup-background-color;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+  color: $color-inverse;
   display: inline-block;
-  margin: @popup-tail-size;
-  padding: @padding;
+  margin: $popup-tail-size;
+  padding: $padding;
   position: absolute;
   transition-property: background, opacity, height, width, bottom, left, right, top, transform;
   z-index: 9;
 }
 
 .cc-popup-content {
-  line-height: @text-line-height;
+  line-height: $text-line-height;
 }
 
 .cc-popup .btn-close:focus,
@@ -47,19 +48,19 @@
 // POPUP POSITION
 
 .cc-popup.anchored-bottom.anchored-left {
-  border-radius: @border-radius 0 @border-radius @border-radius;
+  border-radius: $border-radius 0 $border-radius $border-radius;
 }
 
 .cc-popup.anchored-bottom.anchored-right {
-  border-radius: 0 @border-radius @border-radius @border-radius;
+  border-radius: 0 $border-radius $border-radius $border-radius;
 }
 
 .cc-popup.anchored-top.anchored-left {
-  border-radius: @border-radius @border-radius 0 @border-radius;
+  border-radius: $border-radius $border-radius 0 $border-radius;
 }
 
 .cc-popup.anchored-top.anchored-right {
-  border-radius: @border-radius @border-radius @border-radius 0;
+  border-radius: $border-radius $border-radius $border-radius 0;
 }
 
 // POPUP TAIL
@@ -72,10 +73,10 @@
 }
 
 .cc-popup-tail-bottom {
-  border-left: solid @popup-tail-size transparent;
-  border-right: solid @popup-tail-size transparent;
-  border-top: solid @popup-tail-size @popup-background-color;
-  margin: 0 0 -@popup-tail-size -@popup-tail-size;
+  border-left: solid $popup-tail-size transparent;
+  border-right: solid $popup-tail-size transparent;
+  border-top: solid $popup-tail-size $popup-background-color;
+  margin: 0 0 -$popup-tail-size -$popup-tail-size;
   bottom: 0;
   left: 50%;
   right: auto;
@@ -83,10 +84,10 @@
 }
 
 .cc-popup-tail-left {
-  border-bottom: solid @popup-tail-size transparent !important;
-  border-top: solid @popup-tail-size transparent !important;
-  border-right: solid @popup-tail-size @popup-background-color;
-  margin: -@popup-tail-size 0 0 -@popup-tail-size;
+  border-bottom: solid $popup-tail-size transparent !important;
+  border-top: solid $popup-tail-size transparent !important;
+  border-right: solid $popup-tail-size $popup-background-color;
+  margin: -$popup-tail-size 0 0 -$popup-tail-size;
   bottom: auto;
   left: 0;
   right: auto;
@@ -94,10 +95,10 @@
 }
 
 .cc-popup-tail-right {
-  border-bottom: solid @popup-tail-size transparent !important;
-  border-top: solid @popup-tail-size transparent !important;
-  border-left: solid @popup-tail-size @popup-background-color;
-  margin: -@popup-tail-size -@popup-tail-size 0 0;
+  border-bottom: solid $popup-tail-size transparent !important;
+  border-top: solid $popup-tail-size transparent !important;
+  border-left: solid $popup-tail-size $popup-background-color;
+  margin: -$popup-tail-size -$popup-tail-size 0 0;
   bottom: auto;
   left: auto;
   right: 0;
@@ -105,10 +106,10 @@
 }
 
 .cc-popup-tail-top {
-  border-left: solid @popup-tail-size transparent !important;
-  border-right: solid @popup-tail-size transparent !important;
-  border-bottom: solid @popup-tail-size @popup-background-color;
-  margin: -@popup-tail-size 0 0 -@popup-tail-size;
+  border-left: solid $popup-tail-size transparent !important;
+  border-right: solid $popup-tail-size transparent !important;
+  border-bottom: solid $popup-tail-size $popup-background-color;
+  margin: -$popup-tail-size 0 0 -$popup-tail-size;
   bottom: auto;
   left: 50%;
   right: auto;

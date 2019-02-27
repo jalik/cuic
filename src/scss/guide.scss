@@ -21,17 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+@import "./variables";
 
 .cc-guide.cc-popup {
-  background-color: @guide-background-color;
-  border-radius: @border-radius;
-  box-shadow: @shadow;
-  color: @color-inverse;
+  background-color: $guide-background-color;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+  color: $color-inverse;
   display: inline-block;
-  //margin: @margin;
+  //margin: $margin;
   max-width: 300px;
   min-width: 150px;
-  padding: @padding;
+  padding: $padding;
   position: absolute;
   transition-property: background, opacity, height, width, bottom, left, right, top, transform;
   z-index: 9;
