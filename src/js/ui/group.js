@@ -27,6 +27,9 @@ import Collection from '../utils/collection';
 import Closable from './closable';
 import Element from './element';
 
+/**
+ * A component that holds other components.
+ */
 class Group extends Closable {
   constructor(node, attributes, options) {
     // Set default options

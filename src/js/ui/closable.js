@@ -23,9 +23,16 @@
  */
 
 import extend from '@jalik/extend';
-import { asElement, off, on } from '../cuic';
+import {
+  asElement,
+  off,
+  on,
+} from '../cuic';
 import Component from './component';
 
+/**
+ * A component that can be closed.
+ */
 class Closable extends Component {
   constructor(node, attributes, options) {
     // Set default options

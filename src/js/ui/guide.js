@@ -23,10 +23,17 @@
  */
 
 import extend from '@jalik/extend';
-import { asElement, screenHeight, scrollY } from '../cuic';
+import {
+  asElement,
+  screenHeight,
+  scrollY,
+} from '../cuic';
 import Events from '../utils/events';
 import Popup from './popup';
 
+/**
+ * A component to guide users through steps.
+ */
 class Guide {
   constructor(options) {
     // Set default options

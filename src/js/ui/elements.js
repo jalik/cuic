@@ -24,6 +24,9 @@
 
 import { asElement } from '../cuic';
 
+/**
+ * A collection of Element.
+ */
 class Elements {
   constructor(elements, context, selector) {
     const keys = Object.keys(elements);

@@ -23,7 +23,10 @@
  */
 
 import extend from '@jalik/extend';
-import { asElement, onWindowResized } from '../cuic';
+import {
+  asElement,
+  onWindowResized,
+} from '../cuic';
 import Collection from '../utils/collection';
 import Closable from './closable';
 import Element from './element';

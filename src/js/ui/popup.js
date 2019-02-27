@@ -23,7 +23,10 @@
  */
 
 import extend from '@jalik/extend';
-import { asElement, onWindowResized } from '../cuic';
+import {
+  asElement,
+  onWindowResized,
+} from '../cuic';
 import Keys from '../keys';
 import Collection from '../utils/collection';
 import Shortcut from '../utils/shortcut';
@@ -34,6 +37,9 @@ import Group from './group';
 
 export const Popups = new Collection();
 
+/**
+ * A component to display things contextually.
+ */
 class Popup extends Closable {
   constructor(options) {
     // Set default options

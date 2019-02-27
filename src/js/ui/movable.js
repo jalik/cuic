@@ -33,6 +33,9 @@ import {
 import Collection from '../utils/collection';
 import Component from './component';
 
+/**
+ * A component that can be moved.
+ */
 class Movable extends Component {
   constructor(options) {
     // Set default options

@@ -25,6 +25,9 @@
 import extend from '@jalik/extend';
 import Closable from './closable';
 
+/**
+ * A component that comes over other components.
+ */
 class Overlay extends Closable {
   constructor(options) {
     // Set default options

@@ -25,6 +25,9 @@
 import extend from '@jalik/extend';
 import Component from './component';
 
+/**
+ * A component that can be selected.
+ */
 class Selectable extends Component {
   constructor(options) {
     // Set default options

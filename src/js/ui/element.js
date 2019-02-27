@@ -42,6 +42,9 @@ import {
 import Events from '../utils/events';
 import Elements from './elements';
 
+/**
+ * A basic object to create components.
+ */
 class Element {
   constructor(node, attributes, options) {
     // Set default attributes

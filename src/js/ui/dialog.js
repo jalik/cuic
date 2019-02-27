@@ -23,7 +23,10 @@
  */
 
 import extend from '@jalik/extend';
-import { asElement, onWindowResized } from '../cuic';
+import {
+  asElement,
+  onWindowResized,
+} from '../cuic';
 import Keys from '../keys';
 import Collection from '../utils/collection';
 import Shortcut from '../utils/shortcut';
@@ -54,6 +57,9 @@ Dialogs.getCurrentZIndex = () => {
   return zIndex;
 };
 
+/**
+ * A dialog component.
+ */
 class Dialog extends Closable {
   constructor(options) {
     // Set default options

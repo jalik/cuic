@@ -26,6 +26,9 @@ import extend from '@jalik/extend';
 import Component from './component';
 import Element from './element';
 
+/**
+ * A component that can be hooked somewhere.
+ */
 class Hook extends Component {
   constructor(options) {
     // Set default options

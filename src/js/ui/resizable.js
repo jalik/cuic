@@ -23,11 +23,18 @@
  */
 
 import extend from '@jalik/extend';
-import { off, on, once } from '../cuic';
+import {
+  off,
+  on,
+  once,
+} from '../cuic';
 import Collection from '../utils/collection';
 import Component from './component';
 import Element from './element';
 
+/**
+ * A component that can be resized.
+ */
 class Resizable extends Component {
   constructor(options) {
     // Set default options

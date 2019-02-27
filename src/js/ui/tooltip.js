@@ -23,13 +23,19 @@
  */
 
 import extend from '@jalik/extend';
-import { asElement, find } from '../cuic';
+import {
+  asElement,
+  find,
+} from '../cuic';
 import Collection from '../utils/collection';
 import Closable from './closable';
 import Element from './element';
 
 export const Tooltips = new Collection();
 
+/**
+ * A component to display help.
+ */
 class Tooltip extends Closable {
   constructor(options) {
     // Set default options

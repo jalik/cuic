@@ -22,66 +22,51 @@
  * SOFTWARE.
  */
 
-import * as index from './cuic';
-import Button from './ui/button';
-import Closable from './ui/closable';
-import Dialog, { Dialogs } from './ui/dialog';
-import Element from './ui/element';
-import Elements from './ui/elements';
-import Group from './ui/group';
-import Guide from './ui/guide';
-import Hook from './ui/hook';
-import Movable from './ui/movable';
-import Notification, { Notifications } from './ui/notification';
-import NotificationStack from './ui/notification-stack';
-import Overlay from './ui/overlay';
-import Panel, { Panels } from './ui/panel';
-import Popup, { Popups } from './ui/popup';
-import Resizable from './ui/resizable';
-import Selectable from './ui/selectable';
-import Switcher from './ui/switcher';
-import Tooltip, { Tooltips } from './ui/tooltip';
-import Benchmark from './utils/benchmark';
-import Collection from './utils/collection';
-import Events from './utils/events';
-import Shortcut from './utils/shortcut';
+import { asElement } from './cuic';
 
-const Cuic = {
-  ...index,
-  // todo remove compatibility code for deprecated functions
-  element(...args) {
-    console.warn('DEPRECATED function element(), use asElement() instead.');
-    return index.asElement(...args);
-  },
-  // Add components to global var
-  Button,
-  Closable,
-  Dialog,
+export * from './cuic';
+
+export { default as Button } from './ui/button';
+export { default as Closable } from './ui/closable';
+export {
+  default as Dialog,
   Dialogs,
-  Element,
-  Elements,
-  Group,
-  Guide,
-  Hook,
-  Movable,
-  Notification,
+} from './ui/dialog';
+export { default as Element } from './ui/element';
+export { default as Elements } from './ui/elements';
+export { default as Group } from './ui/group';
+export { default as Guide } from './ui/guide';
+export { default as Hook } from './ui/hook';
+export { default as Movable } from './ui/movable';
+export {
+  default as Notification,
   Notifications,
-  NotificationStack,
-  Overlay,
-  Panel,
+} from './ui/notification';
+export { default as NotificationStack } from './ui/notification-stack';
+export { default as Overlay } from './ui/overlay';
+export {
+  default as Panel,
   Panels,
-  Popup,
-  Popups,
-  Resizable,
-  Selectable,
-  Switcher,
-  Tooltip,
+} from './ui/panel';
+export { default as Resizable } from './ui/resizable';
+export { default as Selectable } from './ui/selectable';
+export { default as Switcher } from './ui/switcher';
+export {
+  default as Tooltip,
   Tooltips,
-  // Add utils to global var
-  Benchmark,
-  Collection,
-  Events,
-  Shortcut,
-};
+} from './ui/tooltip';
+export { default as Benchmark } from './utils/benchmark';
+export { default as Collection } from './utils/collection';
+export { default as Events } from './utils/events';
 
-export default Cuic;
+export {
+  default as Popup,
+  Popups,
+} from './ui/popup';
+export { default as Shortcut } from './utils/shortcut';
+
+export function element(...args) {
+  // todo remove compatibility code for deprecated functions
+  console.warn('DEPRECATED function element(), use asElement() instead.');
+  return asElement(...args);
+}

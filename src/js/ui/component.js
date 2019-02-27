@@ -25,6 +25,9 @@
 import extend from '@jalik/extend';
 import Element from './element';
 
+/**
+ * The base of all components.
+ */
 class Component extends Element {
   constructor(node, attributes, options) {
     // Set default options

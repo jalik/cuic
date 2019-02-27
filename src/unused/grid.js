@@ -100,7 +100,7 @@ function Grid(options) {
   if (grid.autoResize) {
     grid.minimize();
   }
-};
+}
 
 /**
  * Adds a widget to the grid

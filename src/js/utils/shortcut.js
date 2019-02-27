@@ -23,7 +23,11 @@
  */
 
 import extend from '@jalik/extend';
-import { asNode, off, on } from '../cuic';
+import {
+  asNode,
+  off,
+  on,
+} from '../cuic';
 
 class Shortcut {
   constructor(options) {

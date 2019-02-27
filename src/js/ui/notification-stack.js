@@ -27,6 +27,9 @@ import { onWindowResized } from '../cuic';
 import Group from './group';
 import Notification from './notification';
 
+/**
+ * A component to display a list of notifications.
+ */
 class NotificationStack extends Group {
   constructor(options) {
     // Set default options

@@ -23,13 +23,19 @@
  */
 
 import extend from '@jalik/extend';
-import { asElement, onWindowResized } from '../cuic';
+import {
+  asElement,
+  onWindowResized,
+} from '../cuic';
 import Collection from '../utils/collection';
 import Closable from './closable';
 import Element from './element';
 
 export const Notifications = new Collection();
 
+/**
+ * A component to display notification.
+ */
 class Notification extends Closable {
   constructor(options) {
     // Set default options

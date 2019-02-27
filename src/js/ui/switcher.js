@@ -26,6 +26,9 @@ import extend from '@jalik/extend';
 import { asElement } from '../cuic';
 import Closable from './closable';
 
+/**
+ * A component that can cycle its children.
+ */
 class Switcher extends Closable {
   constructor(options) {
     // Set default options

@@ -26,6 +26,9 @@ import extend from '@jalik/extend';
 import Shortcut from '../utils/shortcut';
 import Component from './component';
 
+/**
+ * A button component.
+ */
 class Button extends Component {
   constructor(options) {
     // Set default options
@@ -57,6 +60,7 @@ class Button extends Component {
 }
 
 Button.prototype.options = {
+  autofocus: false,
   className: 'btn btn-default btn-secondary',
   disabled: false,
   label: null,
