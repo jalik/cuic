@@ -31,7 +31,7 @@ class Shortcut {
     this.options = extend({}, Shortcut.prototype.options, options);
 
     // Get the element
-    this.options.asElement = asNode(this.options.element);
+    this.options.element = asNode(this.options.element);
 
     // Check options
     if (typeof this.options.callback !== 'function') {
