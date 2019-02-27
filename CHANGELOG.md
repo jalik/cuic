@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.50.1
+- Fixes named exports in `index.js`
+
 ## v0.50.0
 - Removes functions `body()` and `debug()`
 - Renames function `ready()` to `onDOMReady()`
