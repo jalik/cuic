@@ -25,30 +25,19 @@
 import Element from './ui/element';
 
 /**
- * The mouse X position
- * @type {number}
- */
-let mouseX = 0;
-
-/**
- * The mouse Y position
- * @type {number}
- */
-let mouseY = 0;
-
-/**
  * Adds an event listener
  * @param element
  * @param event
  * @param listener
+ * @param capture
  * @return {*}
  */
-export function addEventListener(element, event, listener) {
+export function addEventListener(element, event, listener, capture = false) {
   if (typeof element.addEventListener === 'function') {
-    return element.addEventListener(event, listener, false);
+    return element.addEventListener(event, listener, capture);
   }
   if (typeof element.attachEvent === 'function') {
-    return element.attachEvent(event, listener, false);
+    return element.attachEvent(event, listener);
   }
   return null;
 }
@@ -812,72 +801,66 @@ export function valueOf(value, context) {
  * @return {*}
  */
 export function whichEvent(event, element) {
-  let resolver = {};
+  if (element) {
+    let resolver = {};
 
-  switch (event) {
-    case 'animationend':
-      resolver = {
-        animation: 'animationend',
-        OAnimation: 'oAnimationEnd',
-        MozAnimation: 'animationend',
-        WebkitAnimation: 'webkitAnimationEnd',
-      };
-      break;
+    switch (event) {
+      case 'animationend':
+        resolver = {
+          animation: 'animationend',
+          OAnimation: 'oAnimationEnd',
+          MozAnimation: 'animationend',
+          WebkitAnimation: 'webkitAnimationEnd',
+        };
+        break;
 
-    case 'transitionend':
-      resolver = {
-        transition: 'transitionend',
-        OTransition: 'oTransitionEnd',
-        MozTransition: 'transitionend',
-        WebkitTransition: 'webkitTransitionEnd',
-      };
-      break;
+      case 'transitionend':
+        resolver = {
+          transition: 'transitionend',
+          OTransition: 'oTransitionEnd',
+          MozTransition: 'transitionend',
+          WebkitTransition: 'webkitTransitionEnd',
+        };
+        break;
 
-    default:
-  }
-
-  // Check in resolver
-  const resolverKeys = Object.keys(resolver);
-  const resolverLength = resolverKeys.length;
-
-  for (let i = 0; i < resolverLength; i += 1) {
-    const key = resolverKeys[i];
-
-    if (typeof element.style[key] !== 'undefined') {
-      return resolver[key];
+      default:
     }
-  }
 
-  // Check in element
-  if (typeof element[event] !== 'undefined') {
-    return event;
-  }
-  if (typeof element[`on${event}`] !== 'undefined') {
-    return event;
-  }
+    // Check in resolver
+    const resolverKeys = Object.keys(resolver);
+    const resolverLength = resolverKeys.length;
 
-  // Check in document
-  if (typeof document[event] !== 'undefined') {
-    return event;
-  }
-  if (typeof document[`on${event}`] !== 'undefined') {
-    return event;
-  }
+    for (let i = 0; i < resolverLength; i += 1) {
+      const key = resolverKeys[i];
 
-  // Check in window
-  if (typeof window[event] !== 'undefined') {
-    return event;
-  }
-  if (typeof window[`on${event}`] !== 'undefined') {
-    return event;
+      if (typeof element.style[key] !== 'undefined') {
+        return resolver[key];
+      }
+    }
+
+    // Check in element
+    if (typeof element[event] !== 'undefined') {
+      return event;
+    }
+    if (typeof element[`on${event}`] !== 'undefined') {
+      return event;
+    }
+  } else {
+    // Check in document
+    if (typeof document[event] !== 'undefined') {
+      return event;
+    }
+    if (typeof document[`on${event}`] !== 'undefined') {
+      return event;
+    }
+
+    // Check in window
+    if (typeof window[event] !== 'undefined') {
+      return event;
+    }
+    if (typeof window[`on${event}`] !== 'undefined') {
+      return event;
+    }
   }
   return undefined;
 }
-
-onDOMReady(() => {
-  // Save mouse position on move
-  asElement(document).on('mousemove', (ev) => {
-    mouseX = ev.clientX;
-    mouseY = ev.clientY;
-  });
-});
