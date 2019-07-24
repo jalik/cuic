@@ -1,8 +1,12 @@
 # Cuic
+![GitHub package.json version](https://img.shields.io/github/package-json/v/jalik/cuic.svg)
+[![Build Status](https://travis-ci.com/jalik/cuic.svg?branch=master)](https://travis-ci.com/jalik/cuic)
+![GitHub](https://img.shields.io/github/license/jalik/cuic.svg)
+![GitHub last commit](https://img.shields.io/github/last-commit/jalik/cuic.svg)
+[![GitHub issues](https://img.shields.io/github/issues/jalik/cuic.svg)](https://github.com/jalik/cuic/issues)
+![npm](https://img.shields.io/npm/dt/cuic.svg)
 
 Cuic stands for **Common User Interface Components** and aims to offer various UI components like dialogs, popups, notifications, tooltips, etc.
-
-**The code is tested against bugs**.
 
 ## Styling
 
