@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 Karl STEIN
+ * Copyright (c) 2020 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,7 @@
  */
 
 import extend from '@jalik/extend';
-import changeCase from 'change-case';
+import { camelCase } from 'change-case';
 import {
   asElement,
   asNode,
@@ -986,7 +986,7 @@ class Element {
         for (let i = 0; i < stylesLength; i += 1) {
           // Rename dash-separated properties to camelCase
           const style = styleKeys[i];
-          const camelCaseStyle = changeCase.camelCase(style);
+          const camelCaseStyle = camelCase(style);
           const value = newStyles[style];
 
           // Check if style is supported

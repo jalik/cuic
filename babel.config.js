@@ -22,37 +22,16 @@
  * SOFTWARE.
  */
 
-const path = require('path');
-const Package = require('./package.json');
+module.exports = (api) => {
+  const presets = [
+    '@babel/preset-env',
+  ];
+  const plugins = [];
 
-// Define bundle file name
-const isProduction = process.argv.includes('--mode=production');
-const bundleName = Package.name + (isProduction ? '.min' : '');
+  api.cache.forever();
 
-// Define paths
-const buildPath = path.resolve(path.join(__dirname, 'bundle'));
-const srcPath = path.resolve(path.join(__dirname, 'src'));
-
-module.exports = {
-  entry: {
-    bundle: path.join(srcPath, 'js/index.js'),
-  },
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: 'babel-loader',
-      },
-    ],
-  },
-  output: {
-    libraryTarget: 'umd',
-    path: buildPath,
-    filename: `${bundleName}.js`,
-  },
-  resolve: {
-    extensions: ['.js'],
-    modules: [srcPath, 'node_modules'],
-  },
+  return {
+    presets,
+    plugins,
+  };
 };
