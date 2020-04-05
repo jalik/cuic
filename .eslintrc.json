@@ -4,15 +4,13 @@
     "es6": true,
     "jest": true
   },
-  "extends": "airbnb",
+  "extends": "airbnb-base",
   "plugins": [
     "import",
-    "jest",
-    "jsx-a11y"
+    "jest"
   ],
   "rules": {
     "import/no-cycle": "warn",
-    "no-use-before-define": "warn",
-    "react/sort-comp": "warn"
+    "no-use-before-define": "warn"
   }
 }

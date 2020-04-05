@@ -449,7 +449,7 @@ export function isOpera() {
  */
 export function isSafari() {
   return /constructor/i.test(window.HTMLElement)
-    || (p => p.toString() === '[object SafariRemoteNotification]')(typeof window.safari === 'undefined' || typeof window.safari.pushNotification !== 'undefined');
+    || ((p) => p.toString() === '[object SafariRemoteNotification]')(typeof window.safari === 'undefined' || typeof window.safari.pushNotification !== 'undefined');
 }
 
 /**
@@ -773,7 +773,7 @@ export function toCamelCase(str) {
     .replace(/[^\w\s]/g, '')
     // Uppercases the first character in each group immediately following a space
     // (delimited by spaces)
-    .replace(/ (.)/g, ($1 => $1.toUpperCase()))
+    .replace(/ (.)/g, (($1) => $1.toUpperCase()))
     // Removes spaces
     .replace(/ /g, '');
 }

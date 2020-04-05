@@ -195,7 +195,7 @@ class Element {
    * @return {Element}
    */
   addPositionClass(position, prefix) {
-    const pfx = str => (prefix ? `${prefix}-${str}` : str);
+    const pfx = (str) => (prefix ? `${prefix}-${str}` : str);
 
     // Remove previous classes
     this.removeClass([
@@ -1031,11 +1031,11 @@ class Element {
     let result = dataSet;
 
     if (typeof value !== 'undefined') {
-      dataSet[changeCase.camelCase(key)] = value;
+      dataSet[camelCase(key)] = value;
       result = this;
     } else if (key !== null) {
       if (typeof key === 'string') {
-        result = dataSet[changeCase.camelCase(key)];
+        result = dataSet[camelCase(key)];
       } else if (typeof key === 'object') {
         const attrs = Object.keys(key);
         const attrsLength = attrs.length;
@@ -1043,7 +1043,7 @@ class Element {
         for (let i = 0; i < attrsLength; i += 1) {
           const name = attrs[i];
 
-          dataSet[changeCase.camelCase(name)] = key[name];
+          dataSet[camelCase(name)] = key[name];
         }
         result = this;
       }

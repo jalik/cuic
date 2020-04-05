@@ -49,7 +49,7 @@ class Elements {
    * @return {Elements}
    */
   addClass(className) {
-    return this.each(el => el.addClass(className));
+    return this.each((el) => el.addClass(className));
   }
 
   /**
@@ -58,7 +58,7 @@ class Elements {
    * @return {Elements}
    */
   align(position) {
-    return this.each(el => el.align(position));
+    return this.each((el) => el.align(position));
   }
 
   /**
@@ -69,7 +69,7 @@ class Elements {
    * @return {Elements}
    */
   anchor(position, anchorPoint, target) {
-    return this.each(el => el.anchor(position, anchorPoint, target));
+    return this.each((el) => el.anchor(position, anchorPoint, target));
   }
 
   /**
@@ -78,7 +78,7 @@ class Elements {
    * @return {Elements}
    */
   append(element) {
-    return this.each(el => el.append(element));
+    return this.each((el) => el.append(element));
   }
 
   /**
@@ -88,7 +88,7 @@ class Elements {
    * @return {Elements}
    */
   attr(name, value) {
-    return this.each(el => el.attr(name, value));
+    return this.each((el) => el.attr(name, value));
   }
 
   /**
@@ -96,7 +96,7 @@ class Elements {
    * @return {Elements}
    */
   click() {
-    return this.each(el => el.click());
+    return this.each((el) => el.click());
   }
 
   /**
@@ -105,7 +105,7 @@ class Elements {
    * @return {Elements}
    */
   css(styles) {
-    return this.each(el => el.css(styles));
+    return this.each((el) => el.css(styles));
   }
 
   /**
@@ -125,7 +125,7 @@ class Elements {
    * @return {Elements}
    */
   empty() {
-    return this.each(el => el.empty());
+    return this.each((el) => el.empty());
   }
 
   /**
@@ -186,7 +186,7 @@ class Elements {
    * @return {Elements}
    */
   focus() {
-    return this.each(el => el.focus());
+    return this.each((el) => el.focus());
   }
 
   /**
@@ -203,7 +203,7 @@ class Elements {
    * @return {Elements}
    */
   hide() {
-    return this.each(el => el.hide());
+    return this.each((el) => el.hide());
   }
 
   /**
@@ -212,7 +212,7 @@ class Elements {
    * @return {Elements}
    */
   html(html) {
-    return this.each(el => el.html(html));
+    return this.each((el) => el.html(html));
   }
 
   /**
@@ -262,7 +262,7 @@ class Elements {
    * @return {Elements}
    */
   off(event, callback) {
-    return this.each(el => el.off(event, callback));
+    return this.each((el) => el.off(event, callback));
   }
 
   /**
@@ -272,7 +272,7 @@ class Elements {
    * @return {Elements}
    */
   once(event, callback) {
-    return this.each(el => el.once(event, callback));
+    return this.each((el) => el.once(event, callback));
   }
 
   /**
@@ -282,7 +282,7 @@ class Elements {
    * @return {Elements}
    */
   on(event, callback) {
-    return this.each(el => el.on(event, callback));
+    return this.each((el) => el.on(event, callback));
   }
 
   /**
@@ -291,7 +291,7 @@ class Elements {
    * @return {Elements}
    */
   prepend(element) {
-    return this.each(el => el.prepend(element));
+    return this.each((el) => el.prepend(element));
   }
 
   /**
@@ -299,7 +299,7 @@ class Elements {
    * @return {Elements}
    */
   remove() {
-    return this.each(el => el.remove());
+    return this.each((el) => el.remove());
   }
 
   /**
@@ -308,7 +308,7 @@ class Elements {
    * @return {Elements}
    */
   removeClass(className) {
-    return this.each(el => el.removeClass(className));
+    return this.each((el) => el.removeClass(className));
   }
 
   /**
@@ -316,7 +316,7 @@ class Elements {
    * @return {Elements}
    */
   show() {
-    return this.each(el => el.show());
+    return this.each((el) => el.show());
   }
 
   /**
@@ -325,7 +325,7 @@ class Elements {
    * @return {Elements}
    */
   text(text) {
-    return this.each(el => el.text(text));
+    return this.each((el) => el.text(text));
   }
 
   /**
@@ -334,7 +334,7 @@ class Elements {
    * @return {Elements}
    */
   toggleClass(className) {
-    return this.each(el => el.toggleClass(className));
+    return this.each((el) => el.toggleClass(className));
   }
 
   /**
@@ -357,7 +357,7 @@ class Elements {
    */
   val(value) {
     if (typeof value !== 'undefined') {
-      return this.each(el => el.val(value));
+      return this.each((el) => el.val(value));
     }
     if (this.length) {
       return this.eq(0).val();

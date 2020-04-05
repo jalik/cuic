@@ -160,7 +160,7 @@ class Dialog extends Closable {
         rootOnly: false,
       });
       // Ignore moving if button is clicked
-      this.movable.onMoveStart(ev => !asElement(ev.target).hasClass('btn-close'));
+      this.movable.onMoveStart((ev) => !asElement(ev.target).hasClass('btn-close'));
     }
 
     /**
