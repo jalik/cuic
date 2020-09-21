@@ -63,7 +63,7 @@
     "eslint": "^7.9.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-jest": "^23.20.0",
+    "eslint-plugin-jest": "^24.0.2",
     "file-loader": "^6.1.0",
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^7.0.1",
