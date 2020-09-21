@@ -1,13 +1,16 @@
 # Changelog
 
+## v0.50.5
+- Upgrades dependencies
+
 ## v0.50.4
-- Updates dependencies
+- Upgrades dependencies
 
 ## v0.50.3
-- Updates dependencies
+- Upgrades dependencies
 
 ## v0.50.2
-- Updates dependencies
+- Upgrades dependencies
 
 ## v0.50.1
 - Fixes named exports in `index.js`
@@ -18,10 +21,10 @@
 - Renames function `element()` to `asElement()`
 - Renames function `node()` to `asNode()`
 - Lib available in ES6+ syntax (see `src` folder) to enable auto-completion in IDEs
-- Updates dependencies
+- Upgrades dependencies
 
 ## v0.14.1
-- Updates dependencies
+- Upgrades dependencies
 
 ## v0.14.0
 - Fixes tooltip closing with option `followPointer: true` when mouse is over tooltip
@@ -36,7 +39,7 @@
 - Fixes application of CSS styles with dash in method `Cuic.css()`
 
 ## v0.13.0
-- Updates dependencies
+- Upgrades dependencies
 - Fixes positioning of method `Element.align()`
 - Deprecates method `Closable.isOpened()`
 - Adds method `Closable.cancelCloseTimer()`
@@ -53,7 +56,7 @@
 - Renames option `opened` to `closed` in all components
 
 ## v0.12.1
-- Updates dependencies
+- Upgrades dependencies
 - Renames method `Cuic._calculateAlign()` to `Cuic.calculateAlign()`
 - Renames method `Cuic._calculateAnchor()` to `Cuic.calculateAnchor()`
 - Renames method `Cuic._calculateAvailablePosition()` to `Cuic.calculateAvailablePosition()`
