@@ -38,14 +38,14 @@
   },
   "main": "dist/index.js",
   "scripts": {
-    "build": "npx gulp build",
-    "lint": "npx eslint .",
-    "lint-fix": "npx eslint --fix .",
-    "package": "npm test && npx webpack --mode=production",
-    "prepare": "npx gulp prepare",
+    "build": "gulp build",
+    "lint": "eslint .",
+    "lint-fix": "eslint --fix .",
+    "package": "npm test && webpack --mode=production",
+    "prepare": "gulp prepare",
     "prepublishOnly": "npm test",
-    "test": "npx jest",
-    "watch": "npx gulp watch"
+    "test": "jest",
+    "watch": "gulp watch"
   },
   "dependencies": {
     "@jalik/extend": "^2.1.8",
