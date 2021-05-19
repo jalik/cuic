@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.50.7
+- Upgraded dependencies
+
 ## v0.50.6
 - Upgraded dependencies
 
