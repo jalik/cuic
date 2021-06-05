@@ -47,6 +47,10 @@
     "test": "jest",
     "watch": "gulp watch"
   },
+  "files": [
+    "/dist",
+    "/src"
+  ],
   "dependencies": {
     "@jalik/extend": "^2.1.12",
     "change-case": "^4.1.2"
