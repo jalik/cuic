@@ -37,6 +37,8 @@
     "url": "https://github.com/jalik/cuic/issues"
   },
   "main": "dist/index.js",
+  "module": "src/js/index.js",
+  "esnext": "src/js/index.js",
   "scripts": {
     "build": "gulp build",
     "lint": "eslint .",
